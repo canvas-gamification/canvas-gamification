@@ -1,0 +1,6 @@
+{
+"Assignments": [10, 20],
+"Midterms": [20,30],
+"Quizzes": [0,10],
+"Final": [40,60]
+}
