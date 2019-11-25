@@ -1,5 +1,5 @@
 ==========================
-Grade Scale Determination
+Canvas Gamification
 ==========================
 
 .. contents::
@@ -8,39 +8,38 @@ Grade Scale Determination
 
 Main Features
 =============
-This is a simple program to assist in determining the best grades for
-a given student. It takes in a selection of categories (e.g. labs,
-projects, exams) along with the grades that the student received in
-each category, and returns the best percentage to use for each category.
 
-It is assumed that the various categories and their percent ranges
-will be provided.
 
 Getting Started
 ===============
 
 Dependencies
 ------------
-Python 3.6.8
+Python 3.7
 
 *Required Packages*
-- unittest
-- csv
-- numpy
 
-*Input Data*
-
+- canvasapi
+- Click
 
 Installing
 ----------
-This is meant as a supplementary program and therefore cannot be
-installed.
+1. You should locally install this program.
+2. Activate the provided virtualenv in ./venv.
+3. Install the program using this command line:
+    pip install --editable .
 
 Usage
 =====
+Copy the settings.sample.json to settings.json and fill/change
+the parameters accordingly.
+
+pass the name of the setting file as --settings. see the examples.
 
 Examples
 --------
+- gamification --help
+- gamification --settings settings.json assign-weights
 
 Authors
 =======
