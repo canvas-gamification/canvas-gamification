@@ -6,11 +6,39 @@ import json
 from Course import Course
 
 
+class SettingsException(Exception):
+    pass
+
+
 class Canvas:
-    def __init__(self, url=None, token=None, course_id=None):
-        self.url = 'https://canvas.ubc.ca'
-        self.token = "11224~t93W3Ig73DPLI6nUZ61g1PAt1uGWixRzzVtIvI9B56szfNzTIypROPJyYcXV39JQ"
-        self.course_id = 45950
+
+    @classmethod
+    def from_file(cls, settings_file):
+
+        try:
+            settings_dict = json.loads(settings_file.read())
+            url = settings_dict['url']
+            token = settings_dict['token']
+            course_id = settings_dict['course_id']
+
+            weights_ranges_file_name = settings_dict['weights_ranges_file_name']
+            weights_assignment_group_name = settings_dict['weights_assignment_group_name']
+            weights_assignment_prefix = settings_dict['weights_assignment_prefix']
+
+        except (KeyError, IOError) as e:
+            raise SettingsException()
+
+        return cls(url, token, course_id, weights_ranges_file_name, weights_assignment_group_name,
+                   weights_assignment_prefix)
+
+    def __init__(self, url, token, course_id, weights_ranges_file_name, weights_assignment_group_name,
+                 weights_assignment_prefix):
+        self.url = url
+        self.token = token
+        self.course_id = course_id
+        self.weights_ranges_file_name = weights_ranges_file_name
+        self.weights_assignment_group_name = weights_assignment_group_name
+        self.weights_assignment_prefix = weights_assignment_prefix
 
         self.canvas = canvasapi.Canvas(self.url, self.token)
         self.course = self.canvas.get_course(self.course_id)
@@ -23,7 +51,7 @@ class Canvas:
 
         weights = None
         for file in files:
-            if file.filename == 'Weights.txt':
+            if file.filename == self.weights_ranges_file_name:
                 weights = file.get_contents()
         weights = json.loads(weights)
 
@@ -31,7 +59,6 @@ class Canvas:
 
     def get_score(self, assignment, user):
         score = assignment.get_submission(user).score or 0
-        # print(("*" * 10), score, user, assignment.name)
         total_score = max(assignment.points_possible, 1)
 
         return score / total_score
@@ -43,7 +70,7 @@ class Canvas:
     def get_score_array(self, user):
         return {
             assignment_group.name: self.get_scores_by_assignment_group_id(assignment_group.id, user)
-            for assignment_group in self.assignment_groups if assignment_group.name != 'Weights'
+            for assignment_group in self.assignment_groups if assignment_group.name != self.weights_assignment_group_name
         }
 
     def get_final_weights(self, user):
@@ -71,7 +98,7 @@ class Canvas:
     def clear_assignment_weights(self):
         weights_assignment_group = None
         for assignment_group in self.assignment_groups:
-            if assignment_group.name == "Weights":
+            if assignment_group.name == self.weights_assignment_group_name:
                 weights_assignment_group = assignment_group
         if not weights_assignment_group:
             return
@@ -81,14 +108,14 @@ class Canvas:
         weights_assignment_group.delete()
 
     def create_assignment_weights(self):
-        weights_assignment_group = self.course.create_assignment_group(name="Weights")
+        weights_assignment_group = self.course.create_assignment_group(name=self.weights_assignment_group_name)
         ranges = self.get_weights_ranges()
 
         weights_assignments = []
         for key, val in ranges.items():
             assignment = self.course.create_assignment({
                 'points_possible': 100,
-                'name': key,
+                'name': self.weights_assignment_prefix + key,
                 'assignment_group_id': weights_assignment_group.id,
                 'published': True,
             })
@@ -104,6 +131,6 @@ class Canvas:
             for weight in weights:
                 assignment.submissions_bulk_update(grade_data={
                     weight['user']: {
-                        'posted_grade': weight['weights'][assignment.name]
+                        'posted_grade': weight['weights'][assignment.name[len(self.weights_assignment_prefix):]]
                     }
                 })
