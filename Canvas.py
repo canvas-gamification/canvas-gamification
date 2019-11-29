@@ -3,11 +3,8 @@
 import canvasapi
 import json
 
-from Course import Course
-
-
-class SettingsException(Exception):
-    pass
+from exceptions import SettingsException
+from weight_calculator import calculate_weights
 
 
 class Canvas:
@@ -70,22 +67,12 @@ class Canvas:
     def get_score_array(self, user):
         return {
             assignment_group.name: self.get_scores_by_assignment_group_id(assignment_group.id, user)
-            for assignment_group in self.assignment_groups if assignment_group.name != self.weights_assignment_group_name
+            for assignment_group in self.assignment_groups if
+        assignment_group.name != self.weights_assignment_group_name
         }
 
     def get_final_weights(self, user):
-        ranges = self.get_weights_ranges()
-        ranges = [[key, val[0], val[1]] for key, val in ranges.items()]
-
-        c = Course(0, ranges)
-
-        scores = self.get_score_array(user)
-        scores = [[key] + val for key, val in scores.items()]
-
-        return {
-            x[0]: x[1]
-            for x in c.get_percentages(scores)
-        }
+        return calculate_weights(self.get_score_array(user), self.get_weights_ranges())
 
     def get_final_weights_for_all_users(self):
         return [
