@@ -20,12 +20,12 @@ Python 3.7
 *Required Packages*
 
 - canvasapi
-- Click
+- click
 
 Installing
 ----------
 1. You should locally install this program.
-2. Activate the provided virtualenv in ./venv.
+2. Activate the provided virtualenv in ./venv or create your own virtual env
 3. Install the program using this command line:
     pip install --editable .
 
@@ -40,6 +40,14 @@ Examples
 --------
 - gamification --help
 - gamification --settings settings.json assign-weights
+
+Tests
+-----
+Tests are available in /test folder.
+
+run all the tests by
+
+- python -m unittest
 
 Authors
 =======
