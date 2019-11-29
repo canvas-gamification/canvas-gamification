@@ -4,6 +4,7 @@
   "course_id": 45950,
 
    "weights_ranges_file_name": "Weights.txt",
+   "weights_ranges_file_local": false,
    "weights_assignment_group_name": "Weights",
    "weights_assignment_prefix": "Weight_"
 }
