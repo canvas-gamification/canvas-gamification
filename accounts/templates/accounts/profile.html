@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    <h2>Profile</h2>
+    <form method="post" style="margin: 10px">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary" id="menu-toggle">Update</button>
+    </form>
+    <button class="btn btn-outline-warning" onclick="window.location='{% url 'accounts:password_change' %}';">Change Password</button>
+{% endblock %}

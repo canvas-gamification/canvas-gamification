@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+    <p>{{ message }}</p>
+
+    <button type="submit" class="btn btn-primary btn-block" id="menu-toggle"
+            onclick="window.location='{% url 'homepage' %}';">Go Home
+    </button>
+{% endblock %}

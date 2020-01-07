@@ -1,0 +1,17 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block form %}
+    <div class="form-group">
+        <h2>{{ title }}</h2>
+    </div>
+    <div class="form-group">
+        <p>{{ message }}</p>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-block" id="menu-toggle"
+                onclick="window.location='{% url 'homepage' %}';">Go Home
+        </button>
+    </div>
+{% endblock %}
