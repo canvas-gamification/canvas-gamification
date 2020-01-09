@@ -5,7 +5,7 @@
         <img src="{% static 'accounts/img/logo.jpg' %}" width="40" height="40" class="d-inline-block align-top"
              alt="Logo" style="border-radius: 50%">
     </a>
-    <a class="navbar-brand" href="{% url 'homepage' %}">What We Teach</a>
+    <a class="navbar-brand" href="{% url 'homepage' %}">Gamification</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -17,7 +17,7 @@
                 <a class="nav-link" href="{% url 'homepage' %}">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Search</a>
+                <a class="nav-link" href="{% url 'course:new_problem' %}">New Problem</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Contribute</a>

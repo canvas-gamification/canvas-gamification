@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block media %}
+    {{ form.media }}
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+
+        <input class="btn btn-primary" type="submit" value="Submit">
+    </form>
+{% endblock %}

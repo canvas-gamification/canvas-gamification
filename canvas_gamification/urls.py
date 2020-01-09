@@ -20,6 +20,8 @@ from canvas_gamification import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('djrichtextfield/', include('djrichtextfield.urls')),
     path('accounts/', include(('accounts.urls', 'accounts'))),
+    path('course/', include(('course.urls', 'course'))),
     path('', views.homepage, name='homepage'),
 ]

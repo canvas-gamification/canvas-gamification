@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djrichtextfield',
     'accounts',
+    'course',
 ]
 
 MIDDLEWARE = [
@@ -106,6 +108,26 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+DJRICHTEXTFIELD_CONFIG = {
+    'js': ['//cdn.ckeditor.com/4.4.4/full/ckeditor.js'],
+    'init_template': 'djrichtextfield/init/ckeditor.js',
+    'profiles': {
+        'basic': {
+            'toolbar': [
+                {'items': ['Format', '-', 'Bold', 'Italic', '-',
+                           'RemoveFormat']},
+                {'items': ['Link', 'Unlink', 'Image', 'Table']},
+                {'items': ['Source']}
+            ],
+            'format_tags': 'p;h1;h2;h3',
+            'width': 700,
+        },
+        'advanced': {
+            'width': 700,
+        },
+    }
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
