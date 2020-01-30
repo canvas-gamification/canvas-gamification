@@ -9,6 +9,7 @@
 
 venv/**
 settings.json
+db.sqlite3
 
 # User-specific stuff
 .idea/**
