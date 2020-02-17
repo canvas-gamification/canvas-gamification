@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ question.title }}</h1>
+    <h2>Statement</h2>
+    <div>{% autoescape off %}{{ question.rendered_text }}{% endautoescape %}</div>
+    <h2>Choices</h2>
+    <div>
+        {% for key, text in question.rendered_choices.items %}
+            <p>
+                {{ key }}: {{ text }}
+            </p>
+        {% endfor %}
+    </div>
+    <h2>Submissions</h2>
+    {% for submission in submissions reversed %}
+        <div>
+            Submission{{ forloop.revcounter }}, answer: {{ submission.answer }}, grade: {{ submission.grade }}
+        </div>
+    {% empty %}
+        <div>You have no submission for this problem</div>
+    {% endfor %}
+
+    <h2>Submit Answer</h2>
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            <label>
+                Answer:
+                <select name="answer">
+                    {% for key, text in question.rendered_choices.items %}
+                        <option value="{{ key }}">{{ text }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                <input type="submit">
+            </label>
+        </form>
+    </div>
+{% endblock %}

@@ -33,12 +33,23 @@ class Question(models.Model):
 class VariableQuestion(Question):
     variables = jsonfield.JSONField()
 
+    @property
+    def rendered_text(self):
+        return self.text.format(**self.variables)
+
     def get_grader(self):
         raise NotImplementedError()
 
 
 class MultipleChoiceQuestion(VariableQuestion):
     choices = jsonfield.JSONField()
+
+    @property
+    def rendered_choices(self):
+        res = {}
+        for key, val in self.choices.items():
+            res[key] = val.format(**self.variables)
+        return res
 
     def get_grader(self):
         return MultipleChoiceGrader(self.answer)
