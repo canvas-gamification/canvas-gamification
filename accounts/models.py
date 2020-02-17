@@ -2,11 +2,25 @@ from django.contrib.auth.models import AbstractUser
 
 
 # Create your models here.
+from django.db import models
+
+STUDENT = 'Student'
+TEACHER = 'Teacher'
+
+USER_ROLE_CHOICES = [
+    (TEACHER, TEACHER),
+    (STUDENT, STUDENT),
+]
+
 
 class MyUser(AbstractUser):
-    @property
-    def new_messages_count(self):
-        return self.received_messages.filter(read=False).count()
+    role = models.CharField(max_length=100, choices=USER_ROLE_CHOICES, default=STUDENT)
+
+    def is_teacher(self):
+        return self.role == TEACHER
+
+    def is_student(self):
+        return self.role == STUDENT
 
     @property
     def has_name(self):

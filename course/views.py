@@ -5,11 +5,11 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
 from course.forms import ProblemCreateForm
-from course.models import Problem
+from course.models import Question
 
 
 class ProblemCreateView(CreateView):
-    model = Problem
+    model = Question
     form_class = ProblemCreateForm
     template_name = 'problem_create.html'
     success_url = reverse_lazy('course:new_problem')
