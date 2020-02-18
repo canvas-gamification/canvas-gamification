@@ -4,6 +4,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from djrichtextfield.models import RichTextField
+from polymorphic.models import PolymorphicModel
 
 from course.grader import MultipleChoiceGrader
 
@@ -16,7 +17,7 @@ class QuestionCategory(models.Model):
         return self.name
 
 
-class Question(models.Model):
+class Question(PolymorphicModel):
     title = models.CharField(max_length=300, null=True, blank=True)
     text = RichTextField(null=True, blank=True)
     answer = models.TextField(null=True, blank=True)
@@ -61,13 +62,10 @@ class Submission(models.Model):
     answer = models.TextField(null=True, blank=True)
     submission_time = models.DateTimeField(auto_now_add=True)
 
-    # Generic Foreign Key to Problems
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    problem = GenericForeignKey('content_type', 'object_id')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='submissions')
 
     def calculate_grade(self):
-        return self.problem.get_grader().grade(self.answer)
+        return self.question.get_grader().grade(self.answer)
 
     def save(self, *args, **kwargs):
         self.grade = self.calculate_grade()

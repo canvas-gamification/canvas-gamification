@@ -1,8 +1,9 @@
 from django.urls import path
 
-from course.views import ProblemCreateView, multiple_choice_question_view
+from course.views import ProblemCreateView, problem_set_view, question_view
 
 urlpatterns = [
     path('new-problem', ProblemCreateView.as_view(), name='new_problem'),
-    path('multiple-choice-question/<int:pk>/', multiple_choice_question_view, name='multiple_choice_question')
+    path('question/<int:pk>/', question_view, name='question_view'),
+    path('problem-set', problem_set_view, name='problem_set'),
 ]

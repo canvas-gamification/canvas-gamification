@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Problem set{% endblock %}
+
+{% block content %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Open</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for problem in problems %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td class="w-75">{{ problem.title }}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="window.location.href='{% url 'course:question_view' problem.pk %}'">Open</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
