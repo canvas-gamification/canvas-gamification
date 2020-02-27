@@ -17,16 +17,30 @@
                 <a class="nav-link" href="{% url 'homepage' %}">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'course:new_problem' %}">New Problem</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="{% url 'course:problem_set' %}">Problem Set</a>
+            </li>
+            <li class="nav-item dropdown" style="float: right">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                   data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false" style="float: right">
+                    New Problem
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{% url 'course:new_problem' %}">MultipleChoice Problem</a>
+                </div>
             </li>
         </ul>
         <ul class="navbar-nav mr-md-0">
             {% if user.is_authenticated %}
                 <span class="navbar-text" style="float: right">
+                {% if user.has_complete_profile %}
                     Hello, {{ user.first_name | safe }}
+                {% else %}
+                    Hello, {{ user.username | safe }}
+                {% endif %}
+                </span>
+                <span class="navbar-text ml-1" style="float: right">
+                    Tokens: {{ user.tokens | safe }}
                 </span>
                 <li class="nav-item dropdown" style="float: right">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -43,10 +57,10 @@
                 </li>
                 {% if user.is_staff %}
                     <form class="form-inline" style="margin-left: 5px">
-                    <button class="btn btn-outline-success float-right" type="button"
-                            onclick="window.location.href ='{% url 'admin:index' %}'">Admin
-                    </button>
-                </form>
+                        <button class="btn btn-outline-success float-right" type="button"
+                                onclick="window.location.href ='{% url 'admin:index' %}'">Admin
+                        </button>
+                    </form>
                 {% endif %}
             {% else %}
                 <form class="form-inline">

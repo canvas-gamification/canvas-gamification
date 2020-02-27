@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 # Create your views here.
@@ -19,18 +20,37 @@ def multiple_choice_question_view(request, question):
     if request.method == 'POST':
         answer = request.POST.get('answer', None)
 
-        submission = Submission()
-        submission.user = request.user
-        submission.answer = answer
-        submission.question = question
+        if request.user.submissions.filter(question=question, answer=answer).exists():
+            messages.add_message(request, messages.INFO, 'You have already submitted this answer!')
+        else:
+            submission = Submission()
+            submission.user = request.user
+            submission.answer = answer
+            submission.question = question
 
-        submission.save()
+            submission.save()
+
+            if submission.is_correct:
+                received_tokens = question.token_value * submission.grade
+                request.user.tokens += received_tokens
+                request.user.save()
+                messages.add_message(
+                    request, messages.SUCCESS,
+                    'Answer submitted. Your answer was correct. You received {} tokens'.format(received_tokens),
+                )
+            else:
+                messages.add_message(
+                    request, messages.ERROR,
+                    'Answer submitted. Your answer was wrong',
+                )
+
 
     return render(request, 'multiple_choice_question.html', {
         'question': question,
         'statement': question.get_rendered_text(request.user),
         'choices': question.get_rendered_choices(request.user),
-        'submissions': question.submissions.filter(user=request.user).all() if request.user.is_authenticated else Submission.objects.none(),
+        'submissions': question.submissions.filter(
+            user=request.user).all() if request.user.is_authenticated else Submission.objects.none(),
     })
 
 

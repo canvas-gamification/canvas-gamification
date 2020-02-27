@@ -18,6 +18,15 @@ class QuestionCategory(models.Model):
         return self.name
 
 
+DIFFICULTY_CHOICES = [
+    ("VERY EASY", "VERY EASY"),
+    ("EASY", "EASY"),
+    ("NORMAL", "NORMAL"),
+    ("HARD", "HARD"),
+    ("VERY HARD", "VERY HARD"),
+]
+
+
 class Question(PolymorphicModel):
     title = models.CharField(max_length=300, null=True, blank=True)
     text = RichTextField(null=True, blank=True)
@@ -27,6 +36,8 @@ class Question(PolymorphicModel):
     time_modified = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
     category = models.ForeignKey(QuestionCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    token_value = models.FloatField()
+    difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES)
 
 
 class VariableQuestion(Question):

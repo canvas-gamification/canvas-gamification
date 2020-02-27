@@ -15,6 +15,7 @@ USER_ROLE_CHOICES = [
 
 class MyUser(AbstractUser):
     role = models.CharField(max_length=100, choices=USER_ROLE_CHOICES, default=STUDENT)
+    tokens = models.FloatField(default=0)
 
     def is_teacher(self):
         return self.role == TEACHER
