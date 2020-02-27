@@ -28,7 +28,9 @@ def multiple_choice_question_view(request, question):
 
     return render(request, 'multiple_choice_question.html', {
         'question': question,
-        'submissions': question.submissions.filter(user=request.user).all(),
+        'statement': question.get_rendered_text(request.user),
+        'choices': question.get_rendered_choices(request.user),
+        'submissions': question.submissions.filter(user=request.user).all() if request.user.is_authenticated else Submission.objects.none(),
     })
 
 
@@ -43,6 +45,12 @@ def question_view(request, pk):
 
 def problem_set_view(request):
     problems = Question.objects.all()
+
+    if request.user.is_authenticated:
+        for problem in problems:
+            problem.is_solved = Submission.objects.filter(question=problem, user=request.user, is_correct=True).exists()
+            problem.no_submission = not Submission.objects.filter(question=problem, user=request.user).exists()
+            problem.is_wrong = not problem.is_solved and not problem.no_submission
 
     return render(request, 'problem_set.html', {
         'problems': problems,

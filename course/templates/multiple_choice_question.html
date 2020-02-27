@@ -3,39 +3,57 @@
 {% block content %}
     <h1>{{ question.title }}</h1>
     <h2>Statement</h2>
-    <div>{% autoescape off %}{{ question.rendered_text }}{% endautoescape %}</div>
+    <div>{% autoescape off %}{{ statement }}{% endautoescape %}</div>
     <h2>Choices</h2>
     <div>
-        {% for key, text in question.rendered_choices.items %}
-            <p>
-                {{ key }}: {{ text }}
-            </p>
-        {% endfor %}
+        <ol>
+            {% for key, text in choices.items %}
+                <li>
+                    {{ text }}
+                </li>
+            {% endfor %}
+        </ol>
     </div>
     <h2>Submissions</h2>
-    {% for submission in submissions reversed %}
-        <div>
-            Submission{{ forloop.revcounter }}, answer: {{ submission.answer }}, grade: {{ submission.grade }}
-        </div>
-    {% empty %}
-        <div>You have no submission for this problem</div>
-    {% endfor %}
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Answer</th>
+            <th scope="col">Grade</th>
+            <th scope="col">Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for submission in submissions reversed %}
+            <tr class="{% if submission.is_correct %}table-success{% endif %}{% if not submission.is_correct %}table-danger{% endif %}">
+                <th scope="row">{{ forloop.revcounter }}</th>
+                <td>{{ submission.answer_display }}</td>
+                <td>{{ submission.grade }}</td>
+                <td>{{ submission.status }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
     <h2>Submit Answer</h2>
     <div>
         <form method="post">
             {% csrf_token %}
-            <label>
-                Answer:
-                <select name="answer">
-                    {% for key, text in question.rendered_choices.items %}
-                        <option value="{{ key }}">{{ text }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            <label>
-                <input type="submit">
-            </label>
+
+            <div class="form-group row ml-0">
+                <label>
+                    Answer:
+                    <select name="answer" class="form-control">
+                        {% for key, text in choices.items %}
+                            <option value="{{ key }}">{{ text }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+            <div class="form-group row ml-0">
+                <button type="submit" class="btn btn-success"> Submit</button>
+            </div>
         </form>
     </div>
 {% endblock %}
