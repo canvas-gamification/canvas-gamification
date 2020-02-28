@@ -7,8 +7,34 @@
 {% block content %}
     <form method="post">
         {% csrf_token %}
-        {{form.as_p}}
+        {% for field in form %}
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ field.label_tag }}
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ error }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {{ field }}
+                </div>
+                {% if field.help_text %}
+                    <div class="col-md-6">
+                        {% autoescape off %}
+                            <pre>
+                            {{ field.help_text }}
+                            </pre>
+                        {% endautoescape %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
 
-        <input class="btn btn-primary" type="submit" value="Submit">
+        <input class="btn btn-primary mb-3" type="submit" value="Submit">
     </form>
 {% endblock %}

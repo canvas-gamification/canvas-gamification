@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'djrichtextfield',
     'accounts',
     'course',
+    'jsoneditor',
 ]
 
 MIDDLEWARE = [
@@ -122,10 +123,8 @@ DJRICHTEXTFIELD_CONFIG = {
                 {'items': ['Source']}
             ],
             'format_tags': 'p;h1;h2;h3',
-            'width': 700,
         },
         'advanced': {
-            'width': 700,
         },
     }
 }
