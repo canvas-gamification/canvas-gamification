@@ -27,6 +27,13 @@ DIFFICULTY_CHOICES = [
 ]
 
 
+def render_text(text, variables):
+    text = str(text)
+    for variable, value in variables.items():
+        text = text.replace("{{"+variable+"}}", str(value))
+    return text
+
+
 class Question(PolymorphicModel):
     title = models.CharField(max_length=300, null=True, blank=True)
     text = RichTextField(null=True, blank=True)
@@ -53,7 +60,7 @@ class VariableQuestion(Question):
         return self.variables[p]
 
     def get_rendered_text(self, user):
-        return self.text.format(**self.get_variables(user))
+        return render_text(self.text, self.get_variables(user))
 
 
 class MultipleChoiceQuestion(VariableQuestion):
@@ -62,7 +69,7 @@ class MultipleChoiceQuestion(VariableQuestion):
     def get_rendered_choices(self, user):
         res = {}
         for key, val in self.choices.items():
-            res[key] = str(val).format(**self.get_variables(user))
+            res[key] = render_text(val, self.get_variables(user))
         return res
 
     def get_grader(self, user):
