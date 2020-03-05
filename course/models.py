@@ -62,7 +62,7 @@ class MultipleChoiceQuestion(VariableQuestion):
     def get_rendered_choices(self, user):
         res = {}
         for key, val in self.choices.items():
-            res[key] = val.format(**self.get_variables(user))
+            res[key] = str(val).format(**self.get_variables(user))
         return res
 
     def get_grader(self, user):
