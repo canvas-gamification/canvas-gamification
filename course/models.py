@@ -39,6 +39,8 @@ class Question(PolymorphicModel):
     token_value = models.FloatField()
     difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES)
 
+    is_verified = models.BooleanField(default=False)
+
 
 class VariableQuestion(Question):
     variables = jsonfield.JSONField()
