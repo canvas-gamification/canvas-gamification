@@ -10,6 +10,7 @@
 venv/**
 settings.json
 db.sqlite3
+debug.log
 
 # User-specific stuff
 .idea/**
