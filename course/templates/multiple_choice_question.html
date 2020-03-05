@@ -1,4 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block script %}
+    <link rel="stylesheet" href="{% static 'highlight/9.18.1/styles/default.min.css' %}"/>
+    <script src="{% static 'highlight/9.18.1/highlight.min.js' %}"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+{% endblock %}
 
 {% block content %}
     <h1>{{ question.title }}</h1>
