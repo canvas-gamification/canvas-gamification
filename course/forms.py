@@ -2,6 +2,7 @@ from django import forms
 from django.forms import TextInput, Textarea, NumberInput, widgets
 from djrichtextfield.widgets import RichTextWidget
 from jsoneditor.forms import JSONEditor
+from jsonfield.forms import JSONFormField
 
 from course.models import MultipleChoiceQuestion, DIFFICULTY_CHOICES
 
@@ -45,7 +46,7 @@ class ProblemCreateForm(forms.ModelForm):
         widget=RichTextWidget(field_settings='advanced')
     )
 
-    variables = forms.CharField(
+    variables = JSONFormField(
         widget=JSONEditor(),
         help_text="""
         It should be an array with each element a set of variables to choose.
@@ -63,7 +64,7 @@ class ProblemCreateForm(forms.ModelForm):
         """
     )
 
-    choices = forms.CharField(
+    choices = JSONFormField(
         widget=JSONEditor(),
         help_text="""
             It should be an object of choices.
