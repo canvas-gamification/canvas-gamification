@@ -4,15 +4,10 @@ from djrichtextfield.widgets import RichTextWidget
 from jsoneditor.forms import JSONEditor
 from jsonfield.forms import JSONFormField
 
-from course.models import MultipleChoiceQuestion, DIFFICULTY_CHOICES
+from course.models import MultipleChoiceQuestion, DIFFICULTY_CHOICES, CheckboxQuestion
 
 
 class ProblemCreateForm(forms.ModelForm):
-    class Meta:
-        model = MultipleChoiceQuestion
-        fields = (
-            'title', 'token_value', 'difficulty', 'text', 'answer', 'tutorial', 'category', 'variables', 'choices')
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -67,15 +62,15 @@ class ProblemCreateForm(forms.ModelForm):
     choices = JSONFormField(
         widget=JSONEditor(),
         help_text="""
-            It should be an object of choices.
-            A valid example:
-            {
-                "a" : "{x} is odd and {y} is odd",
-                "b" : "{x} is even and {y} is odd",
-                "c" : "{x} is odd and {y} is even",
-                "d" : "{x} is even and {y} is even"
-            }
-            """
+        It should be an object of choices.
+        A valid example:
+        {
+            "a" : "{{x}} is odd and {{y}} is odd",
+            "b" : "{{x}} is even and {{y}} is odd",
+            "c" : "{{x}} is odd and {{y}} is even",
+            "d" : "{{x}} is even and {{y}} is even"
+        }
+        """
     )
 
 
@@ -91,7 +86,7 @@ class ProblemFilterForm(forms.Form):
 
     difficulty = forms.ChoiceField(
         required=False,
-        choices=[ ('All', 'All') ]+DIFFICULTY_CHOICES,
+        choices=[('All', 'All')] + DIFFICULTY_CHOICES,
         widget=widgets.Select(attrs={
             'class': 'form-control',
         })
@@ -105,3 +100,27 @@ class ProblemFilterForm(forms.Form):
             'class': 'form-control',
         })
     )
+
+
+class CheckboxQuestionForm(ProblemCreateForm):
+    class Meta:
+        model = CheckboxQuestion
+        fields = (
+            'title', 'token_value', 'difficulty', 'text', 'answer', 'tutorial', 'category', 'variables', 'choices')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['answer'].help_text = '\nPlease write the correct choices in this format.\nexample: [\'a\', \'b\']'
+
+
+class MultipleChoiceQuestionForm(ProblemCreateForm):
+    class Meta:
+        model = MultipleChoiceQuestion
+        fields = (
+            'title', 'token_value', 'difficulty', 'text', 'answer', 'tutorial', 'category', 'variables', 'choices')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['answer'].help_text = '\nPlease only write the name of the correct choice'

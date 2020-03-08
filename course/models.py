@@ -76,6 +76,10 @@ class MultipleChoiceQuestion(VariableQuestion):
         return MultipleChoiceGrader(self, user)
 
 
+class CheckboxQuestion(MultipleChoiceQuestion):
+    pass
+
+
 class Submission(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='submissions')
     grade = models.FloatField(default=0)
@@ -87,7 +91,11 @@ class Submission(models.Model):
 
     @property
     def answer_display(self):
-        return self.question.get_rendered_choices(self.user).get(self.answer, 'Unknown')
+        if isinstance(self.question, CheckboxQuestion):
+            return self.answer
+        if isinstance(self.question, MultipleChoiceQuestion):
+            return self.question.get_rendered_choices(self.user).get(self.answer, 'Unknown')
+        return self.answer
 
     @property
     def status(self):

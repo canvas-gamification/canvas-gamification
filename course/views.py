@@ -3,8 +3,8 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
-from course.forms import ProblemCreateForm, ProblemFilterForm
-from course.models import Question, MultipleChoiceQuestion, Submission
+from course.forms import ProblemCreateForm, ProblemFilterForm, MultipleChoiceQuestionForm, CheckboxQuestionForm
+from course.models import Question, MultipleChoiceQuestion, Submission, CheckboxQuestion
 
 
 # Create your views here.
@@ -12,7 +12,7 @@ from course.models import Question, MultipleChoiceQuestion, Submission
 
 def multiple_choice_question_create_view(request):
     if request.method == 'POST':
-        form = ProblemCreateForm(request.POST)
+        form = MultipleChoiceQuestionForm(request.POST)
 
         if not request.user.is_authenticated:
             messages.add_message(request, messages.ERROR, 'You need to be logged in to create a question')
@@ -27,16 +27,44 @@ def multiple_choice_question_create_view(request):
     else:
         if not request.user.is_authenticated:
             messages.add_message(request, messages.ERROR, 'You need to be logged in to create a question')
-        form = ProblemCreateForm()
+        form = MultipleChoiceQuestionForm()
 
     return render(request, 'problem_create.html', {
         'form': form,
     })
 
 
-def multiple_choice_question_view(request, question):
+def checkbox_question_create_view(request):
     if request.method == 'POST':
+        form = CheckboxQuestionForm(request.POST)
+
+        if not request.user.is_authenticated:
+            messages.add_message(request, messages.ERROR, 'You need to be logged in to create a question')
+        elif form.is_valid():
+            question = form.save(commit=False)
+            question.user = request.user
+            question.is_verified = request.user.is_teacher()
+            question.save()
+
+            messages.add_message(request, messages.SUCCESS, 'Problem was created successfully')
+
+    else:
+        if not request.user.is_authenticated:
+            messages.add_message(request, messages.ERROR, 'You need to be logged in to create a question')
+        form = CheckboxQuestionForm()
+
+    return render(request, 'problem_create.html', {
+        'form': form,
+    })
+
+
+def multiple_choice_question_view(request, question, template_name):
+    if request.method == 'POST':
+
         answer = request.POST.get('answer', None)
+        if not answer:
+            answer = request.POST.getlist('answer[]')
+        answer = str(answer)
 
         if not request.user.is_authenticated:
             messages.add_message(request, messages.ERROR, 'You need to be logged in to submit answers')
@@ -64,7 +92,7 @@ def multiple_choice_question_view(request, question):
                     'Answer submitted. Your answer was wrong',
                 )
 
-    return render(request, 'multiple_choice_question.html', {
+    return render(request, template_name, {
         'question': question,
         'statement': question.get_rendered_text(request.user),
         'choices': question.get_rendered_choices(request.user),
@@ -76,8 +104,11 @@ def multiple_choice_question_view(request, question):
 def question_view(request, pk):
     question = get_object_or_404(Question, pk=pk)
 
+    if isinstance(question, CheckboxQuestion):
+        return multiple_choice_question_view(request, question, 'checkbox_question.html')
+
     if isinstance(question, MultipleChoiceQuestion):
-        return multiple_choice_question_view(request, question)
+        return multiple_choice_question_view(request, question, 'multiple_choice_question.html')
 
     raise Http404()
 

@@ -37,12 +37,15 @@
     <div>
         <form method="post">
             {% csrf_token %}
+
             {% for key, text in choices.items %}
                 <div class="form-group">
-                    <input type="radio" id="answer-{{ key }}" name="answer" value="{{ key }}">
+                    <input type="checkbox" id="answer-{{ key }}" name="answer[]" value="{{ key }}">
                     <label for="answer-{{ key }}">{{ key }}) {{ text }}</label>
                 </div>
             {% endfor %}
+
+
             <div class="form-group row ml-0">
                 <button type="submit" class="btn btn-success"> Submit</button>
             </div>
