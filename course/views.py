@@ -3,16 +3,16 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
-from course.forms import ProblemCreateForm, ProblemFilterForm, MultipleChoiceQuestionForm, CheckboxQuestionForm
-from course.models import Question, MultipleChoiceQuestion, Submission, CheckboxQuestion
+from course.forms import ProblemFilterForm, MultipleChoiceQuestionForm, CheckboxQuestionForm, \
+    JavaQuestionForm
+from course.models import Question, MultipleChoiceQuestion, Submission, CheckboxQuestion, JavaQuestion, JavaSubmission
 
 
 # Create your views here.
 
-
-def multiple_choice_question_create_view(request):
+def question_create_view(request, question_form_class):
     if request.method == 'POST':
-        form = MultipleChoiceQuestionForm(request.POST)
+        form = question_form_class(request.POST)
 
         if not request.user.is_authenticated:
             messages.add_message(request, messages.ERROR, 'You need to be logged in to create a question')
@@ -27,35 +27,23 @@ def multiple_choice_question_create_view(request):
     else:
         if not request.user.is_authenticated:
             messages.add_message(request, messages.ERROR, 'You need to be logged in to create a question')
-        form = MultipleChoiceQuestionForm()
+        form = question_form_class()
 
     return render(request, 'problem_create.html', {
         'form': form,
     })
+
+
+def java_question_create_view(request):
+    return question_create_view(request, JavaQuestionForm)
+
+
+def multiple_choice_question_create_view(request):
+    return question_create_view(request, MultipleChoiceQuestionForm)
 
 
 def checkbox_question_create_view(request):
-    if request.method == 'POST':
-        form = CheckboxQuestionForm(request.POST)
-
-        if not request.user.is_authenticated:
-            messages.add_message(request, messages.ERROR, 'You need to be logged in to create a question')
-        elif form.is_valid():
-            question = form.save(commit=False)
-            question.user = request.user
-            question.is_verified = request.user.is_teacher()
-            question.save()
-
-            messages.add_message(request, messages.SUCCESS, 'Problem was created successfully')
-
-    else:
-        if not request.user.is_authenticated:
-            messages.add_message(request, messages.ERROR, 'You need to be logged in to create a question')
-        form = CheckboxQuestionForm()
-
-    return render(request, 'problem_create.html', {
-        'form': form,
-    })
+    return question_create_view(request, CheckboxQuestionForm)
 
 
 def multiple_choice_question_view(request, question, template_name):
@@ -101,8 +89,55 @@ def multiple_choice_question_view(request, question, template_name):
     })
 
 
+def java_question_view(request, question):
+
+    def return_render():
+        return render(request, 'java_question.html', {
+            'question': question,
+            'submissions': question.java_submissions.filter(
+                user=request.user).all() if request.user.is_authenticated else JavaSubmission.objects.none(),
+        })
+
+    if request.method == "POST":
+
+        answer_text = request.POST.get('answer-text', "")
+        answer_file = request.FILES.get('answer-file', None)
+
+        answer_text = answer_text.strip()
+
+        if answer_text == "" and not answer_file:
+            messages.add_message(request, messages.ERROR, "Please either submit the code as text or upload a java file")
+            return return_render()
+
+        if answer_text != "" and answer_file:
+            messages.add_message(request, messages.ERROR, "Both text and file was submitted please. Please only submit a text or a file")
+            return return_render()
+
+        if answer_file:
+            answer_text = answer_file.read()
+
+        if not request.user.is_authenticated:
+            messages.add_message(request, messages.ERROR, 'You need to be logged in to submit answers')
+        elif request.user.java_submissions.filter(question=question, code=answer_text).exists():
+            messages.add_message(request, messages.INFO, 'You have already submitted this answer!')
+        else:
+            submission = JavaSubmission()
+            submission.user = request.user
+            submission.code = answer_text
+            submission.question = question
+
+            submission.submit()
+
+            messages.add_message(request, messages.INFO, "Your Code has been submitted and being evaluated!")
+
+    return return_render()
+
+
 def question_view(request, pk):
     question = get_object_or_404(Question, pk=pk)
+
+    if isinstance(question, JavaQuestion):
+        return java_question_view(request, question)
 
     if isinstance(question, CheckboxQuestion):
         return multiple_choice_question_view(request, question, 'checkbox_question.html')
@@ -129,17 +164,30 @@ def problem_set_view(request):
 
     if request.user.is_authenticated:
         for problem in problems:
-            problem.is_solved = Submission.objects.filter(question=problem, user=request.user, is_correct=True).exists()
-            problem.no_submission = not Submission.objects.filter(question=problem, user=request.user).exists()
-            problem.is_wrong = not problem.is_solved and not problem.no_submission
+
+            if isinstance(problem, JavaQuestion):
+                problem.is_solved = JavaSubmission.objects.filter(question=problem, user=request.user, grade=1).exists()
+                problem.is_partially_correct = not problem.is_solved and JavaSubmission.objects.filter(question=problem, user=request.user, grade__gt=0).exists()
+                problem.no_submission = not JavaSubmission.objects.filter(question=problem, user=request.user).exists()
+                problem.is_wrong = not problem.is_solved and not problem.no_submission and not problem.is_partially_correct
+            else:
+                problem.is_solved = Submission.objects.filter(question=problem, user=request.user, is_correct=True).exists()
+                problem.is_partially_correct = False
+                problem.no_submission = not Submission.objects.filter(question=problem, user=request.user).exists()
+                problem.is_wrong = not problem.is_solved and not problem.no_submission
     else:
         for problem in problems:
+            problem.is_solved = False
+            problem.is_partially_correct = False
             problem.no_submission = True
+            problem.is_wrong = False
 
     if solved == 'Solved':
         problems = [p for p in problems if p.is_solved]
     if solved == 'Unsolved':
         problems = [p for p in problems if not p.is_solved]
+    if solved == "Partially Correct":
+        problems = [p for p in problems if p.is_partially_correct]
     if solved == 'Wrong':
         problems = [p for p in problems if p.is_wrong]
     if solved == 'Unopened':

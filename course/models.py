@@ -1,6 +1,7 @@
 import random
-
+import requests
 import jsonfield
+
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -80,6 +81,10 @@ class CheckboxQuestion(MultipleChoiceQuestion):
     pass
 
 
+class JavaQuestion(Question):
+    test_cases = jsonfield.JSONField()
+
+
 class Submission(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='submissions')
     grade = models.FloatField(default=0)
@@ -98,6 +103,17 @@ class Submission(models.Model):
         return self.answer
 
     @property
+    def status_color(self):
+        dic = {
+            "Evaluating": 'info',
+            "Wrong": 'danger',
+            "Partially Correct": 'warning',
+            "Correct": 'success',
+        }
+
+        return dic[self.status]
+
+    @property
     def status(self):
         if self.is_correct:
             return "Correct"
@@ -109,3 +125,87 @@ class Submission(models.Model):
     def save(self, *args, **kwargs):
         self.is_correct, self.grade = self.calculate_grade()
         super().save(*args, **kwargs)
+
+
+class JavaSubmission(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='java_submissions')
+    code = models.TextField(null=True, blank=True)
+    grade = models.FloatField(default=0)
+    submission_time = models.DateTimeField(auto_now_add=True)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='java_submissions')
+    tokens = jsonfield.JSONField()
+    results = jsonfield.JSONField()
+
+    @property
+    def status_color(self):
+        dic = {
+            "Evaluating": 'info',
+            "Wrong": 'danger',
+            "Partially Correct": 'warning',
+            "Correct": 'success',
+        }
+
+        return dic[self.status]
+
+    @property
+    def status(self):
+        if self.in_progress:
+            self.evaluate()
+        if self.in_progress:
+            return "Evaluating"
+
+        grade = self.grade
+        if grade == 0:
+            return "Wrong"
+        if grade < 1:
+            return "Partially Correct"
+        return "Correct"
+
+    def get_grade(self, evaluate=True):
+        if self.in_progress and evaluate:
+            self.evaluate()
+        if self.in_progress:
+            return 0
+
+        total_test_cases = len(self.question.test_cases)
+        correct_test_cases = 0
+
+        for i, result in enumerate(self.results):
+            if result['status']['id'] == 3:
+                correct_test_cases += 1
+
+        return correct_test_cases / total_test_cases
+
+    @property
+    def in_progress(self):
+        for result in self.results:
+            if result['status']['id'] == 1 or result['status']['id'] == 2:
+                return True
+        return False
+
+    def evaluate(self):
+        self.results = []
+
+        for i, test_case in enumerate(self.question.test_cases):
+            token = self.tokens[i]
+            r = requests.get("https://api.judge0.com/submissions/{}?base64_encoded=false".format(token))
+            self.results.append(r.json())
+        self.grade = self.get_grade(False)
+        self.save()
+
+    def submit(self):
+        self.tokens = []
+
+        for test_case in self.question.test_cases:
+
+            r = requests.post("https://api.judge0.com/submissions/", data={
+                "base64_encoded": False,
+                "wait": False,
+                "source_code": self.code,
+                "language_id": 62,
+                "stdin": test_case['input'],
+                "expected_output": test_case['output'],
+            })
+            self.tokens.append(r.json()['token'])
+        self.save()
+        self.evaluate()

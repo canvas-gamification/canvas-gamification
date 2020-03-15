@@ -14,6 +14,7 @@ class MultipleChoiceGrader(Grader):
             return False, 0
         else:
             number_of_choices = len(self.question.choices.items())
-            number_of_submissions = self.user.submissions.filter(question=self.question).exclude(pk=submission.pk).count()
+            number_of_submissions = self.user.submissions.filter(question=self.question).exclude(
+                pk=submission.pk).count()
 
-            return True, 1 - number_of_submissions/(number_of_choices - 1)
+            return True, 1 - number_of_submissions / (number_of_choices - 1)

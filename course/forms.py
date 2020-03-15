@@ -4,7 +4,7 @@ from djrichtextfield.widgets import RichTextWidget
 from jsoneditor.forms import JSONEditor
 from jsonfield.forms import JSONFormField
 
-from course.models import MultipleChoiceQuestion, DIFFICULTY_CHOICES, CheckboxQuestion
+from course.models import MultipleChoiceQuestion, DIFFICULTY_CHOICES, CheckboxQuestion, JavaQuestion
 
 
 class ProblemCreateForm(forms.ModelForm):
@@ -40,6 +40,9 @@ class ProblemCreateForm(forms.ModelForm):
     tutorial = forms.CharField(
         widget=RichTextWidget(field_settings='advanced')
     )
+
+
+class ChoiceProblemCreateForm(ProblemCreateForm):
 
     variables = JSONFormField(
         widget=JSONEditor(),
@@ -94,7 +97,7 @@ class ProblemFilterForm(forms.Form):
 
     solved = forms.ChoiceField(
         required=False,
-        choices=[('All', 'All'), ('Solved', 'Solved'), ('Unsolved', 'Unsolved'), ('Wrong', 'Wrong'),
+        choices=[('All', 'All'), ('Solved', 'Solved'), ('Partially Correct', 'Partially Correct'), ('Unsolved', 'Unsolved'), ('Wrong', 'Wrong'),
                  ('Unopened', 'Unopened')],
         widget=widgets.Select(attrs={
             'class': 'form-control',
@@ -102,7 +105,7 @@ class ProblemFilterForm(forms.Form):
     )
 
 
-class CheckboxQuestionForm(ProblemCreateForm):
+class CheckboxQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = CheckboxQuestion
         fields = (
@@ -114,7 +117,7 @@ class CheckboxQuestionForm(ProblemCreateForm):
         self.fields['answer'].help_text = '\nPlease write the correct choices in this format.\nexample: [\'a\', \'b\']'
 
 
-class MultipleChoiceQuestionForm(ProblemCreateForm):
+class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = MultipleChoiceQuestion
         fields = (
@@ -124,3 +127,31 @@ class MultipleChoiceQuestionForm(ProblemCreateForm):
         super().__init__(*args, **kwargs)
 
         self.fields['answer'].help_text = '\nPlease only write the name of the correct choice'
+
+
+class JavaQuestionForm(ProblemCreateForm):
+    class Meta:
+        model = JavaQuestion
+        fields = (
+            'title', 'token_value', 'difficulty', 'text', 'tutorial', 'category', 'test_cases')
+        exclude = ('answer', )
+
+    answer = None
+
+    test_cases = JSONFormField(
+        widget=JSONEditor(),
+        help_text="""
+        It should be an array if test_cases each element need to have input and outpur.
+        A valid example:
+        [
+            {
+                "input": "2",
+                "output": "Even"
+            },
+            {
+                "input": "3",
+                "output": "Odd"
+            }
+        ]
+        """
+    )
