@@ -199,3 +199,14 @@ def problem_set_view(request):
         'problems': problems,
         'form': form,
     })
+
+
+def java_submission_detail_view(request, pk):
+    java_submission = get_object_or_404(JavaSubmission, pk=pk)
+
+    if java_submission.user != request.user:
+        raise Http404()
+
+    return render(request, 'java_submission_detail.html', {
+        'submission': java_submission,
+    })
