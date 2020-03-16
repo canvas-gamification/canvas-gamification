@@ -35,6 +35,15 @@ def render_text(text, variables):
     return text
 
 
+class TokenValue(models.Model):
+    value = models.FloatField(default=0)
+    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, related_name='token_values')
+    difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES)
+
+    class Meta:
+        unique_together = ('category', 'difficulty')
+
+
 class Question(PolymorphicModel):
     title = models.CharField(max_length=300, null=True, blank=True)
     text = RichTextField(null=True, blank=True)
@@ -44,7 +53,6 @@ class Question(PolymorphicModel):
     time_modified = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
     category = models.ForeignKey(QuestionCategory, on_delete=models.SET_NULL, null=True, blank=True)
-    token_value = models.FloatField()
     difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES)
 
     is_verified = models.BooleanField(default=False)

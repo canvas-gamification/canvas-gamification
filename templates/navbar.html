@@ -31,6 +31,11 @@
                     <a class="dropdown-item" href="{% url 'course:new_problem_java' %}">Java Problem</a>
                 </div>
             </li>
+            {% if user.is_staff %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'course:token_values' %}">Token Values</a>
+            </li>
+            {% endif %}
         </ul>
         <ul class="navbar-nav mr-md-0">
             {% if user.is_authenticated %}

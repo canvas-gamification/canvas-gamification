@@ -1,11 +1,14 @@
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
+from django.template.defaultfilters import register
 
 from course.forms import ProblemFilterForm, MultipleChoiceQuestionForm, CheckboxQuestionForm, \
     JavaQuestionForm
-from course.models import Question, MultipleChoiceQuestion, Submission, CheckboxQuestion, JavaQuestion, JavaSubmission
+from course.models import Question, MultipleChoiceQuestion, Submission, CheckboxQuestion, JavaQuestion, JavaSubmission, \
+    QuestionCategory, DIFFICULTY_CHOICES, TokenValue
 
 
 # Create your views here.
@@ -67,7 +70,7 @@ def multiple_choice_question_view(request, question, template_name):
             submission.save()
 
             if submission.is_correct:
-                received_tokens = question.token_value * submission.grade
+                received_tokens = get_token_value(question.category, question.difficulty) * submission.grade
                 request.user.tokens += received_tokens
                 request.user.save()
                 messages.add_message(
@@ -90,7 +93,6 @@ def multiple_choice_question_view(request, question, template_name):
 
 
 def java_question_view(request, question):
-
     def return_render():
         return render(request, 'java_question.html', {
             'question': question,
@@ -110,7 +112,8 @@ def java_question_view(request, question):
             return return_render()
 
         if answer_text != "" and answer_file:
-            messages.add_message(request, messages.ERROR, "Both text and file was submitted please. Please only submit a text or a file")
+            messages.add_message(request, messages.ERROR,
+                                 "Both text and file was submitted please. Please only submit a text or a file")
             return return_render()
 
         if answer_file:
@@ -148,30 +151,50 @@ def question_view(request, pk):
     raise Http404()
 
 
+def get_token_value(category, difficulty):
+    if not category or not difficulty:
+        return 0
+
+    if not TokenValue.objects.filter(category=category, difficulty=difficulty).exists():
+        token_value = TokenValue(category=category, difficulty=difficulty)
+        token_value.save()
+        return token_value.value
+    return TokenValue.objects.get(category=category, difficulty=difficulty).value
+
+
 def problem_set_view(request):
     query = request.GET.get('query', None)
     difficulty = request.GET.get('difficulty', None)
-    solved = request.GET.get('solved', 'All')
+    solved = request.GET.get('solved', None)
+    category = request.GET.get('category', None)
 
     q = Q(is_verified=True)
 
     if query:
         q = q & Q(title__contains=query)
-    if difficulty and difficulty != 'All':
+    if difficulty:
         q = q & Q(difficulty=difficulty)
+    if category:
+        q = q & Q(category=category)
 
     problems = Question.objects.filter(q).all()
+
+    for problem in problems:
+        problem.token_value = get_token_value(problem.category, problem.difficulty)
 
     if request.user.is_authenticated:
         for problem in problems:
 
             if isinstance(problem, JavaQuestion):
                 problem.is_solved = JavaSubmission.objects.filter(question=problem, user=request.user, grade=1).exists()
-                problem.is_partially_correct = not problem.is_solved and JavaSubmission.objects.filter(question=problem, user=request.user, grade__gt=0).exists()
+                problem.is_partially_correct = not problem.is_solved and JavaSubmission.objects.filter(question=problem,
+                                                                                                       user=request.user,
+                                                                                                       grade__gt=0).exists()
                 problem.no_submission = not JavaSubmission.objects.filter(question=problem, user=request.user).exists()
                 problem.is_wrong = not problem.is_solved and not problem.no_submission and not problem.is_partially_correct
             else:
-                problem.is_solved = Submission.objects.filter(question=problem, user=request.user, is_correct=True).exists()
+                problem.is_solved = Submission.objects.filter(question=problem, user=request.user,
+                                                              is_correct=True).exists()
                 problem.is_partially_correct = False
                 problem.no_submission = not Submission.objects.filter(question=problem, user=request.user).exists()
                 problem.is_wrong = not problem.is_solved and not problem.no_submission
@@ -209,4 +232,50 @@ def java_submission_detail_view(request, pk):
 
     return render(request, 'java_submission_detail.html', {
         'submission': java_submission,
+    })
+
+
+@register.filter
+def return_item(l, i):
+    try:
+        return l[i]
+    except:
+        return None
+
+
+def token_values_table_view(request):
+    if not request.user.is_staff:
+        raise PermissionDenied()
+
+    if request.method == 'POST':
+        sent_values = request.POST.getlist('values[]', None)
+        values = []
+
+        for i, category in enumerate(QuestionCategory.objects.all()):
+            values.append(sent_values[i * len(DIFFICULTY_CHOICES):(i + 1) * len(DIFFICULTY_CHOICES)])
+
+            for j, difficulty in enumerate([x for x, y in DIFFICULTY_CHOICES]):
+                token_value = TokenValue.objects.get(category=category, difficulty=difficulty)
+                token_value.value = sent_values[i * len(DIFFICULTY_CHOICES) + j]
+                token_value.save()
+    else:
+        values = []
+
+        for category in QuestionCategory.objects.all():
+            values.append([])
+
+            for difficulty, x in DIFFICULTY_CHOICES:
+
+                if TokenValue.objects.filter(category=category, difficulty=difficulty).exists():
+                    token_value = TokenValue.objects.get(category=category, difficulty=difficulty)
+                else:
+                    token_value = TokenValue(category=category, difficulty=difficulty)
+                    token_value.save()
+
+                values[-1].append(token_value.value)
+
+    return render(request, 'token_values_table.html', {
+        'values': values,
+        'difficulties': [d for d, x in DIFFICULTY_CHOICES],
+        'categories': QuestionCategory.objects.all(),
     })

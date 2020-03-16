@@ -6,13 +6,17 @@
 
     <form method="get">
         <div class="form-row">
-            <div class="form-group col-6">
+            <div class="form-group col-5">
                 {{ form.query.label_tag }}
                 {{ form.query }}
             </div>
-            <div class="form-group col-3">
+            <div class="form-group col-2">
                 {{ form.difficulty.label_tag }}
                 {{ form.difficulty }}
+            </div>
+            <div class="form-group col-2">
+                {{ form.category.label_tag }}
+                {{ form.category }}
             </div>
             <div class="form-group col-2">
                 {{ form.solved.label_tag }}
@@ -29,6 +33,7 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Title</th>
+            <th scope="col">Category</th>
             <th scope="col">Difficulty</th>
             <th scope="col">Token&nbsp;Value</th>
             <th scope="col">Status</th>
@@ -40,6 +45,7 @@
                 <tr class="{% if problem.is_solved %}table-success{% endif %}{% if problem.is_wrong %}table-danger{% endif %}{% if problem.is_partially_correct %}table-warning{% endif %}">
                     <th scope="row">{{ forloop.counter }}</th>
                     <td class="col">{{ problem.title }}</td>
+                    <td>{{ problem.category }}</td>
                     <td>{{ problem.difficulty | safe }}</td>
                     <td>{{ problem.token_value }}</td>
                     <td>

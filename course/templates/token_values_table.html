@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                {% for difficulty in difficulties %}
+                    <th scope="col">{{ difficulty }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for category in categories %}
+                <tr>
+                    <th scope="row">{{ category }}</th>
+                    {% for difficulty in difficulties %}
+                        <td>
+                            <label>
+                                <input class="form-control" name="values[]" type="number" value="{{ values|return_item:forloop.parentloop.counter0 | return_item:forloop.counter0 }}">
+                            </label>
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <input type="submit" class="btn btn-primary">
+    </form>
+{% endblock %}

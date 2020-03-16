@@ -4,7 +4,7 @@ from djrichtextfield.widgets import RichTextWidget
 from jsoneditor.forms import JSONEditor
 from jsonfield.forms import JSONFormField
 
-from course.models import MultipleChoiceQuestion, DIFFICULTY_CHOICES, CheckboxQuestion, JavaQuestion
+from course.models import MultipleChoiceQuestion, DIFFICULTY_CHOICES, CheckboxQuestion, JavaQuestion, QuestionCategory
 
 
 class ProblemCreateForm(forms.ModelForm):
@@ -43,7 +43,6 @@ class ProblemCreateForm(forms.ModelForm):
 
 
 class ChoiceProblemCreateForm(ProblemCreateForm):
-
     variables = JSONFormField(
         widget=JSONEditor(),
         help_text="""
@@ -89,7 +88,16 @@ class ProblemFilterForm(forms.Form):
 
     difficulty = forms.ChoiceField(
         required=False,
-        choices=[('All', 'All')] + DIFFICULTY_CHOICES,
+        choices=[('', 'All')] + DIFFICULTY_CHOICES,
+        widget=widgets.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    category = forms.ModelChoiceField(
+        required=False,
+        empty_label='All',
+        queryset=QuestionCategory.objects.all(),
         widget=widgets.Select(attrs={
             'class': 'form-control',
         })
@@ -97,7 +105,8 @@ class ProblemFilterForm(forms.Form):
 
     solved = forms.ChoiceField(
         required=False,
-        choices=[('All', 'All'), ('Solved', 'Solved'), ('Partially Correct', 'Partially Correct'), ('Unsolved', 'Unsolved'), ('Wrong', 'Wrong'),
+        choices=[('', 'All'), ('Solved', 'Solved'), ('Partially Correct', 'Partially Correct'),
+                 ('Unsolved', 'Unsolved'), ('Wrong', 'Wrong'),
                  ('Unopened', 'Unopened')],
         widget=widgets.Select(attrs={
             'class': 'form-control',
@@ -134,7 +143,7 @@ class JavaQuestionForm(ProblemCreateForm):
         model = JavaQuestion
         fields = (
             'title', 'token_value', 'difficulty', 'text', 'tutorial', 'category', 'test_cases')
-        exclude = ('answer', )
+        exclude = ('answer',)
 
     answer = None
 
