@@ -51,6 +51,7 @@
                     <td>
                         {% if problem.is_solved %}Solved{% endif %}
                         {% if problem.no_submission %}Unopened{% endif %}
+                        {% if problem.is_partially_correct %}Partially Correct{% endif %}
                         {% if problem.is_wrong %}Wrong{% endif %}
                     </td>
                     <td>

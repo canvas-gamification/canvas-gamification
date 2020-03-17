@@ -1,17 +1,19 @@
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.template.defaultfilters import register
+from django.urls import reverse_lazy
 
 from course.forms import ProblemFilterForm, MultipleChoiceQuestionForm, CheckboxQuestionForm, \
     JavaQuestionForm
-from course.models import Question, MultipleChoiceQuestion, Submission, CheckboxQuestion, JavaQuestion, JavaSubmission, \
-    QuestionCategory, DIFFICULTY_CHOICES, TokenValue
+from course.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
+    QuestionCategory, DIFFICULTY_CHOICES, TokenValue, MultipleChoiceSubmission
 
 
 # Create your views here.
+from course.utils import get_token_value, get_user_question_junction
+
 
 def question_create_view(request, question_form_class):
     if request.method == 'POST':
@@ -21,12 +23,13 @@ def question_create_view(request, question_form_class):
             messages.add_message(request, messages.ERROR, 'You need to be logged in to create a question')
         elif form.is_valid():
             question = form.save(commit=False)
-            question.user = request.user
+            question.author = request.user
             question.is_verified = request.user.is_teacher()
             question.save()
 
             messages.add_message(request, messages.SUCCESS, 'Problem was created successfully')
 
+            form = question_form_class()
     else:
         if not request.user.is_authenticated:
             messages.add_message(request, messages.ERROR, 'You need to be logged in to create a question')
@@ -62,7 +65,7 @@ def multiple_choice_question_view(request, question, template_name):
         elif request.user.submissions.filter(question=question, answer=answer).exists():
             messages.add_message(request, messages.INFO, 'You have already submitted this answer!')
         else:
-            submission = Submission()
+            submission = MultipleChoiceSubmission()
             submission.user = request.user
             submission.answer = answer
             submission.question = question
@@ -70,9 +73,7 @@ def multiple_choice_question_view(request, question, template_name):
             submission.save()
 
             if submission.is_correct:
-                received_tokens = get_token_value(question.category, question.difficulty) * submission.grade
-                request.user.tokens += received_tokens
-                request.user.save()
+                received_tokens = get_user_question_junction(request.user, question).tokens_received
                 messages.add_message(
                     request, messages.SUCCESS,
                     'Answer submitted. Your answer was correct. You received {} tokens'.format(received_tokens),
@@ -88,7 +89,7 @@ def multiple_choice_question_view(request, question, template_name):
         'statement': question.get_rendered_text(request.user),
         'choices': question.get_rendered_choices(request.user),
         'submissions': question.submissions.filter(
-            user=request.user).all() if request.user.is_authenticated else Submission.objects.none(),
+            user=request.user).all() if request.user.is_authenticated else MultipleChoiceSubmission.objects.none(),
     })
 
 
@@ -96,7 +97,7 @@ def java_question_view(request, question):
     def return_render():
         return render(request, 'java_question.html', {
             'question': question,
-            'submissions': question.java_submissions.filter(
+            'submissions': question.submissions.filter(
                 user=request.user).all() if request.user.is_authenticated else JavaSubmission.objects.none(),
         })
 
@@ -121,7 +122,7 @@ def java_question_view(request, question):
 
         if not request.user.is_authenticated:
             messages.add_message(request, messages.ERROR, 'You need to be logged in to submit answers')
-        elif request.user.java_submissions.filter(question=question, code=answer_text).exists():
+        elif request.user.submissions.filter(question=question, code=answer_text).exists():
             messages.add_message(request, messages.INFO, 'You have already submitted this answer!')
         else:
             submission = JavaSubmission()
@@ -132,6 +133,8 @@ def java_question_view(request, question):
             submission.submit()
 
             messages.add_message(request, messages.INFO, "Your Code has been submitted and being evaluated!")
+
+            return HttpResponseRedirect(reverse_lazy('course:question_view', kwargs={'pk': question.pk}))
 
     return return_render()
 
@@ -149,17 +152,6 @@ def question_view(request, pk):
         return multiple_choice_question_view(request, question, 'multiple_choice_question.html')
 
     raise Http404()
-
-
-def get_token_value(category, difficulty):
-    if not category or not difficulty:
-        return 0
-
-    if not TokenValue.objects.filter(category=category, difficulty=difficulty).exists():
-        token_value = TokenValue(category=category, difficulty=difficulty)
-        token_value.save()
-        return token_value.value
-    return TokenValue.objects.get(category=category, difficulty=difficulty).value
 
 
 def problem_set_view(request):
@@ -182,28 +174,10 @@ def problem_set_view(request):
     for problem in problems:
         problem.token_value = get_token_value(problem.category, problem.difficulty)
 
-    if request.user.is_authenticated:
-        for problem in problems:
-
-            if isinstance(problem, JavaQuestion):
-                problem.is_solved = JavaSubmission.objects.filter(question=problem, user=request.user, grade=1).exists()
-                problem.is_partially_correct = not problem.is_solved and JavaSubmission.objects.filter(question=problem,
-                                                                                                       user=request.user,
-                                                                                                       grade__gt=0).exists()
-                problem.no_submission = not JavaSubmission.objects.filter(question=problem, user=request.user).exists()
-                problem.is_wrong = not problem.is_solved and not problem.no_submission and not problem.is_partially_correct
-            else:
-                problem.is_solved = Submission.objects.filter(question=problem, user=request.user,
-                                                              is_correct=True).exists()
-                problem.is_partially_correct = False
-                problem.no_submission = not Submission.objects.filter(question=problem, user=request.user).exists()
-                problem.is_wrong = not problem.is_solved and not problem.no_submission
-    else:
-        for problem in problems:
-            problem.is_solved = False
-            problem.is_partially_correct = False
-            problem.no_submission = True
-            problem.is_wrong = False
+        problem.is_solved = problem.is_solved(request.user)
+        problem.is_partially_correct = problem.is_partially_correct(request.user)
+        problem.no_submission = problem.no_submission(request.user)
+        problem.is_wrong = not problem.is_solved and not problem.no_submission and not problem.is_partially_correct
 
     if solved == 'Solved':
         problems = [p for p in problems if p.is_solved]
@@ -233,14 +207,6 @@ def java_submission_detail_view(request, pk):
     return render(request, 'java_submission_detail.html', {
         'submission': java_submission,
     })
-
-
-@register.filter
-def return_item(l, i):
-    try:
-        return l[i]
-    except:
-        return None
 
 
 def token_values_table_view(request):

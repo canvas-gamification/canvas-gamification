@@ -20,12 +20,6 @@ class ProblemCreateForm(forms.ModelForm):
         })
     )
 
-    token_value = forms.IntegerField(
-        widget=NumberInput(attrs={
-            'class': 'form-control'
-        })
-    )
-
     text = forms.CharField(
         label='Statement',
         widget=RichTextWidget(field_settings='advanced')
@@ -118,7 +112,7 @@ class CheckboxQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = CheckboxQuestion
         fields = (
-            'title', 'token_value', 'difficulty', 'text', 'answer', 'tutorial', 'category', 'variables', 'choices')
+            'title', 'difficulty', 'text', 'answer', 'tutorial', 'category', 'variables', 'choices')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -130,7 +124,7 @@ class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = MultipleChoiceQuestion
         fields = (
-            'title', 'token_value', 'difficulty', 'text', 'answer', 'tutorial', 'category', 'variables', 'choices')
+            'title', 'difficulty', 'text', 'answer', 'tutorial', 'category', 'variables', 'choices')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -142,7 +136,7 @@ class JavaQuestionForm(ProblemCreateForm):
     class Meta:
         model = JavaQuestion
         fields = (
-            'title', 'token_value', 'difficulty', 'text', 'tutorial', 'category', 'test_cases')
+            'title', 'difficulty', 'text', 'tutorial', 'category', 'test_cases')
         exclude = ('answer',)
 
     answer = None

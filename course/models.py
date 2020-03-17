@@ -9,6 +9,7 @@ from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
 
 from course.grader import MultipleChoiceGrader
+from course.utils import get_user_question_junction, get_token_value
 
 
 class QuestionCategory(models.Model):
@@ -57,6 +58,21 @@ class Question(PolymorphicModel):
 
     is_verified = models.BooleanField(default=False)
 
+    def is_solved(self, user):
+        if not user.is_authenticated:
+            return False
+        return user.submissions.filter(question=self, is_correct=True).exists()
+
+    def is_partially_correct(self, user):
+        if not user.is_authenticated:
+            return False
+        return user.submissions.filter(question=self, is_partially_correct=True).exists()
+
+    def no_submission(self, user):
+        if not user.is_authenticated:
+            return True
+        return not user.submissions.filter(question=self).exists()
+
 
 class VariableQuestion(Question):
     variables = jsonfield.JSONField()
@@ -93,22 +109,17 @@ class JavaQuestion(Question):
     test_cases = jsonfield.JSONField()
 
 
-class Submission(models.Model):
+class Submission(PolymorphicModel):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='submissions')
-    grade = models.FloatField(default=0)
-    is_correct = models.BooleanField(default=False)
-    answer = models.TextField(null=True, blank=True)
     submission_time = models.DateTimeField(auto_now_add=True)
-
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='submissions')
 
-    @property
-    def answer_display(self):
-        if isinstance(self.question, CheckboxQuestion):
-            return self.answer
-        if isinstance(self.question, MultipleChoiceQuestion):
-            return self.question.get_rendered_choices(self.user).get(self.answer, 'Unknown')
-        return self.answer
+    code = models.TextField(null=True, blank=True)
+    answer = models.TextField(null=True, blank=True)
+
+    grade = models.FloatField(default=0)
+    is_correct = models.BooleanField(default=False)
+    is_partially_correct = models.BooleanField(default=False)
 
     @property
     def status_color(self):
@@ -123,6 +134,20 @@ class Submission(models.Model):
 
     @property
     def status(self):
+        raise NotImplementedError()
+
+
+class MultipleChoiceSubmission(Submission):
+    @property
+    def answer_display(self):
+        if isinstance(self.question, CheckboxQuestion):
+            return self.answer
+        if isinstance(self.question, MultipleChoiceQuestion):
+            return self.question.get_rendered_choices(self.user).get(self.answer, 'Unknown')
+        return self.answer
+
+    @property
+    def status(self):
         if self.is_correct:
             return "Correct"
         return "Wrong"
@@ -132,15 +157,21 @@ class Submission(models.Model):
 
     def save(self, *args, **kwargs):
         self.is_correct, self.grade = self.calculate_grade()
+
+        if self.is_correct:
+            user_question_junction = get_user_question_junction(self.user, self.question)
+
+            received_tokens = self.grade * get_token_value(self.question.category, self.question.difficulty)
+            user_question_junction.tokens_received = received_tokens
+            user_question_junction.save()
+
+            self.user.tokens += received_tokens
+            self.user.save()
+
         super().save(*args, **kwargs)
 
 
-class JavaSubmission(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='java_submissions')
-    code = models.TextField(null=True, blank=True)
-    grade = models.FloatField(default=0)
-    submission_time = models.DateTimeField(auto_now_add=True)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='java_submissions')
+class JavaSubmission(Submission):
     tokens = jsonfield.JSONField()
     results = jsonfield.JSONField()
 
@@ -162,12 +193,12 @@ class JavaSubmission(models.Model):
         if self.in_progress:
             return "Evaluating"
 
-        grade = self.grade
-        if grade == 0:
-            return "Wrong"
-        if grade < 1:
+        if self.is_correct:
+            return "Correct"
+        if self.is_partially_correct:
             return "Partially Correct"
-        return "Correct"
+
+        return "Wrong"
 
     def get_grade(self, evaluate=True):
         if self.in_progress and evaluate:
@@ -198,7 +229,14 @@ class JavaSubmission(models.Model):
             token = self.tokens[i]
             r = requests.get("https://api.judge0.com/submissions/{}?base64_encoded=false".format(token))
             self.results.append(r.json())
+
         self.grade = self.get_grade(False)
+        if self.grade == 1:
+            self.is_correct = True
+            self.is_partially_correct = False
+        if 0 < self.grade < 1:
+            self.is_correct = False
+            self.is_partially_correct = True
         self.save()
 
     def submit(self):
@@ -217,3 +255,12 @@ class JavaSubmission(models.Model):
             self.tokens.append(r.json()['token'])
         self.save()
         self.evaluate()
+
+
+class UserQuestionJunction(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='question_junctions')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='user_junctions')
+
+    opened_tutorial = models.BooleanField(default=False)
+    opened_question = models.BooleanField(default=False)
+    tokens_received = models.FloatField(default=0)
