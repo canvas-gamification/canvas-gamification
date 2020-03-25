@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from general.views import faq
 from canvas_gamification import views
 
 urlpatterns = [
@@ -23,5 +24,6 @@ urlpatterns = [
     path('djrichtextfield/', include('djrichtextfield.urls')),
     path('accounts/', include(('accounts.urls', 'accounts'))),
     path('course/', include(('course.urls', 'course'))),
+    path('faq/', faq, name='faq'),
     path('', views.homepage, name='homepage'),
 ]

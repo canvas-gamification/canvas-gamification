@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'course',
     'jsoneditor',
+    'general',
 ]
 
 MIDDLEWARE = [

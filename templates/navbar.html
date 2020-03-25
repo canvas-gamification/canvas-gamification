@@ -26,15 +26,19 @@
                     New Problem
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'course:new_problem_multiple_choice' %}">MultipleChoice Problem</a>
+                    <a class="dropdown-item" href="{% url 'course:new_problem_multiple_choice' %}">MultipleChoice
+                        Problem</a>
                     <a class="dropdown-item" href="{% url 'course:new_problem_checkbox' %}">Checkbox Problem</a>
                     <a class="dropdown-item" href="{% url 'course:new_problem_java' %}">Java Problem</a>
                 </div>
             </li>
-            {% if user.is_staff %}
-            <li class="nav-item {% ifequal header 'token_values' %}active{% endifequal %}">
-                <a class="nav-link" href="{% url 'course:token_values' %}">Token Values</a>
+            <li class="nav-item {% ifequal header 'faq' %}active{% endifequal %}">
+                <a class="nav-link" href="{% url 'faq' %}">FAQ</a>
             </li>
+            {% if user.is_staff %}
+                <li class="nav-item {% ifequal header 'token_values' %}active{% endifequal %}">
+                    <a class="nav-link" href="{% url 'course:token_values' %}">Token Values</a>
+                </li>
             {% endif %}
         </ul>
         <ul class="navbar-nav mr-md-0">
