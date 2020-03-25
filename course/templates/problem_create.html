@@ -1,8 +1,13 @@
 {% extends 'base.html' %}
 
+{% block header %}
+    New Problem
+{% endblock %}
+
 {% block media %}
     {{ form.media }}
 {% endblock %}
+
 
 {% block content %}
     <form method="post">

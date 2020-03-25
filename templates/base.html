@@ -6,8 +6,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description"
-          content="Responsive sidebar template with sliding effect and dropdown menu based on bootstrap 3">
+    <meta name="description" content="">
     <title>{% block title %}HomePage{% endblock %}</title>
 
 
@@ -36,7 +35,19 @@
 <body>
 
 {% include 'navbar.html' %}
-<main class="page-content" style="padding-top: 100px; padding-left: 20px">
+<header>
+    <div class="container-fluid">
+        <div class="row my-auto">
+            <div class="col m-3">
+                <h1 class="m-0">
+                    {% block header %}
+                    {% endblock %}
+                </h1>
+            </div>
+        </div>
+    </div>
+</header>
+<main class="page-content m-3">
     <div class="container-fluid">
 
         {% for message in messages %}
