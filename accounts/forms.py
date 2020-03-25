@@ -1,7 +1,7 @@
 import requests
 from django import forms
 from django.contrib.auth import password_validation, get_user_model
-from django.contrib.auth.forms import UserCreationForm, UsernameField
+from django.contrib.auth.forms import UserCreationForm, UsernameField, UserChangeForm
 from django.utils.translation import gettext_lazy as _
 
 from canvas_gamification.settings import RECAPTCHA_URL, RECAPTCHA_KEY
@@ -53,3 +53,33 @@ class SignupForm(UserCreationForm):
     class Meta:
         model = get_user_model()
         fields = ('username', 'email', 'password1', 'password2')
+
+
+class UserProfileForm(UserChangeForm):
+    class Meta:
+        model = get_user_model()
+        fields = ['username', 'first_name', 'last_name', 'email']
+
+    username = UsernameField(
+        label=_("Username"),
+        strip=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+    )
+
+    email = forms.EmailField(
+        label=_("Email"),
+        max_length=200,
+        widget=forms.EmailInput(attrs={'class': 'form-control'}),
+    )
+
+    first_name = forms.CharField(
+        label=_("First Name"),
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+    )
+
+    last_name = forms.CharField(
+        label=_("Last Name"),
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+    )
+
+    password = None

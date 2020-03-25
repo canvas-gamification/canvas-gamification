@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model, login
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.contrib.auth.tokens import default_token_generator
@@ -9,7 +10,7 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views.generic import UpdateView
 
-from accounts.forms import SignupForm
+from accounts.forms import SignupForm, UserProfileForm
 from accounts.utils.email_functions import send_activation_email, account_activation_token_generator
 from canvas_gamification import settings
 
@@ -53,11 +54,14 @@ def activate(request, uidb64, token):
 class UserProfileView(UpdateView):
     model = get_user_model()
     template_name = 'accounts/profile.html'
-    success_url = reverse_lazy('accounts:profile')
-    fields = ['username', 'first_name', 'last_name', 'email']
+    form_class = UserProfileForm
 
     def get_object(self, queryset=None):
         return self.request.user
+
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, "Profile Updated Successfully!")
+        return reverse_lazy('accounts:profile')
 
 
 class PasswordChangeView2(PasswordChangeView):

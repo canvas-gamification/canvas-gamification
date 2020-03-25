@@ -47,7 +47,7 @@
                 {% endif %}
                 </span>
                 <span class="navbar-text ml-1" style="float: right">
-                    Tokens: {{ user.tokens | safe }}
+                    Tokens: {{ user.tokens | floatformat:2 | safe }}
                 </span>
                 <li class="nav-item dropdown" style="float: right">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
