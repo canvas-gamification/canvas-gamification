@@ -37,6 +37,7 @@ def question_create_view(request, question_form_class):
 
     return render(request, 'problem_create.html', {
         'form': form,
+        'header': 'new_problem',
     })
 
 
@@ -195,6 +196,7 @@ def problem_set_view(request):
     return render(request, 'problem_set.html', {
         'problems': problems,
         'form': form,
+        'header': 'problem_set',
     })
 
 
@@ -244,4 +246,5 @@ def token_values_table_view(request):
         'values': values,
         'difficulties': [d for d, x in DIFFICULTY_CHOICES],
         'categories': QuestionCategory.objects.all(),
+        'header': 'token_values',
     })
