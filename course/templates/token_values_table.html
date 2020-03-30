@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load arrays %}
 
 {% block header %}
     Token Values
@@ -23,7 +24,8 @@
                     {% for difficulty in difficulties %}
                         <td>
                             <label>
-                                <input class="form-control" name="values[]" type="number" value="{{ values|return_item:forloop.parentloop.counter0 | return_item:forloop.counter0 }}">
+                                <input class="form-control" name="values[]" type="number"
+                                       value="{{ values|return_item:forloop.parentloop.counter0 | return_item:forloop.counter0 }}">
                             </label>
                         </td>
                     {% endfor %}

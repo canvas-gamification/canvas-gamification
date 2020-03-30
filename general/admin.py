@@ -4,7 +4,7 @@ from django.contrib import admin
 from django import forms
 from djrichtextfield.widgets import RichTextWidget
 
-from general.models import FAQ
+from general.models import FAQ, Action
 
 
 class FAQAdminForm(forms.ModelForm):
@@ -24,3 +24,4 @@ class FAQAdmin(admin.ModelAdmin):
 
 
 admin.site.register(FAQ, FAQAdmin)
+admin.site.register(Action)

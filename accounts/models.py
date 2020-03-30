@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 
-
 # Create your models here.
 from django.db import models
 
@@ -15,7 +14,10 @@ USER_ROLE_CHOICES = [
 
 class MyUser(AbstractUser):
     role = models.CharField(max_length=100, choices=USER_ROLE_CHOICES, default=STUDENT)
-    tokens = models.FloatField(default=0)
+
+    @property
+    def tokens(self):
+        return self.actions.all().aggregate(models.Sum('token_change'))['token_change__sum']
 
     def is_teacher(self):
         return self.role == TEACHER

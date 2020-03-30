@@ -1,0 +1,26 @@
+{% load token_format %}
+
+{% if user.actions.all.exists %}
+
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+        <tr>
+            <th>Description</th>
+            <th>Token&nbsp;Change</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for action in user.actions.all %}
+            <tr>
+                <td class="col">{% autoescape off %}{{ action.description }}{% endautoescape %}</td>
+                <td>{{ action.token_change | token_change_format }}</td>
+                <td>{{ action.status }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}
+    <p>No recent Actions</p>
+{% endif %}

@@ -5,11 +5,13 @@ import jsonfield
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.urls import reverse_lazy
 from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
 
 from course.grader import MultipleChoiceGrader
 from course.utils import get_user_question_junction, get_token_value
+from general.models import Action
 
 
 class QuestionCategory(models.Model):
@@ -164,9 +166,9 @@ class MultipleChoiceSubmission(Submission):
             received_tokens = self.grade * get_token_value(self.question.category, self.question.difficulty)
             user_question_junction.tokens_received = received_tokens
             user_question_junction.save()
-
-            self.user.tokens += received_tokens
             self.user.save()
+
+            Action.create_action(self.user, "Solved Question <a href='{}'>{}</a>".format(reverse_lazy('course:question_view', kwargs={'pk':self.question.pk}), self.question.title), received_tokens, Action.COMPLETE)
 
         super().save(*args, **kwargs)
 
@@ -238,6 +240,22 @@ class JavaSubmission(Submission):
             self.is_correct = False
             self.is_partially_correct = True
         self.save()
+
+        if not self.in_progress:
+            self.finalize_evaluation()
+
+    def finalize_evaluation(self):
+        user_question_junction = get_user_question_junction(self.user, self.question)
+        received_tokens = self.grade * get_token_value(self.question.category, self.question.difficulty)
+        token_change = received_tokens - user_question_junction.tokens_received
+        if token_change > 0:
+            user_question_junction.tokens_received = received_tokens
+            user_question_junction.save()
+
+            Action.create_action(self.user, self.get_description(), token_change, Action.COMPLETE)
+
+    def get_description(self):
+        return "{}Solved Question <a href='{}'>{}</a>".format("Partially " if self.is_partially_correct else "", reverse_lazy('course:question_view', kwargs={'pk':self.question.pk}), self.question.title)
 
     def submit(self):
         self.tokens = []
