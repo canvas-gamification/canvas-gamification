@@ -1,18 +1,23 @@
 from django.contrib import messages
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model, login, views as auth_views
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import render
+
 # Create your views here.
 from django.urls import reverse_lazy
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views.generic import UpdateView
 
-from accounts.forms import SignupForm, UserProfileForm
+from accounts.forms import SignupForm, UserProfileForm, LoginForm, PasswordChangeForm
 from accounts.utils.email_functions import send_activation_email, account_activation_token_generator
 from canvas_gamification import settings
+
+
+class LoginView(auth_views.LoginView):
+    form_class = LoginForm
+    template_name = 'accounts/login.html'
 
 
 def signup_view(request):
@@ -64,9 +69,10 @@ class UserProfileView(UpdateView):
         return reverse_lazy('accounts:profile')
 
 
-class PasswordChangeView2(PasswordChangeView):
+class PasswordChangeView(auth_views.PasswordChangeView):
     success_url = reverse_lazy('accounts:password_change_done')
     template_name = 'accounts/password_change.html'
+    form_class = PasswordChangeForm
 
 
 def password_change_done_view(request):

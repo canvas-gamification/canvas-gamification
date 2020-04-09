@@ -4,19 +4,9 @@
 
 {% block form %}
     <h4 class="card-title">Profile</h4>
-    <form method="post">
-        {% csrf_token %}
+    <form method="post"  novalidate="">
+        {% include 'accounts/form.html' %}
 
-        {% if form.errors %}
-            {% for error in form.non_field_errors %}
-                <div class="alert alert-danger">
-                    <strong>{{ error|escape }}</strong>
-                </div>
-            {% endfor %}
-        {% endif %}
-        <div class="form-group">
-            {{ form.as_p }}
-        </div>
         <button type="submit" class="btn btn-primary my-1" id="menu-toggle">Update</button>
     </form>
     <button class="btn btn-outline-warning my-1" onclick="window.location='{% url 'accounts:password_change' %}';">Change

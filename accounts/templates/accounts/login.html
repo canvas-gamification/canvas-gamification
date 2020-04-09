@@ -4,52 +4,7 @@
 {% block form %}
     <h4 class="card-title">Login</h4>
     <form method="POST" class="my-login-validation" novalidate="">
-        {% csrf_token %}
-
-        {% if form.errors %}
-            {% for error in form.non_field_errors %}
-                <div class="alert alert-danger">
-                    <strong>{{ error|escape }}</strong>
-                </div>
-            {% endfor %}
-        {% endif %}
-
-
-        <div class="form-group">
-            {% for error in form.username.errors %}
-                <div class="alert alert-danger">
-                    <strong>{{ error|escape }}</strong>
-                </div>
-            {% endfor %}
-            <label for="username">Username</label>
-            <input id="id_username" type="text" class="form-control" name="username"
-                   value=""
-                   required
-                   autofocus>
-            <div class="invalid-feedback">
-                Username is invalid
-            </div>
-
-        </div>
-
-        <div class="form-group">
-            {% for error in form.password.errors %}
-                <div class="alert alert-danger">
-                    <strong>{{ error|escape }}</strong>
-                </div>
-            {% endfor %}
-            <label for="password">Password
-                <a href="{% url 'accounts:password_forgot' %}" class="float-right">
-                    Forgot Password?
-                </a>
-            </label>
-            <input id="id_password" type="password" class="form-control" name="password"
-                   required
-                   data-eye>
-            <div class="invalid-feedback">
-                Password is required
-            </div>
-        </div>
+        {% include 'accounts/form.html' %}
 
         <div class="form-group">
             <div class="custom-checkbox custom-control">

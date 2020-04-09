@@ -1,0 +1,24 @@
+{% csrf_token %}
+
+{% if form.errors %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% for field in form %}
+    <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% for error in field.errors %}
+            <div class="invalid-feedback">
+                {{ error|escape }}
+            </div>
+        {% endfor %}
+        {% if field.help_text %}
+            <div class="info alert-info alert my-1 px-0">{{ field.help_text|safe }} </div>
+        {% endif %}
+    </div>
+{% endfor %}
