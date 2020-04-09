@@ -175,9 +175,9 @@ def problem_set_view(request):
     for problem in problems:
         problem.token_value = get_token_value(problem.category, problem.difficulty)
 
-        problem.is_solved = problem.is_solved(request.user)
-        problem.is_partially_correct = problem.is_partially_correct(request.user)
-        problem.no_submission = problem.no_submission(request.user)
+        problem.is_solved = problem.is_solved_by_user(request.user)
+        problem.is_partially_correct = problem.is_partially_correct_by_user(request.user)
+        problem.no_submission = problem.has_no_submission_by_user(request.user)
         problem.is_wrong = not problem.is_solved and not problem.no_submission and not problem.is_partially_correct
 
     if solved == 'Solved':

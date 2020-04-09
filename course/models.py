@@ -60,18 +60,17 @@ class Question(PolymorphicModel):
 
     is_verified = models.BooleanField(default=False)
 
-    def is_solved(self, user):
+    def is_solved_by_user(self, user):
         if not user.is_authenticated:
             return False
         return user.submissions.filter(question=self, is_correct=True).exists()
 
-    def is_partially_correct(self, user):
+    def is_partially_correct_by_user(self, user):
         if not user.is_authenticated:
             return False
-        return user.submissions.filter(question=self, is_partially_correct=True).exists() \
-               and not user.submissions.filter(question=self, is_correct=True).exists()
+        return user.submissions.filter(question=self, is_partially_correct=True).exists() and not self.is_solved_by_user(user)
 
-    def no_submission(self, user):
+    def has_no_submission_by_user(self, user):
         if not user.is_authenticated:
             return True
         return not user.submissions.filter(question=self).exists()
