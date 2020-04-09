@@ -68,7 +68,8 @@ class Question(PolymorphicModel):
     def is_partially_correct(self, user):
         if not user.is_authenticated:
             return False
-        return user.submissions.filter(question=self, is_partially_correct=True).exists()
+        return user.submissions.filter(question=self, is_partially_correct=True).exists() \
+               and not user.submissions.filter(question=self, is_correct=True).exists()
 
     def no_submission(self, user):
         if not user.is_authenticated:
