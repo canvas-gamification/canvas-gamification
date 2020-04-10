@@ -8,7 +8,11 @@
     {% endfor %}
 {% endif %}
 
-{% for field in form %}
+{% for field in form.hidden_fields %}
+    {{ field }}
+{% endfor %}
+
+{% for field in form.visible_fields %}
     <div class="form-group">
         {{ field.label_tag }}
         {{ field }}

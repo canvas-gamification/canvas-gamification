@@ -27,6 +27,10 @@ def add_bootstrap_validation(form):
 
 
 class LoginForm(auth_forms.AuthenticationForm):
+    is_login = forms.BooleanField(
+        widget=forms.HiddenInput,
+        initial=True,
+    )
     username = auth_forms.UsernameField(widget=forms.TextInput(attrs={'autofocus': True, 'class': 'form-control'}))
     password = forms.CharField(
         label=_("Password"),

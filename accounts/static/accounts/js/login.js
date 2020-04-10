@@ -1,4 +1,6 @@
 $(function() {
+	$(".dark-background").click(close_login_overlay);
+
 	$("input[type='password'][data-eye]").each(function(i) {
 		var $this = $(this),
 			id = 'eye-password-' + i,
@@ -19,7 +21,7 @@ $(function() {
 		}).css({
 				position: 'absolute',
 				right: 10,
-				top: ($this.outerHeight() / 2) - 12,
+				top: 8,
 				padding: '2px 7px',
 				fontSize: 12,
 				cursor: 'pointer',
@@ -53,3 +55,11 @@ $(function() {
 		});
 	});
 });
+
+function close_login_overlay() {
+	$('.login-overlay').hide();
+}
+
+function open_login_overlay() {
+	$('.login-overlay').show();
+}
