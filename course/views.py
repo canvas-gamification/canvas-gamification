@@ -119,7 +119,7 @@ def java_question_view(request, question):
             return return_render()
 
         if answer_file:
-            answer_text = answer_file.read()
+            answer_text = answer_file.read().decode("ascii", "ignore")
 
         if not request.user.is_authenticated:
             messages.add_message(request, messages.ERROR, 'You need to be logged in to submit answers')
