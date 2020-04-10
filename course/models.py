@@ -51,6 +51,7 @@ class Question(PolymorphicModel):
     title = models.CharField(max_length=300, null=True, blank=True)
     text = RichTextField(null=True, blank=True)
     answer = models.TextField(null=True, blank=True)
+    max_submission_allowed = models.IntegerField(default=5, blank=True)
     tutorial = RichTextField(null=True, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
     time_modified = models.DateTimeField(auto_now=True)
@@ -59,6 +60,11 @@ class Question(PolymorphicModel):
     difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES)
 
     is_verified = models.BooleanField(default=False)
+
+    def is_allowed_to_submit(self, user):
+        if not user.is_authenticated:
+            return False
+        return user.submissions.filter(question=self).count() < self.max_submission_allowed
 
     def is_solved_by_user(self, user):
         if not user.is_authenticated:
@@ -109,6 +115,11 @@ class CheckboxQuestion(MultipleChoiceQuestion):
 
 class JavaQuestion(Question):
     test_cases = jsonfield.JSONField()
+
+    def is_allowed_to_submit(self, user):
+        if not user.is_authenticated:
+            return False
+        return len(list(filter(lambda s : not s.is_compile_error, list(user.submissions.filter(question=self))))) < self.max_submission_allowed
 
 
 class Submission(PolymorphicModel):
@@ -176,6 +187,13 @@ class MultipleChoiceSubmission(Submission):
 class JavaSubmission(Submission):
     tokens = jsonfield.JSONField()
     results = jsonfield.JSONField()
+
+    @property
+    def is_compile_error(self):
+        for result in self.results:
+            if result['status']['id'] != 6:
+                return False
+        return True
 
     @property
     def status_color(self):

@@ -63,6 +63,8 @@ def multiple_choice_question_view(request, question, template_name):
 
         if not request.user.is_authenticated:
             messages.add_message(request, messages.ERROR, 'You need to be logged in to submit answers')
+        elif not question.is_allowed_to_submit(request.user):
+            messages.add_message(request, messages.ERROR, 'Maximum number of submissions reached')
         elif request.user.submissions.filter(question=question, answer=answer).exists():
             messages.add_message(request, messages.INFO, 'You have already submitted this answer!')
         else:
@@ -91,6 +93,7 @@ def multiple_choice_question_view(request, question, template_name):
         'choices': question.get_rendered_choices(request.user),
         'submissions': question.submissions.filter(
             user=request.user).all() if request.user.is_authenticated else MultipleChoiceSubmission.objects.none(),
+        'submission_allowed': question.is_allowed_to_submit(request.user),
     })
 
 
@@ -100,6 +103,7 @@ def java_question_view(request, question):
             'question': question,
             'submissions': question.submissions.filter(
                 user=request.user).all() if request.user.is_authenticated else JavaSubmission.objects.none(),
+            'submission_allowed': question.is_allowed_to_submit(request.user),
         })
 
     if request.method == "POST":
@@ -123,6 +127,8 @@ def java_question_view(request, question):
 
         if not request.user.is_authenticated:
             messages.add_message(request, messages.ERROR, 'You need to be logged in to submit answers')
+        elif not question.is_allowed_to_submit(request.user):
+            messages.add_message(request, messages.ERROR, 'Maximum number of submissions reached')
         elif request.user.submissions.filter(question=question, code=answer_text).exists():
             messages.add_message(request, messages.INFO, 'You have already submitted this answer!')
         else:
