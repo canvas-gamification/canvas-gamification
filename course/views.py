@@ -10,9 +10,6 @@ from course.forms import ProblemFilterForm, MultipleChoiceQuestionForm, Checkbox
     JavaQuestionForm
 from course.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
     QuestionCategory, DIFFICULTY_CHOICES, TokenValue, MultipleChoiceSubmission
-
-
-# Create your views here.
 from course.utils import get_token_value, get_user_question_junction
 
 

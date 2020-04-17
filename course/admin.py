@@ -22,23 +22,26 @@ class QuestionAdminForm(forms.ModelForm):
 
 
 class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'title', 'author', 'category', 'difficulty', 'is_verified', )
+    list_filter = ('author', 'category', 'difficulty', 'is_verified', )
     form = QuestionAdminForm
 
 
-class MultipleChoiceQuestionAdmin(admin.ModelAdmin):
-    form = QuestionAdminForm
+class SubmissionAdmin(admin.ModelAdmin):
+    list_filter = ('user__username', 'is_correct', 'is_partially_correct', 'question')
+    list_display = ('__str__', 'user', 'grade', 'is_correct', 'is_partially_correct')
 
 
-class CheckboxQuestionAdmin(admin.ModelAdmin):
-    form = QuestionAdminForm
+class TokenValueAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'category', 'difficulty', 'value')
 
 
 admin.site.register(Question, QuestionAdmin)
-admin.site.register(VariableQuestion)
-admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin)
-admin.site.register(CheckboxQuestion, CheckboxQuestionAdmin)
-admin.site.register(Submission)
+admin.site.register(VariableQuestion, QuestionAdmin)
+admin.site.register(MultipleChoiceQuestion, QuestionAdmin)
+admin.site.register(CheckboxQuestion, QuestionAdmin)
+admin.site.register(Submission, SubmissionAdmin)
 admin.site.register(QuestionCategory)
-admin.site.register(JavaSubmission)
-admin.site.register(JavaQuestion)
-admin.site.register(TokenValue)
+admin.site.register(JavaSubmission, SubmissionAdmin)
+admin.site.register(JavaQuestion, QuestionAdmin)
+admin.site.register(TokenValue, TokenValueAdmin)

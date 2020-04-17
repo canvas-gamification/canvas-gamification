@@ -20,8 +20,14 @@ class FAQAdminForm(forms.ModelForm):
 
 
 class FAQAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'question')
     form = FAQAdminForm
 
 
+class ActionAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'description', 'user', 'token_change', 'status')
+    list_filter = ('status', )
+
+
 admin.site.register(FAQ, FAQAdmin)
-admin.site.register(Action)
+admin.site.register(Action, ActionAdmin)
