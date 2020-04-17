@@ -5,6 +5,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 
+from accounts.utils.decorators import show_login
 from course.forms import ProblemFilterForm, MultipleChoiceQuestionForm, CheckboxQuestionForm, \
     JavaQuestionForm
 from course.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
@@ -15,13 +16,12 @@ from course.models import Question, MultipleChoiceQuestion, CheckboxQuestion, Ja
 from course.utils import get_token_value, get_user_question_junction
 
 
+@show_login('You need to be logged in to create a question')
 def question_create_view(request, question_form_class):
     if request.method == 'POST':
         form = question_form_class(request.POST)
 
-        if not request.user.is_authenticated:
-            messages.add_message(request, messages.ERROR, 'You need to be logged in to create a question')
-        elif form.is_valid():
+        if form.is_valid():
             question = form.save(commit=False)
             question.author = request.user
             question.is_verified = request.user.is_teacher()
@@ -31,8 +31,6 @@ def question_create_view(request, question_form_class):
 
             form = question_form_class()
     else:
-        if not request.user.is_authenticated:
-            messages.add_message(request, messages.ERROR, 'You need to be logged in to create a question')
         form = question_form_class()
 
     return render(request, 'problem_create.html', {
