@@ -23,11 +23,9 @@ class QuestionCategory(models.Model):
 
 
 DIFFICULTY_CHOICES = [
-    ("VERY EASY", "VERY EASY"),
     ("EASY", "EASY"),
     ("NORMAL", "NORMAL"),
     ("HARD", "HARD"),
-    ("VERY HARD", "VERY HARD"),
 ]
 
 
