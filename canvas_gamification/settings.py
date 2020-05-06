@@ -58,8 +58,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
-    'accounts.middlewares.login_overlay_middleware'
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'accounts.middlewares.login_overlay_middleware',
 ]
 
 ROOT_URLCONF = 'canvas_gamification.urls'
