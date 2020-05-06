@@ -27,6 +27,7 @@ SECRET_KEY = '=cv^=w$b8iw4q5!ti#j)mxwujw24o)_d*og7($erv@4t5=3z7*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+PRODUCTION = False
 
 ALLOWED_HOSTS = []
 
@@ -182,15 +183,35 @@ LOGOUT_URL = reverse_lazy('accounts:logout')
 LOGIN_REDIRECT_URL = reverse_lazy('homepage')
 LOGOUT_REDIRECT_URL = reverse_lazy('homepage')
 
-settings_file = open("settings.json")
-SETTINGS_JSON = json.loads(settings_file.read())
+if not PRODUCTION:
 
-EMAIL_USE_TLS = SETTINGS_JSON['EMAIL_USE_TLS']
-EMAIL_HOST = SETTINGS_JSON['EMAIL_HOST']
-EMAIL_HOST_USER = SETTINGS_JSON['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = SETTINGS_JSON['EMAIL_HOST_PASSWORD']
-EMAIL_PORT = SETTINGS_JSON['EMAIL_PORT']
-EMAIL_ACTIVATION = SETTINGS_JSON['EMAIL_ACTIVATION']
-EMAIL_PASSWORD_RESET = SETTINGS_JSON['EMAIL_PASSWORD_RESET']
-RECAPTCHA_KEY = SETTINGS_JSON['reCaptcha_key']
-RECAPTCHA_URL = SETTINGS_JSON['reCaptcha_url']
+    settings_file = open("settings.json")
+    SETTINGS_JSON = json.loads(settings_file.read())
+
+    EMAIL_USE_TLS = SETTINGS_JSON['EMAIL_USE_TLS']
+    EMAIL_HOST = SETTINGS_JSON['EMAIL_HOST']
+    EMAIL_HOST_USER = SETTINGS_JSON['EMAIL_HOST_USER']
+    EMAIL_HOST_PASSWORD = SETTINGS_JSON['EMAIL_HOST_PASSWORD']
+    EMAIL_PORT = SETTINGS_JSON['EMAIL_PORT']
+    EMAIL_ACTIVATION = SETTINGS_JSON['EMAIL_ACTIVATION']
+    EMAIL_PASSWORD_RESET = SETTINGS_JSON['EMAIL_PASSWORD_RESET']
+    RECAPTCHA_KEY = SETTINGS_JSON['reCaptcha_key']
+    RECAPTCHA_URL = SETTINGS_JSON['reCaptcha_url']
+
+else:
+    EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS']
+    EMAIL_HOST = os.environ['EMAIL_HOST']
+    EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+    EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+    EMAIL_PORT = os.environ['EMAIL_PORT']
+    EMAIL_ACTIVATION = os.environ['EMAIL_ACTIVATION']
+    EMAIL_PASSWORD_RESET = os.environ['EMAIL_PASSWORD_RESET']
+    RECAPTCHA_KEY = os.environ['reCaptcha_key']
+    RECAPTCHA_URL = os.environ['reCaptcha_url']
+
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+    import dj_database_url
+
+    prod_db = dj_database_url.config(conn_max_age=500)
+    DATABASES['default'].update(prod_db)
