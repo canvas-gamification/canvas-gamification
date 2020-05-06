@@ -1,1 +1,1 @@
-web: gunicorn HCI_Course.wsgi --log-file -
+web: gunicorn canvas_gamification.wsgi --log-file -
