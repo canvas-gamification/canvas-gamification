@@ -29,7 +29,10 @@ SECRET_KEY = '=cv^=w$b8iw4q5!ti#j)mxwujw24o)_d*og7($erv@4t5=3z7*'
 DEBUG = False
 PRODUCTION = True
 
-ALLOWED_HOSTS = []
+if PRODUCTION:
+    ALLOWED_HOSTS = ['canvas-gamification.herokuapp.com']
+else:
+    ALLOWED_HOSTS = ['*']
 
 # Application definition
 
