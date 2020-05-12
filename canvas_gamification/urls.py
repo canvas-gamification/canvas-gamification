@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import TemplateView
 
 from general.views import faq
 from canvas_gamification import views
@@ -25,5 +26,6 @@ urlpatterns = [
     path('accounts/', include(('accounts.urls', 'accounts'))),
     path('course/', include(('course.urls', 'course'))),
     path('faq/', faq, name='faq'),
-    path('', views.homepage, name='homepage'),
+    path('homepage', views.homepage, name='homepage'),
+    path('', TemplateView.as_view(template_name='index.html')),
 ]
