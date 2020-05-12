@@ -27,5 +27,7 @@ urlpatterns = [
     path('course/', include(('course.urls', 'course'))),
     path('faq/', faq, name='faq'),
     path('homepage', views.homepage, name='homepage'),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/', include('api.urls', namespace='api')),
     path('', TemplateView.as_view(template_name='index.html')),
 ]

@@ -43,16 +43,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'rest_framework',
     'djrichtextfield',
     'accounts',
     'course',
     'jsoneditor',
     'general',
+    'api',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -186,6 +190,9 @@ LOGIN_URL = reverse_lazy('accounts:login')
 LOGOUT_URL = reverse_lazy('accounts:logout')
 LOGIN_REDIRECT_URL = reverse_lazy('homepage')
 LOGOUT_REDIRECT_URL = reverse_lazy('homepage')
+
+if DEBUG:
+    CORS_ORIGIN_ALLOW_ALL = True
 
 if not PRODUCTION:
 
