@@ -12,3 +12,8 @@ header {
     margin: 5em 0 0 0;
     font-family: "Times New Roman", serif;
 }
+
+label.required:before {
+    color: red;
+    content: "* ";
+}

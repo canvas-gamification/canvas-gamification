@@ -15,6 +15,7 @@ USER_ROLE_CHOICES = [
 class MyUser(AbstractUser):
     role = models.CharField(max_length=100, choices=USER_ROLE_CHOICES, default=STUDENT)
     student_number = models.CharField(max_length=100, null=True, blank=True)
+    email = models.EmailField('email address', blank=True, unique=True)
 
     @property
     def tokens(self):

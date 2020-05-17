@@ -17,9 +17,13 @@ from general.models import Action
 class QuestionCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return self.name
+        if self.parent is None:
+            return self.name
+        else:
+            return "{} :: {}".format(self.parent, self.name)
 
 
 DIFFICULTY_CHOICES = [
@@ -39,7 +43,7 @@ def render_text(text, variables):
 class TokenValue(models.Model):
     value = models.FloatField(default=0)
     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, related_name='token_values')
-    difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES)
+    difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES, default="EASY")
 
     class Meta:
         unique_together = ('category', 'difficulty')

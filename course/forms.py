@@ -13,6 +13,7 @@ class ProblemCreateForm(forms.ModelForm):
 
         self.fields['category'].widget.attrs.update({'class': 'form-control'})
         self.fields['difficulty'].widget.attrs.update({'class': 'form-control'})
+        self.fields['difficulty'].initial = "EASY"
 
     max_submission_allowed = forms.IntegerField(
         widget=NumberInput(attrs={
@@ -21,13 +22,14 @@ class ProblemCreateForm(forms.ModelForm):
     )
 
     title = forms.CharField(
+        label="Question Name",
         widget=TextInput(attrs={
             'class': 'form-control'
         })
     )
 
     text = forms.CharField(
-        label='Statement',
+        label='Question',
         widget=RichTextWidget(field_settings='advanced')
     )
 
@@ -37,9 +39,9 @@ class ProblemCreateForm(forms.ModelForm):
         })
     )
 
-    tutorial = forms.CharField(
-        widget=RichTextWidget(field_settings='advanced')
-    )
+    # tutorial = forms.CharField(
+    #     widget=RichTextWidget(field_settings='advanced')
+    # )
 
 
 class ChoiceProblemCreateForm(ProblemCreateForm):
@@ -97,7 +99,7 @@ class ProblemFilterForm(forms.Form):
     category = forms.ModelChoiceField(
         required=False,
         empty_label='All',
-        queryset=QuestionCategory.objects.all(),
+        queryset=QuestionCategory.objects.filter(parent__isnull=True).all(),
         widget=widgets.Select(attrs={
             'class': 'form-control',
         })
@@ -118,7 +120,7 @@ class CheckboxQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = CheckboxQuestion
         fields = (
-            'title', 'difficulty', 'max_submission_allowed', 'text', 'answer', 'tutorial', 'category', 'variables', 'choices')
+            'title', 'difficulty', 'max_submission_allowed', 'category', 'text', 'answer', 'variables', 'choices')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -130,7 +132,7 @@ class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = MultipleChoiceQuestion
         fields = (
-            'title', 'difficulty', 'max_submission_allowed', 'text', 'answer', 'tutorial', 'category', 'variables', 'choices')
+            'title', 'difficulty', 'max_submission_allowed', 'category', 'text', 'answer', 'variables', 'choices')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -142,7 +144,7 @@ class JavaQuestionForm(ProblemCreateForm):
     class Meta:
         model = JavaQuestion
         fields = (
-            'title', 'difficulty',  'max_submission_allowed', 'text', 'tutorial', 'category', 'test_cases')
+            'title', 'difficulty',  'max_submission_allowed', 'category', 'text', 'test_cases')
         exclude = ('answer',)
 
     answer = None

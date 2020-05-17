@@ -47,17 +47,13 @@ class LoginForm(auth_forms.AuthenticationForm):
 class SignupForm(auth_forms.UserCreationForm):
     class Meta:
         model = MyUser
-        fields = ('username', 'student_number', 'email', 'password1', 'password2')
+        fields = ('username', 'email', 'password1', 'password2')
 
     username = auth_forms.UsernameField(
         label=_("Username"),
         strip=False,
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-    )
-
-    student_number = forms.CharField(
-        label=_("Student Number"),
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        initial="123",
+        widget=forms.HiddenInput(attrs={'class': 'form-control'}),
     )
 
     email = forms.EmailField(
@@ -78,6 +74,11 @@ class SignupForm(auth_forms.UserCreationForm):
         widget=PasswordWidget(attrs={'class': 'form-control'}),
         strip=False,
     )
+
+    def clean(self):
+        data = super().clean()
+        data['username'] = data['email']
+        return data
 
     def is_valid(self):
         response = self.data['g-recaptcha-response']
@@ -134,7 +135,6 @@ class UserProfileForm(auth_forms.UserChangeForm):
 
 
 class PasswordChangeForm(auth_forms.PasswordChangeForm):
-
     old_password = forms.CharField(
         label=_("Old password"),
         strip=False,

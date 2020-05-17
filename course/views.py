@@ -169,7 +169,7 @@ def problem_set_view(request):
     if difficulty:
         q = q & Q(difficulty=difficulty)
     if category:
-        q = q & Q(category=category)
+        q = q & (Q(category=category) | Q(category__parent=category))
 
     problems = Question.objects.filter(q).all()
 
