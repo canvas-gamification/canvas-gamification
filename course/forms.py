@@ -15,11 +15,11 @@ class ProblemCreateForm(forms.ModelForm):
         self.fields['difficulty'].widget.attrs.update({'class': 'form-control'})
         self.fields['difficulty'].initial = "EASY"
 
-    max_submission_allowed = forms.IntegerField(
-        widget=NumberInput(attrs={
-            'class': 'form-control',
-        })
-    )
+    # max_submission_allowed = forms.IntegerField(
+    #     widget=NumberInput(attrs={
+    #         'class': 'form-control',
+    #     })
+    # )
 
     title = forms.CharField(
         label="Question Name",
@@ -120,7 +120,7 @@ class CheckboxQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = CheckboxQuestion
         fields = (
-            'title', 'difficulty', 'max_submission_allowed', 'category', 'text', 'answer', 'variables', 'choices')
+            'title', 'difficulty', 'category', 'text', 'answer', 'variables', 'choices')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -132,7 +132,7 @@ class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = MultipleChoiceQuestion
         fields = (
-            'title', 'difficulty', 'max_submission_allowed', 'category', 'text', 'answer', 'variables', 'choices')
+            'title', 'difficulty', 'category', 'text', 'answer', 'variables', 'choices')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -144,7 +144,7 @@ class JavaQuestionForm(ProblemCreateForm):
     class Meta:
         model = JavaQuestion
         fields = (
-            'title', 'difficulty',  'max_submission_allowed', 'category', 'text', 'test_cases')
+            'title', 'difficulty', 'category', 'text', 'test_cases')
         exclude = ('answer',)
 
     answer = None
