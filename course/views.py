@@ -1,20 +1,72 @@
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
+from django.forms import formset_factory
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 
 from accounts.utils.decorators import show_login
 from course.forms import ProblemFilterForm, MultipleChoiceQuestionForm, CheckboxQuestionForm, \
-    JavaQuestionForm
+    JavaQuestionForm, ChoiceForm
 from course.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
     QuestionCategory, DIFFICULTY_CHOICES, TokenValue, MultipleChoiceSubmission
 from course.utils import get_token_value, get_user_question_junction
 
 
 @show_login('You need to be logged in to create a question')
-def question_create_view(request, question_form_class):
+def _multiple_choice_question_create_view(request, question_form_class, correct_answer_formset_class, distractor_answer_formset_class):
+    if request.method == 'POST':
+        correct_answer_formset = correct_answer_formset_class(request.POST, prefix='correct')
+        distractor_answer_formset = distractor_answer_formset_class(request.POST, prefix='distractor')
+
+        answer = None
+        choices = {}
+
+        if correct_answer_formset.is_valid():
+            if len(correct_answer_formset.forms) == 1:
+                answer = correct_answer_formset.forms[0].cleaned_data['name']
+            else:
+                answer = [f.cleaned_data['name'] for f in correct_answer_formset.forms]
+            for f in correct_answer_formset.forms:
+                choices[f.cleaned_data['name']] = f.cleaned_data['text']
+
+        if distractor_answer_formset.is_valid():
+            for f in distractor_answer_formset.forms:
+                if not f.cleaned_data['DELETE']:
+                    choices[f.cleaned_data['name']] = f.cleaned_data['text']
+
+        post_data = request.POST.copy()
+        post_data['answer'] = answer
+        post_data['choices'] = choices
+
+        form = question_form_class(post_data)
+
+        if distractor_answer_formset.is_valid() and distractor_answer_formset.is_valid() and form.is_valid():
+            question = form.save(commit=False)
+            question.author = request.user
+            question.is_verified = request.user.is_teacher()
+            question.save()
+
+            messages.add_message(request, messages.SUCCESS, 'Problem was created successfully')
+
+            form = question_form_class()
+    else:
+        form = question_form_class()
+
+        correct_answer_formset = correct_answer_formset_class(prefix='correct')
+        distractor_answer_formset = distractor_answer_formset_class(prefix='distractor')
+
+    return render(request, 'problem_create.html', {
+        'form': form,
+        'correct_answer_formset': correct_answer_formset,
+        'distractor_answer_formset': distractor_answer_formset,
+        'header': 'new_problem',
+    })
+
+
+@show_login('You need to be logged in to create a question')
+def _java_question_create_view(request, question_form_class):
     if request.method == 'POST':
         form = question_form_class(request.POST)
 
@@ -37,15 +89,25 @@ def question_create_view(request, question_form_class):
 
 
 def java_question_create_view(request):
-    return question_create_view(request, JavaQuestionForm)
+    return _java_question_create_view(request, JavaQuestionForm)
 
 
 def multiple_choice_question_create_view(request):
-    return question_create_view(request, MultipleChoiceQuestionForm)
+    return _multiple_choice_question_create_view(
+        request,
+        MultipleChoiceQuestionForm,
+        formset_factory(ChoiceForm, extra=1, can_delete=True, max_num=1, min_num=1),
+        formset_factory(ChoiceForm, extra=3, can_delete=True),
+    )
 
 
 def checkbox_question_create_view(request):
-    return question_create_view(request, CheckboxQuestionForm)
+    return _multiple_choice_question_create_view(
+        request,
+        CheckboxQuestionForm,
+        formset_factory(ChoiceForm, extra=1, can_delete=True),
+        formset_factory(ChoiceForm, extra=3, can_delete=True),
+    )
 
 
 def multiple_choice_question_view(request, question, template_name):

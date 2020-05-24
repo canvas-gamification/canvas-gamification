@@ -1,0 +1,33 @@
+{% if formset %}
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <table class="table">
+                <tbody>
+                {% for choice_form in formset %}
+                    <tr class="table-choice {{ formset.prefix }}">
+                        {% for field in choice_form %}
+                            <td style="vertical-align: middle">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.errors %}
+                                    {% for error in field.errors %}
+                                        <div class="alert-danger alert mt-2">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {{ formset.management_form }}
+
+    <script>
+        $('.table-choice.{{ formset.prefix }}').formset({
+            prefix: '{{ formset.prefix }}'
+        })
+    </script>
+
+{% endif %}

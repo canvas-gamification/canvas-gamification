@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import TextInput, Textarea, NumberInput, widgets
+from django.forms import TextInput, Textarea, NumberInput, widgets, formset_factory
 from djrichtextfield.widgets import RichTextWidget
 from jsoneditor.forms import JSONEditor
 from jsonfield.forms import JSONFormField
@@ -34,8 +34,9 @@ class ProblemCreateForm(forms.ModelForm):
     )
 
     answer = forms.CharField(
-        widget=Textarea(attrs={
-            'class': 'form-control'
+        initial="",
+        widget=forms.HiddenInput(attrs={
+            'class': 'form-control',
         })
     )
 
@@ -46,7 +47,8 @@ class ProblemCreateForm(forms.ModelForm):
 
 class ChoiceProblemCreateForm(ProblemCreateForm):
     variables = JSONFormField(
-        widget=JSONEditor(),
+        initial='[{}]',
+        widget=forms.HiddenInput(),
         help_text="""
         It should be an array with each element a set of variables to choose.
         A valid example:
@@ -64,7 +66,8 @@ class ChoiceProblemCreateForm(ProblemCreateForm):
     )
 
     choices = JSONFormField(
-        widget=JSONEditor(),
+        widget=forms.HiddenInput(),
+        initial='{}',
         help_text="""
         It should be an object of choices.
         A valid example:
@@ -166,3 +169,22 @@ class JavaQuestionForm(ProblemCreateForm):
         ]
         """
     )
+
+
+class ChoiceForm(forms.Form):
+    name = forms.CharField(
+        label='Label',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+    text = forms.CharField(
+        label='Answer',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.empty_permitted = False
