@@ -27,7 +27,7 @@
                 {{ form.solved }}
             </div>
             <div class="form-group col-1 mt-auto">
-                <button type="submit" class="btn btn-primary float-right">Filter</button>
+                <button type="submit" class="btn btn-primary float-right">Go</button>
             </div>
         </div>
     </form>
@@ -36,12 +36,12 @@
         <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Title</th>
+            <th scope="col">Question Name</th>
             <th scope="col">Category</th>
             <th scope="col">Difficulty</th>
             <th scope="col">Token&nbsp;Value</th>
             <th scope="col">Status</th>
-            <th scope="col">Open</th>
+            <th scope="col">Action</th>
         </tr>
         </thead>
         <tbody>
@@ -54,12 +54,12 @@
                     <td>{{ problem.token_value }}</td>
                     <td>
                         {% if problem.is_solved %}Solved{% endif %}
-                        {% if problem.no_submission %}Unopened{% endif %}
+                        {% if problem.no_submission %}New{% endif %}
                         {% if problem.is_partially_correct %}Partially Correct{% endif %}
                         {% if problem.is_wrong %}Wrong{% endif %}
                     </td>
                     <td>
-                        <button class="btn btn-primary" onclick="window.location.href='{% url 'course:question_view' problem.pk %}'">Open</button>
+                        <button class="btn btn-primary" onclick="window.location.href='{% url 'course:question_view' problem.pk %}'">View</button>
                     </td>
                 </tr>
             {% endfor %}

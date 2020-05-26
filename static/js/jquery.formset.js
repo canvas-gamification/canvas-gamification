@@ -236,8 +236,8 @@
     $.fn.formset.defaults = {
         prefix: 'form',                  // The form prefix for your django formset
         formTemplate: null,              // The jQuery selection cloned to generate new form instances
-        addText: 'add another',          // Text for the add link
-        deleteText: 'remove',            // Text for the delete link
+        addText: 'Add Another',          // Text for the add link
+        deleteText: 'Remove',            // Text for the delete link
         addContainerClass: null,         // Container CSS class for the add link
         deleteContainerClass: null,      // Container CSS class for the delete link
         addCssClass: 'add-row',          // CSS class applied to the add link

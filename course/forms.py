@@ -83,7 +83,7 @@ class ChoiceProblemCreateForm(ProblemCreateForm):
 
 class ProblemFilterForm(forms.Form):
     query = forms.CharField(
-        label='Search',
+        label='Search in Question Name',
         required=False,
         widget=widgets.TextInput(attrs={
             'class': 'form-control',
@@ -109,10 +109,11 @@ class ProblemFilterForm(forms.Form):
     )
 
     solved = forms.ChoiceField(
+        label='Status',
         required=False,
         choices=[('', 'All'), ('Solved', 'Solved'), ('Partially Correct', 'Partially Correct'),
                  ('Unsolved', 'Unsolved'), ('Wrong', 'Wrong'),
-                 ('Unopened', 'Unopened')],
+                 ('New', 'New')],
         widget=widgets.Select(attrs={
             'class': 'form-control',
         })

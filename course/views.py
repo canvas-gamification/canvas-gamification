@@ -15,7 +15,8 @@ from course.utils import get_token_value, get_user_question_junction, increment_
 
 
 @show_login('You need to be logged in to create a question')
-def _multiple_choice_question_create_view(request, question_form_class, correct_answer_formset_class, distractor_answer_formset_class):
+def _multiple_choice_question_create_view(request, header, question_form_class, correct_answer_formset_class,
+                                          distractor_answer_formset_class):
     if request.method == 'POST':
         correct_answer_formset = correct_answer_formset_class(request.POST, prefix='correct')
         distractor_answer_formset = distractor_answer_formset_class(request.POST, prefix='distractor')
@@ -67,12 +68,12 @@ def _multiple_choice_question_create_view(request, question_form_class, correct_
         'form': form,
         'correct_answer_formset': correct_answer_formset,
         'distractor_answer_formset': distractor_answer_formset,
-        'header': 'new_problem',
+        'header': header,
     })
 
 
 @show_login('You need to be logged in to create a question')
-def _java_question_create_view(request, question_form_class):
+def _java_question_create_view(request, header, question_form_class):
     if request.method == 'POST':
         form = question_form_class(request.POST)
 
@@ -90,29 +91,31 @@ def _java_question_create_view(request, question_form_class):
 
     return render(request, 'problem_create.html', {
         'form': form,
-        'header': 'new_problem',
+        'header': header,
     })
 
 
 def java_question_create_view(request):
-    return _java_question_create_view(request, JavaQuestionForm)
+    return _java_question_create_view(request, 'New Java Question', JavaQuestionForm)
 
 
 def multiple_choice_question_create_view(request):
     return _multiple_choice_question_create_view(
         request,
+        'New Multiple Choice Question',
         MultipleChoiceQuestionForm,
         formset_factory(ChoiceForm, extra=1, can_delete=True, max_num=1, min_num=1),
-        formset_factory(ChoiceForm, extra=3, can_delete=True),
+        formset_factory(ChoiceForm, extra=2, can_delete=True),
     )
 
 
 def checkbox_question_create_view(request):
     return _multiple_choice_question_create_view(
         request,
+        'New Checkbox Question',
         CheckboxQuestionForm,
         formset_factory(ChoiceForm, extra=1, can_delete=True),
-        formset_factory(ChoiceForm, extra=3, can_delete=True),
+        formset_factory(ChoiceForm, extra=2, can_delete=True),
     )
 
 
@@ -257,7 +260,7 @@ def problem_set_view(request):
         problems = [p for p in problems if p.is_partially_correct]
     if solved == 'Wrong':
         problems = [p for p in problems if p.is_wrong]
-    if solved == 'Unopened':
+    if solved == 'New':
         problems = [p for p in problems if p.no_submission]
 
     form = ProblemFilterForm(request.GET)
