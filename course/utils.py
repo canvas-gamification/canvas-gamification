@@ -19,3 +19,7 @@ def get_token_value(category, difficulty):
         token_value.save()
         return token_value.value
     return TokenValue.objects.get(category=category, difficulty=difficulty).value
+
+
+def increment_char(c):
+    return chr(ord(c)+1)

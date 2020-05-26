@@ -11,7 +11,7 @@ from course.forms import ProblemFilterForm, MultipleChoiceQuestionForm, Checkbox
     JavaQuestionForm, ChoiceForm
 from course.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
     QuestionCategory, DIFFICULTY_CHOICES, TokenValue, MultipleChoiceSubmission
-from course.utils import get_token_value, get_user_question_junction
+from course.utils import get_token_value, get_user_question_junction, increment_char
 
 
 @show_login('You need to be logged in to create a question')
@@ -22,19 +22,25 @@ def _multiple_choice_question_create_view(request, question_form_class, correct_
 
         answer = None
         choices = {}
+        name = 'a'
 
         if correct_answer_formset.is_valid():
             if len(correct_answer_formset.forms) == 1:
-                answer = correct_answer_formset.forms[0].cleaned_data['name']
+                answer = name
+                choices[name] = correct_answer_formset.forms[0].cleaned_data['text']
+                name = increment_char(name)
             else:
-                answer = [f.cleaned_data['name'] for f in correct_answer_formset.forms]
-            for f in correct_answer_formset.forms:
-                choices[f.cleaned_data['name']] = f.cleaned_data['text']
+                answer = []
+                for f in correct_answer_formset.forms:
+                    answer.append(name)
+                    choices[name] = f.cleaned_data['text']
+                    name = increment_char(name)
 
         if distractor_answer_formset.is_valid():
             for f in distractor_answer_formset.forms:
                 if not f.cleaned_data['DELETE']:
-                    choices[f.cleaned_data['name']] = f.cleaned_data['text']
+                    choices[name] = f.cleaned_data['text']
+                    name = increment_char(name)
 
         post_data = request.POST.copy()
         post_data['answer'] = answer

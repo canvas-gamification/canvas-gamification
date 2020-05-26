@@ -100,6 +100,7 @@ class VariableQuestion(Question):
 
 class MultipleChoiceQuestion(VariableQuestion):
     choices = jsonfield.JSONField()
+    visible_distractor_count = models.IntegerField()
 
     def get_rendered_choices(self, user):
         res = {}

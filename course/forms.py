@@ -123,24 +123,56 @@ class CheckboxQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = CheckboxQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'answer', 'variables', 'choices')
+            'title', 'difficulty', 'category', 'text', 'answer', 'variables', 'choices', 'visible_distractor_count')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.fields['answer'].help_text = '\nPlease write the correct choices in this format.\nexample: [\'a\', \'b\']'
 
+    def clean(self):
+        data = super().clean()
+        data['visible_distractor_count'] = 999 if data['distractor_count'] == 'All' else int(data['distractor_count'])
+        return data
+
+    visible_distractor_count = forms.IntegerField(
+        initial=999,
+        widget=forms.HiddenInput()
+    )
+
+    distractor_count = forms.ChoiceField(
+        choices=[('All', 'All'), ('2', '2'), ('3', '3')],
+        initial='All',
+        widget=forms.RadioSelect(),
+    )
+
 
 class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = MultipleChoiceQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'answer', 'variables', 'choices')
+            'title', 'difficulty', 'category', 'text', 'answer', 'variables', 'choices', 'visible_distractor_count')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.fields['answer'].help_text = '\nPlease only write the name of the correct choice'
+
+    def clean(self):
+        data = super().clean()
+        data['visible_distractor_count'] = 999 if data['distractor_count'] == 'All' else int(data['distractor_count'])
+        return data
+
+    visible_distractor_count = forms.IntegerField(
+        initial=999,
+        widget=forms.HiddenInput()
+    )
+
+    distractor_count = forms.ChoiceField(
+        choices=[('All', 'All'), ('2', '2'), ('3', '3')],
+        initial='All',
+        widget=forms.RadioSelect()
+    )
 
 
 class JavaQuestionForm(ProblemCreateForm):
@@ -172,12 +204,6 @@ class JavaQuestionForm(ProblemCreateForm):
 
 
 class ChoiceForm(forms.Form):
-    name = forms.CharField(
-        label='Label',
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-        })
-    )
     text = forms.CharField(
         label='Answer',
         widget=forms.TextInput(attrs={
