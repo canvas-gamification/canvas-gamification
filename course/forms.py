@@ -5,6 +5,7 @@ from jsoneditor.forms import JSONEditor
 from jsonfield.forms import JSONFormField
 
 from course.models import MultipleChoiceQuestion, DIFFICULTY_CHOICES, CheckboxQuestion, JavaQuestion, QuestionCategory
+from course.widgets import RadioInlineSelect
 
 
 class ProblemCreateForm(forms.ModelForm):
@@ -14,12 +15,6 @@ class ProblemCreateForm(forms.ModelForm):
         self.fields['category'].widget.attrs.update({'class': 'form-control'})
         self.fields['difficulty'].widget.attrs.update({'class': 'form-control'})
         self.fields['difficulty'].initial = "EASY"
-
-    # max_submission_allowed = forms.IntegerField(
-    #     widget=NumberInput(attrs={
-    #         'class': 'form-control',
-    #     })
-    # )
 
     title = forms.CharField(
         label="Question Name",
@@ -40,44 +35,16 @@ class ProblemCreateForm(forms.ModelForm):
         })
     )
 
-    # tutorial = forms.CharField(
-    #     widget=RichTextWidget(field_settings='advanced')
-    # )
-
 
 class ChoiceProblemCreateForm(ProblemCreateForm):
     variables = JSONFormField(
         initial='[{}]',
         widget=forms.HiddenInput(),
-        help_text="""
-        It should be an array with each element a set of variables to choose.
-        A valid example:
-        [
-            {
-                "x" : 1,
-                "y" : 2,
-            },
-            {
-                "x" : 5,
-                "y" : 8,
-            }
-        ]
-        """
     )
 
     choices = JSONFormField(
         widget=forms.HiddenInput(),
         initial='{}',
-        help_text="""
-        It should be an object of choices.
-        A valid example:
-        {
-            "a" : "{{x}} is odd and {{y}} is odd",
-            "b" : "{{x}} is even and {{y}} is odd",
-            "c" : "{{x}} is odd and {{y}} is even",
-            "d" : "{{x}} is even and {{y}} is even"
-        }
-        """
     )
 
 
@@ -131,20 +98,10 @@ class CheckboxQuestionForm(ChoiceProblemCreateForm):
 
         self.fields['answer'].help_text = '\nPlease write the correct choices in this format.\nexample: [\'a\', \'b\']'
 
-    def clean(self):
-        data = super().clean()
-        data['visible_distractor_count'] = 999 if data['distractor_count'] == 'All' else int(data['distractor_count'])
-        return data
-
-    visible_distractor_count = forms.IntegerField(
-        initial=999,
-        widget=forms.HiddenInput()
-    )
-
-    distractor_count = forms.ChoiceField(
-        choices=[('All', 'All'), ('2', '2'), ('3', '3')],
+    visible_distractor_count = forms.ChoiceField(
+        choices=[('999', 'All'), ('2', '2'), ('3', '3')],
         initial='All',
-        widget=forms.RadioSelect(),
+        widget=RadioInlineSelect()
     )
 
 
@@ -159,20 +116,10 @@ class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
 
         self.fields['answer'].help_text = '\nPlease only write the name of the correct choice'
 
-    def clean(self):
-        data = super().clean()
-        data['visible_distractor_count'] = 999 if data['distractor_count'] == 'All' else int(data['distractor_count'])
-        return data
-
-    visible_distractor_count = forms.IntegerField(
-        initial=999,
-        widget=forms.HiddenInput()
-    )
-
-    distractor_count = forms.ChoiceField(
-        choices=[('All', 'All'), ('2', '2'), ('3', '3')],
+    visible_distractor_count = forms.ChoiceField(
+        choices=[('999', 'All'), ('2', '2'), ('3', '3')],
         initial='All',
-        widget=forms.RadioSelect()
+        widget=RadioInlineSelect()
     )
 
 
