@@ -1,18 +1,17 @@
-from django.shortcuts import render
-
 # Create your views here.
-from django.utils.decorators import classonlymethod
 from rest_framework import viewsets
 
-from api.serializers import QuestionSerializer
-from course.models import Question
+from api.permissions import TeacherAccessPermission
+from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer
+from course.models import Question, MultipleChoiceQuestion
 
 
-class QuestionViewSet(viewsets.ModelViewSet):
+class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
 
-    @classonlymethod
-    def as_view(cls, actions=None, **initkwargs):
-        return super().as_view({'get': 'list'})
 
+class MultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
+    queryset = MultipleChoiceQuestion.objects.all()
+    serializer_class = MultipleChoiceQuestionSerializer
+    permission_classes = [TeacherAccessPermission, ]
