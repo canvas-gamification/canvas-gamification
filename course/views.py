@@ -11,7 +11,7 @@ from course.forms import ProblemFilterForm, MultipleChoiceQuestionForm, Checkbox
     JavaQuestionForm, ChoiceForm
 from course.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
     QuestionCategory, DIFFICULTY_CHOICES, TokenValue, MultipleChoiceSubmission
-from course.utils import get_token_value, get_user_question_junction, increment_char
+from course.utils import get_token_value, get_user_question_junction, increment_char, create_multiple_choice_question
 
 
 @show_login('You need to be logged in to create a question')
@@ -20,40 +20,20 @@ def _multiple_choice_question_create_view(request, header, question_form_class, 
     if request.method == 'POST':
         correct_answer_formset = correct_answer_formset_class(request.POST, prefix='correct')
         distractor_answer_formset = distractor_answer_formset_class(request.POST, prefix='distractor')
+        form = question_form_class(request.POST)
 
-        answer = None
-        choices = {}
-        name = 'a'
+        if correct_answer_formset.is_valid() and distractor_answer_formset.is_valid() and form.is_valid():
 
-        if correct_answer_formset.is_valid():
-            if len(correct_answer_formset.forms) == 1:
-                answer = name
-                choices[name] = correct_answer_formset.forms[0].cleaned_data['text']
-                name = increment_char(name)
-            else:
-                answer = []
-                for f in correct_answer_formset.forms:
-                    answer.append(name)
-                    choices[name] = f.cleaned_data['text']
-                    name = increment_char(name)
-
-        if distractor_answer_formset.is_valid():
-            for f in distractor_answer_formset.forms:
-                if not f.cleaned_data['DELETE']:
-                    choices[name] = f.cleaned_data['text']
-                    name = increment_char(name)
-
-        post_data = request.POST.copy()
-        post_data['answer'] = answer
-        post_data['choices'] = choices
-
-        form = question_form_class(post_data)
-
-        if distractor_answer_formset.is_valid() and distractor_answer_formset.is_valid() and form.is_valid():
-            question = form.save(commit=False)
-            question.author = request.user
-            question.is_verified = request.user.is_teacher()
-            question.save()
+            question = create_multiple_choice_question(
+                title=form.cleaned_data['title'],
+                text=form.cleaned_data['text'],
+                author=request.user,
+                category=form.cleaned_data['category'],
+                difficulty=form.cleaned_data['difficulty'],
+                visible_distractor_count=form.cleaned_data['visible_distractor_count'],
+                answer_text=correct_answer_formset.forms[0].cleaned_data['text'],
+                distractors=[form.cleaned_data['text'] for form in distractor_answer_formset.forms],
+            )
 
             messages.add_message(request, messages.SUCCESS, 'Problem was created successfully')
 

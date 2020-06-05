@@ -91,36 +91,38 @@ class CheckboxQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = CheckboxQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'answer', 'variables', 'choices', 'visible_distractor_count')
+            'title', 'difficulty', 'category', 'text', 'visible_distractor_count')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['answer'].help_text = '\nPlease write the correct choices in this format.\nexample: [\'a\', \'b\']'
 
     visible_distractor_count = forms.ChoiceField(
         choices=[('999', 'All'), ('2', '2'), ('3', '3')],
         initial='All',
         widget=RadioInlineSelect()
     )
+
+    answer = None
+    variables = None
+    choices = None
 
 
 class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = MultipleChoiceQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'answer', 'variables', 'choices', 'visible_distractor_count')
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['answer'].help_text = '\nPlease only write the name of the correct choice'
+            'title', 'difficulty', 'category', 'text', 'visible_distractor_count')
 
     visible_distractor_count = forms.ChoiceField(
         choices=[('999', 'All'), ('2', '2'), ('3', '3')],
         initial='All',
         widget=RadioInlineSelect()
     )
+
+    variables = None
+    choices = None
+    answer = None
 
 
 class JavaQuestionForm(ProblemCreateForm):

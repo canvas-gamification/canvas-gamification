@@ -34,6 +34,9 @@ def create_multiple_choice_question(title=None, text=None, answer=None, max_subm
     if choices and (answer_text or distractors):
         raise Exception("choices and (answer_text or distractors) cannot be set at the same time!")
 
+    if not variables:
+        variables = [{}]
+
     if not choices:
         choices = {}
         choice_label = 'a'
@@ -44,9 +47,13 @@ def create_multiple_choice_question(title=None, text=None, answer=None, max_subm
 
         for text in distractors:
             choices[choice_label] = text
+            choice_label = increment_char(choice_label)
 
         if not is_verified:
             is_verified = author.is_teacher()
+
+    if not max_submission_allowed:
+        max_submission_allowed = len(choices)
 
     from course.models import MultipleChoiceQuestion
     question = MultipleChoiceQuestion(title=title, text=text, answer=answer,
