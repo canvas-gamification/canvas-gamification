@@ -59,7 +59,10 @@
                         {% if problem.is_wrong %}Wrong{% endif %}
                     </td>
                     <td>
-                        <button class="btn btn-primary" onclick="window.location.href='{% url 'course:question_view' problem.pk %}'">View</button>
+                        <button class="btn btn-primary my-1" onclick="window.location.href='{% url 'course:question_view' problem.pk %}'">View</button>
+                        {% if user.is_teacher %}
+                            <button class="btn btn-warning my-1" onclick="window.location.href='{% url 'course:question_edit' problem.pk %}'">Edit</button>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

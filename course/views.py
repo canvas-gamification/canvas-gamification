@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.forms import formset_factory
@@ -203,6 +204,61 @@ def question_view(request, pk):
 
     if isinstance(question, MultipleChoiceQuestion):
         return multiple_choice_question_view(request, question, 'multiple_choice_question.html')
+
+    raise Http404()
+
+
+def teacher_check(user):
+    return not user.is_anonymous and user.is_teacher()
+
+
+@user_passes_test(teacher_check)
+def multiple_choice_question_edit_view(request, question):
+    correct_answer_formset_class = formset_factory(ChoiceForm, extra=1, can_delete=True, max_num=1, min_num=1)
+    distractor_answer_formset_class = formset_factory(ChoiceForm, extra=0, can_delete=True)
+
+    if request.method == 'POST':
+        correct_answer_formset = correct_answer_formset_class(request.POST, prefix='correct')
+        distractor_answer_formset = distractor_answer_formset_class(request.POST, prefix='distractor')
+        form = MultipleChoiceQuestionForm(request.POST)
+
+        if correct_answer_formset.is_valid() and distractor_answer_formset.is_valid() and form.is_valid():
+            create_multiple_choice_question(
+                pk=question.pk,
+                title=form.cleaned_data['title'],
+                text=form.cleaned_data['text'],
+                max_submission_allowed=question.max_submission_allowed,
+                author=request.user,
+                category=form.cleaned_data['category'],
+                difficulty=form.cleaned_data['difficulty'],
+                is_verified=question.is_verified,
+                visible_distractor_count=form.cleaned_data['visible_distractor_count'],
+                answer_text=correct_answer_formset.forms[0].cleaned_data['text'],
+                distractors=[form.cleaned_data['text'] for form in distractor_answer_formset.forms],
+            )
+
+            messages.add_message(request, messages.SUCCESS, 'Problem saved successfully')
+    else:
+        form = MultipleChoiceQuestionForm(instance=question)
+
+        correct_answer_formset = correct_answer_formset_class(prefix='correct', initial=[{'text': question.choices[question.answer]}])
+        distractor_answer_formset = distractor_answer_formset_class(prefix='distractor', initial=
+            [{'text': value} for name, value in question.choices.items() if name != question.answer]
+        )
+
+    return render(request, 'problem_create.html', {
+        'form': form,
+        'correct_answer_formset': correct_answer_formset,
+        'distractor_answer_formset': distractor_answer_formset,
+        'header': 'Edit Question',
+    })
+
+
+def question_edit_view(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+
+    if isinstance(question, MultipleChoiceQuestion):
+        return multiple_choice_question_edit_view(request, question)
 
     raise Http404()
 

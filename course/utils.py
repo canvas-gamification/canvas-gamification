@@ -25,7 +25,8 @@ def increment_char(c):
     return chr(ord(c) + 1)
 
 
-def create_multiple_choice_question(title=None, text=None, answer=None, max_submission_allowed=None, tutorial=None,
+def create_multiple_choice_question(pk=None, title=None, text=None, answer=None, max_submission_allowed=None,
+                                    tutorial=None,
                                     author=None, category=None, difficulty=None, is_verified=None, variables=None,
                                     choices=None, visible_distractor_count=None, answer_text=None, distractors=None):
     if not answer and not answer_text:
@@ -56,10 +57,21 @@ def create_multiple_choice_question(title=None, text=None, answer=None, max_subm
         max_submission_allowed = len(choices)
 
     from course.models import MultipleChoiceQuestion
-    question = MultipleChoiceQuestion(title=title, text=text, answer=answer,
-                                      max_submission_allowed=max_submission_allowed, tutorial=tutorial, author=author,
-                                      category=category, difficulty=difficulty, is_verified=is_verified,
-                                      variables=variables, choices=choices,
-                                      visible_distractor_count=visible_distractor_count)
-    question.save()
-    return question
+    if pk:
+        MultipleChoiceQuestion.objects.filter(pk=pk).update(title=title, text=text, answer=answer,
+                                                                       max_submission_allowed=max_submission_allowed,
+                                                                       tutorial=tutorial, author=author,
+                                                                       category=category, difficulty=difficulty,
+                                                                       is_verified=is_verified,
+                                                                       variables=variables, choices=choices,
+                                                                       visible_distractor_count=visible_distractor_count)
+    else:
+        question = MultipleChoiceQuestion(title=title, text=text, answer=answer,
+                                          max_submission_allowed=max_submission_allowed, tutorial=tutorial,
+                                          author=author,
+                                          category=category, difficulty=difficulty, is_verified=is_verified,
+                                          variables=variables, choices=choices,
+                                          visible_distractor_count=visible_distractor_count)
+        question.save()
+        return question
+    return None
