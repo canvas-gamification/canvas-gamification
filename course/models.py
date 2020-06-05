@@ -17,7 +17,7 @@ from general.models import Action
 class QuestionCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
-    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True)
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         if self.parent is None:

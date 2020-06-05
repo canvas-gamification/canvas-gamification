@@ -122,6 +122,13 @@ USE_L10N = True
 
 USE_TZ = True
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
+
 DJRICHTEXTFIELD_CONFIG = {
     'js': ['//cdn.ckeditor.com/4.14.0/full-all/ckeditor.js'],
     'init_template': 'djrichtextfield/init/ckeditor.js',
