@@ -1,3 +1,5 @@
+import json
+
 from django.core.management import BaseCommand
 
 from course.models import QuestionCategory, MultipleChoiceQuestion
@@ -31,57 +33,31 @@ class Command(BaseCommand):
 
     def populate_categories(self):
         QuestionCategory.objects.all().delete()
-        self.create_category_cluster('Basics', [
-            "Variables",
-            "Statements",
-            "Constants",
-            "Data Types",
-            "Casting",
-            "Arithmetic Operators",
-            "Simple Calculation Programs"
-        ])
+
+        with open('import/categories.json') as f:
+            categories = json.loads(f.read())
+            for group_name, sub_categories in categories.items():
+                self.create_category_cluster(group_name, sub_categories)
 
     def populate_multiple_choice_questions(self):
         MultipleChoiceQuestion.objects.all().delete()
-        create_multiple_choice_question(
-            title='Question 1',
-            text='What is the purpose of a variable in Java?',
-            answer='a',
-            max_submission_allowed=4,
-            tutorial=None,
-            author=None,
-            category=QuestionCategory.objects.first() if QuestionCategory.objects.all().exists() else None,
-            difficulty="EASY",
-            is_verified=True,
-            variables=[{}],
-            choices={
-                'a': 'Used to store data that can be used or modified as needed',
-                'b': 'Used to repeatedly perform a single task',
-                'c': 'Used to identify a portion of the program',
-                'd': 'Used to change the appearance of the program',
-            },
-            visible_distractor_count=3,
-            answer_text=None,
-            distractors=None,
-        )
-        create_multiple_choice_question(
-            title='Question 2',
-            text='According to Java naming conventions, which of the following is a variable:',
-            answer='a',
-            max_submission_allowed=4,
-            tutorial=None,
-            author=None,
-            category=QuestionCategory.objects.first() if QuestionCategory.objects.all().exists() else None,
-            difficulty="EASY",
-            is_verified=True,
-            variables=[{}],
-            choices={
-                'a': 'distanceCovered',
-                'b': 'DISTANCE_COVERED',
-                'c': 'Distance Covered',
-                'd': 'distance Covered',
-            },
-            visible_distractor_count=3,
-            answer_text=None,
-            distractors=None,
-        )
+
+        with open('import/multiple_choice_questions.json') as f:
+            questions = json.loads(f.read())
+            for question in questions:
+                create_multiple_choice_question(
+                    title=question['title'],
+                    text=question['text'],
+                    answer='a',
+                    max_submission_allowed=4,
+                    tutorial=None,
+                    author=None,
+                    category=QuestionCategory.objects.first() if QuestionCategory.objects.all().exists() else None,
+                    difficulty="EASY",
+                    is_verified=True,
+                    variables=[{}],
+                    choices=question['choices'],
+                    visible_distractor_count=3,
+                    answer_text=None,
+                    distractors=None,
+                )

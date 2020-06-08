@@ -130,7 +130,7 @@ REST_FRAMEWORK = {
 }
 
 DJRICHTEXTFIELD_CONFIG = {
-    'js': ['//cdn.ckeditor.com/4.14.0/full-all/ckeditor.js'],
+    'js': ['/static/ckeditor/ckeditor.js'],
     'init_template': 'djrichtextfield/init/ckeditor.js',
     'profiles': {
         'basic': {
@@ -143,7 +143,7 @@ DJRICHTEXTFIELD_CONFIG = {
             'format_tags': 'p;h1;h2;h3',
         },
         'advanced': {
-            'extraPlugins': 'codesnippet',
+            'extraPlugins': ['codesnippet', 'codeTag']
         },
     }
 }

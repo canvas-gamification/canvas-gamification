@@ -1,0 +1,41 @@
+[
+  {
+    "title": "Question 1",
+    "text": "What is the purpose of a variable in Java?",
+    "choices": {
+      "a": "Used to store data that can be used or modified as needed",
+      "b": "Used to repeatedly perform a single task",
+      "c": "Used to identify a portion of the program",
+      "d": "Used to change the appearance of the program"
+    }
+  },
+  {
+    "title": "Question 2",
+    "text": "According to Java naming conventions, which of the following is a variable?",
+    "choices": {
+      "a": "distanceCovered",
+      "b": "DISTANCE_COVERED",
+      "c": "Distance Covered",
+      "d": "distance Covered"
+    }
+  },
+  {
+    "title": "Question 3",
+    "text": "After the following statement <code>int size = 5;</code>, what is the value stored in <code>size</code>?",
+    "choices": {
+      "a": "5",
+      "b": "5.0",
+      "c": "Five",
+      "d": "size"
+    }
+  },
+  {
+    "title": "Question 4",
+    "text": "<p>Consider the following program:</p>\n\n<pre>\n<code class=\"language-java\">public class Test\n{\n    public static void main( String[] args )\n    {\n        int a = 9;\n        System.out.println( a );\n    }\n}</code></pre>\n\n<p>What is the output of this program?</p>\n",
+    "choices": {
+      "a": "The value of the variable <code>a</code> is being printed",
+      "b": "The letter 'a' is being printed",
+      "c": "Nothing is printed"
+    }
+  }
+]
