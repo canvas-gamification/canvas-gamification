@@ -25,15 +25,29 @@ def increment_char(c):
     return chr(ord(c) + 1)
 
 
+class QuestionCreateException(Exception):
+
+    def __init__(self, message, user_message):
+        super().__init__()
+        self.message = message
+        self.user_message = user_message
+
+
 def create_multiple_choice_question(pk=None, title=None, text=None, answer=None, max_submission_allowed=None,
-                                    tutorial=None,
-                                    author=None, category=None, difficulty=None, is_verified=None, variables=None,
-                                    choices=None, visible_distractor_count=None, answer_text=None, distractors=None):
+                                    tutorial=None, author=None, category=None, difficulty=None, is_verified=None,
+                                    variables=None, choices=None, visible_distractor_count=None, answer_text=None,
+                                    distractors=None):
     if not answer and not answer_text:
-        raise Exception("answer or answer_text should be provided!")
+        raise QuestionCreateException(
+            message="answer or answer_text should be provided!",
+            user_message="Cannot create question due to an unknown error, please contact developers"
+        )
 
     if choices and (answer_text or distractors):
-        raise Exception("choices and (answer_text or distractors) cannot be set at the same time!")
+        raise QuestionCreateException(
+            message="choices and (answer_text or distractors) cannot be set at the same time!",
+            user_message="Cannot create question due to an unknown error, please contact developers"
+        )
 
     if not variables:
         variables = [{}]
@@ -59,19 +73,25 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
     from course.models import MultipleChoiceQuestion
     if pk:
         MultipleChoiceQuestion.objects.filter(pk=pk).update(title=title, text=text, answer=answer,
-                                                                       max_submission_allowed=max_submission_allowed,
-                                                                       tutorial=tutorial, author=author,
-                                                                       category=category, difficulty=difficulty,
-                                                                       is_verified=is_verified,
-                                                                       variables=variables, choices=choices,
-                                                                       visible_distractor_count=visible_distractor_count)
+                                                            max_submission_allowed=max_submission_allowed,
+                                                            tutorial=tutorial, author=author,
+                                                            category=category, difficulty=difficulty,
+                                                            is_verified=is_verified,
+                                                            variables=variables, choices=choices,
+                                                            visible_distractor_count=visible_distractor_count)
     else:
-        question = MultipleChoiceQuestion(title=title, text=text, answer=answer,
-                                          max_submission_allowed=max_submission_allowed, tutorial=tutorial,
-                                          author=author,
-                                          category=category, difficulty=difficulty, is_verified=is_verified,
-                                          variables=variables, choices=choices,
-                                          visible_distractor_count=visible_distractor_count)
-        question.save()
+        try:
+            question = MultipleChoiceQuestion(title=title, text=text, answer=answer,
+                                              max_submission_allowed=max_submission_allowed, tutorial=tutorial,
+                                              author=author,
+                                              category=category, difficulty=difficulty, is_verified=is_verified,
+                                              variables=variables, choices=choices,
+                                              visible_distractor_count=visible_distractor_count)
+            question.save()
+        except:
+            raise QuestionCreateException(
+                message="Invalid list of arguments to create MultipleChoiceQuestion",
+                user_message="Cannot create question due to an unknown error, please contact developers"
+            )
         return question
     return None

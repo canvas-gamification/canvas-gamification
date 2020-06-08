@@ -12,7 +12,8 @@ from course.forms import ProblemFilterForm, MultipleChoiceQuestionForm, Checkbox
     JavaQuestionForm, ChoiceForm
 from course.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
     QuestionCategory, DIFFICULTY_CHOICES, TokenValue, MultipleChoiceSubmission
-from course.utils import get_token_value, get_user_question_junction, increment_char, create_multiple_choice_question
+from course.utils import get_token_value, get_user_question_junction, increment_char, create_multiple_choice_question, \
+    QuestionCreateException
 
 
 @show_login('You need to be logged in to create a question')
@@ -25,20 +26,24 @@ def _multiple_choice_question_create_view(request, header, question_form_class, 
 
         if correct_answer_formset.is_valid() and distractor_answer_formset.is_valid() and form.is_valid():
 
-            question = create_multiple_choice_question(
-                title=form.cleaned_data['title'],
-                text=form.cleaned_data['text'],
-                author=request.user,
-                category=form.cleaned_data['category'],
-                difficulty=form.cleaned_data['difficulty'],
-                visible_distractor_count=form.cleaned_data['visible_distractor_count'],
-                answer_text=correct_answer_formset.forms[0].cleaned_data['text'],
-                distractors=[form.cleaned_data['text'] for form in distractor_answer_formset.forms],
-            )
-
-            messages.add_message(request, messages.SUCCESS, 'Problem was created successfully')
-
-            form = question_form_class()
+            try:
+                question = create_multiple_choice_question(
+                    title=form.cleaned_data['title'],
+                    text=form.cleaned_data['text'],
+                    author=request.user,
+                    category=form.cleaned_data['category'],
+                    difficulty=form.cleaned_data['difficulty'],
+                    visible_distractor_count=form.cleaned_data['visible_distractor_count'],
+                    answer_text=correct_answer_formset.forms[0].cleaned_data['text'],
+                    distractors=[form.cleaned_data['text'] for form in distractor_answer_formset.forms if not form.cleaned_data['DELETE']],
+                )
+                messages.add_message(request, messages.SUCCESS, 'Problem was created successfully')
+                form = question_form_class()
+                correct_answer_formset = correct_answer_formset_class(prefix='correct')
+                distractor_answer_formset = distractor_answer_formset_class(prefix='distractor')
+                
+            except QuestionCreateException as e:
+                messages.add_message(request, messages.ERROR, e.user_message)
     else:
         form = question_form_class()
 
@@ -223,28 +228,32 @@ def multiple_choice_question_edit_view(request, question):
         form = MultipleChoiceQuestionForm(request.POST)
 
         if correct_answer_formset.is_valid() and distractor_answer_formset.is_valid() and form.is_valid():
-            create_multiple_choice_question(
-                pk=question.pk,
-                title=form.cleaned_data['title'],
-                text=form.cleaned_data['text'],
-                max_submission_allowed=question.max_submission_allowed,
-                author=request.user,
-                category=form.cleaned_data['category'],
-                difficulty=form.cleaned_data['difficulty'],
-                is_verified=question.is_verified,
-                visible_distractor_count=form.cleaned_data['visible_distractor_count'],
-                answer_text=correct_answer_formset.forms[0].cleaned_data['text'],
-                distractors=[form.cleaned_data['text'] for form in distractor_answer_formset.forms],
-            )
+            try:
+                create_multiple_choice_question(
+                    pk=question.pk,
+                    title=form.cleaned_data['title'],
+                    text=form.cleaned_data['text'],
+                    max_submission_allowed=question.max_submission_allowed,
+                    author=request.user,
+                    category=form.cleaned_data['category'],
+                    difficulty=form.cleaned_data['difficulty'],
+                    is_verified=question.is_verified,
+                    visible_distractor_count=form.cleaned_data['visible_distractor_count'],
+                    answer_text=correct_answer_formset.forms[0].cleaned_data['text'],
+                    distractors=[form.cleaned_data['text'] for form in distractor_answer_formset.forms],
+                )
+                messages.add_message(request, messages.SUCCESS, 'Problem saved successfully')
+            except QuestionCreateException as e:
+                messages.add_message(request, messages.ERROR, e.user_message)
 
-            messages.add_message(request, messages.SUCCESS, 'Problem saved successfully')
     else:
         form = MultipleChoiceQuestionForm(instance=question)
 
-        correct_answer_formset = correct_answer_formset_class(prefix='correct', initial=[{'text': question.choices[question.answer]}])
+        correct_answer_formset = correct_answer_formset_class(prefix='correct',
+                                                              initial=[{'text': question.choices[question.answer]}])
         distractor_answer_formset = distractor_answer_formset_class(prefix='distractor', initial=
-            [{'text': value} for name, value in question.choices.items() if name != question.answer]
-        )
+        [{'text': value} for name, value in question.choices.items() if name != question.answer]
+                                                                    )
 
     return render(request, 'problem_create.html', {
         'form': form,
