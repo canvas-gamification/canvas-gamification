@@ -34,7 +34,7 @@ if HEROKU:
 elif DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOST = ['s202.ok.ubc.ca']
+    ALLOWED_HOSTS = ['s202.ok.ubc.ca']
 
 # Application definition
 
