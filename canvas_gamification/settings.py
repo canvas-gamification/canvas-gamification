@@ -27,12 +27,14 @@ SECRET_KEY = '=cv^=w$b8iw4q5!ti#j)mxwujw24o)_d*og7($erv@4t5=3z7*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-PRODUCTION = False
+HEROKU = False
 
-if PRODUCTION:
+if HEROKU:
     ALLOWED_HOSTS = ['canvas-gamification.herokuapp.com']
-else:
+elif DEBUG:
     ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOST = ['s202.ok.ubc.ca']
 
 # Application definition
 
@@ -90,12 +92,24 @@ WSGI_APPLICATION = 'canvas_gamification.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 's202db',
+            'USER': 's202dbuser',
+            'PASSWORD': 'bBuy9$66DPRtx~gT',
+            'HOST': 'pgsql.rits.ok.ubc.ca',
+            'PORT': '5432',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -201,7 +215,7 @@ LOGOUT_REDIRECT_URL = reverse_lazy('homepage')
 if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True
 
-if not PRODUCTION:
+if not HEROKU:
 
     settings_file = open("settings.json")
     SETTINGS_JSON = json.loads(settings_file.read())
