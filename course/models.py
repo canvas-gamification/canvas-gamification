@@ -1,3 +1,4 @@
+import json
 import random
 import requests
 import jsonfield
@@ -89,10 +90,10 @@ class VariableQuestion(Question):
 
     def get_variables(self, user):
         random.seed(user.pk or 0)
-
-        size = len(self.variables)
+        variables = json.loads(self.variables) if type(self.variables) == str else self.variables
+        size = len(variables)
         p = random.randrange(0, size)
-        return self.variables[p]
+        return variables[p]
 
     def get_rendered_text(self, user):
         return render_text(self.text, self.get_variables(user))
@@ -103,8 +104,10 @@ class MultipleChoiceQuestion(VariableQuestion):
     visible_distractor_count = models.IntegerField()
 
     def get_rendered_choices(self, user):
+        choices = json.loads(self.choices) if type(self.choices) == str else self.choices
+
         res = {}
-        for key, val in self.choices.items():
+        for key, val in choices.items():
             res[key] = render_text(val, self.get_variables(user))
         return res
 
