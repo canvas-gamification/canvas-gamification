@@ -8,10 +8,32 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ question.title }}</h1>
-    <h2>Statement</h2>
-    <div>{% autoescape off %}{{ statement }}{% endautoescape %}</div>
-    <h2>Submissions</h2>
+
+    <div class="card">
+        <div class="card-header"><h1>{{ question.title }}</h1></div>
+        <div class="card-body">
+            <div>{% autoescape off %}{{ statement }}{% endautoescape %}</div>
+        </div>
+    </div>
+
+    <div class="card my-1">
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {% for key, text in choices.items %}
+                    <div class="form-group">
+                        <input type="radio" id="answer-{{ key }}" name="answer" value="{{ key }}">
+                        <label for="answer-{{ key }}">{{ text }}</label>
+                    </div>
+                {% endfor %}
+                <div class="form-group row ml-0">
+                    <button type="submit" class="btn btn-success"> Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <h2>My Past Submissions</h2>
     <table class="table table-hover">
         <thead>
         <tr>
@@ -33,19 +55,4 @@
         </tbody>
     </table>
 
-    <h2>Submit Answer</h2>
-    <div>
-        <form method="post">
-            {% csrf_token %}
-            {% for key, text in choices.items %}
-                <div class="form-group">
-                    <input type="radio" id="answer-{{ key }}" name="answer" value="{{ key }}">
-                    <label for="answer-{{ key }}">{{ key }}) {{ text }}</label>
-                </div>
-            {% endfor %}
-            <div class="form-group row ml-0">
-                <button type="submit" class="btn btn-success"> Submit</button>
-            </div>
-        </form>
-    </div>
 {% endblock %}

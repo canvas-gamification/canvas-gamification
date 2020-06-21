@@ -64,7 +64,7 @@ def _java_question_create_view(request, header, question_form_class):
         form = question_form_class(request.POST)
 
         if form.is_valid():
-            question = form.save(commit=False)
+            question = form.save()
             question.author = request.user
             question.is_verified = request.user.is_teacher()
             question.save()
@@ -329,14 +329,16 @@ def java_submission_detail_view(request, pk):
 
 
 def token_values_table_view(request):
-    if not request.user.is_staff:
+    if not request.user.is_teacher:
         raise PermissionDenied()
+
+    query_set = QuestionCategory.objects.filter(parent__isnull=False).all()
 
     if request.method == 'POST':
         sent_values = request.POST.getlist('values[]', None)
         values = []
 
-        for i, category in enumerate(QuestionCategory.objects.all()):
+        for i, category in enumerate(query_set):
             values.append(sent_values[i * len(DIFFICULTY_CHOICES):(i + 1) * len(DIFFICULTY_CHOICES)])
 
             for j, difficulty in enumerate([x for x, y in DIFFICULTY_CHOICES]):
@@ -346,7 +348,7 @@ def token_values_table_view(request):
     else:
         values = []
 
-        for category in QuestionCategory.objects.all():
+        for category in query_set:
             values.append([])
 
             for difficulty, x in DIFFICULTY_CHOICES:
@@ -361,7 +363,7 @@ def token_values_table_view(request):
 
     return render(request, 'token_values_table.html', {
         'values': values,
-        'difficulties': [d for d, x in DIFFICULTY_CHOICES],
-        'categories': QuestionCategory.objects.all(),
+        'difficulties': [x for d, x in DIFFICULTY_CHOICES],
+        'categories': query_set,
         'header': 'token_values',
     })

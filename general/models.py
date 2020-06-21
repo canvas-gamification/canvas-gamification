@@ -24,6 +24,8 @@ class Action(models.Model):
     description = models.CharField(max_length=500)
     token_change = models.FloatField(default=0)
     status = models.CharField(max_length=100, choices=ACTION_STATUS_CHOICES)
+    time_created = models.DateTimeField(auto_now_add=True)
+    time_modified = models.DateTimeField(auto_now=True)
 
     @classmethod
     def create_action(cls, user, description, token_change, status):

@@ -25,33 +25,35 @@
             {{ field }}
         {% endfor %}
         {% for field in form.visible_fields %}
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <h3>
-                        {{ field.label_tag }}
-                    </h3>
-                    {% if field.errors %}
-                        {% for error in field.errors %}
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                {{ error }}
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                    {{ field }}
-                </div>
-                {% if field.help_text %}
+            {% if field != form.visible_distractor_count %}
+                <div class="row mb-3">
                     <div class="col-md-6">
-                        {% autoescape off %}
-                            <pre>
+                        <h3>
+                            {{ field.label_tag }}
+                        </h3>
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ error }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        {{ field }}
+                    </div>
+                    {% if field.help_text %}
+                        <div class="col-md-6">
+                            {% autoescape off %}
+                                <pre>
                             {{ field.help_text }}
                             </pre>
-                        {% endautoescape %}
-                    </div>
-                {% endif %}
-            </div>
+                            {% endautoescape %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
         {% endfor %}
 
         {% if correct_answer_formset %}
@@ -62,11 +64,7 @@
         {% if distractor_answer_formset %}
             <h3>Distractor Answers</h3>
             <h5>How many distractor answers to show</h5>
-            {% for x in form.distractor_count %}
-                <div class="form-check-inline">
-                    {{ x }}
-                </div>
-            {% endfor %}
+            {{ form.visible_distractor_count }}
             {% include 'choices_formset_snippet.html' with formset=distractor_answer_formset %}
         {% endif %}
 

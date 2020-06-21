@@ -29,7 +29,7 @@ class QuestionCategory(models.Model):
 
 DIFFICULTY_CHOICES = [
     ("EASY", "EASY"),
-    ("NORMAL", "NORMAL"),
+    ("NORMAL", "MEDIUM"),
     ("HARD", "HARD"),
 ]
 
@@ -42,9 +42,20 @@ def render_text(text, variables):
 
 
 class TokenValue(models.Model):
-    value = models.FloatField(default=0)
+    value = models.FloatField()
     category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, related_name='token_values')
-    difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES, default="EASY")
+    difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES)
+
+    def save(self, **kwargs):
+        if self.value is None:
+            if self.difficulty == 'EASY':
+                self.value = 1
+            if self.difficulty == "NORMAL":
+                self.value = 2
+            if self.difficulty == 'HARD':
+                self.value = 3
+
+        super().save(**kwargs)
 
     class Meta:
         unique_together = ('category', 'difficulty')
@@ -60,7 +71,7 @@ class Question(PolymorphicModel):
     time_modified = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
     category = models.ForeignKey(QuestionCategory, on_delete=models.SET_NULL, null=True, blank=True)
-    difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES)
+    difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES, default="EASY")
 
     is_verified = models.BooleanField(default=False)
 
