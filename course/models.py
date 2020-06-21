@@ -1,7 +1,6 @@
 import json
 import random
 import requests
-import jsonfield
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
@@ -10,6 +9,7 @@ from django.urls import reverse_lazy
 from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
 
+from course.fields import JSONField
 from course.grader import MultipleChoiceGrader
 from course.utils import get_user_question_junction, get_token_value
 from general.models import Action
@@ -97,7 +97,7 @@ class Question(PolymorphicModel):
 
 
 class VariableQuestion(Question):
-    variables = jsonfield.JSONField()
+    variables = JSONField()
 
     def get_variables(self, user):
         random.seed(user.pk or 0)
@@ -111,7 +111,7 @@ class VariableQuestion(Question):
 
 
 class MultipleChoiceQuestion(VariableQuestion):
-    choices = jsonfield.JSONField()
+    choices = JSONField()
     visible_distractor_count = models.IntegerField()
 
     def get_rendered_choices(self, user):
@@ -131,7 +131,7 @@ class CheckboxQuestion(MultipleChoiceQuestion):
 
 
 class JavaQuestion(Question):
-    test_cases = jsonfield.JSONField()
+    test_cases = JSONField()
 
     def is_allowed_to_submit(self, user):
         if not user.is_authenticated:
@@ -202,8 +202,8 @@ class MultipleChoiceSubmission(Submission):
 
 
 class JavaSubmission(Submission):
-    tokens = jsonfield.JSONField()
-    results = jsonfield.JSONField()
+    tokens = JSONField()
+    results = JSONField()
 
     @property
     def is_compile_error(self):
