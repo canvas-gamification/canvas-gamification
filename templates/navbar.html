@@ -35,7 +35,7 @@
             <li class="nav-item {% ifequal header 'faq' %}active{% endifequal %}">
                 <a class="nav-link" href="{% url 'faq' %}">FAQ</a>
             </li>
-            {% if user.is_staff %}
+            {% if user.is_teacher %}
                 <li class="nav-item {% ifequal header 'token_values' %}active{% endifequal %}">
                     <a class="nav-link" href="{% url 'course:token_values' %}">Token Values</a>
                 </li>

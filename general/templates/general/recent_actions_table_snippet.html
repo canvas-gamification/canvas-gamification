@@ -1,25 +1,28 @@
 {% load token_format %}
 
 {% if user.actions.all.exists %}
-
-    <table class="table table-bordered table-striped table-hover">
-        <thead>
-        <tr>
-            <th>Description</th>
-            <th>Token&nbsp;Change</th>
-            <th>Status</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for action in user.actions.all %}
-            <tr>
-                <td class="col">{% autoescape off %}{{ action.description }}{% endautoescape %}</td>
-                <td>{{ action.token_change | token_change_format }}</td>
-                <td>{{ action.status }}</td>
+    <div class="container-fluid">
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+            <tr class="d-flex">
+                <th class="col-9">Description</th>
+                <th class="col-1">Token&nbsp;Change</th>
+                <th class="col-1">Date</th>
+                <th class="col-1">Status</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for action in user.actions.all reversed %}
+                <tr class="d-flex">
+                    <td class="col-9">{% autoescape off %}{{ action.description }}{% endautoescape %}</td>
+                    <td class="col-1">{{ action.token_change | token_change_format }}</td>
+                    <td class="col-1">{{ action.time_created }}</td>
+                    <td class="col-1">{{ action.status }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 {% else %}
     <p>No recent Actions</p>

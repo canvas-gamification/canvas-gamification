@@ -50,7 +50,7 @@
                     <th scope="row">{{ forloop.counter }}</th>
                     <td class="col">{{ problem.title }}</td>
                     <td>{{ problem.category }}</td>
-                    <td>{{ problem.difficulty | safe }}</td>
+                    <td>{{ problem.get_difficulty_display | safe }}</td>
                     <td>{{ problem.token_value }}</td>
                     <td>
                         {% if problem.is_solved %}Solved{% endif %}
