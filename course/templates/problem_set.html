@@ -37,6 +37,9 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Question Name</th>
+            {% if user.is_teacher %}
+                <th scope="col">Author</th>
+            {% endif %}
             <th scope="col">Category</th>
             <th scope="col">Difficulty</th>
             <th scope="col">Token&nbsp;Value</th>
@@ -45,27 +48,34 @@
         </tr>
         </thead>
         <tbody>
-            {% for problem in problems %}
-                <tr class="{% if problem.is_solved %}table-success{% endif %}{% if problem.is_wrong %}table-danger{% endif %}{% if problem.is_partially_correct %}table-warning{% endif %}">
-                    <th scope="row">{{ forloop.counter }}</th>
-                    <td class="col">{{ problem.title }}</td>
-                    <td>{{ problem.category }}</td>
-                    <td>{{ problem.get_difficulty_display | safe }}</td>
-                    <td>{{ problem.token_value }}</td>
-                    <td>
-                        {% if problem.is_solved %}Solved{% endif %}
-                        {% if problem.no_submission %}New{% endif %}
-                        {% if problem.is_partially_correct %}Partially Correct{% endif %}
-                        {% if problem.is_wrong %}Wrong{% endif %}
-                    </td>
-                    <td>
-                        <button class="btn btn-primary my-1" onclick="window.location.href='{% url 'course:question_view' problem.pk %}'">View</button>
-                        {% if user.is_teacher %}
-                            <button class="btn btn-warning my-1" onclick="window.location.href='{% url 'course:question_edit' problem.pk %}'">Edit</button>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
+        {% for problem in problems %}
+            <tr class="{% if problem.is_solved %}table-success{% endif %}{% if problem.is_wrong %}table-danger{% endif %}{% if problem.is_partially_correct %}table-warning{% endif %}">
+                <th scope="row">{{ forloop.counter }}</th>
+                <td class="col">{{ problem.title }}</td>
+                {% if user.is_teacher %}
+                    <td>{{ problem.author }}</td>
+                {% endif %}
+                <td>{{ problem.category }}</td>
+                <td>{{ problem.get_difficulty_display | safe }}</td>
+                <td>{{ problem.token_value }}</td>
+                <td>
+                    {% if problem.is_solved %}Solved{% endif %}
+                    {% if problem.no_submission %}New{% endif %}
+                    {% if problem.is_partially_correct %}Partially Correct{% endif %}
+                    {% if problem.is_wrong %}Wrong{% endif %}
+                </td>
+                <td>
+                    <button class="btn btn-primary my-1"
+                            onclick="window.location.href='{% url 'course:question_view' problem.pk %}'">View
+                    </button>
+                    {% if user.is_teacher %}
+                        <button class="btn btn-warning my-1"
+                                onclick="window.location.href='{% url 'course:question_edit' problem.pk %}'">Edit
+                        </button>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 {% endblock %}
