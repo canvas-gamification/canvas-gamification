@@ -64,8 +64,8 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
             choices[choice_label] = text
             choice_label = increment_char(choice_label)
 
-        if not is_verified:
-            is_verified = author.is_teacher()
+    if not is_verified:
+        is_verified = author.is_teacher()
 
     if not max_submission_allowed:
         max_submission_allowed = len(choices)
@@ -95,3 +95,22 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
             )
         return question
     return None
+
+
+def create_java_question(pk=None, title=None, text=None, max_submission_allowed=None, tutorial=None, author=None,
+                         category=None, difficulty=None, is_verified=None, test_cases=None):
+    if not max_submission_allowed:
+        max_submission_allowed = 5
+    if not is_verified:
+        is_verified = author.is_teacher()
+
+    from course.models import JavaQuestion
+    if pk:
+        JavaQuestion.objects.filter(pk=pk).update(title=title, text=text, max_submission_allowed=max_submission_allowed,
+                                                  tutorial=tutorial, author=author, category=category,
+                                                  difficulty=difficulty, is_verified=is_verified, test_cases=test_cases)
+    else:
+        question = JavaQuestion(title=title, text=text, max_submission_allowed=max_submission_allowed, tutorial=tutorial,
+                                author=author, category=category, difficulty=difficulty, is_verified=is_verified,
+                                test_cases=test_cases)
+        question.save()

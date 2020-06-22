@@ -2,15 +2,15 @@ import json
 import random
 import requests
 
-from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.urls import reverse_lazy
 from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
 
+from accounts.models import MyUser
 from course.fields import JSONField
-from course.grader import MultipleChoiceGrader
+from course.grader import MultipleChoiceGrader, JavaGrader
 from course.utils import get_user_question_junction, get_token_value
 from general.models import Action
 
@@ -69,7 +69,7 @@ class Question(PolymorphicModel):
     tutorial = RichTextField(null=True, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
     time_modified = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
+    author = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
     category = models.ForeignKey(QuestionCategory, on_delete=models.SET_NULL, null=True, blank=True)
     difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES, default="EASY")
 
@@ -95,6 +95,9 @@ class Question(PolymorphicModel):
             return True
         return not user.submissions.filter(question=self).exists()
 
+    def get_grader(self, user):
+        raise NotImplementedError()
+
 
 class VariableQuestion(Question):
     variables = JSONField()
@@ -108,6 +111,9 @@ class VariableQuestion(Question):
 
     def get_rendered_text(self, user):
         return render_text(self.text, self.get_variables(user))
+
+    def get_grader(self, user):
+        raise NotImplementedError()
 
 
 class MultipleChoiceQuestion(VariableQuestion):
@@ -138,9 +144,12 @@ class JavaQuestion(Question):
             return False
         return len(list(filter(lambda s : not s.is_compile_error, list(user.submissions.filter(question=self))))) < self.max_submission_allowed
 
+    def get_grader(self, user):
+        return JavaGrader(self, user)
+
 
 class Submission(PolymorphicModel):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='submissions')
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='submissions')
     submission_time = models.DateTimeField(auto_now_add=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='submissions')
 
@@ -150,6 +159,9 @@ class Submission(PolymorphicModel):
     grade = models.FloatField(default=0)
     is_correct = models.BooleanField(default=False)
     is_partially_correct = models.BooleanField(default=False)
+
+    def get_description(self):
+        return "{}Solved Question <a href='{}'>{}</a>".format("Partially " if self.is_partially_correct else "", reverse_lazy('course:question_view', kwargs={'pk':self.question.pk}), self.question.title)
 
     @property
     def status_color(self):
@@ -163,8 +175,47 @@ class Submission(PolymorphicModel):
         return dic[self.status]
 
     @property
+    def in_progress(self):
+        return False
+
+    @property
     def status(self):
-        raise NotImplementedError()
+        if self.in_progress:
+            return "Evaluating"
+        if self.is_correct:
+            return "Correct"
+        if self.is_partially_correct:
+            return "Partially Correct"
+
+        return "Wrong"
+
+    def calculate_grade(self):
+        self.is_correct, self.grade = self.question.get_grader(self.user).grade(self)
+
+        if not self.is_correct and self.grade > 0:
+            self.is_partially_correct = True
+
+        self.save()
+
+    @property
+    def get_grade(self):
+        if self.in_progress:
+            self.calculate_grade()
+        return self.grade
+
+    def save(self, *args, **kwargs):
+        if not self.in_progress and self.is_correct or self.is_partially_correct:
+            user_question_junction = get_user_question_junction(self.user, self.question)
+            received_tokens = self.grade * get_token_value(self.question.category, self.question.difficulty)
+            token_change = received_tokens - user_question_junction.tokens_received
+
+            if token_change > 0:
+                user_question_junction.tokens_received = received_tokens
+                user_question_junction.save()
+
+            Action.create_action(self.user, self.get_description(), received_tokens, Action.COMPLETE)
+
+        super().save(*args, **kwargs)
 
 
 class MultipleChoiceSubmission(Submission):
@@ -175,30 +226,6 @@ class MultipleChoiceSubmission(Submission):
         if isinstance(self.question, MultipleChoiceQuestion):
             return self.question.get_rendered_choices(self.user).get(self.answer, 'Unknown')
         return self.answer
-
-    @property
-    def status(self):
-        if self.is_correct:
-            return "Correct"
-        return "Wrong"
-
-    def calculate_grade(self):
-        return self.question.get_grader(self.user).grade(self)
-
-    def save(self, *args, **kwargs):
-        self.is_correct, self.grade = self.calculate_grade()
-
-        if self.is_correct:
-            user_question_junction = get_user_question_junction(self.user, self.question)
-
-            received_tokens = self.grade * get_token_value(self.question.category, self.question.difficulty)
-            user_question_junction.tokens_received = received_tokens
-            user_question_junction.save()
-            self.user.save()
-
-            Action.create_action(self.user, "Solved Question <a href='{}'>{}</a>".format(reverse_lazy('course:question_view', kwargs={'pk':self.question.pk}), self.question.title), received_tokens, Action.COMPLETE)
-
-        super().save(*args, **kwargs)
 
 
 class JavaSubmission(Submission):
@@ -213,44 +240,10 @@ class JavaSubmission(Submission):
         return True
 
     @property
-    def status_color(self):
-        dic = {
-            "Evaluating": 'info',
-            "Wrong": 'danger',
-            "Partially Correct": 'warning',
-            "Correct": 'success',
-        }
-
-        return dic[self.status]
-
-    @property
     def status(self):
         if self.in_progress:
-            self.evaluate()
-        if self.in_progress:
-            return "Evaluating"
-
-        if self.is_correct:
-            return "Correct"
-        if self.is_partially_correct:
-            return "Partially Correct"
-
-        return "Wrong"
-
-    def get_grade(self, evaluate=True):
-        if self.in_progress and evaluate:
-            self.evaluate()
-        if self.in_progress:
-            return 0
-
-        total_test_cases = len(self.question.test_cases)
-        correct_test_cases = 0
-
-        for i, result in enumerate(self.results):
-            if result['status']['id'] == 3:
-                correct_test_cases += 1
-
-        return correct_test_cases / total_test_cases
+            self.calculate_grade()
+        return super().status
 
     @property
     def in_progress(self):
@@ -259,59 +252,12 @@ class JavaSubmission(Submission):
                 return True
         return False
 
-    def evaluate(self):
-        self.results = []
-
-        for i, test_case in enumerate(self.question.test_cases):
-            token = self.tokens[i]
-            r = requests.get("https://api.judge0.com/submissions/{}?base64_encoded=false".format(token))
-            self.results.append(r.json())
-
-        self.grade = self.get_grade(False)
-        if self.grade == 1:
-            self.is_correct = True
-            self.is_partially_correct = False
-        if 0 < self.grade < 1:
-            self.is_correct = False
-            self.is_partially_correct = True
-        self.save()
-
-        if not self.in_progress:
-            self.finalize_evaluation()
-
-    def finalize_evaluation(self):
-        user_question_junction = get_user_question_junction(self.user, self.question)
-        received_tokens = self.grade * get_token_value(self.question.category, self.question.difficulty)
-        token_change = received_tokens - user_question_junction.tokens_received
-        if token_change > 0:
-            user_question_junction.tokens_received = received_tokens
-            user_question_junction.save()
-
-            Action.create_action(self.user, self.get_description(), token_change, Action.COMPLETE)
-
-    def get_description(self):
-        return "{}Solved Question <a href='{}'>{}</a>".format("Partially " if self.is_partially_correct else "", reverse_lazy('course:question_view', kwargs={'pk':self.question.pk}), self.question.title)
-
     def submit(self):
-        self.tokens = []
-
-        for test_case in self.question.test_cases:
-
-            r = requests.post("https://api.judge0.com/submissions/", data={
-                "base64_encoded": False,
-                "wait": False,
-                "source_code": self.code,
-                "language_id": 62,
-                "stdin": test_case['input'],
-                "expected_output": test_case['output'],
-            })
-            self.tokens.append(r.json()['token'])
-        self.save()
-        self.evaluate()
+        self.question.get_grader(self.user).submit(self)
 
 
 class UserQuestionJunction(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='question_junctions')
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='question_junctions')
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='user_junctions')
 
     opened_tutorial = models.BooleanField(default=False)

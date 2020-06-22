@@ -27,7 +27,7 @@
             <tr class="table-{{ submission.status_color }}">
                 <th scope="row">{{ forloop.revcounter }}</th>
                 <td><span style="word-break: break-all">{{ submission.code }}</span></td>
-                <td>{{ submission.grade | floatformat:2 }}</td>
+                <td>{{ submission.get_grade | floatformat:2 }}</td>
                 <td>{{ submission.status }}</td>
                 <td>
                     <button class="btn btn-info"

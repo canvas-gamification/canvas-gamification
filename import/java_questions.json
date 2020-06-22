@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Java Question 1",
+    "text": "Write a Java program that reads and integer and prints if the input is \"Odd\" or \"Even\"",
+    "test_cases": [
+      {
+        "input": 2,
+        "output": "Even"
+      },
+      {
+        "input": 3,
+        "output": "Odd"
+      }
+    ]
+  }
+]
