@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block script %}
+    <link rel="stylesheet" href="{% static 'highlight/9.18.1/styles/default.min.css' %}"/>
+    <script src="{% static 'highlight/9.18.1/highlight.min.js' %}"></script>
+
+    <script src="{% static 'dragula/dragula.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'dragula/dragula.css' %}">
+
+    <script>hljs.initHighlightingOnLoad();</script>
+{% endblock %}
+
+{% block content %}
+    <h1>{{ question.title }}</h1>
+    <h2>Statement</h2>
+    <div>{% autoescape off %}{{ question.text }}{% endautoescape %}</div>
+    <h2>Submissions</h2>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Code</th>
+            <th scope="col">Grade</th>
+            <th scope="col">Status</th>
+            <th scope="col">Details</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for submission in submissions reversed %}
+            <tr class="table-{{ submission.status_color }}">
+                <th scope="row">{{ forloop.revcounter }}</th>
+                <td><span style="word-break: break-all">{{ submission.code }}</span></td>
+                <td>{{ submission.get_grade | floatformat:2 }}</td>
+                <td>{{ submission.status }}</td>
+                <td>
+                    <button class="btn btn-info"
+                            onclick="window.location.href='{% url 'course:submission_detail' submission.pk %}'">Details
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Submit Answer</h2>
+    {% if submission_allowed %}
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Lines</h5>
+                    <div class="left-container">
+                        {% for line in question.get_lines %}
+                            <div class="container-object">{{ line }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5>Your Solution</h5>
+                    <div class="right-container">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            drake = dragula([$(".left-container")[0], $('.right-container')[0]])
+                .on('drop', function (e1, target, source, sibling) {
+                    calculate_source_code();
+                })
+            function calculate_source_code(){
+                let code = $('.right-container').children().text();
+                $('#source_code').val(code);
+            }
+        </script>
+        <div class="my-3">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <input type="hidden" id="source_code" name="code" class="form-control">
+
+                <div class="form-group my-3">
+                    <button type="submit" class="btn btn-success"> Submit</button>
+                </div>
+            </form>
+        </div>
+    {% else %}
+        {% if user.is_authenticated %}
+            <p>Maximum number of submissions reached</p>
+        {% else %}
+            <p>Please log in to submit</p>
+        {% endif %}
+    {% endif %}
+{% endblock %}

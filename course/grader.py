@@ -25,6 +25,10 @@ class MultipleChoiceGrader(Grader):
 
 
 class JavaGrader(Grader):
+    HEADERS = {
+        'X-RapidAPI-Host': 'judge0.p.rapidapi.com',
+        'X-RapidAPI-Key': 'e29a947330msh9b3e32544b404bfp146d9djsn63c86eaa6d11',
+    }
 
     def grade(self, submission):
         if submission.in_progress:
@@ -48,10 +52,7 @@ class JavaGrader(Grader):
             token = submission.tokens[i]
             r = requests.get(
                 "https://judge0.p.rapidapi.com/submissions/{}?base64_encoded=false".format(token),
-                headers={
-                    'X-RapidAPI-Host': 'judge0.p.rapidapi.com',
-                    'X-RapidAPI-Key': 'e29a947330msh9b3e32544b404bfp146d9djsn63c86eaa6d11',
-                }
+                headers=self.HEADERS,
             )
             submission.results.append(r.json())
 
@@ -64,7 +65,6 @@ class JavaGrader(Grader):
         submission.tokens = []
 
         for test_case in self.question.test_cases:
-
             r = requests.post(
                 "https://judge0.p.rapidapi.com/submissions/",
                 data={
@@ -75,16 +75,57 @@ class JavaGrader(Grader):
                     "stdin": test_case['input'],
                     "expected_output": test_case['output'],
                 },
-                headers={
-                    'X-RapidAPI-Host': 'judge0.p.rapidapi.com',
-                    'X-RapidAPI-Key': 'e29a947330msh9b3e32544b404bfp146d9djsn63c86eaa6d11',
-                },
+                headers=self.HEADERS,
             )
             submission.tokens.append(r.json()['token'])
         self.evaluate(submission)
 
 
 class ParsonsGrader(Grader):
+    HEADERS = {
+        'X-RapidAPI-Host': 'judge0-extra.p.rapidapi.com',
+        'X-RapidAPI-Key': 'e29a947330msh9b3e32544b404bfp146d9djsn63c86eaa6d11',
+    }
+    BASE_URL = 'https://judge0-extra.p.rapidapi.com/'
+
+    def get_source_code(self, submission):
+        return self.question.junit_template.replace("{{code}}", submission.code)
 
     def grade(self, submission):
-        return 0
+        if submission.in_progress:
+            self.evaluate(submission)
+        if submission.in_progress:
+            return False, 0
+
+        return (True, 1) if submission.results[0]['status']['id'] == 3 else (False, 0)
+
+    def evaluate(self, submission):
+        submission.results = []
+
+        token = submission.tokens[0]
+        r = requests.get(
+            "{}submissions/{}?base64_encoded=true".format(self.BASE_URL, token),
+            headers=self.HEADERS,
+        )
+        submission.results.append(r.json())
+
+        if not submission.in_progress:
+            submission.calculate_grade()
+        else:
+            submission.save()
+
+    def submit(self, submission):
+        submission.tokens = []
+
+        r = requests.post(
+            "{}submissions/".format(self.BASE_URL),
+            data={
+                "base64_encoded": False,
+                "wait": False,
+                "source_code": self.get_source_code(submission),
+                "language_id": 5,
+            },
+            headers=self.HEADERS,
+        )
+        submission.tokens.append(r.json()['token'])
+        self.evaluate(submission)

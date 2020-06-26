@@ -3,7 +3,7 @@ from rest_framework import viewsets
 
 from api.permissions import TeacherAccessPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer
-from course.models import Question, MultipleChoiceQuestion
+from course.models.models import Question, MultipleChoiceQuestion
 
 
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):

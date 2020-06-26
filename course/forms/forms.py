@@ -1,10 +1,10 @@
 from django import forms
-from django.forms import TextInput, Textarea, NumberInput, widgets, formset_factory
+from django.forms import TextInput, widgets
 from djrichtextfield.widgets import RichTextWidget
 from jsoneditor.forms import JSONEditor
 from jsonfield.forms import JSONFormField
 
-from course.models import MultipleChoiceQuestion, DIFFICULTY_CHOICES, CheckboxQuestion, JavaQuestion, QuestionCategory
+from course.models.models import MultipleChoiceQuestion, DIFFICULTY_CHOICES, CheckboxQuestion, JavaQuestion, QuestionCategory
 from course.widgets import RadioInlineSelect
 
 

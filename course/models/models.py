@@ -228,7 +228,7 @@ class MultipleChoiceSubmission(Submission):
         return self.answer
 
 
-class JavaSubmission(Submission):
+class CodeSubmission(Submission):
     tokens = JSONField()
     results = JSONField()
 
@@ -254,6 +254,10 @@ class JavaSubmission(Submission):
 
     def submit(self):
         self.question.get_grader(self.user).submit(self)
+
+
+class JavaSubmission(CodeSubmission):
+    pass
 
 
 class UserQuestionJunction(models.Model):

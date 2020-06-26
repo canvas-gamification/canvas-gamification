@@ -1,5 +1,5 @@
 def get_user_question_junction(user, question):
-    from course.models import UserQuestionJunction
+    from course.models.models import UserQuestionJunction
 
     if user.question_junctions.filter(question=question).exists():
         return user.question_junctions.get(question=question)
@@ -9,7 +9,7 @@ def get_user_question_junction(user, question):
 
 
 def get_token_value(category, difficulty):
-    from course.models import TokenValue
+    from course.models.models import TokenValue
 
     if not category or not difficulty:
         return 0
@@ -70,7 +70,7 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
     if not max_submission_allowed:
         max_submission_allowed = len(choices)
 
-    from course.models import MultipleChoiceQuestion
+    from course.models.models import MultipleChoiceQuestion
     if pk:
         MultipleChoiceQuestion.objects.filter(pk=pk).update(title=title, text=text, answer=answer,
                                                             max_submission_allowed=max_submission_allowed,
@@ -104,7 +104,7 @@ def create_java_question(pk=None, title=None, text=None, max_submission_allowed=
     if not is_verified:
         is_verified = author.is_teacher()
 
-    from course.models import JavaQuestion
+    from course.models.models import JavaQuestion
     if pk:
         JavaQuestion.objects.filter(pk=pk).update(title=title, text=text, max_submission_allowed=max_submission_allowed,
                                                   tutorial=tutorial, author=author, category=category,

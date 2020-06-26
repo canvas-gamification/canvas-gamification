@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from course.models import Question, MultipleChoiceQuestion
+from course.models.models import Question, MultipleChoiceQuestion
 
 
 class QuestionSerializer(serializers.ModelSerializer):

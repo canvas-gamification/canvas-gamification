@@ -8,12 +8,14 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 
 from accounts.utils.decorators import show_login
-from course.forms import ProblemFilterForm, MultipleChoiceQuestionForm, CheckboxQuestionForm, \
+from course.forms.forms import ProblemFilterForm, MultipleChoiceQuestionForm, CheckboxQuestionForm, \
     JavaQuestionForm, ChoiceForm
-from course.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
-    QuestionCategory, DIFFICULTY_CHOICES, TokenValue, MultipleChoiceSubmission
-from course.utils import get_token_value, get_user_question_junction, increment_char, create_multiple_choice_question, \
+from course.models.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
+    QuestionCategory, DIFFICULTY_CHOICES, TokenValue, MultipleChoiceSubmission, Submission
+from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
+from course.utils import get_token_value, get_user_question_junction, create_multiple_choice_question, \
     QuestionCreateException
+from course.views.parsons import _parsons_question_create_view, parsons_question_view, parsons_submission_detail_view
 
 
 @show_login('You need to be logged in to create a question')
@@ -41,7 +43,7 @@ def _multiple_choice_question_create_view(request, header, question_form_class, 
                 form = question_form_class()
                 correct_answer_formset = correct_answer_formset_class(prefix='correct')
                 distractor_answer_formset = distractor_answer_formset_class(prefix='distractor')
-                
+
             except QuestionCreateException as e:
                 messages.add_message(request, messages.ERROR, e.user_message)
     else:
@@ -103,6 +105,10 @@ def checkbox_question_create_view(request):
         formset_factory(ChoiceForm, extra=1, can_delete=True),
         formset_factory(ChoiceForm, extra=2, can_delete=True),
     )
+
+
+def parsons_question_create_view(request):
+    return _parsons_question_create_view(request, 'New Parsons Question')
 
 
 def multiple_choice_question_view(request, question, template_name):
@@ -209,6 +215,9 @@ def question_view(request, pk):
 
     if isinstance(question, MultipleChoiceQuestion):
         return multiple_choice_question_view(request, question, 'multiple_choice_question.html')
+
+    if isinstance(question, ParsonsQuestion):
+        return parsons_question_view(request, question)
 
     raise Http404()
 
@@ -317,15 +326,24 @@ def problem_set_view(request):
     })
 
 
-def java_submission_detail_view(request, pk):
-    java_submission = get_object_or_404(JavaSubmission, pk=pk)
+def java_submission_detail_view(request, submission):
+    return render(request, 'java_submission_detail.html', {
+        'submission': submission,
+    })
 
-    if java_submission.user != request.user:
+
+def submission_detail_view(request, pk):
+    submission = get_object_or_404(Submission, pk=pk)
+
+    if submission.user != request.user:
         raise Http404()
 
-    return render(request, 'java_submission_detail.html', {
-        'submission': java_submission,
-    })
+    if isinstance(submission, JavaSubmission):
+        return java_submission_detail_view(request, submission)
+    if isinstance(submission, ParsonsSubmission):
+        return parsons_submission_detail_view(request, submission)
+    raise Http404()
+
 
 
 def token_values_table_view(request):
