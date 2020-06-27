@@ -1,0 +1,819 @@
+[
+  {
+    "model": "course.question",
+    "pk": 1,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Question 1",
+      "text": "Used to change the appearance of the program",
+      "answer": "a",
+      "max_submission_allowed": 4,
+      "tutorial": null,
+      "time_created": "2020-06-21T01:46:03.719Z",
+      "time_modified": "2020-06-21T01:46:03.719Z",
+      "author": 1,
+      "category": 1,
+      "difficulty": "EASY",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 2,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Question 2",
+      "text": "According to Java naming conventions, which of the following is a variable?",
+      "answer": "a",
+      "max_submission_allowed": 4,
+      "tutorial": null,
+      "time_created": "2020-06-21T01:46:03.724Z",
+      "time_modified": "2020-06-21T01:46:03.724Z",
+      "author": null,
+      "category": 1,
+      "difficulty": "EASY",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 3,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Question 3",
+      "text": "After the following statement <code>int size = 5;</code>, what is the value stored in <code>size</code>?",
+      "answer": "a",
+      "max_submission_allowed": 4,
+      "tutorial": null,
+      "time_created": "2020-06-21T01:46:03.729Z",
+      "time_modified": "2020-06-21T01:46:03.729Z",
+      "author": null,
+      "category": 1,
+      "difficulty": "EASY",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 4,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Question 4",
+      "text": "<p>Consider the following program:</p>\n\n<pre>\n<code class=\"language-java\">public class Test\n{\n    public static void main( String[] args )\n    {\n        int a = 9;\n        System.out.println( a );\n    }\n}</code></pre>\n\n<p>What is the output of this program?</p>\n",
+      "answer": "a",
+      "max_submission_allowed": 4,
+      "tutorial": null,
+      "time_created": "2020-06-21T01:46:03.733Z",
+      "time_modified": "2020-06-21T01:46:03.733Z",
+      "author": null,
+      "category": 1,
+      "difficulty": "EASY",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 5,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "<p>To allow users to store their names into the program</p>",
+      "answer": "a",
+      "max_submission_allowed": 8,
+      "tutorial": "",
+      "time_created": "2020-06-26T14:41:39.000Z",
+      "time_modified": "2020-06-26T21:43:05.646Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "EASY",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 6,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "<p>cannot be initialized</p>",
+      "answer": "a",
+      "max_submission_allowed": 8,
+      "tutorial": "",
+      "time_created": "2020-06-26T15:04:42.241Z",
+      "time_modified": "2020-06-26T21:43:31.296Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "EASY",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 7,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "<p>Undefined</p>",
+      "answer": "a",
+      "max_submission_allowed": 5,
+      "tutorial": "",
+      "time_created": "2020-06-26T15:27:22.836Z",
+      "time_modified": "2020-06-26T21:43:47.976Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "EASY",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 8,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "<p>cluttered</p>",
+      "answer": "a",
+      "max_submission_allowed": 9,
+      "tutorial": "",
+      "time_created": "2020-06-26T15:29:49.701Z",
+      "time_modified": "2020-06-26T21:43:55.189Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "NORMAL",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 9,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "<p>A data type</p>",
+      "answer": "a",
+      "max_submission_allowed": 9,
+      "tutorial": "",
+      "time_created": "2020-06-26T15:31:47.556Z",
+      "time_modified": "2020-06-26T21:44:02.120Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "NORMAL",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 10,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "Placing a value inside a predetermined memory location reserved for the variable",
+      "answer": "a",
+      "max_submission_allowed": 8,
+      "tutorial": null,
+      "time_created": "2020-06-26T15:33:38.752Z",
+      "time_modified": "2020-06-26T15:33:38.752Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "HARD",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 11,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "Creating an initial memory location for the variable",
+      "answer": "a",
+      "max_submission_allowed": 8,
+      "tutorial": null,
+      "time_created": "2020-06-26T15:35:35.949Z",
+      "time_modified": "2020-06-26T15:35:35.949Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "HARD",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 12,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "Changing the memory location of the variable to the new location",
+      "answer": "a",
+      "max_submission_allowed": 9,
+      "tutorial": null,
+      "time_created": "2020-06-26T15:38:19.227Z",
+      "time_modified": "2020-06-26T15:38:19.227Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "HARD",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 13,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "b",
+      "answer": "a",
+      "max_submission_allowed": 8,
+      "tutorial": null,
+      "time_created": "2020-06-26T15:40:24.018Z",
+      "time_modified": "2020-06-26T15:40:24.018Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "HARD",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 14,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "The memory address of the variable <tt>b</tt>",
+      "answer": "a",
+      "max_submission_allowed": 6,
+      "tutorial": null,
+      "time_created": "2020-06-26T15:42:02.454Z",
+      "time_modified": "2020-06-26T15:42:02.454Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "HARD",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 15,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "Error: The program generates a logic error stating that variable  <tt>b</tt> cannot be used to in the addition",
+      "answer": "a",
+      "max_submission_allowed": 7,
+      "tutorial": null,
+      "time_created": "2020-06-26T15:44:12.721Z",
+      "time_modified": "2020-06-26T15:44:12.721Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "HARD",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 16,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "The variable was declared but not used in the program",
+      "answer": "a",
+      "max_submission_allowed": 8,
+      "tutorial": null,
+      "time_created": "2020-06-26T15:46:46.100Z",
+      "time_modified": "2020-06-26T15:46:46.100Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "HARD",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 17,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "The value given to the variable is invalid",
+      "answer": "a",
+      "max_submission_allowed": 8,
+      "tutorial": null,
+      "time_created": "2020-06-26T15:48:14.050Z",
+      "time_modified": "2020-06-26T15:48:14.050Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "HARD",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 18,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "There is a variable in the program that was given an invalid value",
+      "answer": "a",
+      "max_submission_allowed": 8,
+      "tutorial": null,
+      "time_created": "2020-06-26T15:49:54.119Z",
+      "time_modified": "2020-06-26T15:49:54.119Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "HARD",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.question",
+    "pk": 19,
+    "fields": {
+      "polymorphic_ctype": 15,
+      "title": "Variables Concept",
+      "text": "a",
+      "answer": "a",
+      "max_submission_allowed": 9,
+      "tutorial": null,
+      "time_created": "2020-06-26T15:51:40.335Z",
+      "time_modified": "2020-06-26T15:51:40.335Z",
+      "author": 2,
+      "category": 2,
+      "difficulty": "HARD",
+      "is_verified": true
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 1,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 2,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 3,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 4,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 5,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 6,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 7,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 8,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 9,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 10,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 11,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 12,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 13,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 14,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 15,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 16,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 17,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 18,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.variablequestion",
+    "pk": 19,
+    "fields": {
+      "variables": [
+        {}
+      ]
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 1,
+    "fields": {
+      "choices": {
+        "a": "Used to store data that can be used or modified as needed",
+        "b": "Used to repeatedly perform a single task",
+        "c": "Used to identify a portion of the program",
+        "d": "Used to change the appearance of the program"
+      },
+      "visible_distractor_count": 999
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 2,
+    "fields": {
+      "choices": {
+        "a": "distanceCovered",
+        "b": "DISTANCE_COVERED",
+        "c": "Distance Covered",
+        "d": "distance Covered"
+      },
+      "visible_distractor_count": 3
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 3,
+    "fields": {
+      "choices": {
+        "a": "5",
+        "b": "5.0",
+        "c": "Five",
+        "d": "size"
+      },
+      "visible_distractor_count": 3
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 4,
+    "fields": {
+      "choices": {
+        "a": "The value of the variable <code>a</code> is being printed",
+        "b": "The letter 'a' is being printed",
+        "c": "Nothing is printed"
+      },
+      "visible_distractor_count": 3
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 5,
+    "fields": {
+      "choices": {
+        "a": "To store data that can be used or modified as needed",
+        "b": "To repeatedly perform a single task",
+        "c": "To identify a portion of the program",
+        "d": "To label different points in the program so we can refer to them easily",
+        "e": "To make the program change behaviours when executed",
+        "f": "To execute parts of the program in different ways",
+        "g": "Used to speed up the program",
+        "h": "To allow users to store their names into the program"
+      },
+      "visible_distractor_count": 999
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 6,
+    "fields": {
+      "choices": {
+        "a": "can have its value initialized and changed later if needed",
+        "b": "can never have its value changed",
+        "c": "can be renamed in Java",
+        "d": "can be used anywhere on your system, even outside of the Java program",
+        "e": "is permanently stored on your system",
+        "f": "will reduce the speed of your processor",
+        "g": "can speed up the rest of the program",
+        "h": "cannot be initialized"
+      },
+      "visible_distractor_count": 999
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 7,
+    "fields": {
+      "choices": {
+        "a": "0, because every variable of type <tt>double</tt> has a default value of 0.",
+        "b": "0, because every variable in Java has an initial value of 0.",
+        "c": "NaN (not a number)",
+        "d": "null",
+        "e": "Undefined"
+      },
+      "visible_distractor_count": 999
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 8,
+    "fields": {
+      "choices": {
+        "a": "readable for people",
+        "b": "easily accessible for other data",
+        "c": "available to store in the memory",
+        "d": "faster to execute by the compiler",
+        "e": "easier for computer to run",
+        "f": "challenging for people",
+        "g": "concise and efficient",
+        "h": "unorganized",
+        "i": "cluttered"
+      },
+      "visible_distractor_count": 3
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 9,
+    "fields": {
+      "choices": {
+        "a": "A variable",
+        "b": "A constant",
+        "c": "A value",
+        "d": "A number",
+        "e": "A class",
+        "f": "A method",
+        "g": "A function",
+        "h": "A constructor",
+        "i": "A data type"
+      },
+      "visible_distractor_count": 3
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 10,
+    "fields": {
+      "choices": {
+        "a": "Setting aside a predetermined amount of space to store data",
+        "b": "Finding a memory location with the same name as the variable",
+        "c": "Storing data in the Java code",
+        "d": "Adding more memory to the program",
+        "e": "Changing the amount of memory in the computer",
+        "f": "Decreasing the amount of memory used in the program",
+        "g": "Deleting unused memory in the computer",
+        "h": "Placing a value inside a predetermined memory location reserved for the variable"
+      },
+      "visible_distractor_count": 3
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 11,
+    "fields": {
+      "choices": {
+        "a": "Placing a value inside the predetermined memory location reserved for the variable",
+        "b": "Setting aside a predetermined amount of space to store data",
+        "c": "Finding a memory location with the same name as the variable",
+        "d": "Adding more memory to the program",
+        "e": "Changing the amount of memory in the computer",
+        "f": "Decreasing the amount of memory used in the program",
+        "g": "Deleting unused memory in the computer",
+        "h": "Creating an initial memory location for the variable"
+      },
+      "visible_distractor_count": 3
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 12,
+    "fields": {
+      "choices": {
+        "a": "Replacing the existing value of the variable stored in memory with another value",
+        "b": "Placing a value inside the predetermined space reserved for the variable",
+        "c": "Refreshing the system memory with a new value",
+        "d": "Changing the predetermined amount of space used to store the variable to another amount specified by the new value",
+        "e": "Changing the amount of memory available in the program",
+        "f": "Decreasing the amount of memory used in the program by the amount specified as the new value",
+        "g": "Deleting a certain amount of unused memory specified by the new value",
+        "h": "Changing the storage values in the system memory",
+        "i": "Changing the memory location of the variable to the new location"
+      },
+      "visible_distractor_count": 3
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 13,
+    "fields": {
+      "choices": {
+        "a": "Error: The program generates a compiler error stating that variable <tt>b</tt> might not have been initialized",
+        "b": "0, because the default value for an integer variable is 0.",
+        "c": "Error: The program tries to run but then generates a runtime error when it tries to print the value of the variable <tt>b</tt>",
+        "d": "Error: The program generates a compiler error stating that variable <tt>b</tt> is not a valid variable name",
+        "e": "The memory address of the variable <tt>b</tt>",
+        "f": "The value stored in the variable <tt>b</tt>",
+        "g": "Error: The program generates a logic error stating that variable  <tt>b</tt> cannot be printed",
+        "h": "b"
+      },
+      "visible_distractor_count": 3
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 14,
+    "fields": {
+      "choices": {
+        "a": "b",
+        "b": "Error: The program generates a compiler error stating that variable <tt>b</tt> might not have been initialized",
+        "c": "0, because the default value for an integer variable is 0.",
+        "d": "Error: The program tries to run but then generates a runtime error when it tries to print the value of the variable <tt>b</tt>",
+        "e": "Error: The program generates a compiler error stating that variable <tt>b</tt> is not a valid variable name",
+        "f": "The memory address of the variable <tt>b</tt>"
+      },
+      "visible_distractor_count": 3
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 15,
+    "fields": {
+      "choices": {
+        "a": "Error: The program generates a compiler error stating that variable <tt>b</tt> might not have been initialized",
+        "b": "1, because the default value for an integer variable is 0 so <tt>b</tt> becomes 1 after adding 1 to it.",
+        "c": "Error: The program tries to run but then generates a runtime error when it tries to add 1 to the value of the variable <tt>b</tt>",
+        "d": "Error: The program generates a compiler error stating that variable <tt>b</tt> is not a valid variable name",
+        "e": "The memory address after the memory address of the variable <tt>b</tt>",
+        "f": "The value stored in the variable <tt>b</tt> after adding 1 to it",
+        "g": "Error: The program generates a logic error stating that variable  <tt>b</tt> cannot be used to in the addition"
+      },
+      "visible_distractor_count": 3
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 16,
+    "fields": {
+      "choices": {
+        "a": "Variable <tt>x</tt> has been declared but it has not yet been assigned a value even though the program is trying to use the variable",
+        "b": "The variable does not exist in memory",
+        "c": "The variable might not have been created yet",
+        "d": "Variable <tt>x</tt> has a value of 0",
+        "e": "The variable has not been given a data type",
+        "f": "There is a syntax error in the variable declaration",
+        "g": "There is a logic error in the variable initialization",
+        "h": "The variable was declared but not used in the program"
+      },
+      "visible_distractor_count": 3
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 17,
+    "fields": {
+      "choices": {
+        "a": "The variable is being used without having been declared first",
+        "b": "The variable in question has a value of 0",
+        "c": "The variable is out of the scope of the current program",
+        "d": "The variable has not been given a data type",
+        "e": "There is a syntax error in the variable declaration",
+        "f": "There is a logic error in the variable initialization",
+        "g": "The variable has been declared but not used in the program",
+        "h": "The value given to the variable is invalid"
+      },
+      "visible_distractor_count": 3
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 18,
+    "fields": {
+      "choices": {
+        "a": "There is a variable being used but it was not declared in the program",
+        "b": "There is a variable being used but it has a value of 0",
+        "c": "There is a variable being used but it has a value of undefined",
+        "d": "There is a variable being used but it has not been given a data type",
+        "e": "There is a syntax error in a variable declaration",
+        "f": "There is a syntax error in a variable initialization",
+        "g": "There is a variable that has been declared but not used in the program",
+        "h": "There is a variable in the program that was given an invalid value"
+      },
+      "visible_distractor_count": 999
+    }
+  },
+  {
+    "model": "course.multiplechoicequestion",
+    "pk": 19,
+    "fields": {
+      "choices": {
+        "a": "Error: The program generates a compiler error stating it <tt>cannot find symbol</tt>",
+        "b": "Error: The program generates a compiler error stating that variable <tt>a</tt> might not have been initialized",
+        "c": "0, because the default value for an integer variable is 0.",
+        "d": "Error: The program tries to run but then generates a runtime error when it tries to print the value of the variable <tt>a</tt>",
+        "e": "Error: The program generates a compiler error stating that variable <tt>a</tt> is not a valid variable name",
+        "f": "The memory address of the variable <tt>a</tt>",
+        "g": "The value stored in the variable <tt>a</tt>",
+        "h": "Error: The program generates a logic error stating that variable  <tt>a</tt> cannot be printed",
+        "i": "a"
+      },
+      "visible_distractor_count": 999
+    }
+  }
+]
