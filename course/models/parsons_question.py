@@ -18,4 +18,7 @@ class ParsonsQuestion(VariableQuestion):
 class ParsonsSubmission(CodeSubmission):
 
     def get_decoded_stdout(self):
-        return base64.b64decode(self.results[0]['stdout']).decode('utf-8')
+        stdout = self.results[0]['stdout']
+        if stdout is None:
+            stdout = ""
+        return base64.b64decode(stdout).decode('utf-8')
