@@ -22,3 +22,9 @@ class ParsonsSubmission(CodeSubmission):
         if stdout is None:
             stdout = ""
         return base64.b64decode(stdout).decode('utf-8')
+
+    def get_decoded_compile_output(self):
+        stdout = self.results[0]['compile_output']
+        if stdout is None:
+            stdout = ""
+        return base64.b64decode(stdout).decode('utf-8')
