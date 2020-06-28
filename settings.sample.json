@@ -1,13 +1,4 @@
 {
-  "url": "https://canvas.ubc.ca",
-  "token": "",
-  "course_id": 45950,
-
-  "weights_ranges_file_name": "Weights.txt",
-  "weights_ranges_file_local": true,
-  "weights_assignment_group_name": "Weights",
-  "weights_assignment_prefix": "Weight_",
-
   "EMAIL_USE_TLS": true,
   "EMAIL_HOST": "smtp-relay.sendinblue.com",
   "EMAIL_HOST_USER": "",
@@ -15,6 +6,10 @@
   "EMAIL_ACTIVATION": "activate@whatweteach.herokuapp.com",
   "EMAIL_PASSWORD_RESET": "reset@whatweteach.herokuapp.com",
   "EMAIL_PORT": 587,
+
+  "JUDGE0_HOST": "http://s202.ok.ubc.ca/judge",
+  "JUDGE0_PASSWORD": "",
+
   "reCaptcha_key": "",
   "reCaptcha_url": "https://www.google.com/recaptcha/api/siteverify"
 }

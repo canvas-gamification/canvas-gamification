@@ -1,5 +1,7 @@
 import requests
 
+from canvas_gamification.settings import JUDGE0_PASSWORD, JUDGE0_HOST
+
 
 class Grader:
 
@@ -26,9 +28,9 @@ class MultipleChoiceGrader(Grader):
 
 class JavaGrader(Grader):
     HEADERS = {
-        'X-RapidAPI-Host': 'judge0.p.rapidapi.com',
-        'X-RapidAPI-Key': 'e29a947330msh9b3e32544b404bfp146d9djsn63c86eaa6d11',
+        'X-Auth-Token': JUDGE0_PASSWORD,
     }
+    BASE_URL = JUDGE0_HOST
 
     def grade(self, submission):
         if submission.in_progress:
@@ -51,11 +53,10 @@ class JavaGrader(Grader):
         for i, test_case in enumerate(self.question.test_cases):
             token = submission.tokens[i]
             r = requests.get(
-                "https://judge0.p.rapidapi.com/submissions/{}?base64_encoded=false".format(token),
+                "{}/submissions/{}?base64_encoded=false".format(self.BASE_URL, token),
                 headers=self.HEADERS,
             )
             submission.results.append(r.json())
-
         if not submission.in_progress:
             submission.calculate_grade()
         else:
@@ -66,12 +67,12 @@ class JavaGrader(Grader):
 
         for test_case in self.question.test_cases:
             r = requests.post(
-                "https://judge0.p.rapidapi.com/submissions/",
+                "{}/submissions".format(self.BASE_URL),
                 data={
                     "base64_encoded": False,
                     "wait": False,
                     "source_code": submission.code,
-                    "language_id": 62,
+                    "language_id": 4,
                     "stdin": test_case['input'],
                     "expected_output": test_case['output'],
                 },
@@ -83,10 +84,9 @@ class JavaGrader(Grader):
 
 class ParsonsGrader(Grader):
     HEADERS = {
-        'X-RapidAPI-Host': 'judge0-extra.p.rapidapi.com',
-        'X-RapidAPI-Key': 'e29a947330msh9b3e32544b404bfp146d9djsn63c86eaa6d11',
+        'X-Auth-Token': JUDGE0_PASSWORD,
     }
-    BASE_URL = 'https://judge0-extra.p.rapidapi.com/'
+    BASE_URL = JUDGE0_HOST
 
     def get_source_code(self, submission):
         return self.question.junit_template.replace("{{code}}", submission.code)
@@ -104,7 +104,7 @@ class ParsonsGrader(Grader):
 
         token = submission.tokens[0]
         r = requests.get(
-            "{}submissions/{}?base64_encoded=true".format(self.BASE_URL, token),
+            "{}/submissions/{}?base64_encoded=true".format(self.BASE_URL, token),
             headers=self.HEADERS,
         )
         submission.results.append(r.json())
@@ -118,7 +118,7 @@ class ParsonsGrader(Grader):
         submission.tokens = []
 
         r = requests.post(
-            "{}submissions/".format(self.BASE_URL),
+            "{}/submissions".format(self.BASE_URL),
             data={
                 "base64_encoded": False,
                 "wait": False,
