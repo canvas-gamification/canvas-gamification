@@ -121,7 +121,7 @@ def multiple_choice_question_view(request, question, template_name):
 
         if not request.user.is_authenticated:
             messages.add_message(request, messages.ERROR, 'You need to be logged in to submit answers')
-        elif not question.is_allowed_to_submit(request.user):
+        elif not question.is_allowed_to_submit:
             messages.add_message(request, messages.ERROR, 'Maximum number of submissions reached')
         elif request.user.submissions.filter(question=question, answer=answer).exists():
             messages.add_message(request, messages.INFO, 'You have already submitted this answer!')
@@ -147,11 +147,9 @@ def multiple_choice_question_view(request, question, template_name):
 
     return render(request, template_name, {
         'question': question,
-        'statement': question.get_rendered_text(request.user),
-        'choices': question.get_rendered_choices(request.user),
         'submissions': question.submissions.filter(
             user=request.user).all() if request.user.is_authenticated else MultipleChoiceSubmission.objects.none(),
-        'submission_allowed': question.is_allowed_to_submit(request.user),
+        'submission_class': MultipleChoiceSubmission,
     })
 
 
@@ -161,7 +159,7 @@ def java_question_view(request, question):
             'question': question,
             'submissions': question.submissions.filter(
                 user=request.user).all() if request.user.is_authenticated else JavaSubmission.objects.none(),
-            'submission_allowed': question.is_allowed_to_submit(request.user),
+            'submission_class': JavaSubmission,
         })
 
     if request.method == "POST":
@@ -185,7 +183,7 @@ def java_question_view(request, question):
 
         if not request.user.is_authenticated:
             messages.add_message(request, messages.ERROR, 'You need to be logged in to submit answers')
-        elif not question.is_allowed_to_submit(request.user):
+        elif not question.is_allowed_to_submit:
             messages.add_message(request, messages.ERROR, 'Maximum number of submissions reached')
         elif request.user.submissions.filter(question=question, code=answer_text).exists():
             messages.add_message(request, messages.INFO, 'You have already submitted this answer!')
@@ -196,6 +194,7 @@ def java_question_view(request, question):
             submission.question = question
 
             submission.submit()
+            submission.save()
 
             messages.add_message(request, messages.INFO, "Your Code has been submitted and being evaluated!")
 
@@ -206,6 +205,7 @@ def java_question_view(request, question):
 
 def question_view(request, pk):
     question = get_object_or_404(Question, pk=pk)
+    question.user = request.user
 
     if isinstance(question, JavaQuestion):
         return java_question_view(request, question)
@@ -300,11 +300,7 @@ def problem_set_view(request):
 
     for problem in problems:
         problem.token_value = get_token_value(problem.category, problem.difficulty)
-
-        problem.is_solved = problem.is_solved_by_user(request.user)
-        problem.is_partially_correct = problem.is_partially_correct_by_user(request.user)
-        problem.no_submission = problem.has_no_submission_by_user(request.user)
-        problem.is_wrong = not problem.is_solved and not problem.no_submission and not problem.is_partially_correct
+        problem.user = request.user
 
     if solved == 'Solved':
         problems = [p for p in problems if p.is_solved]
@@ -343,7 +339,6 @@ def submission_detail_view(request, pk):
     if isinstance(submission, ParsonsSubmission):
         return parsons_submission_detail_view(request, submission)
     raise Http404()
-
 
 
 def token_values_table_view(request):

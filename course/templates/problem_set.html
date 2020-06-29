@@ -32,7 +32,7 @@
         </div>
     </form>
 
-    <table class="table table-hover">
+    <table class="table table-hover no-text-wrap-table">
         <thead>
         <tr>
             <th scope="col">#</th>
@@ -57,7 +57,7 @@
                 {% endif %}
                 <td>{{ problem.category }}</td>
                 <td>{{ problem.get_difficulty_display | safe }}</td>
-                <td>{{ problem.token_value }}</td>
+                <td>{{ problem.token_value | floatformat:0 }}</td>
                 <td>
                     {% if problem.is_solved %}Solved{% endif %}
                     {% if problem.no_submission %}New{% endif %}
@@ -65,14 +65,22 @@
                     {% if problem.is_wrong %}Wrong{% endif %}
                 </td>
                 <td>
-                    <button class="btn btn-primary my-1"
-                            onclick="window.location.href='{% url 'course:question_view' problem.pk %}'">View
-                    </button>
-                    {% if user.is_teacher %}
-                        <button class="btn btn-warning my-1"
-                                onclick="window.location.href='{% url 'course:question_edit' problem.pk %}'">Edit
+                    <div>
+                        <button class="btn btn-primary mx-1"
+                                onclick="window.location.href='{% url 'course:question_view' problem.pk %}'">
+                            View
                         </button>
-                    {% endif %}
+
+                        {% if user.is_teacher %}
+
+                            <button class="btn btn-warning mx-1"
+                                    onclick="window.location.href='{% url 'course:question_edit' problem.pk %}'">
+                                Edit
+                            </button>
+
+                        {% endif %}
+
+                    </div>
                 </td>
             </tr>
         {% endfor %}

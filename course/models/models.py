@@ -1,6 +1,7 @@
 import json
 import random
 import requests
+from django.contrib.auth.models import AnonymousUser
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -75,61 +76,68 @@ class Question(PolymorphicModel):
 
     is_verified = models.BooleanField(default=False)
 
-    def is_allowed_to_submit(self, user):
-        if not user.is_authenticated:
-            return False
-        return user.submissions.filter(question=self).count() < self.max_submission_allowed
+    user = AnonymousUser()
+    grader = None
 
-    def is_solved_by_user(self, user):
-        if not user.is_authenticated:
+    @property
+    def is_allowed_to_submit(self):
+        if not self.user.is_authenticated:
             return False
-        return user.submissions.filter(question=self, is_correct=True).exists()
+        return self.user.submissions.filter(question=self).count() < self.max_submission_allowed
 
-    def is_partially_correct_by_user(self, user):
-        if not user.is_authenticated:
+    @property
+    def is_solved(self):
+        if not self.user.is_authenticated:
             return False
-        return user.submissions.filter(question=self, is_partially_correct=True).exists() and not self.is_solved_by_user(user)
+        return self.user.submissions.filter(question=self, is_correct=True).exists()
 
-    def has_no_submission_by_user(self, user):
-        if not user.is_authenticated:
+    @property
+    def is_partially_correct(self):
+        if not self.user.is_authenticated:
+            return False
+        return self.user.submissions.filter(question=self, is_partially_correct=True).exists() and not self.is_solved
+
+    @property
+    def no_submission(self):
+        if not self.user.is_authenticated:
             return True
-        return not user.submissions.filter(question=self).exists()
+        return not self.user.submissions.filter(question=self).exists()
 
-    def get_grader(self, user):
-        raise NotImplementedError()
+    @property
+    def is_wrong(self):
+        return not self.is_solved and not self.is_partially_correct and not self.no_submission
+
+    def get_rendered_text(self):
+        return self.text
 
 
 class VariableQuestion(Question):
     variables = JSONField()
 
-    def get_variables(self, user):
-        random.seed(user.pk or 0)
+    def get_variables(self):
+        random.seed(self.user.pk or 0)
         variables = json.loads(self.variables) if type(self.variables) == str else self.variables
         size = len(variables)
         p = random.randrange(0, size)
         return variables[p]
 
-    def get_rendered_text(self, user):
-        return render_text(self.text, self.get_variables(user))
-
-    def get_grader(self, user):
-        raise NotImplementedError()
+    def get_rendered_text(self):
+        return render_text(self.text, self.get_variables())
 
 
 class MultipleChoiceQuestion(VariableQuestion):
     choices = JSONField()
     visible_distractor_count = models.IntegerField()
 
-    def get_rendered_choices(self, user):
+    grader = MultipleChoiceGrader()
+
+    def get_rendered_choices(self):
         choices = json.loads(self.choices) if type(self.choices) == str else self.choices
 
         res = {}
         for key, val in choices.items():
-            res[key] = render_text(val, self.get_variables(user))
+            res[key] = render_text(val, self.get_variables())
         return res
-
-    def get_grader(self, user):
-        return MultipleChoiceGrader(self, user)
 
 
 class CheckboxQuestion(MultipleChoiceQuestion):
@@ -139,13 +147,12 @@ class CheckboxQuestion(MultipleChoiceQuestion):
 class JavaQuestion(Question):
     test_cases = JSONField()
 
-    def is_allowed_to_submit(self, user):
-        if not user.is_authenticated:
-            return False
-        return len(list(filter(lambda s : not s.is_compile_error, list(user.submissions.filter(question=self))))) < self.max_submission_allowed
+    grader = JavaGrader()
 
-    def get_grader(self, user):
-        return JavaGrader(self, user)
+    def is_allowed_to_submit(self):
+        if not self.user.is_authenticated:
+            return False
+        return len(list(filter(lambda s : not s.is_compile_error, list(self.user.submissions.filter(question=self))))) < self.max_submission_allowed
 
 
 class Submission(PolymorphicModel):
@@ -159,6 +166,10 @@ class Submission(PolymorphicModel):
     grade = models.FloatField(default=0)
     is_correct = models.BooleanField(default=False)
     is_partially_correct = models.BooleanField(default=False)
+    finalized = models.BooleanField(default=False)
+
+    show_answer = True
+    show_detail = False
 
     def get_description(self):
         return "{}Solved Question <a href='{}'>{}</a>".format("Partially " if self.is_partially_correct else "", reverse_lazy('course:question_view', kwargs={'pk':self.question.pk}), self.question.title)
@@ -189,13 +200,20 @@ class Submission(PolymorphicModel):
 
         return "Wrong"
 
-    def calculate_grade(self):
-        self.is_correct, self.grade = self.question.get_grader(self.user).grade(self)
+    def calculate_grade(self, commit=True):
+        if self.finalized:
+            return
+
+        self.is_correct, self.grade = self.question.grader.grade(self)
 
         if not self.is_correct and self.grade > 0:
             self.is_partially_correct = True
 
-        self.save()
+        if not self.in_progress:
+            self.finalized = True
+
+        if commit:
+            self.save()
 
     @property
     def get_grade(self):
@@ -204,6 +222,10 @@ class Submission(PolymorphicModel):
         return self.grade
 
     def save(self, *args, **kwargs):
+
+        if not self.finalized:
+            self.calculate_grade(commit=False)
+
         if not self.in_progress and self.is_correct or self.is_partially_correct:
             user_question_junction = get_user_question_junction(self.user, self.question)
             received_tokens = self.grade * get_token_value(self.question.category, self.question.difficulty)
@@ -221,16 +243,15 @@ class Submission(PolymorphicModel):
 class MultipleChoiceSubmission(Submission):
     @property
     def answer_display(self):
-        if isinstance(self.question, CheckboxQuestion):
-            return self.answer
-        if isinstance(self.question, MultipleChoiceQuestion):
-            return self.question.get_rendered_choices(self.user).get(self.answer, 'Unknown')
-        return self.answer
+        return self.question.get_rendered_choices().get(self.answer, 'Unknown')
 
 
 class CodeSubmission(Submission):
     tokens = JSONField()
     results = JSONField()
+
+    show_answer = False
+    show_detail = True
 
     @property
     def is_compile_error(self):
@@ -253,7 +274,7 @@ class CodeSubmission(Submission):
         return False
 
     def submit(self):
-        self.question.get_grader(self.user).submit(self)
+        self.question.grader.submit(self)
 
 
 class JavaSubmission(CodeSubmission):

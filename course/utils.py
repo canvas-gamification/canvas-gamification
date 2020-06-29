@@ -60,8 +60,8 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
         choices[choice_label] = answer_text
         choice_label = increment_char(choice_label)
 
-        for text in distractors:
-            choices[choice_label] = text
+        for distractor in distractors:
+            choices[choice_label] = distractor
             choice_label = increment_char(choice_label)
 
     if not is_verified:
@@ -71,6 +71,7 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
         max_submission_allowed = len(choices)
 
     from course.models.models import MultipleChoiceQuestion
+
     if pk:
         MultipleChoiceQuestion.objects.filter(pk=pk).update(title=title, text=text, answer=answer,
                                                             max_submission_allowed=max_submission_allowed,

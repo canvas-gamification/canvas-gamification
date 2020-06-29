@@ -4,15 +4,15 @@ from course.fields import JSONField
 from django.db import models
 import base64
 
+
 class ParsonsQuestion(VariableQuestion):
     lines = JSONField(default='[]')
     junit_template = models.TextField()
 
+    grader = ParsonsGrader()
+
     def get_lines(self):
         return self.lines
-
-    def get_grader(self, user):
-        return ParsonsGrader(self, user)
 
 
 class ParsonsSubmission(CodeSubmission):

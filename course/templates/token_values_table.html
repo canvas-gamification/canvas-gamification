@@ -25,7 +25,7 @@
                         <td>
                             <label>
                                 <input class="form-control" name="values[]" type="number"
-                                       value="{{ values|return_item:forloop.parentloop.counter0 | return_item:forloop.counter0 }}">
+                                       value="{{ values|return_item:forloop.parentloop.counter0 | return_item:forloop.counter0 | floatformat:0}}">
                             </label>
                         </td>
                     {% endfor %}

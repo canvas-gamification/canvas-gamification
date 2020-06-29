@@ -35,12 +35,13 @@ class ProblemCreateForm(forms.ModelForm):
         })
     )
 
-
-class ChoiceProblemCreateForm(ProblemCreateForm):
     variables = JSONFormField(
         initial='[{}]',
         widget=forms.HiddenInput(),
     )
+
+
+class ChoiceProblemCreateForm(ProblemCreateForm):
 
     choices = JSONFormField(
         widget=forms.HiddenInput(),
@@ -91,11 +92,10 @@ class CheckboxQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = CheckboxQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'visible_distractor_count')
+            'title', 'difficulty', 'category', 'text', 'visible_distractor_count', 'variables')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
 
     visible_distractor_count = forms.ChoiceField(
         choices=[('999', 'All'), ('2', '2'), ('3', '3')],
@@ -104,7 +104,6 @@ class CheckboxQuestionForm(ChoiceProblemCreateForm):
     )
 
     answer = None
-    variables = None
     choices = None
 
 
@@ -112,7 +111,7 @@ class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = MultipleChoiceQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'visible_distractor_count')
+            'title', 'difficulty', 'category', 'text', 'visible_distractor_count', 'variables')
 
     visible_distractor_count = forms.ChoiceField(
         choices=[('999', 'All'), ('2', '2'), ('3', '3')],
@@ -120,7 +119,6 @@ class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
         widget=RadioInlineSelect()
     )
 
-    variables = None
     choices = None
     answer = None
 
@@ -129,7 +127,7 @@ class JavaQuestionForm(ProblemCreateForm):
     class Meta:
         model = JavaQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'test_cases')
+            'title', 'difficulty', 'category', 'text', 'test_cases', 'variables')
         exclude = ('answer',)
 
     answer = None

@@ -13,16 +13,18 @@
 {% endfor %}
 
 {% for field in form.visible_fields %}
-    <div class="form-group">
-        {{ field.label_tag }}
-        {{ field }}
-        {% for error in field.errors %}
-            <div class="invalid-feedback">
-                {{ error|escape }}
-            </div>
-        {% endfor %}
-        {% if field.help_text %}
-            <div class="info alert-info alert my-1 px-0">{{ field.help_text|safe }} </div>
-        {% endif %}
-    </div>
+    {% if field != form.consent %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% for error in field.errors %}
+                <div class="invalid-feedback">
+                    {{ error|escape }}
+                </div>
+            {% endfor %}
+            {% if field.help_text %}
+                <div class="info alert-info alert my-1 px-0">{{ field.help_text|safe }} </div>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endfor %}

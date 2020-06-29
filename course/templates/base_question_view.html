@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block script %}
+    <link rel="stylesheet" href="{% static 'highlight/9.18.1/styles/default.min.css' %}"/>
+    <script src="{% static 'highlight/9.18.1/highlight.min.js' %}"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="{% static 'dragula/dragula.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'dragula/dragula.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="card">
+        <div class="card-header"><h1>{{ question.title }}</h1></div>
+        <div class="card-body">
+            <div>{% autoescape off %}{{ question.get_rendered_text }}{% endautoescape %}</div>
+        </div>
+    </div>
+
+    <div class="card my-1">
+        <div class="card-body">
+            {% if question.is_allowed_to_submit %}
+                {% block submit_form %}
+                {% endblock %}
+            {% else %}
+                {% if user.is_authenticated %}
+                    <p>Maximum number of submissions reached</p>
+                {% else %}
+                    <p>Please log in to submit</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <h2>My Past Submissions</h2>
+    {% include 'past_submissions_snippet.html' %}
+
+{% endblock %}

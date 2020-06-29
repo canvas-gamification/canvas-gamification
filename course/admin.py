@@ -5,7 +5,7 @@ from django.contrib import admin
 from djrichtextfield.widgets import RichTextWidget
 
 from course.models.models import Question, VariableQuestion, MultipleChoiceQuestion, Submission, QuestionCategory, \
-    CheckboxQuestion, JavaSubmission, JavaQuestion, TokenValue
+    CheckboxQuestion, JavaSubmission, JavaQuestion, TokenValue, MultipleChoiceSubmission
 from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
 
 
@@ -45,6 +45,7 @@ admin.site.register(JavaQuestion, QuestionAdmin)
 admin.site.register(ParsonsQuestion, QuestionAdmin)
 
 admin.site.register(Submission, SubmissionAdmin)
+admin.site.register(MultipleChoiceSubmission, SubmissionAdmin)
 admin.site.register(JavaSubmission, SubmissionAdmin)
 admin.site.register(ParsonsSubmission, SubmissionAdmin)
 

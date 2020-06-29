@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import get_user_model, login, views as auth_views
+from django.contrib.auth import login, views as auth_views
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import render
@@ -11,6 +11,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.views.generic import UpdateView
 
 from accounts.forms import SignupForm, UserProfileForm, LoginForm, PasswordChangeForm
+from accounts.models import MyUser
 from accounts.utils.email_functions import send_activation_email, account_activation_token_generator
 from canvas_gamification import settings
 
@@ -41,8 +42,8 @@ def signup_view(request):
 def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
-        user = get_user_model().objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+        user = MyUser.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, MyUser.DoesNotExist):
         user = None
     if user is not None and account_activation_token_generator.check_token(user, token):
         user.is_active = True
@@ -57,16 +58,17 @@ def activate(request, uidb64, token):
 
 
 class UserProfileView(UpdateView):
-    model = get_user_model()
+    model = MyUser
     template_name = 'accounts/profile.html'
     form_class = UserProfileForm
+    success_url = None
 
     def get_object(self, queryset=None):
         return self.request.user
 
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Profile Updated Successfully!")
-        return reverse_lazy('accounts:profile')
+        return reverse_lazy('homepage')
 
 
 class PasswordChangeView(auth_views.PasswordChangeView):
@@ -104,8 +106,8 @@ def password_reset_view(request, uidb64, token):
     def get_user():
         try:
             uid = force_text(urlsafe_base64_decode(uidb64))
-            user = get_user_model().objects.get(pk=uid)
-        except(TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+            user = MyUser.objects.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, MyUser.DoesNotExist):
             user = None
         if user is not None and default_token_generator.check_token(user, token):
             return user

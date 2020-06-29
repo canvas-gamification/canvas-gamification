@@ -5,10 +5,6 @@ from canvas_gamification.settings import JUDGE0_PASSWORD, JUDGE0_HOST
 
 class Grader:
 
-    def __init__(self, question, user):
-        self.question = question
-        self.user = user
-
     def grade(self, submission):
         raise NotImplementedError()
 
@@ -16,11 +12,11 @@ class Grader:
 class MultipleChoiceGrader(Grader):
 
     def grade(self, submission):
-        if submission.answer != self.question.answer:
+        if submission.answer != submission.question.answer:
             return False, 0
         else:
-            number_of_choices = len(self.question.choices.items())
-            number_of_submissions = self.user.submissions.filter(question=self.question).exclude(
+            number_of_choices = len(submission.question.choices.items())
+            number_of_submissions = submission.user.submissions.filter(question=submission.question).exclude(
                 pk=submission.pk).count()
 
             return True, 1 - number_of_submissions / (number_of_choices - 1)
@@ -38,7 +34,7 @@ class JavaGrader(Grader):
         if submission.in_progress:
             return False, 0
 
-        total_test_cases = len(self.question.test_cases)
+        total_test_cases = len(submission.question.test_cases)
         correct_test_cases = 0
 
         for i, result in enumerate(submission.results):
@@ -50,22 +46,18 @@ class JavaGrader(Grader):
     def evaluate(self, submission):
         submission.results = []
 
-        for i, test_case in enumerate(self.question.test_cases):
+        for i, test_case in enumerate(submission.question.test_cases):
             token = submission.tokens[i]
             r = requests.get(
                 "{}/submissions/{}?base64_encoded=false".format(self.BASE_URL, token),
                 headers=self.HEADERS,
             )
             submission.results.append(r.json())
-        if not submission.in_progress:
-            submission.calculate_grade()
-        else:
-            submission.save()
 
     def submit(self, submission):
         submission.tokens = []
 
-        for test_case in self.question.test_cases:
+        for test_case in submission.question.test_cases:
             r = requests.post(
                 "{}/submissions".format(self.BASE_URL),
                 data={
@@ -89,7 +81,7 @@ class ParsonsGrader(Grader):
     BASE_URL = JUDGE0_HOST
 
     def get_source_code(self, submission):
-        return self.question.junit_template.replace("{{code}}", submission.code)
+        return submission.question.junit_template.replace("{{code}}", submission.code)
 
     def grade(self, submission):
         if submission.in_progress:
@@ -108,11 +100,6 @@ class ParsonsGrader(Grader):
             headers=self.HEADERS,
         )
         submission.results.append(r.json())
-
-        if not submission.in_progress:
-            submission.calculate_grade()
-        else:
-            submission.save()
 
     def submit(self, submission):
         submission.tokens = []

@@ -37,7 +37,7 @@ def parsons_question_view(request, question):
             'question': question,
             'submissions': question.submissions.filter(
                 user=request.user).all() if request.user.is_authenticated else ParsonsSubmission.objects.none(),
-            'submission_allowed': question.is_allowed_to_submit(request.user),
+            'submission_class': ParsonsSubmission,
         })
 
     if request.method == "POST":
@@ -46,7 +46,7 @@ def parsons_question_view(request, question):
 
         if not request.user.is_authenticated:
             messages.add_message(request, messages.ERROR, 'You need to be logged in to submit answers')
-        elif not question.is_allowed_to_submit(request.user):
+        elif not question.is_allowed_to_submit:
             messages.add_message(request, messages.ERROR, 'Maximum number of submissions reached')
         elif request.user.submissions.filter(question=question, code=code).exists():
             messages.add_message(request, messages.INFO, 'You have already submitted this answer!')
@@ -57,6 +57,7 @@ def parsons_question_view(request, question):
             submission.question = question
 
             submission.submit()
+            submission.save()
 
             messages.add_message(request, messages.INFO, "Your Code has been submitted and being evaluated!")
 

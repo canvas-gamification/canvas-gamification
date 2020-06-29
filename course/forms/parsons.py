@@ -11,7 +11,7 @@ class ParsonsQuestionForm(ProblemCreateForm):
     class Meta:
         model = ParsonsQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'lines', 'junit_template')
+            'title', 'difficulty', 'category', 'text', 'lines', 'junit_template', 'variables')
         exclude = ('answer',)
 
     answer = None

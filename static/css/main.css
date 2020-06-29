@@ -17,3 +17,7 @@ label.required:before {
     color: red;
     content: "* ";
 }
+
+.no-text-wrap-table td {
+    white-space: nowrap;
+}

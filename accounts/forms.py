@@ -1,6 +1,7 @@
 import requests
 from django import forms
-from django.contrib.auth import password_validation, get_user_model, forms as auth_forms
+from django.contrib.auth import password_validation, forms as auth_forms
+from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 from accounts.models import MyUser
@@ -75,9 +76,16 @@ class SignupForm(auth_forms.UserCreationForm):
         strip=False,
     )
 
+    consent = forms.BooleanField(
+        label="",
+        widget=forms.CheckboxInput(attrs={'class': 'custom-control-input'}),
+        required=True,
+    )
+
     def clean(self):
         data = super().clean()
-        data['username'] = data['email']
+        if 'email' in data:
+            data['username'] = data['email']
         return data
 
     def is_valid(self):
@@ -101,19 +109,8 @@ class SignupForm(auth_forms.UserCreationForm):
 
 class UserProfileForm(auth_forms.UserChangeForm):
     class Meta:
-        model = get_user_model()
-        fields = ['username', 'student_number', 'first_name', 'last_name', 'email']
-
-    username = auth_forms.UsernameField(
-        label=_("Username"),
-        strip=False,
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-    )
-
-    student_number = forms.CharField(
-        label=_("Student Number"),
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-    )
+        model = MyUser
+        fields = ['first_name', 'last_name', 'email']
 
     email = forms.EmailField(
         label=_("Email"),
@@ -132,6 +129,11 @@ class UserProfileForm(auth_forms.UserChangeForm):
     )
 
     password = None
+
+    def is_valid(self):
+        valid = super().is_valid()
+        add_bootstrap_validation(self)
+        return valid
 
 
 class PasswordChangeForm(auth_forms.PasswordChangeForm):
