@@ -157,7 +157,7 @@ DJRICHTEXTFIELD_CONFIG = {
             'format_tags': 'p;h1;h2;h3',
         },
         'advanced': {
-            'extraPlugins': ['codesnippet', 'codeTag']
+            'extraPlugins': ['codesnippet', 'codeTag', 'base64image']
         },
     }
 }
