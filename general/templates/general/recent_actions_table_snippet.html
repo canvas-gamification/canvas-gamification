@@ -4,20 +4,20 @@
     <div class="container-fluid">
         <table class="table table-bordered table-striped table-hover no-text-wrap-table">
             <thead>
-            <tr class="d-flex">
-                <th class="col-9">Description</th>
-                <th class="col-1">Token&nbsp;Change</th>
-                <th class="col-1">Date</th>
-                <th class="col-1">Status</th>
+            <tr>
+                <th scope="col">Description</th>
+                <th scope="col">Token&nbsp;Change</th>
+                <th scope="col">Date</th>
+                <th scope="col">Status</th>
             </tr>
             </thead>
             <tbody>
             {% for action in user.actions.all reversed %}
-                <tr class="d-flex">
-                    <td class="col-9">{% autoescape off %}{{ action.description }}{% endautoescape %}</td>
-                    <td class="col-1">{{ action.token_change | token_change_format }}</td>
-                    <td class="col-1">{{ action.time_created }}</td>
-                    <td class="col-1">{{ action.status }}</td>
+                <tr>
+                    <td>{% autoescape off %}{{ action.description }}{% endautoescape %}</td>
+                    <td>{{ action.token_change | token_change_format }}</td>
+                    <td>{{ action.time_created }}</td>
+                    <td>{{ action.status }}</td>
                 </tr>
             {% endfor %}
             </tbody>
