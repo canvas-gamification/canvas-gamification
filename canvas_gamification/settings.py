@@ -157,7 +157,8 @@ DJRICHTEXTFIELD_CONFIG = {
             'format_tags': 'p;h1;h2;h3',
         },
         'advanced': {
-            'extraPlugins': ['codesnippet', 'codeTag', 'base64image']
+            'extraPlugins': ['codesnippet', 'codeTag', 'base64image'],
+            'mathJaxLib': '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML',
         },
     }
 }
