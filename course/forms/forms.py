@@ -1,10 +1,11 @@
 from django import forms
 from django.forms import TextInput, widgets
 from djrichtextfield.widgets import RichTextWidget
-from jsoneditor.forms import JSONEditor
-from jsonfield.forms import JSONFormField
+from course.widgets import JSONEditor
+from course.fields import JSONFormField
 
-from course.models.models import MultipleChoiceQuestion, DIFFICULTY_CHOICES, CheckboxQuestion, JavaQuestion, QuestionCategory
+from course.models.models import MultipleChoiceQuestion, DIFFICULTY_CHOICES, CheckboxQuestion, JavaQuestion, \
+    QuestionCategory
 from course.widgets import RadioInlineSelect
 
 
@@ -42,7 +43,6 @@ class ProblemCreateForm(forms.ModelForm):
 
 
 class ChoiceProblemCreateForm(ProblemCreateForm):
-
     choices = JSONFormField(
         widget=forms.HiddenInput(),
         initial='{}',
@@ -133,7 +133,25 @@ class JavaQuestionForm(ProblemCreateForm):
     answer = None
 
     test_cases = JSONFormField(
-        widget=JSONEditor(),
+        widget=JSONEditor(schema={
+            "title": "Test Cases",
+            "type": "array",
+            "format": "table",
+            "items": {
+                "type": "object",
+                "title": "Test Case",
+                "properties": {
+                    "input": {
+                        "type": "string",
+                        "description": "Standard input of this test case."
+                    },
+                    "output": {
+                        "type": "string",
+                        "description": "Expected output of this test case"
+                    }
+                }
+            }
+        }),
         help_text="""
         It should be an array if test_cases each element need to have input and outpur.
         A valid example:

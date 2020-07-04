@@ -7,3 +7,8 @@ class JSONField(jsonfield.JSONField):
         if value is None:
             return None
         return json.loads(value, **self.decoder_kwargs)
+
+
+class JSONFormField(jsonfield.fields.JSONFormField):
+    def prepare_value(self, value):
+        return str(value).replace("'", "\"")
