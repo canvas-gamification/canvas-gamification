@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 
-from course.forms.forms import JavaQuestionForm
+from course.forms.java import JavaQuestionForm
 from course.models.models import JavaSubmission
 
 

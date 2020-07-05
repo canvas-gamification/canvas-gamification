@@ -1,0 +1,9 @@
+{
+  "title": "Lines",
+  "type": "array",
+  "format": "table",
+  "items": {
+    "type": "string",
+    "title": "Line"
+  }
+}

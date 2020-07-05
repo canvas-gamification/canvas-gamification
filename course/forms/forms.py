@@ -1,12 +1,11 @@
 from django import forms
 from django.forms import TextInput, widgets
+from django.template.loader import render_to_string
 from djrichtextfield.widgets import RichTextWidget
-from course.widgets import JSONEditor
 from course.fields import JSONFormField
-
-from course.models.models import MultipleChoiceQuestion, DIFFICULTY_CHOICES, CheckboxQuestion, JavaQuestion, \
-    QuestionCategory
-from course.widgets import RadioInlineSelect
+from django.contrib.staticfiles.storage import staticfiles_storage
+from course.models.models import DIFFICULTY_CHOICES, QuestionCategory
+from course.widgets import JSONEditor
 
 
 class ProblemCreateForm(forms.ModelForm):
@@ -37,15 +36,9 @@ class ProblemCreateForm(forms.ModelForm):
     )
 
     variables = JSONFormField(
-        initial='[{}]',
-        widget=forms.HiddenInput(),
-    )
-
-
-class ChoiceProblemCreateForm(ProblemCreateForm):
-    choices = JSONFormField(
-        widget=forms.HiddenInput(),
-        initial='{}',
+        initial='[]',
+        label='',
+        widget=JSONEditor(schema=render_to_string('schemas/variables.json')),
     )
 
 
@@ -86,97 +79,3 @@ class ProblemFilterForm(forms.Form):
             'class': 'form-control',
         })
     )
-
-
-class CheckboxQuestionForm(ChoiceProblemCreateForm):
-    class Meta:
-        model = CheckboxQuestion
-        fields = (
-            'title', 'difficulty', 'category', 'text', 'visible_distractor_count', 'variables')
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    visible_distractor_count = forms.ChoiceField(
-        choices=[('999', 'All'), ('2', '2'), ('3', '3')],
-        initial='All',
-        widget=RadioInlineSelect()
-    )
-
-    answer = None
-    choices = None
-
-
-class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
-    class Meta:
-        model = MultipleChoiceQuestion
-        fields = (
-            'title', 'difficulty', 'category', 'text', 'visible_distractor_count', 'variables')
-
-    visible_distractor_count = forms.ChoiceField(
-        choices=[('999', 'All'), ('2', '2'), ('3', '3')],
-        initial='All',
-        widget=RadioInlineSelect()
-    )
-
-    choices = None
-    answer = None
-
-
-class JavaQuestionForm(ProblemCreateForm):
-    class Meta:
-        model = JavaQuestion
-        fields = (
-            'title', 'difficulty', 'category', 'text', 'test_cases', 'variables')
-        exclude = ('answer',)
-
-    answer = None
-
-    test_cases = JSONFormField(
-        widget=JSONEditor(schema={
-            "title": "Test Cases",
-            "type": "array",
-            "format": "table",
-            "items": {
-                "type": "object",
-                "title": "Test Case",
-                "properties": {
-                    "input": {
-                        "type": "string",
-                        "description": "Standard input of this test case."
-                    },
-                    "output": {
-                        "type": "string",
-                        "description": "Expected output of this test case"
-                    }
-                }
-            }
-        }),
-        help_text="""
-        It should be an array if test_cases each element need to have input and outpur.
-        A valid example:
-        [
-            {
-                "input": "2",
-                "output": "Even"
-            },
-            {
-                "input": "3",
-                "output": "Odd"
-            }
-        ]
-        """
-    )
-
-
-class ChoiceForm(forms.Form):
-    text = forms.CharField(
-        label='Answer',
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-        })
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.empty_permitted = False

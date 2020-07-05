@@ -1,0 +1,19 @@
+{
+  "title": "Test Cases",
+  "type": "array",
+  "format": "table",
+  "items": {
+    "type": "object",
+    "title": "Test Case",
+    "properties": {
+      "input": {
+        "type": "string",
+        "description": "Standard input of this test case."
+      },
+      "output": {
+        "type": "string",
+        "description": "Expected output of this test case"
+      }
+    }
+  }
+}

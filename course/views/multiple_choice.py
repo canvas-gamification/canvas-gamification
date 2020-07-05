@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.forms import formset_factory
 from django.shortcuts import render
 
-from course.forms.forms import MultipleChoiceQuestionForm, ChoiceForm
+from course.forms.multiple_choice import MultipleChoiceQuestionForm, ChoiceForm
 from course.models.models import MultipleChoiceSubmission
 from course.utils import create_multiple_choice_question, QuestionCreateException, get_user_question_junction
 

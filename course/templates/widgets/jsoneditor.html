@@ -5,17 +5,29 @@
 </textarea>
 
 <script type="text/javascript">
-    const element = document.getElementById('{{ widget.name }}_json_editor');
-    const textarea = document.getElementById('{{ widget.attrs.id }}');
-    // Initialize the editor with a JSON schema
-    var editor = new JSONEditor(element, {
-        'schema': {% autoescape off %}{{ schema }}{% endautoescape %},
-        'theme': 'bootstrap4',
-    });
+    {
+        const textarea = document.getElementById('{{ widget.attrs.id }}');
+        const editor = new JSONEditor(document.getElementById('{{ widget.name }}_json_editor'), {
+            'schema': {% autoescape off %}{{ schema }}{% endautoescape %},
+            'theme': 'bootstrap4',
+            'no_additional_properties': true,
+            'disable_properties': true,
+            'disable_collapse': true,
+            'disable_array_reorder': true,
+            'disable_array_delete_all_rows': true,
+            'disable_array_delete_last_row': true,
+            'disable_edit_json': true,
+        });
 
-    editor.setValue(JSON.parse(textarea.innerText));
+        editor.on('change', () => {
+            textarea.innerText = JSON.stringify(editor.getValue());
+        })
 
-    editor.on('change', () => {
-        textarea.innerText = JSON.stringify(editor.getValue());
-    })
+        try {
+            editor.setValue(JSON.parse(textarea.innerText));
+        } catch (SyntaxError) {
+            console.log("Invalid initial");
+        }
+    }
+
 </script>

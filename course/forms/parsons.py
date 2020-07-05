@@ -1,5 +1,7 @@
 from django import forms
 from django.forms import Textarea
+from django.template.loader import render_to_string
+
 from course.widgets import JSONEditor
 from course.fields import JSONFormField
 
@@ -17,15 +19,7 @@ class ParsonsQuestionForm(ProblemCreateForm):
     answer = None
 
     lines = JSONFormField(
-        widget=JSONEditor(schema={
-            "title": "Lines",
-            "type": "array",
-            "format": "table",
-            "items": {
-                "type": "string",
-                "title": "Line"
-            }
-        }),
+        widget=JSONEditor(schema=render_to_string('schemas/lines.json')),
         help_text="""
             It should be an array of lines.
             A valid example:

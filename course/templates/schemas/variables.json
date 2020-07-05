@@ -1,0 +1,136 @@
+{
+  "type": "array",
+  "title": "Variables",
+  "options": {
+    "keep_oneof_values": false
+  },
+  "items": {
+    "type": "object",
+    "oneOf": [
+    {
+      "title": "Integer",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "min",
+        "max"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "int"
+          ],
+          "options": {
+            "hidden": true
+          }
+        },
+        "min": {
+          "type": "number",
+          "title": "Minimum Value"
+        },
+        "max": {
+          "type": "number",
+          "title": "Maximum Value"
+        }
+      },
+      "type": "object",
+      "options": {
+        "keep_oneof_values": false
+      }
+    },
+    {
+      "title": "Float",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "min",
+        "max",
+        "precision"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "float"
+          ],
+          "options": {
+            "hidden": true
+          }
+        },
+        "min": {
+          "type": "number",
+          "title": "Minimum Value"
+        },
+        "max": {
+          "type": "number",
+          "title": "Maximum Value"
+        },
+        "precision": {
+          "type": "number",
+          "title": "Number of digits after the decimal point"
+        }
+      },
+      "type": "object",
+      "options": {
+        "keep_oneof_values": false
+      }
+    },
+    {
+      "title": "Enum",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "values"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "enum"
+          ],
+          "options": {
+            "hidden": true
+          }
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "type": "object",
+      "options": {
+        "keep_oneof_values": false
+      }
+    },
+    {
+      "title": "Expression",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "expression"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "expression"
+          ],
+          "options": {
+            "hidden": true
+          }
+        },
+        "expression": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "options": {
+        "keep_oneof_values": false
+      }
+    }
+  ]
+  }
+}

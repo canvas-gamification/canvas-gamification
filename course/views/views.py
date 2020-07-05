@@ -6,8 +6,9 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
 from accounts.utils.decorators import show_login
-from course.forms.forms import ProblemFilterForm, CheckboxQuestionForm, \
-    JavaQuestionForm, ChoiceForm, MultipleChoiceQuestionForm
+from course.forms.forms import ProblemFilterForm
+from course.forms.java import JavaQuestionForm
+from course.forms.multiple_choice import CheckboxQuestionForm, MultipleChoiceQuestionForm, ChoiceForm
 from course.models.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
     QuestionCategory, DIFFICULTY_CHOICES, TokenValue, Submission
 from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
