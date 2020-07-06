@@ -3,7 +3,7 @@ from django.forms import Textarea
 from django.template.loader import render_to_string
 
 from course.widgets import JSONEditor
-from course.fields import JSONFormField
+from course.fields import JSONFormField, JSONLineFormField
 
 from course.forms.forms import ProblemCreateForm
 from course.models.parsons_question import ParsonsQuestion
@@ -18,18 +18,11 @@ class ParsonsQuestionForm(ProblemCreateForm):
 
     answer = None
 
-    lines = JSONFormField(
-        widget=JSONEditor(schema=render_to_string('schemas/lines.json')),
+    lines = JSONLineFormField(
+        widget=forms.Textarea(attrs={'class': 'form-control'}),
         help_text="""
-            It should be an array of lines.
-            A valid example:
-            [
-                "static class Calculator {",
-                "public int add(int x, int y) {",
-                "return x + y;",
-                "}",
-                "}"
-            ]
+            Paste the solution here. Possibly add extra lines at the end.
+            Lines will be extracted and shuffled.
             """
     )
 
