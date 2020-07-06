@@ -13,7 +13,8 @@
       "required": [
         "type",
         "min",
-        "max"
+        "max",
+        "name"
       ],
       "properties": {
         "type": {
@@ -25,12 +26,15 @@
             "hidden": true
           }
         },
+        "name": {
+          "type": "string"
+        },
         "min": {
-          "type": "number",
+          "type": "string",
           "title": "Minimum Value"
         },
         "max": {
-          "type": "number",
+          "type": "string",
           "title": "Maximum Value"
         }
       },
@@ -46,7 +50,8 @@
         "type",
         "min",
         "max",
-        "precision"
+        "precision",
+        "name"
       ],
       "properties": {
         "type": {
@@ -58,12 +63,15 @@
             "hidden": true
           }
         },
+        "name": {
+          "type": "string"
+        },
         "min": {
-          "type": "number",
+          "type": "string",
           "title": "Minimum Value"
         },
         "max": {
-          "type": "number",
+          "type": "string",
           "title": "Maximum Value"
         },
         "precision": {
@@ -81,7 +89,8 @@
       "additionalProperties": false,
       "required": [
         "type",
-        "values"
+        "values",
+        "name"
       ],
       "properties": {
         "type": {
@@ -92,6 +101,9 @@
           "options": {
             "hidden": true
           }
+        },
+        "name": {
+          "type": "string"
         },
         "values": {
           "type": "array",
@@ -110,7 +122,8 @@
       "additionalProperties": false,
       "required": [
         "type",
-        "expression"
+        "expression",
+        "name"
       ],
       "properties": {
         "type": {
@@ -121,6 +134,9 @@
           "options": {
             "hidden": true
           }
+        },
+        "name": {
+          "type": "string"
         },
         "expression": {
           "type": "string"

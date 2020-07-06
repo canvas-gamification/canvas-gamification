@@ -1,9 +1,8 @@
 import json
 import random
-import requests
-from django.contrib.auth.models import AnonymousUser
+import math
 
-from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import AnonymousUser
 from django.db import models
 from django.urls import reverse_lazy
 from djrichtextfield.models import RichTextField
@@ -38,7 +37,7 @@ DIFFICULTY_CHOICES = [
 def render_text(text, variables):
     text = str(text)
     for variable, value in variables.items():
-        text = text.replace("{{"+variable+"}}", str(value))
+        text = text.replace("{{" + variable + "}}", str(value))
     return text
 
 
@@ -116,10 +115,33 @@ class VariableQuestion(Question):
 
     def get_variables(self):
         random.seed(self.user.pk or 0)
-        variables = json.loads(self.variables) if type(self.variables) == str else self.variables
-        size = len(variables)
-        p = random.randrange(0, size)
-        return variables[p]
+        variables = {}
+
+        if type(self.variables) != list:
+            return variables
+
+        for attrs in self.variables:
+            vtype = attrs.get('type', None)
+            vmin = eval(render_text(attrs.get('min', 0), variables))
+            vmax = eval(render_text(attrs.get('max', 1), variables))
+            precision = eval(render_text(attrs.get('precision'), variables))
+            exp = render_text(attrs.get('expression', ''), variables)
+            values = [render_text(x, variables) for x in attrs.get('values', [])]
+
+            if vtype == 'int':
+                variables[attrs['name']] = random.randrange(vmin, vmax + 1)
+            if vtype == 'float':
+                value = random.uniform(vmin, vmax + 1)
+                precision = 10**precision
+                value = math.floor(value*precision)/precision
+                variables[attrs['name']] = value
+            if vtype == 'enum':
+                p = random.randrange(0, len(values))
+                variables[attrs['name']] = values[p]
+            if vtype == 'expression':
+                variables[attrs['name']] = eval(exp)
+
+        return variables
 
     def get_rendered_text(self):
         return render_text(self.text, self.get_variables())
@@ -152,7 +174,8 @@ class JavaQuestion(Question):
     def is_allowed_to_submit(self):
         if not self.user.is_authenticated:
             return False
-        return len(list(filter(lambda s : not s.is_compile_error, list(self.user.submissions.filter(question=self))))) < self.max_submission_allowed
+        return len(list(filter(lambda s: not s.is_compile_error,
+                               list(self.user.submissions.filter(question=self))))) < self.max_submission_allowed
 
 
 class Submission(PolymorphicModel):
@@ -172,7 +195,10 @@ class Submission(PolymorphicModel):
     show_detail = False
 
     def get_description(self):
-        return "{}Solved Question <a href='{}'>{}</a>".format("Partially " if self.is_partially_correct else "", reverse_lazy('course:question_view', kwargs={'pk':self.question.pk}), self.question.title)
+        return "{}Solved Question <a href='{}'>{}</a>".format("Partially " if self.is_partially_correct else "",
+                                                              reverse_lazy('course:question_view',
+                                                                           kwargs={'pk': self.question.pk}),
+                                                              self.question.title)
 
     @property
     def status_color(self):
