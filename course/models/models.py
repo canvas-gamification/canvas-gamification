@@ -129,7 +129,7 @@ class VariableQuestion(Question):
             values = [render_text(x, variables) for x in attrs.get('values', [])]
 
             if vtype == 'int':
-                variables[attrs['name']] = random.randrange(vmin, vmax + 1)
+                variables[attrs['name']] = random.randrange(int(vmin), int(vmax) + 1)
             if vtype == 'float':
                 value = random.uniform(vmin, vmax + 1)
                 precision = 10**precision
