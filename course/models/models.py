@@ -11,7 +11,8 @@ from polymorphic.models import PolymorphicModel
 from accounts.models import MyUser
 from course.fields import JSONField
 from course.grader import MultipleChoiceGrader, JavaGrader
-from course.utils import get_user_question_junction, get_token_value
+from course.utils.utils import get_user_question_junction, get_token_value
+from course.utils.variables import render_text, generate_variables
 from general.models import Action
 
 
@@ -32,13 +33,6 @@ DIFFICULTY_CHOICES = [
     ("NORMAL", "MEDIUM"),
     ("HARD", "HARD"),
 ]
-
-
-def render_text(text, variables):
-    text = str(text)
-    for variable, value in variables.items():
-        text = text.replace("{{" + variable + "}}", str(value))
-    return text
 
 
 class TokenValue(models.Model):
@@ -114,33 +108,9 @@ class VariableQuestion(Question):
     variables = JSONField()
 
     def get_variables(self):
-        random.seed(self.user.pk or 0)
-        variables = {}
-
         if type(self.variables) != list:
-            return variables
-
-        for attrs in self.variables:
-            vtype = attrs.get('type', None)
-            vmin = eval(render_text(attrs.get('min', 0), variables))
-            vmax = eval(render_text(attrs.get('max', 1), variables))
-            precision = eval(render_text(attrs.get('precision'), variables))
-            exp = render_text(attrs.get('expression', ''), variables)
-            values = [render_text(x, variables) for x in attrs.get('values', [])]
-
-            if vtype == 'int':
-                variables[attrs['name']] = random.randrange(int(vmin), int(vmax) + 1)
-            if vtype == 'float':
-                value = random.uniform(vmin, vmax + 1)
-                precision = 10**precision
-                value = math.floor(value*precision)/precision
-                variables[attrs['name']] = value
-            if vtype == 'enum':
-                p = random.randrange(0, len(values))
-                variables[attrs['name']] = values[p]
-            if vtype == 'expression':
-                variables[attrs['name']] = eval(exp)
-
+            return {}
+        variables, errors = generate_variables(self.variables, self.user)
         return variables
 
     def get_rendered_text(self):

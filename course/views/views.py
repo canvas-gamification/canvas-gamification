@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import user_passes_test
-from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.forms import formset_factory
 from django.http import Http404
@@ -12,7 +11,7 @@ from course.forms.multiple_choice import CheckboxQuestionForm, MultipleChoiceQue
 from course.models.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
     QuestionCategory, DIFFICULTY_CHOICES, TokenValue, Submission
 from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
-from course.utils import get_token_value
+from course.utils.utils import get_token_value
 from course.views.java import _java_question_create_view, _java_question_view, _java_submission_detail_view, \
     _java_question_edit_view
 from course.views.multiple_choice import _multiple_choice_question_create_view, _multiple_choice_question_view, \
