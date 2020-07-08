@@ -1,3 +1,6 @@
+{% if doc_url %}
+<a href="{{ doc_url }}">See documentation</a>
+{% endif %}
 <div id='{{ widget.name }}_json_editor'></div>
 
 <textarea hidden readonly name="{{ widget.name }}" {% include 'django/forms/widgets/attrs.html' %}>

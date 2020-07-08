@@ -13,13 +13,16 @@ class RadioInlineSelect(RadioSelect):
 class JSONEditor(Textarea):
     template_name = 'widgets/jsoneditor.html'
 
-    def __init__(self, attrs=None, schema=None):
+    def __init__(self, attrs=None, schema=None, doc_url=None):
         super().__init__(attrs)
         self.schema = schema
+        self.doc_url = doc_url
 
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
         context['schema'] = self.schema
+        if self.doc_url:
+            context['doc_url'] = self.doc_url
         return context
 
     class Media:

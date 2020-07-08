@@ -38,7 +38,10 @@ class ProblemCreateForm(forms.ModelForm):
     variables = JSONFormField(
         initial='[]',
         label='',
-        widget=JSONEditor(schema=render_to_string('schemas/variables.json')),
+        widget=JSONEditor(
+            schema=render_to_string('schemas/variables.json'),
+            doc_url='/docs/usage/variables.html',
+        ),
     )
 
 
