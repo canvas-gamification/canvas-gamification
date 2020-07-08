@@ -1,3 +1,4 @@
+import djangosphinx
 from django.contrib import messages
 from django.forms import formset_factory
 from django.shortcuts import render
@@ -136,3 +137,4 @@ def _multiple_choice_question_edit_view(request, question):
         'distractor_answer_formset': distractor_answer_formset,
         'header': 'Edit Question',
     })
+

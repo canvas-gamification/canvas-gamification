@@ -218,7 +218,7 @@ if DEBUG:
 
 if not HEROKU:
 
-    settings_file = open("settings.json")
+    settings_file = open(os.path.join(BASE_DIR, "settings.json"))
     SETTINGS_JSON = json.loads(settings_file.read())
 
     EMAIL_USE_TLS = SETTINGS_JSON['EMAIL_USE_TLS']
