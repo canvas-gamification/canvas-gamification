@@ -126,10 +126,13 @@ class MultipleChoiceQuestion(VariableQuestion):
     def get_rendered_choices(self):
         choices = json.loads(self.choices) if type(self.choices) == str else self.choices
 
-        res = {}
-        for key, val in choices.items():
-            res[key] = render_text(val, self.get_variables())
-        return res
+        keys = list(choices.keys())
+        keys = keys[:self.visible_distractor_count+1]
+
+        random.seed(self.user.pk or 0)
+        random.shuffle(keys)
+
+        return {key: render_text(choices[key], self.get_variables()) for key in keys}
 
 
 class CheckboxQuestion(MultipleChoiceQuestion):

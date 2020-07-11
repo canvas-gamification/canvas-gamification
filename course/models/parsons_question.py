@@ -3,6 +3,7 @@ from course.models.models import VariableQuestion, CodeSubmission
 from course.fields import JSONField
 from django.db import models
 import base64
+import random
 
 
 class ParsonsQuestion(VariableQuestion):
@@ -12,7 +13,10 @@ class ParsonsQuestion(VariableQuestion):
     grader = ParsonsGrader()
 
     def get_lines(self):
-        return self.lines
+        random.seed(self.user.pk or 0)
+        lines = self.lines.copy()
+        random.shuffle(lines)
+        return lines
 
 
 class ParsonsSubmission(CodeSubmission):

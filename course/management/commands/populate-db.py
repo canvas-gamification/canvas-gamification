@@ -59,7 +59,7 @@ class Command(BaseCommand):
                     category=QuestionCategory.objects.first() if QuestionCategory.objects.all().exists() else None,
                     difficulty="EASY",
                     is_verified=True,
-                    variables=[{}],
+                    variables=[],
                     choices=question['choices'],
                     visible_distractor_count=3,
                     answer_text=None,

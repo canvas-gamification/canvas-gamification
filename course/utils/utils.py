@@ -50,7 +50,7 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
         )
 
     if not variables:
-        variables = [{}]
+        variables = []
 
     if not choices:
         choices = {}
