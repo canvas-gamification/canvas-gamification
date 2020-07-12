@@ -28,9 +28,11 @@
             {% if field != form.visible_distractor_count %}
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <h3>
-                            {{ field.label_tag }}
-                        </h3>
+                        {% if field.label %}
+                            <h3>
+                                {{ field.label_tag }}
+                            </h3>
+                        {% endif %}
                         {% if field.errors %}
                             {% for error in field.errors %}
                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">

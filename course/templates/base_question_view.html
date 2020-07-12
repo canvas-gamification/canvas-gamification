@@ -14,6 +14,25 @@
 
 {% block content %}
 
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Type</th>
+            <th scope="col">Category</th>
+            <th scope="col">Difficulty</th>
+            <th scope="col">Token&nbspValue</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="{% if question.is_solved %}table-success{% endif %}{% if question.is_wrong %}table-danger{% endif %}{% if question.is_partially_correct %}table-warning{% endif %}">
+            <td>{{ question.type_name | title }}</td>
+            <td>{{ question.category }}</td>
+            <td>{{ question.get_difficulty_display | safe }}</td>
+            <td>{{ question.token_value | floatformat:0 }}</td>
+        </tr>
+        </tbody>
+    </table>
+
     <div class="card">
         <div class="card-header"><h1>{{ question.title }}</h1></div>
         <div class="card-body">

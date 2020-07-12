@@ -11,7 +11,7 @@ from course.forms.multiple_choice import CheckboxQuestionForm, MultipleChoiceQue
 from course.models.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
     QuestionCategory, DIFFICULTY_CHOICES, TokenValue, Submission
 from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
-from course.utils.utils import get_token_value
+from course.utils.utils import get_token_value, get_user_question_junction
 from course.views.java import _java_question_create_view, _java_question_view, _java_submission_detail_view, \
     _java_question_edit_view
 from course.views.multiple_choice import _multiple_choice_question_create_view, _multiple_choice_question_view, \
@@ -58,6 +58,10 @@ def parsons_question_create_view(request):
 def question_view(request, pk):
     question = get_object_or_404(Question, pk=pk)
     question.user = request.user
+
+    uqj = get_user_question_junction(request.user, question)
+    uqj.opened_question = True
+    uqj.save()
 
     if isinstance(question, JavaQuestion):
         return _java_question_view(request, question)
@@ -108,7 +112,6 @@ def problem_set_view(request):
     problems = Question.objects.filter(q).all()
 
     for problem in problems:
-        problem.token_value = get_token_value(problem.category, problem.difficulty)
         problem.user = request.user
 
     if solved == 'Solved':

@@ -42,6 +42,11 @@ class ProblemCreateForm(forms.ModelForm):
             schema=render_to_string('schemas/variables.json'),
             doc_url='/docs/usage/variables.html',
         ),
+        help_text="""
+        If you are not using variables,
+        please don't add any variables
+        and delete the existing ones.
+        """
     )
 
 

@@ -73,6 +73,14 @@ class Question(PolymorphicModel):
     grader = None
 
     @property
+    def type_name(self):
+        return self._meta.verbose_name
+
+    @property
+    def token_value(self):
+        return get_token_value(self.category, self.difficulty)
+
+    @property
     def is_allowed_to_submit(self):
         if not self.user.is_authenticated:
             return False

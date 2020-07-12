@@ -1,6 +1,7 @@
 {
   "type": "array",
   "title": "Variables",
+  "format": "table",
   "options": {
     "keep_oneof_values": false
   },
@@ -107,6 +108,7 @@
         },
         "values": {
           "type": "array",
+          "format": "table",
           "items": {
             "type": "string"
           }
