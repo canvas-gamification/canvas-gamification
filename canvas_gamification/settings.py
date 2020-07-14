@@ -227,7 +227,7 @@ if not HEROKU:
     RECAPTCHA_URL = SETTINGS_JSON['reCaptcha_url']
 
     if not DEBUG:
-        DATABASES = SETTINGS_JSON['DATBASES']
+        DATABASES = SETTINGS_JSON['DATABASES']
 
 else:
     EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS']
