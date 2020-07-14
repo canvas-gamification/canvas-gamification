@@ -100,17 +100,7 @@ if DEBUG:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 's202db',
-            'USER': 's202dbuser',
-            'PASSWORD': 'bBuy9$66DPRtx~gT',
-            'HOST': 'pgsql.rits.ok.ubc.ca',
-            'PORT': '5432',
-        }
-    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -236,6 +226,8 @@ if not HEROKU:
     RECAPTCHA_KEY = SETTINGS_JSON['reCaptcha_key']
     RECAPTCHA_URL = SETTINGS_JSON['reCaptcha_url']
 
+    if not DEBUG:
+        DATABASES = SETTINGS_JSON['DATBASES']
 
 else:
     EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS']
