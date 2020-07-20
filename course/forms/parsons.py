@@ -13,7 +13,8 @@ class ParsonsQuestionForm(ProblemCreateForm):
     class Meta:
         model = ParsonsQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'lines', 'junit_template', 'variables')
+            'title', 'difficulty', 'category', 'text', 'lines', 'junit_template',
+            'additional_file_name', 'variables', )
         exclude = ('answer',)
 
     answer = None
@@ -35,4 +36,22 @@ class ParsonsQuestionForm(ProblemCreateForm):
             Please provide a JUnit template to evaluate the code.
             Identify where to insert the solution by "{{code}}"
             """
+    )
+
+    additional_file_name = forms.CharField(
+        label="User Code File Name",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control'
+        }),
+        help_text="""
+        Provide a file name to put the user code in it when compiling.
+        Leave empty if the user code is not a complete java program.
+        This has no interference with {{code}} tag in the Junit template, you can use both.
+        By providing a name here a file with that name will be created in the same directory
+        of your Junit code and will be compiled with you Junit code.
+        
+        This name usually should be the exact name of the Java class with .java extension.
+        For example if the solution has a public class Calculator, the file name should be
+        Calculator.java
+        """
     )

@@ -1,3 +1,7 @@
+from base64 import encodebytes
+from io import BytesIO
+from zipfile import ZipFile
+
 import requests
 
 from canvas_gamification.settings import JUDGE0_PASSWORD, JUDGE0_HOST
@@ -83,6 +87,19 @@ class ParsonsGrader(Grader):
     def get_source_code(self, submission):
         return submission.question.junit_template.replace("{{code}}", submission.code)
 
+    def get_additional_file(self, submission):
+        filename = submission.question.additional_file_name
+
+        if not filename:
+            return None
+
+        zipfile = BytesIO()
+        z = ZipFile(zipfile, "w")
+        z.writestr(filename, submission.code)
+        z.close()
+
+        return encodebytes(zipfile.getvalue()).decode("UTF-8").strip()
+
     def grade(self, submission):
         if submission.in_progress:
             self.evaluate(submission)
@@ -111,6 +128,8 @@ class ParsonsGrader(Grader):
                 "wait": False,
                 "source_code": self.get_source_code(submission),
                 "language_id": 5,
+                "additional_files": self.get_additional_file(submission),
+                "compiler_options": submission.question.additional_file_name,
             },
             headers=self.HEADERS,
         )

@@ -9,6 +9,7 @@ import random
 class ParsonsQuestion(VariableQuestion):
     lines = JSONField(default='[]')
     junit_template = models.TextField()
+    additional_file_name = models.CharField(max_length=100, null=True, blank=True, default=None)
 
     grader = ParsonsGrader()
 
