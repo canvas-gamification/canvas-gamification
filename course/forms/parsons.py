@@ -43,6 +43,7 @@ class ParsonsQuestionForm(ProblemCreateForm):
         widget=forms.TextInput(attrs={
             'class': 'form-control'
         }),
+        required=False,
         help_text="""
         Provide a file name to put the user code in it when compiling.
         Leave empty if the user code is not a complete java program.
