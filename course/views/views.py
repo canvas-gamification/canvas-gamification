@@ -1,8 +1,10 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Q
 from django.forms import formset_factory
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from django.contrib import messages
+from rest_framework.reverse import reverse_lazy
 
 from accounts.utils.decorators import show_login
 from course.forms.forms import ProblemFilterForm
@@ -92,6 +94,20 @@ def question_edit_view(request, pk):
         return _parsons_question_edit_view(request, question)
 
     raise Http404()
+
+
+@user_passes_test(teacher_check)
+def question_delete_view(request, pk):
+    question = get_object_or_404(Question, pk=pk)
+
+    if question.author != request.user:
+        messages.add_message(request, messages.ERROR,
+                             'Unauthorized request to delete question. '
+                             'Please ask the author to delete.')
+    else:
+        question.delete()
+
+    return HttpResponseRedirect(reverse_lazy('course:problem_set'))
 
 
 def problem_set_view(request):

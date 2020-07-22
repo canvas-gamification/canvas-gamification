@@ -90,6 +90,10 @@
                                 Edit
                             </button>
 
+                            <button class="btn btn-danger mx-1"
+                                    onclick="window.location.href='{% url 'course:question_delete' problem.pk %}'">
+                                Delete
+                            </button>
                         {% endif %}
 
                     </div>
