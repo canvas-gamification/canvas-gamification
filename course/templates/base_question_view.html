@@ -17,6 +17,7 @@
     <table class="table">
         <thead>
         <tr>
+            <th scope="col">ID</th>
             <th scope="col">Type</th>
             <th scope="col">Category</th>
             <th scope="col">Difficulty</th>
@@ -25,6 +26,7 @@
         </thead>
         <tbody>
         <tr class="{% if question.is_solved %}table-success{% endif %}{% if question.is_wrong %}table-danger{% endif %}{% if question.is_partially_correct %}table-warning{% endif %}">
+            <td>{{ question.pk }}</td>
             <td>{{ question.type_name | title }}</td>
             <td>{{ question.category }}</td>
             <td>{{ question.get_difficulty_display | safe }}</td>

@@ -1,9 +1,17 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block title %}Problem set{% endblock %}
 
 {% block header %}
     Problem Set
+{% endblock %}
+
+{% block script %}
+    <link rel="stylesheet" href="{% static 'bootstrap/bootstrap-table.min.css' %}">
+    <script src="{% static 'bootstrap/bootstrap-table.min.js' %}"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -32,25 +40,29 @@
         </div>
     </form>
 
-    <table class="table table-hover no-text-wrap-table">
+    <table class="table table-hover no-text-wrap-table"
+           data-toggle="table"
+    >
         <thead>
         <tr>
             <th scope="col">#</th>
             <th scope="col">Question Name</th>
             {% if user.is_teacher %}
-                <th scope="col">Author</th>
+                <th scope="col" data-sortable="true">
+                    Author
+                </th>
             {% endif %}
-            <th scope="col">Category</th>
-            <th scope="col">Difficulty</th>
-            <th scope="col">Token&nbsp;Value</th>
-            <th scope="col">Status</th>
+            <th scope="col" data-sortable="true">Category</th>
+            <th scope="col" data-sortable="true">Difficulty</th>
+            <th scope="col" data-sortable="true">Token&nbsp;Value</th>
+            <th scope="col" data-sortable="true">Status</th>
             <th scope="col">Action</th>
         </tr>
         </thead>
         <tbody>
         {% for problem in problems %}
             <tr class="{% if problem.is_solved %}table-success{% endif %}{% if problem.is_wrong %}table-danger{% endif %}{% if problem.is_partially_correct %}table-warning{% endif %}">
-                <th scope="row">{{ forloop.counter }}</th>
+                <th scope="row">{{ problem.pk }}</th>
                 <td class="col">{{ problem.title }}</td>
                 {% if user.is_teacher %}
                     <td>{{ problem.author }}</td>
