@@ -69,7 +69,6 @@ class Question(PolymorphicModel):
 
     is_verified = models.BooleanField(default=False)
 
-    user = AnonymousUser()
     grader = None
 
     @property
@@ -80,49 +79,9 @@ class Question(PolymorphicModel):
     def token_value(self):
         return get_token_value(self.category, self.difficulty)
 
-    @property
-    def is_allowed_to_submit(self):
-        if not self.user.is_authenticated:
-            return False
-        return self.user.submissions.filter(question=self).count() < self.max_submission_allowed
-
-    @property
-    def is_solved(self):
-        if not self.user.is_authenticated:
-            return False
-        return self.user.submissions.filter(question=self, is_correct=True).exists()
-
-    @property
-    def is_partially_correct(self):
-        if not self.user.is_authenticated:
-            return False
-        return self.user.submissions.filter(question=self, is_partially_correct=True).exists() and not self.is_solved
-
-    @property
-    def no_submission(self):
-        if not self.user.is_authenticated:
-            return True
-        return not self.user.submissions.filter(question=self).exists()
-
-    @property
-    def is_wrong(self):
-        return not self.is_solved and not self.is_partially_correct and not self.no_submission
-
-    def get_rendered_text(self):
-        return self.text
-
 
 class VariableQuestion(Question):
     variables = JSONField()
-
-    def get_variables(self):
-        if type(self.variables) != list:
-            return {}
-        variables, errors = generate_variables(self.variables, self.user)
-        return variables
-
-    def get_rendered_text(self):
-        return render_text(self.text, self.get_variables())
 
 
 class MultipleChoiceQuestion(VariableQuestion):
@@ -130,17 +89,6 @@ class MultipleChoiceQuestion(VariableQuestion):
     visible_distractor_count = models.IntegerField()
 
     grader = MultipleChoiceGrader()
-
-    def get_rendered_choices(self):
-        choices = json.loads(self.choices) if type(self.choices) == str else self.choices
-
-        keys = list(choices.keys())
-        keys = keys[:self.visible_distractor_count+1]
-
-        random.seed(self.user.pk or 0)
-        random.shuffle(keys)
-
-        return {key: render_text(choices[key], self.get_variables()) for key in keys}
 
 
 class CheckboxQuestion(MultipleChoiceQuestion):
@@ -152,19 +100,88 @@ class JavaQuestion(Question):
 
     grader = JavaGrader()
 
+
+class UserQuestionJunction(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='question_junctions')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='user_junctions')
+
+    opened_tutorial = models.BooleanField(default=False)
+    opened_question = models.BooleanField(default=False)
+    tokens_received = models.FloatField(default=0)
+
+    is_solved = models.BooleanField(default=False)
+    is_partially_solved = models.BooleanField(default=False)
+
+    @property
     def is_allowed_to_submit(self):
-        if not self.user.is_authenticated:
+        if self.user.is_teacher():
+            return True
+        if self.opened_tutorial:
             return False
-        return len(list(filter(lambda s: not s.is_compile_error,
-                               list(self.user.submissions.filter(question=self))))) < self.max_submission_allowed
+        if self.is_solved:
+            return False
+
+        return self.submissions.count() < self.question.max_submission_allowed
+
+    def get_variables(self):
+        if not isinstance(self.question, VariableQuestion):
+            return {}
+
+        if type(self.question.variables) != list:
+            return {}
+
+        variables, errors = generate_variables(self.question.variables, self.user)
+
+        return variables
+
+    def get_rendered_text(self):
+        return render_text(self.question.text, self.get_variables())
+
+    def get_rendered_choices(self):
+        if not isinstance(self.question, MultipleChoiceQuestion):
+            return {}
+
+        choices = json.loads(self.question.choices) if type(self.question.choices) == str else self.question.choices
+
+        keys = list(choices.keys())
+        keys = keys[:self.question.visible_distractor_count+1]
+
+        random.seed(self.user.pk or 0)
+        random.shuffle(keys)
+
+        return {key: render_text(choices[key], self.get_variables()) for key in keys}
+
+    def get_lines(self):
+        from course.models.parsons_question import ParsonsQuestion
+
+        if not isinstance(self.question, ParsonsQuestion):
+            return {}
+
+        random.seed(self.user.pk or 0)
+        lines = self.question.lines.copy()
+        random.shuffle(lines)
+        return lines
+
+    @property
+    def status_class(self):
+        if self.is_solved:
+            return "table-success"
+        if self.is_partially_solved:
+            return "table-warning"
+        if self.submissions.exists():
+            return "table-danger"
+        return ""
+
+    def save(self, **kwargs):
+        self.is_solved = self.submissions.filter(is_correct=True).exists()
+        self.is_partially_solved = not self.is_solved and self.submissions.filter(is_partially_correct=True).exists()
+        super().save(**kwargs)
 
 
 class Submission(PolymorphicModel):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='submissions')
+    uqj = models.ForeignKey(UserQuestionJunction, on_delete=models.CASCADE, related_name='submissions')
     submission_time = models.DateTimeField(auto_now_add=True)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='submissions')
 
-    code = models.TextField(null=True, blank=True)
     answer = models.TextField(null=True, blank=True)
 
     grade = models.FloatField(default=0)
@@ -175,11 +192,20 @@ class Submission(PolymorphicModel):
     show_answer = True
     show_detail = False
 
+    @property
+    def question(self):
+        return self.uqj.question
+
+    @property
+    def user(self):
+        return self.uqj.user
+
     def get_description(self):
-        return "{}Solved Question <a href='{}'>{}</a>".format("Partially " if self.is_partially_correct else "",
-                                                              reverse_lazy('course:question_view',
-                                                                           kwargs={'pk': self.question.pk}),
-                                                              self.question.title)
+        template = "{}Solved Question <a href='{}'>{}</a>"
+        url = reverse_lazy('course:question_view', kwargs={'pk': self.question.pk})
+        title = self.uqj.question.title
+
+        return template.format("Partially " if self.is_partially_correct else "", url, title)
 
     @property
     def status_color(self):
@@ -211,7 +237,7 @@ class Submission(PolymorphicModel):
         if self.finalized:
             return
 
-        self.is_correct, self.grade = self.question.grader.grade(self)
+        self.is_correct, self.grade = self.uqj.question.grader.grade(self)
 
         if not self.is_correct and self.grade > 0:
             self.is_partially_correct = True
@@ -234,7 +260,7 @@ class Submission(PolymorphicModel):
             self.calculate_grade(commit=False)
 
         if not self.in_progress and self.is_correct or self.is_partially_correct:
-            user_question_junction = get_user_question_junction(self.user, self.question)
+            user_question_junction = self.uqj
             received_tokens = self.grade * get_token_value(self.question.category, self.question.difficulty)
             token_change = received_tokens - user_question_junction.tokens_received
 
@@ -246,11 +272,14 @@ class Submission(PolymorphicModel):
 
         super().save(*args, **kwargs)
 
+    def submit(self):
+        pass
+
 
 class MultipleChoiceSubmission(Submission):
     @property
     def answer_display(self):
-        return self.question.get_rendered_choices().get(self.answer, 'Unknown')
+        return self.uqj.get_rendered_choices().get(self.answer, 'Unknown')
 
 
 class CodeSubmission(Submission):
@@ -287,11 +316,3 @@ class CodeSubmission(Submission):
 class JavaSubmission(CodeSubmission):
     pass
 
-
-class UserQuestionJunction(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='question_junctions')
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='user_junctions')
-
-    opened_tutorial = models.BooleanField(default=False)
-    opened_question = models.BooleanField(default=False)
-    tokens_received = models.FloatField(default=0)

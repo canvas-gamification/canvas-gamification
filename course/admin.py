@@ -29,12 +29,17 @@ class QuestionAdmin(admin.ModelAdmin):
 
 
 class SubmissionAdmin(admin.ModelAdmin):
-    list_filter = ('user__username', 'is_correct', 'is_partially_correct', 'question')
-    list_display = ('__str__', 'user', 'grade', 'is_correct', 'is_partially_correct')
+    list_filter = ('uqj__user__username', 'is_correct', 'is_partially_correct', 'uqj__question')
+    list_display = ('__str__', 'grade', 'is_correct', 'is_partially_correct')
 
 
 class TokenValueAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'category', 'difficulty', 'value')
+
+
+class UserQuestionJunctionAdmin(admin.ModelAdmin):
+    list_filter = ('user__username', 'question')
+    list_display = ('user', 'question', 'is_solved', 'is_partially_solved',)
 
 
 admin.site.register(Question, QuestionAdmin)
@@ -50,5 +55,5 @@ admin.site.register(JavaSubmission, SubmissionAdmin)
 admin.site.register(ParsonsSubmission, SubmissionAdmin)
 
 admin.site.register(TokenValue, TokenValueAdmin)
-admin.site.register(UserQuestionJunction)
+admin.site.register(UserQuestionJunction, UserQuestionJunctionAdmin)
 admin.site.register(QuestionCategory)

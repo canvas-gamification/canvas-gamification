@@ -25,6 +25,7 @@ from course.views.parsons import _parsons_question_create_view, _parsons_questio
 def teacher_check(user):
     return not user.is_anonymous and user.is_teacher()
 
+
 @user_passes_test(teacher_check)
 def multiple_choice_question_create_view(request):
     return _multiple_choice_question_create_view(
@@ -34,6 +35,7 @@ def multiple_choice_question_create_view(request):
         formset_factory(ChoiceForm, extra=1, can_delete=True, max_num=1, min_num=1),
         formset_factory(ChoiceForm, extra=2, can_delete=True),
     )
+
 
 @user_passes_test(teacher_check)
 def checkbox_question_create_view(request):
@@ -59,7 +61,6 @@ def parsons_question_create_view(request):
 @show_login('You need to be logged in to submit an answer')
 def question_view(request, pk):
     question = get_object_or_404(Question, pk=pk)
-    question.user = request.user
 
     uqj = get_user_question_junction(request.user, question)
     uqj.opened_question = True
@@ -125,21 +126,22 @@ def problem_set_view(request):
     if category:
         q = q & (Q(category=category) | Q(category__parent=category))
 
+    # TODO: Find a way to filter by status
+    if solved == 'Solved':
+        pass
+    if solved == 'Unsolved':
+        pass
+    if solved == "Partially Correct":
+        pass
+    if solved == 'Wrong':
+        pass
+    if solved == 'New':
+        pass
+
     problems = Question.objects.filter(q).all()
 
     for problem in problems:
-        problem.user = request.user
-
-    if solved == 'Solved':
-        problems = [p for p in problems if p.is_solved]
-    if solved == 'Unsolved':
-        problems = [p for p in problems if not p.is_solved]
-    if solved == "Partially Correct":
-        problems = [p for p in problems if p.is_partially_correct]
-    if solved == 'Wrong':
-        problems = [p for p in problems if p.is_wrong]
-    if solved == 'New':
-        problems = [p for p in problems if p.no_submission]
+        problem.uqj = get_user_question_junction(request.user, problem)
 
     form = ProblemFilterForm(request.GET)
 

@@ -13,12 +13,6 @@ class ParsonsQuestion(VariableQuestion):
 
     grader = ParsonsGrader()
 
-    def get_lines(self):
-        random.seed(self.user.pk or 0)
-        lines = self.lines.copy()
-        random.shuffle(lines)
-        return lines
-
 
 class ParsonsSubmission(CodeSubmission):
 

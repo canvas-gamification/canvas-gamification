@@ -20,8 +20,7 @@ class MultipleChoiceGrader(Grader):
             return False, 0
         else:
             number_of_choices = len(submission.question.choices.items())
-            number_of_submissions = submission.user.submissions.filter(question=submission.question).exclude(
-                pk=submission.pk).count()
+            number_of_submissions = submission.uqj.submissions.exclude(pk=submission.pk).count()
 
             return True, 1 - number_of_submissions / (number_of_choices - 1)
 
@@ -67,7 +66,7 @@ class JavaGrader(Grader):
                 data={
                     "base64_encoded": False,
                     "wait": False,
-                    "source_code": submission.code,
+                    "source_code": submission.answer,
                     "language_id": 4,
                     "stdin": test_case['input'],
                     "expected_output": test_case['output'],
@@ -85,7 +84,7 @@ class ParsonsGrader(Grader):
     BASE_URL = JUDGE0_HOST
 
     def get_source_code(self, submission):
-        return submission.question.junit_template.replace("{{code}}", submission.code)
+        return submission.question.junit_template.replace("{{code}}", submission.answer)
 
     def get_additional_file(self, submission):
         filename = submission.question.additional_file_name
@@ -95,7 +94,7 @@ class ParsonsGrader(Grader):
 
         zipfile = BytesIO()
         z = ZipFile(zipfile, "w")
-        z.writestr(filename, submission.code)
+        z.writestr(filename, submission.answer)
         z.close()
 
         return encodebytes(zipfile.getvalue()).decode("UTF-8").strip()

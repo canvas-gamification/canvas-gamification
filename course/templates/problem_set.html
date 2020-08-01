@@ -61,7 +61,7 @@
         </thead>
         <tbody>
         {% for problem in problems %}
-            <tr class="{% if problem.is_solved %}table-success{% endif %}{% if problem.is_wrong %}table-danger{% endif %}{% if problem.is_partially_correct %}table-warning{% endif %}">
+            <tr class="{{ problem.uqj.status_class }}">
                 <th scope="row">{{ problem.pk }}</th>
                 <td class="col">{{ problem.title }}</td>
                 {% if user.is_teacher %}

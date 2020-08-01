@@ -38,13 +38,13 @@
     <div class="card">
         <div class="card-header"><h1>{{ question.title }}</h1></div>
         <div class="card-body">
-            <div>{% autoescape off %}{{ question.get_rendered_text }}{% endautoescape %}</div>
+            <div>{% autoescape off %}{{ uqj.get_rendered_text }}{% endautoescape %}</div>
         </div>
     </div>
 
     <div class="card my-1">
         <div class="card-body">
-            {% if question.is_allowed_to_submit %}
+            {% if uqj.is_allowed_to_submit %}
                 {% block submit_form %}
                 {% endblock %}
             {% else %}
@@ -58,6 +58,6 @@
     </div>
 
     <h2>My Past Submissions</h2>
-    {% include 'past_submissions_snippet.html' %}
+    {% include 'past_submissions_snippet.html' with submissions=uqj.submissions.all %}
 
 {% endblock %}

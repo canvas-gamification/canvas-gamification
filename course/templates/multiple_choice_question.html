@@ -4,7 +4,7 @@
 {% block submit_form %}
     <form method="post">
         {% csrf_token %}
-        {% for key, text in question.get_rendered_choices.items %}
+        {% for key, text in uqj.get_rendered_choices.items %}
             <div class="form-group">
                 <input type="radio" id="answer-{{ key }}" name="answer" value="{{ key }}">
                 <label for="answer-{{ key }}">{{ text }}</label>

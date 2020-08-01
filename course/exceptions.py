@@ -1,0 +1,2 @@
+class SubmissionException(Exception):
+    pass

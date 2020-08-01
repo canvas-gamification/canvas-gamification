@@ -3,8 +3,11 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 
+from course.exceptions import SubmissionException
 from course.forms.java import JavaQuestionForm
 from course.models.models import JavaSubmission
+from course.utils.submissions import submit_solution
+from course.utils.utils import get_user_question_junction
 
 
 def _java_question_create_view(request, header, question_form_class):
@@ -54,8 +57,7 @@ def _java_question_view(request, question):
     def return_render():
         return render(request, 'java_question.html', {
             'question': question,
-            'submissions': question.submissions.filter(
-                user=request.user).all() if request.user.is_authenticated else JavaSubmission.objects.none(),
+            'uqj': get_user_question_junction(request.user, question),
             'submission_class': JavaSubmission,
         })
 
@@ -78,24 +80,11 @@ def _java_question_view(request, question):
         if answer_file:
             answer_text = answer_file.read().decode("ascii", "ignore")
 
-        if not request.user.is_authenticated:
-            messages.add_message(request, messages.ERROR, 'You need to be logged in to submit answers')
-        elif not question.is_allowed_to_submit:
-            messages.add_message(request, messages.ERROR, 'Maximum number of submissions reached')
-        elif request.user.submissions.filter(question=question, code=answer_text).exists():
-            messages.add_message(request, messages.INFO, 'You have already submitted this answer!')
-        else:
-            submission = JavaSubmission()
-            submission.user = request.user
-            submission.code = answer_text
-            submission.question = question
-
-            submission.submit()
-            submission.save()
-
+        try:
+            submission = submit_solution(question, request.user, answer_text)
             messages.add_message(request, messages.INFO, "Your Code has been submitted and being evaluated!")
-
-            return HttpResponseRedirect(reverse_lazy('course:question_view', kwargs={'pk': question.pk}))
+        except SubmissionException as e:
+            messages.add_message(request, messages.ERROR, "{}".format(e))
 
     return return_render()
 

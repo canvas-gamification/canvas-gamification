@@ -5,6 +5,8 @@ from django.shortcuts import render
 
 from course.forms.multiple_choice import MultipleChoiceQuestionForm, ChoiceForm
 from course.models.models import MultipleChoiceSubmission
+from course.utils.submissions import submit_solution, get_all_submissions
+from course.exceptions import SubmissionException
 from course.utils.utils import create_multiple_choice_question, QuestionCreateException, get_user_question_junction
 
 
@@ -59,19 +61,8 @@ def _multiple_choice_question_view(request, question, template_name):
             answer = request.POST.getlist('answer[]')
         answer = str(answer)
 
-        if not request.user.is_authenticated:
-            messages.add_message(request, messages.ERROR, 'You need to be logged in to submit answers')
-        elif not question.is_allowed_to_submit:
-            messages.add_message(request, messages.ERROR, 'Maximum number of submissions reached')
-        elif request.user.submissions.filter(question=question, answer=answer).exists():
-            messages.add_message(request, messages.INFO, 'You have already submitted this answer!')
-        else:
-            submission = MultipleChoiceSubmission()
-            submission.user = request.user
-            submission.answer = answer
-            submission.question = question
-
-            submission.save()
+        try:
+            submission = submit_solution(question, request.user, answer)
 
             if submission.is_correct:
                 received_tokens = get_user_question_junction(request.user, question).tokens_received
@@ -84,11 +75,12 @@ def _multiple_choice_question_view(request, question, template_name):
                     request, messages.ERROR,
                     'Answer submitted. Your answer was wrong',
                 )
+        except SubmissionException as e:
+            messages.add_message(request, messages.ERROR, "{}".format(e))
 
     return render(request, template_name, {
         'question': question,
-        'submissions': question.submissions.filter(
-            user=request.user).all() if request.user.is_authenticated else MultipleChoiceSubmission.objects.none(),
+        'uqj': get_user_question_junction(request.user, question),
         'submission_class': MultipleChoiceSubmission,
     })
 
