@@ -68,7 +68,7 @@ def _multiple_choice_question_view(request, question, template_name):
                 received_tokens = get_user_question_junction(request.user, question).tokens_received
                 messages.add_message(
                     request, messages.SUCCESS,
-                    'Answer submitted. Your answer was correct. You received {} tokens'.format(received_tokens),
+                    'Answer submitted. Your answer was correct. You received {} tokens'.format(round(received_tokens,2)),
                 )
             else:
                 messages.add_message(
