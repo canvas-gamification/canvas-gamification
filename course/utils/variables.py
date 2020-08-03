@@ -1,8 +1,18 @@
 import math
 import random
 
-ALLOWED_NAMES = {
+MATH_NAMES = {
     k: v for k, v in math.__dict__.items() if not k.startswith("__")
+}
+
+STR_NAMES = {
+    k: v for k, v in str.__dict__.items() if not k.startswith("__")
+}
+
+ALLOWED_NAMES = {
+    **MATH_NAMES,
+    **STR_NAMES,
+    'len': len,
 }
 
 

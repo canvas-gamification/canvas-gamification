@@ -103,19 +103,23 @@ This variable type randomly chooses one of the given
 values. The values are treated as strings.
 You can still use previously defined variables, but
 it will not evaluate mathematical expressions.
+in other words, you NOT allowed to use the available
+commands and operators.
 
 ++++++++++
 expression
 ++++++++++
 
 This variable type generates a value based on an
-expression.
+expression. You are allowed to use available commands
+and operators.
 
 --------------------------------
 Available commands and operators
 --------------------------------
 
-All the Python3 operators and math library functions
+All the Python3 operators, math, and str library functions
+in addition to some extra commands
 are available to use. Due to security reasons,
 no other function/method/class is accessible. If you
 need another function to use please ask developers
@@ -141,9 +145,9 @@ Operator  Definition     Example
 
 `See all the operators <https://www.w3schools.com/python/python_operators.asp>`_
 
-++++++++
-commands
-++++++++
+++++++++++++
+math Library
+++++++++++++
 
 ========= ============== ========
 Function  Definition     Example
@@ -157,4 +161,35 @@ radians   Deg to Rad     radians(45)
 e         Constant e     e**{{x}}
 ========= ============== ========
 
-`See all the commands <https://docs.python.org/3/library/math.html>`_
+`See all the math commands <https://docs.python.org/3/library/math.html>`_
+
++++++++++++
+str Library
++++++++++++
+
+Please use single quotes to specify strings (i.e ')
+to avoid conflicts.
+
+========= ==================== ===========
+Function  Definition           Example
+========= ==================== ===========
+upper     convert to uppercase upper('text')
+lower     convert to lowercase '{{a}}'.lower()
+title     \*see the commands\* title('{{a}}')
+strip     \*see the commands\* '{{a}}'.strip()
+========= ==================== ===========
+
+`See all the str commands <https://www.w3schools.com/python/python_ref_string.asp>`_
+
++++++++++++++++
+Extra Functions
++++++++++++++++
+
+Please use single quotes to specify strings (i.e ')
+to avoid conflicts.
+
+========= ==================== ===========
+Function  Definition           Example
+========= ==================== ===========
+len       length of an string  len('{{a}}')
+========= ==================== ===========

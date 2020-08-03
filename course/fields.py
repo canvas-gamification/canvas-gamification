@@ -1,4 +1,5 @@
 import jsonfield
+import json
 
 
 class JSONField(jsonfield.JSONField):
@@ -7,7 +8,9 @@ class JSONField(jsonfield.JSONField):
 
 class JSONFormField(jsonfield.fields.JSONFormField):
     def prepare_value(self, value):
-        return str(value).replace("'", "\"")
+        if type(value) != str:
+            return json.dumps(value)
+        return value
 
 
 class JSONLineFormField(JSONFormField):
