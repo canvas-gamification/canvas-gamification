@@ -108,7 +108,8 @@ def _multiple_choice_question_edit_view(request, question):
                     variables=form.cleaned_data['variables'],
                     visible_distractor_count=form.cleaned_data['visible_distractor_count'],
                     answer_text=correct_answer_formset.forms[0].cleaned_data['text'],
-                    distractors=[form.cleaned_data['text'] for form in distractor_answer_formset.forms],
+                    distractors=[form.cleaned_data['text'] for form in distractor_answer_formset.forms if
+                                 not form.cleaned_data['DELETE']],
                 )
                 messages.add_message(request, messages.SUCCESS, 'Problem saved successfully')
             except QuestionCreateException as e:
