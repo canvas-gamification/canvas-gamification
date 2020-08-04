@@ -140,8 +140,9 @@ def problem_set_view(request):
 
     problems = Question.objects.filter(q).all()
 
-    for problem in problems:
-        problem.uqj = get_user_question_junction(request.user, problem)
+    if request.user.is_authenticated:
+        for problem in problems:
+            problem.uqj = get_user_question_junction(request.user, problem)
 
     form = ProblemFilterForm(request.GET)
 
