@@ -127,20 +127,19 @@ def problem_set_view(request):
         q = q & (Q(category=category) | Q(category__parent=category))
 
     if solved == 'Solved':
-        q = q & Q(user_junctions__is_solved=True, user_junctions__user=request.user)
+        q = q & Q(user_junctions__is_solved=True)
     if solved == 'Unsolved':
-        q = q & Q(user_junctions__submissions=None, user_junctions__opened_question=True,
-                  user_junctions__user=request.user)
+        q = q & Q(user_junctions__submissions=None, user_junctions__opened_question=True)
     if solved == "Partially Correct":
-        q = q & Q(user_junctions__is_partially_solved=True, user_junctions__user=request.user)
+        q = q & Q(user_junctions__is_partially_solved=True)
     if solved == 'Wrong':
-        q = q & Q(user_junctions__user=request.user, user_junctions__submissions__count__gt=0,
-                  user_junctions__is_solved=False, user_junctions__is_partially_solved=False)
+        q = q & Q(user_junctions__submissions__count__gt=0, user_junctions__is_solved=False,
+                  user_junctions__is_partially_solved=False)
     if solved == 'New':
-        q = q & Q(user_junctions__submissions=None, user_junctions__opened_question=False,
-                  user_junctions__user=request.user)
+        q = q & Q(user_junctions__submissions=None, user_junctions__opened_question=False)
 
-    problems = Question.objects.annotate(Count('user_junctions__submissions')).filter(q).all()
+    problems = Question.objects.filter(user_junctions__user=request.user).annotate(
+        Count('user_junctions__submissions')).filter(q).all()
 
     if request.user.is_authenticated:
         for problem in problems:
