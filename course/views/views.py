@@ -138,7 +138,7 @@ def problem_set_view(request):
     if solved == 'New':
         q = q & Q(user_junctions__submissions=None, user_junctions__opened_question=False)
 
-    problems = Question.objects.filter(user_junctions__user=request.user).annotate(
+    problems = Question.objects.annotate(
         Count('user_junctions__submissions')).filter(q).all()
 
     if request.user.is_authenticated:
