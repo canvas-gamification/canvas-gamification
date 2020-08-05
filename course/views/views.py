@@ -134,8 +134,8 @@ def problem_set_view(request):
     if solved == "Partially Correct":
         q = q & Q(user_junctions__is_partially_solved=True, user_junctions__user=request.user)
     if solved == 'Wrong':
-        q = q & Q(user_junctions__submissions__count__gt=0, user_junctions__is_solved=False,
-                  user_junctions__is_partially_solved=False, user_junctions__user=request.user)
+        q = q & Q(user_junctions__user=request.user, user_junctions__submissions__count__gt=0,
+                  user_junctions__is_solved=False, user_junctions__is_partially_solved=False)
     if solved == 'New':
         q = q & Q(user_junctions__submissions=None, user_junctions__opened_question=False,
                   user_junctions__user=request.user)
