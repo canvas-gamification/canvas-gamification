@@ -101,7 +101,7 @@ def _multiple_choice_question_edit_view(request, question):
                     title=form.cleaned_data['title'],
                     text=form.cleaned_data['text'],
                     max_submission_allowed=question.max_submission_allowed,
-                    author=request.user,
+                    author=question.author,
                     category=form.cleaned_data['category'],
                     difficulty=form.cleaned_data['difficulty'],
                     is_verified=question.is_verified,

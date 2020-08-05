@@ -12,7 +12,6 @@ class ProblemCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['category'].widget.attrs.update({'class': 'form-control'})
         self.fields['difficulty'].widget.attrs.update({'class': 'form-control'})
         self.fields['difficulty'].initial = "EASY"
 
@@ -26,6 +25,14 @@ class ProblemCreateForm(forms.ModelForm):
     text = forms.CharField(
         label='Question',
         widget=RichTextWidget(field_settings='advanced')
+    )
+
+    category = forms.ModelChoiceField(
+        required=True,
+        queryset=QuestionCategory.objects.filter(parent__isnull=False).all(),
+        widget=widgets.Select(attrs={
+            'class': 'form-control',
+        })
     )
 
     answer = forms.CharField(

@@ -45,8 +45,8 @@
     >
         <thead>
         <tr>
-            <th scope="col">#</th>
-            <th scope="col">Question Name</th>
+            <th scope="col" data-sortable="true">#</th>
+            <th scope="col" data-sortable="true">Question Name</th>
             {% if user.is_teacher %}
                 <th scope="col" data-sortable="true">
                     Author
@@ -71,10 +71,7 @@
                 <td>{{ problem.get_difficulty_display | safe }}</td>
                 <td>{{ problem.token_value | floatformat:0 }}</td>
                 <td>
-                    {% if problem.is_solved %}Solved{% endif %}
-                    {% if problem.no_submission %}New{% endif %}
-                    {% if problem.is_partially_correct %}Partially Correct{% endif %}
-                    {% if problem.is_wrong %}Wrong{% endif %}
+                    {{ problem.uqj.status }}
                 </td>
                 <td>
                     <div>

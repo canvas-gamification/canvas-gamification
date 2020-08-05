@@ -172,6 +172,18 @@ class UserQuestionJunction(models.Model):
             return "table-danger"
         return ""
 
+    @property
+    def status(self):
+        if self.is_solved:
+            return "Solved"
+        if self.is_partially_solved:
+            return "Partially Solved"
+        if self.submissions.exists():
+            return "Wrong"
+        if self.opened_question:
+            return "Unsolved"
+        return "New"
+
     def save(self, **kwargs):
         self.is_solved = self.submissions.filter(is_correct=True).exists()
         self.is_partially_solved = not self.is_solved and self.submissions.filter(is_partially_correct=True).exists()

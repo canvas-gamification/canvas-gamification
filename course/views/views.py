@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import user_passes_test
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.forms import formset_factory
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -126,19 +126,18 @@ def problem_set_view(request):
     if category:
         q = q & (Q(category=category) | Q(category__parent=category))
 
-    # TODO: Find a way to filter by status
     if solved == 'Solved':
-        pass
+        q = q & Q(user_junctions__is_solved=True)
     if solved == 'Unsolved':
-        pass
+        q = q & Q(user_junctions__submissions=None, user_junctions__opened_question=True)
     if solved == "Partially Correct":
-        pass
+        q = q & Q(user_junctions__is_partially_solved=True)
     if solved == 'Wrong':
-        pass
+        q = q & Q(user_junctions__submissions__count__gt=0, user_junctions__is_solved=False, user_junctions__is_partially_solved=False)
     if solved == 'New':
-        pass
+        q = q & Q(user_junctions__submissions=None, user_junctions__opened_question=False)
 
-    problems = Question.objects.filter(q).all()
+    problems = Question.objects.annotate(Count('user_junctions__submissions')).filter(q).all()
 
     if request.user.is_authenticated:
         for problem in problems:

@@ -19,7 +19,7 @@ class MultipleChoiceGrader(Grader):
         if submission.answer != submission.question.answer:
             return False, 0
         else:
-            number_of_choices = len(submission.question.choices.items())
+            number_of_choices = submission.question.visible_distractor_count + 1
             number_of_submissions = submission.uqj.submissions.exclude(pk=submission.pk).count()
 
             return True, 1 - number_of_submissions / (number_of_choices - 1)
