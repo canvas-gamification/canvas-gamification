@@ -5,6 +5,7 @@ from zipfile import ZipFile
 import requests
 
 from canvas_gamification.settings import JUDGE0_PASSWORD, JUDGE0_HOST
+from course.utils.variables import render_text
 
 
 class Grader:
@@ -84,9 +85,11 @@ class ParsonsGrader(Grader):
     BASE_URL = JUDGE0_HOST
 
     def get_source_code(self, submission):
-        return submission.question.junit_template.replace("{{code}}", submission.answer)
+        code = render_text(submission.question.junit_template, submission.uqj.get_variables())
+        return code.replace("{{code}}", submission.answer)
 
     def get_additional_file(self, submission):
+        code = render_text(submission.answer, submission.uqj.get_variables())
         filename = submission.question.additional_file_name
 
         if not filename:
@@ -94,7 +97,7 @@ class ParsonsGrader(Grader):
 
         zipfile = BytesIO()
         z = ZipFile(zipfile, "w")
-        z.writestr(filename, submission.answer)
+        z.writestr(filename, code)
         z.close()
 
         return encodebytes(zipfile.getvalue()).decode("UTF-8").strip()

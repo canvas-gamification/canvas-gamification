@@ -158,7 +158,9 @@ class UserQuestionJunction(models.Model):
             return {}
 
         random.seed(self.user.pk or 0)
-        lines = self.question.lines.copy()
+        lines = []
+        for line in self.question.lines:
+            lines.append(render_text(line, self.get_variables()))
         random.shuffle(lines)
         return lines
 
