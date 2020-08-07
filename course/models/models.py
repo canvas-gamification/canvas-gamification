@@ -5,6 +5,7 @@ import math
 from django.contrib.auth.models import AnonymousUser
 from django.db import models
 from django.urls import reverse_lazy
+from django.utils.crypto import get_random_string
 from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
 
@@ -101,9 +102,15 @@ class JavaQuestion(Question):
     grader = JavaGrader()
 
 
+def random_seed():
+    seed = get_random_string(8, '0123456789')
+    return int(seed)
+
+
 class UserQuestionJunction(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='question_junctions')
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='user_junctions')
+    random_seed = models.IntegerField(default=random_seed)
 
     opened_tutorial = models.BooleanField(default=False)
     opened_question = models.BooleanField(default=False)
@@ -130,7 +137,7 @@ class UserQuestionJunction(models.Model):
         if type(self.question.variables) != list:
             return {}
 
-        variables, errors = generate_variables(self.question.variables, self.user)
+        variables, errors = generate_variables(self.question.variables, self.random_seed)
 
         return variables
 
@@ -146,7 +153,7 @@ class UserQuestionJunction(models.Model):
         keys = list(choices.keys())
         keys = keys[:self.question.visible_distractor_count+1]
 
-        random.seed(self.user.pk or 0)
+        random.seed(self.random_seed)
         random.shuffle(keys)
 
         return {key: render_text(choices[key], self.get_variables()) for key in keys}
@@ -157,7 +164,7 @@ class UserQuestionJunction(models.Model):
         if not isinstance(self.question, ParsonsQuestion):
             return {}
 
-        random.seed(self.user.pk or 0)
+        random.seed(self.random_seed)
         lines = []
         for line in self.question.lines:
             lines.append(render_text(line, self.get_variables()))

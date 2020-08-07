@@ -33,8 +33,8 @@ def render_text(text, variables):
     return text
 
 
-def generate_variables(variable_schema, user):
-    random.seed(user.pk or 0)
+def generate_variables(variable_schema, seed):
+    random.seed(seed)
     variables = {}
     errors = []
 
