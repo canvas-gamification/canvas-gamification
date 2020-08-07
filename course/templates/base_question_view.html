@@ -56,6 +56,9 @@
             {% endif %}
         </div>
     </div>
+    {% if user.is_teacher %}
+        {% include 'variables_debug_snippet.html' %}
+    {% endif %}
 
     <h2>My Past Submissions</h2>
     {% include 'past_submissions_snippet.html' with submissions=uqj.submissions.all %}

@@ -1,0 +1,17 @@
+<div class="card my-1">
+    <div class="card-header"><h1>Generated Variables</h1></div>
+    <div class="card-body">
+        {% for k, v in uqj.get_variables.items %}
+            <div>{{ k }}: {{ v }}</div>
+        {% empty %}
+            No Variables.
+        {% endfor %}
+    </div>
+    <div class="card-footer">
+        {% for err in uqj.get_variables_errors %}
+            <div class="alert-danger">{{ err }}</div>
+        {% empty %}
+            No error detected.
+        {% endfor %}
+    </div>
+</div>

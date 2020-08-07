@@ -130,16 +130,19 @@ class UserQuestionJunction(models.Model):
 
         return self.submissions.count() < self.question.max_submission_allowed
 
-    def get_variables(self):
+    def _get_variables(self):
         if not isinstance(self.question, VariableQuestion):
-            return {}
-
-        if type(self.question.variables) != list:
-            return {}
+            return {}, []
 
         variables, errors = generate_variables(self.question.variables, self.random_seed)
 
-        return variables
+        return variables, errors
+
+    def get_variables_errors(self):
+        return self._get_variables()[1]
+
+    def get_variables(self):
+        return self._get_variables()[0]
 
     def get_rendered_text(self):
         return render_text(self.question.text, self.get_variables())
