@@ -105,7 +105,7 @@ class CheckboxQuestion(MultipleChoiceQuestion):
     pass
 
 
-class JavaQuestion(Question):
+class JavaQuestion(VariableQuestion):
     test_cases = JSONField()
 
     grader = JavaGrader()
