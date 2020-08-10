@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load static %}
+{% load math %}
 
 {% block title %}Problem set{% endblock %}
 
@@ -40,22 +41,27 @@
         </div>
     </form>
 
-    <table class="table table-hover no-text-wrap-table"
+    <table class="table table-hover"
            data-toggle="table"
     >
         <thead>
         <tr>
             <th scope="col" data-sortable="true">#</th>
-            <th scope="col" data-sortable="true">Question Name</th>
             {% if user.is_teacher %}
+                <th scope="col" data-sortable="true">Question Name</th>
                 <th scope="col" data-sortable="true">
                     Author
                 </th>
             {% endif %}
             <th scope="col" data-sortable="true">Category</th>
+            <th scope="col" data-sortable="true">Sub&nbsp;Category</th>
             <th scope="col" data-sortable="true">Difficulty</th>
             <th scope="col" data-sortable="true">Token&nbsp;Value</th>
             <th scope="col" data-sortable="true">Status</th>
+            {% if user.is_teacher %}
+                <th scope="col" data-sortable="true">Avg&nbsp;Success</th>
+            {% endif %}
+            <th scope="col" data-sortable="true">Num&nbsp;Attempts</th>
             <th scope="col">Action</th>
         </tr>
         </thead>
@@ -63,37 +69,48 @@
         {% for problem in problems %}
             <tr class="{{ problem.uqj.status_class }}">
                 <th scope="row">{{ problem.pk }}</th>
-                <td class="col">{{ problem.title }}</td>
                 {% if user.is_teacher %}
+                    <td>{{ problem.title }}</td>
                     <td>{{ problem.author }}</td>
                 {% endif %}
-                <td>{{ problem.category }}</td>
+                <td>{{ problem.category.parent }}</td>
+                <td>{{ problem.category.name }}</td>
                 <td>{{ problem.get_difficulty_display | safe }}</td>
                 <td>{{ problem.token_value | floatformat:0 }}</td>
                 <td>
                     {{ problem.uqj.status }}
                 </td>
+                {% if user.is_teacher %}
+                    <td>
+                        {{ problem.success_rate | to_percentage }}
+                    </td>
+                {% endif %}
                 <td>
-                    <div>
-                        <button class="btn btn-primary mx-1"
-                                onclick="window.location.href='{% url 'course:question_view' problem.pk %}'">
-                            View
-                        </button>
-
-                        {% if user.is_teacher %}
-
-                            <button class="btn btn-warning mx-1"
-                                    onclick="window.location.href='{% url 'course:question_edit' problem.pk %}'">
-                                Edit
-                            </button>
-
-                            <button class="btn btn-danger mx-1"
-                                    onclick="window.location.href='{% url 'course:question_delete' problem.pk %}'">
-                                Delete
-                            </button>
-                        {% endif %}
-
-                    </div>
+                    {{ problem.uqj.num_attempts }}
+                </td>
+                <td>
+                    {% if user.is_teacher %}
+                        <div style="white-space: nowrap; display: flex">
+                            <div class="action-icon" style="background-color: #0e84b5; border-radius: 10px 0 0 10px">
+                                <a href="{% url 'course:question_view' problem.pk %}">
+                                    <i class="fa fa-search"
+                                       style="color: white"></i>
+                                </a>
+                            </div>
+                            <div class="action-icon" style="background-color: antiquewhite">
+                                <a href="{% url 'course:question_edit' problem.pk %}">
+                                    <i class="fa fa-pencil-alt" style="color: black"></i>
+                                </a>
+                            </div>
+                            <div class="action-icon" style="background-color: red; border-radius: 0 10px 10px 0">
+                                <a href="{% url 'course:question_delete' problem.pk %}">
+                                    <i class="fa fa-trash-alt" style="color: white"></i>
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'course:question_view' problem.pk %}" class="btn btn-primary">Open</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}

@@ -4,6 +4,7 @@ import math
 
 from django.contrib.auth.models import AnonymousUser
 from django.db import models
+from django.db.models import Count
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
 from djrichtextfield.models import RichTextField
@@ -80,6 +81,14 @@ class Question(PolymorphicModel):
     def token_value(self):
         return get_token_value(self.category, self.difficulty)
 
+    @property
+    def success_rate(self):
+        total_tried = self.user_junctions.annotate(Count('submissions')).filter(submissions__count__gt=0).count()
+        total_solved = self.user_junctions.filter(is_solved=True).count()
+        if total_tried == 0:
+            return 0
+        return total_solved/total_tried
+
 
 class VariableQuestion(Question):
     variables = JSONField()
@@ -118,6 +127,7 @@ class UserQuestionJunction(models.Model):
 
     is_solved = models.BooleanField(default=False)
     is_partially_solved = models.BooleanField(default=False)
+
 
     @property
     def is_allowed_to_submit(self):
@@ -173,6 +183,9 @@ class UserQuestionJunction(models.Model):
             lines.append(render_text(line, self.get_variables()))
         random.shuffle(lines)
         return lines
+
+    def num_attempts(self):
+        return self.submissions.count()
 
     @property
     def status_class(self):
