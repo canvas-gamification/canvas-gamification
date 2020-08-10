@@ -89,7 +89,7 @@ class SignupForm(auth_forms.UserCreationForm):
         return data
 
     def is_valid(self):
-        response = self.data['g-recaptcha-response']
+        response = self.data.get('g-recaptcha-response', None)
 
         r = requests.post(RECAPTCHA_URL, {
             'secret': RECAPTCHA_KEY,
