@@ -136,6 +136,9 @@ class UserQuestionJunction(models.Model):
     is_solved = models.BooleanField(default=False)
     is_partially_solved = models.BooleanField(default=False)
 
+    class Meta:
+        unique_together = ('user', 'question')
+
     def viewed(self):
         self.last_viewed = datetime.now()
         self.save()
