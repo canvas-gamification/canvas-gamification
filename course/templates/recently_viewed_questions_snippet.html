@@ -1,0 +1,16 @@
+<div class="card">
+    <div class="card-header">
+        <h3>Recently Viewed<h3>
+    </div>
+    <ul class="list-group list-group-flush">
+        {% for uqj in recently_viewed %}
+            <li class="list-group-item">
+                <a href="{% url 'course:question_view' uqj.question.pk %}">
+                    {{ uqj.question }}
+                </a>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No Recent Question</li>
+        {% endfor %}
+    </ul>
+</div>

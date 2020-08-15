@@ -63,8 +63,7 @@ def question_view(request, pk):
     question = get_object_or_404(Question, pk=pk)
 
     uqj = get_user_question_junction(request.user, question)
-    uqj.opened_question = True
-    uqj.save()
+    uqj.viewed()
 
     if isinstance(question, JavaQuestion):
         return _java_question_view(request, question)

@@ -1,6 +1,7 @@
 import json
 import random
 import math
+from datetime import datetime
 
 from django.contrib.auth.models import AnonymousUser
 from django.db import models
@@ -77,6 +78,9 @@ class Question(PolymorphicModel):
     def type_name(self):
         return self._meta.verbose_name
 
+    def __str__(self):
+        return "{} ({})".format(self.type_name, self.id)
+
     @property
     def token_value(self):
         return get_token_value(self.category, self.difficulty)
@@ -125,13 +129,16 @@ class UserQuestionJunction(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='user_junctions')
     random_seed = models.IntegerField(default=random_seed)
 
+    last_viewed = models.DateTimeField(default=None, null=True)
     opened_tutorial = models.BooleanField(default=False)
-    opened_question = models.BooleanField(default=False)
     tokens_received = models.FloatField(default=0)
 
     is_solved = models.BooleanField(default=False)
     is_partially_solved = models.BooleanField(default=False)
 
+    def viewed(self):
+        self.last_viewed = datetime.now()
+        self.save()
 
     @property
     def is_allowed_to_submit(self):
@@ -209,7 +216,7 @@ class UserQuestionJunction(models.Model):
             return "Partially Solved"
         if self.submissions.exists():
             return "Wrong"
-        if self.opened_question:
+        if self.last_viewed:
             return "Unsolved"
         return "New"
 

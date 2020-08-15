@@ -1,6 +1,6 @@
 {% load token_format %}
 
-{% if user.actions.all.exists %}
+{% if actions %}
     <div class="container-fluid">
         <table class="table table-bordered table-striped table-hover no-text-wrap-table">
             <thead>
@@ -12,7 +12,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for action in user.actions.all reversed %}
+            {% for action in actions %}
                 <tr>
                     <td>{% autoescape off %}{{ action.description }}{% endautoescape %}</td>
                     <td>{{ action.token_change | token_change_format }}</td>
