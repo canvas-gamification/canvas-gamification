@@ -1,3 +1,5 @@
+
+
 def get_user_question_junction(user, question):
     from course.models.models import UserQuestionJunction
 
@@ -6,6 +8,37 @@ def get_user_question_junction(user, question):
     user_question_junction = UserQuestionJunction(user=user, question=question)
     user_question_junction.save()
     return user_question_junction
+
+
+def ensure_uqj(user, question):
+    from course.models.models import UserQuestionJunction
+    from course.models.models import Question
+    from accounts.models import MyUser
+
+    if not user and not question:
+        return
+
+    if user and question:
+        if user.question_junctions.filter(question=question).exists():
+            return
+        uqj = UserQuestionJunction(user=user, question=question)
+        uqj.save()
+
+    if not question:
+        exist_ids = [x['id'] for x in user.question_junctions.values('id')]
+        qs = [x['id'] for x in Question.objects.exclude(id__in=exist_ids).values('id')]
+
+        for question_id in qs:
+            uqj = UserQuestionJunction(user=user, question_id=question_id)
+            uqj.save()
+
+    if not user:
+        exist_ids = [x['id'] for x in question.user_junctions.values('id')]
+        qs = [x['id'] for x in MyUser.objects.exclude(id__in=exist_ids).values('id')]
+
+        for user_id in qs:
+            uqj = UserQuestionJunction(user_id=user_id, question=question)
+            uqj.save()
 
 
 def get_token_value(category, difficulty):
@@ -89,7 +122,8 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
                                               variables=variables, choices=choices,
                                               visible_distractor_count=visible_distractor_count)
             question.save()
-        except:
+        except Exception as e:
+            print(e)
             raise QuestionCreateException(
                 message="Invalid list of arguments to create MultipleChoiceQuestion",
                 user_message="Cannot create question due to an unknown error, please contact developers"
@@ -111,7 +145,8 @@ def create_java_question(pk=None, title=None, text=None, max_submission_allowed=
                                                   tutorial=tutorial, author=author, category=category,
                                                   difficulty=difficulty, is_verified=is_verified, test_cases=test_cases)
     else:
-        question = JavaQuestion(title=title, text=text, max_submission_allowed=max_submission_allowed, tutorial=tutorial,
+        question = JavaQuestion(title=title, text=text, max_submission_allowed=max_submission_allowed,
+                                tutorial=tutorial,
                                 author=author, category=category, difficulty=difficulty, is_verified=is_verified,
                                 test_cases=test_cases)
         question.save()

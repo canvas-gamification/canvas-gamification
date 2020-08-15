@@ -13,7 +13,7 @@ from polymorphic.models import PolymorphicModel
 from accounts.models import MyUser
 from course.fields import JSONField
 from course.grader import MultipleChoiceGrader, JavaGrader
-from course.utils.utils import get_user_question_junction, get_token_value
+from course.utils.utils import get_user_question_junction, get_token_value, ensure_uqj
 from course.utils.variables import render_text, generate_variables
 from general.models import Action
 
@@ -88,6 +88,10 @@ class Question(PolymorphicModel):
         if total_tried == 0:
             return 0
         return total_solved/total_tried
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        ensure_uqj(None, self)
 
 
 class VariableQuestion(Question):

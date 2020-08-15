@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 from django.db import models
 
+from course.utils.utils import ensure_uqj
+
 STUDENT = 'Student'
 TEACHER = 'Teacher'
 
@@ -33,3 +35,7 @@ class MyUser(AbstractUser):
     @property
     def has_complete_profile(self):
         return self.has_name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        ensure_uqj(self, None)
