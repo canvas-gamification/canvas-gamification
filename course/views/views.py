@@ -11,7 +11,7 @@ from course.forms.forms import ProblemFilterForm
 from course.forms.java import JavaQuestionForm
 from course.forms.multiple_choice import CheckboxQuestionForm, MultipleChoiceQuestionForm, ChoiceForm
 from course.models.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
-    QuestionCategory, DIFFICULTY_CHOICES, TokenValue, Submission
+    QuestionCategory, DIFFICULTY_CHOICES, TokenValue, Submission, UserQuestionJunction
 from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
 from course.utils.utils import get_token_value, get_user_question_junction
 from course.views.java import _java_question_create_view, _java_question_view, _java_submission_detail_view, \
@@ -116,38 +116,36 @@ def problem_set_view(request):
     solved = request.GET.get('solved', None)
     category = request.GET.get('category', None)
 
-    q = Q(is_verified=True)
+    q = Q(question__is_verified=True)
 
     if query:
-        q = q & Q(title__contains=query)
+        q = q & Q(question__title__contains=query)
     if difficulty:
-        q = q & Q(difficulty=difficulty)
+        q = q & Q(question__difficulty=difficulty)
     if category:
-        q = q & (Q(category=category) | Q(category__parent=category))
+        q = q & (Q(question__category=category) | Q(question__category__parent=category))
 
     if solved == 'Solved':
-        q = q & Q(user_junctions__is_solved=True)
+        q = q & Q(is_solved=True)
     if solved == 'Unsolved':
-        q = q & Q(user_junctions__submissions=None, user_junctions__opened_question=True)
+        q = q & Q(is_solved=False, is_partially_solved=False)
     if solved == "Partially Correct":
-        q = q & Q(user_junctions__is_partially_solved=True)
+        q = q & Q(is_partially_solved=True)
     if solved == 'Wrong':
-        q = q & Q(user_junctions__submissions__count__gt=0, user_junctions__is_solved=False,
-                  user_junctions__is_partially_solved=False)
+        q = q & Q(submissions__count__gt=0, is_solved=False,
+                  is_partially_solved=False)
     if solved == 'New':
-        q = q & Q(user_junctions__submissions=None, user_junctions__opened_question=False)
-
-    problems = Question.objects.annotate(
-        Count('user_junctions__submissions')).filter(q).all()
+        q = q & Q(submissions__count=0, last_viewed__isnull=True)
 
     if request.user.is_authenticated:
-        for problem in problems:
-            problem.uqj = get_user_question_junction(request.user, problem)
+        uqjs = request.user.question_junctions.annotate(Count('submissions')).filter(q).all()
+    else:
+        uqjs = UserQuestionJunction.objects.none()
 
     form = ProblemFilterForm(request.GET)
 
     return render(request, 'problem_set.html', {
-        'problems': problems,
+        'uqjs': uqjs,
         'form': form,
         'header': 'problem_set',
     })
