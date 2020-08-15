@@ -125,16 +125,16 @@ def random_seed():
 
 
 class UserQuestionJunction(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='question_junctions')
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='user_junctions')
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='question_junctions', db_index=True)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='user_junctions', db_index=True)
     random_seed = models.IntegerField(default=random_seed)
 
-    last_viewed = models.DateTimeField(default=None, null=True)
+    last_viewed = models.DateTimeField(default=None, null=True, db_index=True)
     opened_tutorial = models.BooleanField(default=False)
     tokens_received = models.FloatField(default=0)
 
-    is_solved = models.BooleanField(default=False)
-    is_partially_solved = models.BooleanField(default=False)
+    is_solved = models.BooleanField(default=False, db_index=True)
+    is_partially_solved = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         unique_together = ('user', 'question')
