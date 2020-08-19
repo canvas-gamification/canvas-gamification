@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'jsoneditor',
     'general',
     'api',
+    'canvas',
 ]
 
 MIDDLEWARE = [
