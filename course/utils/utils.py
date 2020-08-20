@@ -28,9 +28,6 @@ def ensure_uqj(user, question):
         exist_ids = [x['question_id'] for x in user.question_junctions.values('question_id')]
         qs = [x['id'] for x in Question.objects.exclude(id__in=exist_ids).values('id')]
 
-        print("exist_ids: ", exist_ids)
-        print("qs: ", qs)
-
         for question_id in qs:
             uqj = UserQuestionJunction(user=user, question_id=question_id)
             uqj.save()
