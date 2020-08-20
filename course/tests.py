@@ -33,3 +33,12 @@ class EnsureUQJTest(ProblemTestCase):
         user = MyUser.objects.get(username='test_user2')
         self.assertEquals(user.question_junctions.count(), Question.objects.all().count())
         self.assertEqual(Question.objects.first().user_junctions.count(), MyUser.objects.count())
+
+        user.save()
+        self.user.save()
+        for q in Question.objects.all():
+            q.save()
+
+        self.assertEquals(self.user.question_junctions.count(), Question.objects.all().count())
+        self.assertEquals(user.question_junctions.count(), Question.objects.all().count())
+        self.assertEqual(Question.objects.first().user_junctions.count(), MyUser.objects.count())
