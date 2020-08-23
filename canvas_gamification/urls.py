@@ -32,5 +32,6 @@ urlpatterns = [
     path('terms-and-conditions/', TemplateView.as_view(template_name='terms_and_conditions.html'), name='terms_and_conditions'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/', include('api.urls', namespace='api')),
+    path('canvas/', include('canvas.urls', namespace='canvas')),
     path('', TemplateView.as_view(template_name='index.html')),
 ]

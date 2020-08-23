@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    Courses Registration
+{% endblock %}
+
+{% block content %}
+    {% if blocked %}
+        <div class="alert-danger">Registration has been blocked fo you. Please contact your instructor.</div>
+    {% else %}
+        {% if success %}
+            <div class="alert-success">You have successfully registered.</div>
+        {% else %}
+            {% if name %}
+                <div>
+                    {% if failed %}
+                        <div class="alert-danger">No matching record found. Please make sure you spelled your name
+                            correctly
+                        </div>
+                    {% endif %}
+                    Please enter your name exactly as it appears on Canvas.
+
+
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <label>
+                        Name:
+                        <input class="form-control" type="text" name="name"
+                               {% if failed %}value="{{ name }}"{% endif %}>
+                    </label>
+                    <input type="submit" class="btn btn-primary">
+                </form>
+            {% endif %}
+            {% if guessed_name %}
+                <div>
+                    Please verify that this is your name.
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <label>
+                        Your Full Name:
+                        <input class="form-control" type="text" name="confirmed_name" value="{{ guessed_name }}"
+                               readonly>
+                    </label>
+                    <input type="submit" class="btn btn-success" value="Confirm">
+                    <button type="button" class="btn btn-danger" onclick="location = location">Try Again</button>
+                </form>
+            {% endif %}
+            {% if verification %}
+                {% if verification_failed %}
+                    <div class="alert-danger">Verification Failed</div>
+                {% endif %}
+                <div>
+                    Your verification assignment has been graded in canvas.<br>
+                    Please provide your grade in verification assignment to confirm your identity.<br>
+                    Attempts Remaining: {{ attempts }}
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <label>
+                        Verification Code:
+                        <input class="form-control" type="text" name="code">
+                    </label>
+                    <input type="submit" class="btn btn-success">
+                </form>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endblock %}

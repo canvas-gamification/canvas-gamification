@@ -27,3 +27,4 @@ sphinx==3.1.2
 django-sphinx==2.2.4
 django-extensions==3.0.2
 ipython==7.16.1
+fuzzywuzzy==0.18.0

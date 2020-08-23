@@ -1,6 +1,9 @@
+from datetime import datetime
+from django.utils import timezone
 from django.db import models
 import canvasapi
 from accounts.models import MyUser
+from fuzzywuzzy import process
 
 
 class CanvasCourse(models.Model):
@@ -23,6 +26,7 @@ class CanvasCourse(models.Model):
         super().__init__(*args, **kwargs)
         self._canvas = None
         self._course = None
+        self._verification_assignment = None
 
     @property
     def canvas(self):
@@ -35,6 +39,16 @@ class CanvasCourse(models.Model):
         if not self._course:
             self._course = self.canvas.get_course(self.course_id)
         return self._course
+
+    @property
+    def status(self):
+        if not self.allow_registration:
+            return "Blocked"
+        if timezone.now() < self.start_date:
+            return "Pending"
+        if self.end_date < timezone.now():
+            return "Finished"
+        return "In Session"
 
     @property
     def verification_assignment(self):
@@ -60,6 +74,16 @@ class CanvasCourse(models.Model):
         })
         self.verification_assignment_id = a.id
 
+    def get_user(self, name=None, id=None):
+        for user in self.course.get_users():
+            if user.id == id or user.name == name:
+                return user
+        return None
+
+    def guess_user(self, name):
+        choices = [x.name for x in self.course.get_users()]
+        return process.extractOne(name, choices, score_cutoff=95)
+
     def save(self, *args, **kwargs):
         self.create_verification_assignment_group()
         self.create_verification_assignment()
@@ -82,6 +106,9 @@ class CanvasCourseRegistration(models.Model):
     verification_code = models.IntegerField(default=random_verification_code)
     verification_attempts = models.IntegerField(default=3)
 
+    class Meta:
+        unique_together = ('course', 'user')
+
     @property
     def canvas_user(self):
         if self.canvas_user_id is None:
@@ -100,7 +127,7 @@ class CanvasCourseRegistration(models.Model):
     def check_verification_code(self, code):
         if self.is_blocked:
             return False
-        if self.verification_code == code:
+        if str(self.verification_code) == str(code):
             self.is_verified = True
             self.save()
             return True

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    Courses
+{% endblock %}
+
+{% block content %}
+    <table class="table table-hover" data-toggle="table">
+        <thead>
+            <tr>
+                <th scope="col" data-sortable="true">#</th>
+                <th scope="col" data-sortable="true">Name</th>
+                <th scope="col" data-sortable="true">Status</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ course.name }}</td>
+                    <td>{{ course.status }}</td>
+                    <td>
+                        <a href="{% url 'canvas:course' course.pk %}" class="btn btn-primary">Open</a>
+                        <a href="{% url 'canvas:course_register' course.pk %}" class="btn btn-primary">Register</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
