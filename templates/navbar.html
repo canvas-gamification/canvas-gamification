@@ -19,23 +19,26 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'canvas:course_list' %}">Courses</a>
             </li>
-            <li class="nav-item {% ifequal header 'problem_set' %}active{% endifequal %}">
-                <a class="nav-link" href="{% url 'course:problem_set' %}">Problem Set</a>
-            </li>
-            <li class="nav-item dropdown {% ifequal header 'new_problem' %}active{% endifequal %}" style="float: right">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                   data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false" style="float: right">
-                    New Problem
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'course:new_problem_multiple_choice' %}">MultipleChoice
-                        Problem</a>
-                    <a class="dropdown-item" href="{% url 'course:new_problem_checkbox' %}">Checkbox Problem</a>
-                    <a class="dropdown-item" href="{% url 'course:new_problem_java' %}">Java Problem</a>
-                    <a class="dropdown-item" href="{% url 'course:new_problem_parsons' %}">Parsons Problem</a>
-                </div>
-            </li>
+            {% if user.is_teacher %}
+                <li class="nav-item {% ifequal header 'problem_set' %}active{% endifequal %}">
+                    <a class="nav-link" href="{% url 'course:problem_set' %}">Problem Set</a>
+                </li>
+                <li class="nav-item dropdown {% ifequal header 'new_problem' %}active{% endifequal %}"
+                    style="float: right">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false" style="float: right">
+                        New Problem
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'course:new_problem_multiple_choice' %}">MultipleChoice
+                            Problem</a>
+                        <a class="dropdown-item" href="{% url 'course:new_problem_checkbox' %}">Checkbox Problem</a>
+                        <a class="dropdown-item" href="{% url 'course:new_problem_java' %}">Java Problem</a>
+                        <a class="dropdown-item" href="{% url 'course:new_problem_parsons' %}">Parsons Problem</a>
+                    </div>
+                </li>
+            {% endif %}
             <li class="nav-item {% ifequal header 'faq' %}active{% endifequal %}">
                 <a class="nav-link" href="{% url 'faq' %}">FAQ</a>
             </li>
@@ -72,9 +75,8 @@
                 </li>
                 {% if user.is_staff %}
                     <form class="form-inline" style="margin-left: 5px">
-                        <button class="btn btn-outline-success float-right" type="button"
-                                onclick="window.location.href ='{% url 'admin:index' %}'">Admin
-                        </button>
+                        <a class="btn btn-outline-success float-right" href="{% url 'admin:index' %}">Admin
+                        </a>
                     </form>
                 {% endif %}
             {% else %}

@@ -110,6 +110,7 @@ def question_delete_view(request, pk):
     return HttpResponseRedirect(reverse_lazy('course:problem_set'))
 
 
+@user_passes_test(teacher_check)
 def problem_set_view(request):
     query = request.GET.get('query', None)
     difficulty = request.GET.get('difficulty', None)

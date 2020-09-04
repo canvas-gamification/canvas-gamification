@@ -1,9 +1,7 @@
 import json
 import random
-import math
 from datetime import datetime
 
-from django.contrib.auth.models import AnonymousUser
 from django.db import models
 from django.db.models import Count
 from django.urls import reverse_lazy
@@ -12,9 +10,10 @@ from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
 
 from accounts.models import MyUser
+from canvas.models import Event
 from course.fields import JSONField
 from course.grader import MultipleChoiceGrader, JavaGrader
-from course.utils.utils import get_user_question_junction, get_token_value, ensure_uqj
+from course.utils.utils import get_token_value, ensure_uqj
 from course.utils.variables import render_text, generate_variables
 from general.models import Action
 
@@ -69,6 +68,8 @@ class Question(PolymorphicModel):
     author = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
     category = models.ForeignKey(QuestionCategory, on_delete=models.SET_NULL, null=True, blank=True)
     difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES, default="EASY")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='question_set', null=True, blank=True,
+                              db_index=True)
 
     is_verified = models.BooleanField(default=False)
 
@@ -91,7 +92,7 @@ class Question(PolymorphicModel):
         total_solved = self.user_junctions.filter(is_solved=True).count()
         if total_tried == 0:
             return 0
-        return total_solved/total_tried
+        return total_solved / total_tried
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -178,7 +179,7 @@ class UserQuestionJunction(models.Model):
         choices = json.loads(self.question.choices) if type(self.question.choices) == str else self.question.choices
 
         keys = list(choices.keys())
-        keys = keys[:self.question.visible_distractor_count+1]
+        keys = keys[:self.question.visible_distractor_count + 1]
 
         random.seed(self.random_seed)
         random.shuffle(keys)
@@ -366,4 +367,3 @@ class CodeSubmission(Submission):
 
 class JavaSubmission(CodeSubmission):
     pass
-

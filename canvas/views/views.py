@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 from canvas.models import CanvasCourse
+from course.views.views import teacher_check
 
 
 def course_list_view(request):
@@ -15,6 +17,9 @@ def course_list_view(request):
 
 
 def course_view(request, pk):
-    return render(request, 'canvas/course.html')
+    course = get_object_or_404(CanvasCourse, pk=pk)
+    return render(request, 'canvas/course.html', {
+        'course': course,
+    })
 
 

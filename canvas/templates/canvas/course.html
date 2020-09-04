@@ -1,5 +1,58 @@
 {% extends 'base.html' %}
 
+{% block header %}
+    {{ course.name }}
+{% endblock %}
 
 {% block content %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">URL</th>
+            <th scope="col">Canvas&nbsp;Course&nbsp;Name</th>
+            <th scope="col">Start&nbsp;Date</th>
+            <th scope="col">End&nbsp;Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{ course.pk }}</td>
+            <td>{{ course.name }}</td>
+            <td>{{ course.url }}</td>
+            <td>{{ course.canvas_course_name }}</td>
+            <td>{{ course.start_date }}</td>
+            <td>{{ course.end_date }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Events</h2>
+    {% if request.user.is_teacher %}
+        <a class="btn btn-primary my-1">Add an Event</a>
+        <a class="btn btn-primary my-1">Import an Event</a>
+    {% endif %}
+    <table class="table table-hover" data-toggle="table">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Start&nbsp;Date</th>
+            <th scope="col">End&nbsp;Date</th>
+            <th scope="col">Grade</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for event in course.events.all %}
+            <tr>
+                <td>{{ event.name }}</td>
+                <td>{{ event.start_date }}</td>
+                <td>{{ event.end_date }}</td>
+                <td></td>
+                <td></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
