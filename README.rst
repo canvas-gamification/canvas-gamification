@@ -26,3 +26,10 @@ Keyvan Khademi
 - Email: keyvankhademi@gmail.com
 - GitHub: `keyvankhademi <https://github.com/keyvankhademi>`__
 
+Collaborators
+=============
+Opey Adeyemi
+
+- Email: opeyadeyemi@gmail.com
+- GitHub: `opeyem1a <https://github.com/opeyem1a>`__
+
