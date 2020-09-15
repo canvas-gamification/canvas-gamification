@@ -29,3 +29,9 @@ label.required:before {
     text-align: center;
     padding: 0;
 }
+
+.no-spin-button::-webkit-inner-spin-button,
+.no-spin-button::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

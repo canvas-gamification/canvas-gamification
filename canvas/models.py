@@ -98,6 +98,9 @@ class CanvasCourse(models.Model):
         choices = [x.name for x in self.course.get_users()]
         return process.extractOne(name, choices, score_cutoff=95)
 
+    def is_registered(self, user):
+        return self.canvascourseregistration_set.filter(user=user, is_verified=True, is_blocked=False).exists()
+
     def save(self, *args, **kwargs):
         self.create_verification_assignment_group()
         self.create_verification_assignment()
@@ -156,9 +159,9 @@ class CanvasCourseRegistration(models.Model):
     @property
     def available_tokens(self):
         event_ids = [x['id'] for x in self.course.events.filter(count_for_tokens=True).values('id')]
-        tokens_gained = self.user.question_junctions.filter(question__event_id__in=event_ids).\
+        tokens_gained = self.user.question_junctions.filter(question__event_id__in=event_ids). \
             aggregate(Sum('tokens_received'))['tokens_received__sum']
-        tokens_used = self.user.token_uses.filter(option__course=self.course).\
+        tokens_used = self.user.token_uses.filter(option__course=self.course). \
             aggregate(Sum('option__tokens_required'))['option__tokens_required__sum']
 
         if not tokens_gained:
@@ -176,6 +179,9 @@ class Event(models.Model):
 
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
+
+    def is_allowed_to_open(self, user):
+        return self.start_date <= timezone.now() <= self.end_date and self.course.is_registered(user)
 
 
 class TokenUseOption(models.Model):

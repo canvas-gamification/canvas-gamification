@@ -1,0 +1,32 @@
+<table class="table table-hover" data-toggle="table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Category</th>
+        <th scope="col">Sub&nbsp;Category</th>
+        <th scope="col">Difficulty</th>
+        <th scope="col">Token&nbsp;Value</th>
+        <th scope="col">Status</th>
+        <th scope="col">Num&nbsp;Attempts</th>
+        <th scope="col">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for uqj in uqjs %}
+        <tr class="{{ uqj.status_class }}">
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ uqj.question.category.parent }}</td>
+            <td>{{ uqj.question.category.name }}</td>
+            <td>{{ uqj.question.get_difficulty_display | safe }}</td>
+            <td>{{ uqj.question.token_value | floatformat:0 }}</td>
+            <td>{{ uqj.status }}</td>
+            <td>
+                {{ uqj.num_attempts }} / {{ uqj.question.max_submission_allowed }}
+            </td>
+            <td>
+                <a href="{% url 'course:question_view' uqj.question.pk %}" class="btn btn-primary">Open</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
