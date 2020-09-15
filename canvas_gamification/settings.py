@@ -17,6 +17,8 @@ from django.contrib.messages import constants as message_constants
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from django.urls import reverse_lazy
 
+from canvas_gamification.env import read_env
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -26,15 +28,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '=cv^=w$b8iw4q5!ti#j)mxwujw24o)_d*og7($erv@4t5=3z7*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 HEROKU = False
+
+if DEBUG:
+    read_env(os.path.join(BASE_DIR, 'env', 'gamification.env'))
 
 if HEROKU:
     ALLOWED_HOSTS = ['canvas-gamification.herokuapp.com']
 elif DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOST = ['s202.ok.ubc.ca']
+    ALLOWED_HOSTS = ['web', 'localhost']
 
 # Application definition
 
@@ -104,7 +109,17 @@ if DEBUG:
             }
         }
     }
-
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ.get("POSTGRES_DB", "postgres"),
+            'USER': os.environ.get("POSTGRES_USER", "postgres"),
+            'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
+            'HOST': os.environ.get("POSTGRES_HOST", "db"),
+            'PORT': os.environ.get("POSTGRES_PORT", 5432),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -211,43 +226,22 @@ LOGOUT_REDIRECT_URL = reverse_lazy('homepage')
 if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True
 
-if not HEROKU:
+EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS']
+EMAIL_HOST = os.environ['EMAIL_HOST']
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+EMAIL_PORT = os.environ['EMAIL_PORT']
+EMAIL_ACTIVATION = os.environ['EMAIL_ACTIVATION']
+EMAIL_PASSWORD_RESET = os.environ['EMAIL_PASSWORD_RESET']
 
-    settings_file = open(os.path.join(BASE_DIR, "settings.json"))
-    SETTINGS_JSON = json.loads(settings_file.read())
+JUDGE0_HOST = os.environ['JUDGE0_HOST']
+JUDGE0_PASSWORD = os.environ['JUDGE0_PASSWORD']
 
-    EMAIL_USE_TLS = SETTINGS_JSON['EMAIL_USE_TLS']
-    EMAIL_HOST = SETTINGS_JSON['EMAIL_HOST']
-    EMAIL_HOST_USER = SETTINGS_JSON['EMAIL_HOST_USER']
-    EMAIL_HOST_PASSWORD = SETTINGS_JSON['EMAIL_HOST_PASSWORD']
-    EMAIL_PORT = SETTINGS_JSON['EMAIL_PORT']
-    EMAIL_ACTIVATION = SETTINGS_JSON['EMAIL_ACTIVATION']
-    EMAIL_PASSWORD_RESET = SETTINGS_JSON['EMAIL_PASSWORD_RESET']
+RECAPTCHA_KEY = os.environ['RECAPTCHA_KEY']
+RECAPTCHA_URL = os.environ['RECAPTCHA_URL']
 
-    JUDGE0_HOST = SETTINGS_JSON['JUDGE0_HOST']
-    JUDGE0_PASSWORD = SETTINGS_JSON['JUDGE0_PASSWORD']
 
-    RECAPTCHA_KEY = SETTINGS_JSON['reCaptcha_key']
-    RECAPTCHA_URL = SETTINGS_JSON['reCaptcha_url']
-
-    if not DEBUG:
-        DATABASES = SETTINGS_JSON['DATABASES']
-
-else:
-    EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS']
-    EMAIL_HOST = os.environ['EMAIL_HOST']
-    EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
-    EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
-    EMAIL_PORT = os.environ['EMAIL_PORT']
-    EMAIL_ACTIVATION = os.environ['EMAIL_ACTIVATION']
-    EMAIL_PASSWORD_RESET = os.environ['EMAIL_PASSWORD_RESET']
-
-    JUDGE0_HOST = os.environ['JUDGE0_HOST']
-    JUDGE0_PASSWORD = os.environ['JUDGE0_PASSWORD']
-
-    RECAPTCHA_KEY = os.environ['reCaptcha_key']
-    RECAPTCHA_URL = os.environ['reCaptcha_url']
-
+if HEROKU:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
     import dj_database_url
