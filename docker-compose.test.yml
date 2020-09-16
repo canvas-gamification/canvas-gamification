@@ -12,7 +12,7 @@ services:
       - db
       - judge0-server
       - judge0-workers
-    command: run_tests.sh
+    command: ["./run_tests.sh"]
 
   db:
     image: postgres:9.6
