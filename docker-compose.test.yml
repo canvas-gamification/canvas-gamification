@@ -17,15 +17,11 @@ services:
   db:
     image: postgres:9.6
     env_file: env/db.env
-    volumes:
-      - ./srv/postgres-data:/var/lib/postgresql/data/
     privileged: true
     restart: always
 
   judge0-server:
     image: judge0/api:1.9.0-extra
-    volumes:
-      - ./env/judge0.env:/judge0.conf:ro
     privileged: true
     depends_on:
       - judge0-db
@@ -35,8 +31,6 @@ services:
   judge0-workers:
     image: judge0/api:1.9.0-extra
     command: ["./scripts/workers"]
-    volumes:
-      - ./env/judge0.env:/judge0.conf:ro
     privileged: true
     depends_on:
       - judge0-db
@@ -46,8 +40,6 @@ services:
   judge0-db:
     image: postgres:9.6
     env_file: env/judge0.env
-    volumes:
-      - ./srv/judge0-postgres-data:/var/lib/postgresql/data/
     privileged: true
     restart: always
 
@@ -58,6 +50,4 @@ services:
       'docker-entrypoint.sh --appendonly yes --requirepass "$$REDIS_PASSWORD"'
     ]
     env_file: env/judge0.env
-    volumes:
-      - ./srv/redis-data:/data
     restart: always
