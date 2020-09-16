@@ -6,7 +6,7 @@ services:
     build: .
     image: gamification:latest
     env_file:
-    - env/gamification.env
+    - env/test.env
     - env/db.env
     depends_on:
       - db
