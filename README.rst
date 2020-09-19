@@ -149,3 +149,8 @@ Opey Adeyemi
 - Email: opeyadeyemi@gmail.com
 - GitHub: `opeyem1a <https://github.com/opeyem1a>`__
 
+Carson Ricca
+
+- Email: carsonricca28@gmail.com
+- GitHub: `carson-ricca <https://github.com/carson-ricca>`__
+
