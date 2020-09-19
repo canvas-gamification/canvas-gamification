@@ -36,8 +36,44 @@ Dependencies
 Local Dev
 ---------
 
-Copy setting.sample.json to settings.json
+Copy env/gamification.sample.env to env/gamification.env
 and fill the missing fields.
+
+Go to canvas_gamification/settings.py and change
+
+.. code-block:: bash
+
+    DEBUG=True
+
+Ensure Python is installed, then upgrade/install pip
+
+.. code-block:: bash
+
+    python3 -m pip install pip --upgrade
+
+Then install Pipenv
+
+.. code-block:: bash
+
+    python3 -m pip install pipenv
+
+Next navigate to the project directory, once in the project directory create a virtual environment with Pipenv
+
+.. code-block:: bash
+
+    pipenv shell
+
+Install Django
+
+.. code-block:: bash
+
+    pipenv install Django
+
+To install all necessary dependencies
+
+.. code-block:: bash
+
+    pip install -r requirements.txt
 
 Then apply the migrations
 
@@ -45,17 +81,29 @@ Then apply the migrations
 
     ./manage.py migrate
 
+.. code-block:: bash
+
+    python3 manage.py migrate
+
 Finally you can run the server by
 
 .. code-block:: bash
 
     ./manage.py runserver
 
+.. code-block:: bash
+
+    python3 manage.py runserver
+
 To initialize sample questions you can use
 
 .. code-block:: bash
 
     ./manage.py populate-db --all
+
+.. code-block:: bash
+
+    python3 manage.py populate-db --all
 
 Tests
 -----
