@@ -81,6 +81,8 @@ Then apply the migrations
 
     ./manage.py migrate
 
+or
+
 .. code-block:: bash
 
     python3 manage.py migrate
@@ -91,6 +93,8 @@ Finally you can run the server by
 
     ./manage.py runserver
 
+or
+
 .. code-block:: bash
 
     python3 manage.py runserver
@@ -100,6 +104,8 @@ To initialize sample questions you can use
 .. code-block:: bash
 
     ./manage.py populate-db --all
+
+or
 
 .. code-block:: bash
 
