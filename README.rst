@@ -111,6 +111,18 @@ or
 
     python3 manage.py populate-db --all
 
+To create a superuser for local testing, in gamification.env set
+
+.. code-block:: bash
+
+    EMAIL_USE_TLS=false
+
+Then
+
+.. code-block:: bash
+
+    python3 manage.py createsuperuser
+
 Tests
 -----
 
@@ -123,6 +135,13 @@ Docker
 
 A docker file is provided to run the website.
 It is recommended to use the provided docker compose.
+Ensure docker is installed on local machine, if not can install from: `Docker <https://www.docker.com/products/docker-desktop>`_
+
+To run the provided docker compose, navigate to the project directory
+
+.. code-block:: bash
+
+    docker-compose up
 
 Documentation
 =============
