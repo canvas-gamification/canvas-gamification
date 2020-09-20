@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  judge0-server:
+    image: judge0/api:1.9.0-extra
+    volumes:
+      - ./env/judge0.env:/judge0.conf:ro
+    privileged: true
+    depends_on:
+      - judge0-db
+      - judge0-redis
+    ports:
+    - "3000:3000"
+    restart: always
+
+  judge0-workers:
+    image: judge0/api:1.9.0-extra
+    command: ["./scripts/workers"]
+    volumes:
+      - ./env/judge0.env:/judge0.conf:ro
+    privileged: true
+    depends_on:
+      - judge0-db
+      - judge0-redis
+    restart: always
+
+  judge0-db:
+    image: postgres:9.6
+    env_file: env/judge0.env
+    privileged: true
+    restart: always
+
+  judge0-redis:
+    image: redis:4.0
+    command: [
+      "bash", "-c",
+      'docker-entrypoint.sh --appendonly yes --requirepass "$$REDIS_PASSWORD"'
+    ]
+    env_file: env/judge0.env
+    restart: always
