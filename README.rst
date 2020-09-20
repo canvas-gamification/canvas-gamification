@@ -28,16 +28,23 @@ Dependencies
 
 * Python 3.7
     * *Required Packages* is listed in requirements.txt
+* Docker
+    * Required to run Judge0 locally and deploying the website
+    * `Installation <https://docs.docker.com/desktop/>`__
 * Judge0 server
     * Provided in docker compose
 * Mailing System
-    * Requires an SMTP mailing service. Provide the details in settings.json
+    * Requires an SMTP mailing service. Provide the details in env files.
+* reCaptcha
+    * For production, you need to obtain your reCaptcha key and provide it in env files.
+    * `Details <https://www.google.com/recaptcha/about/>`__
 
 Local Dev
 ---------
 
-Copy env/gamification.sample.env to env/gamification.env
-and fill the missing fields.
+In local development you can set the environment variables in
+env/gamification.dev.env. All the field are pre populated
+so if you just want to run the website locally don't change it.
 
 Go to canvas_gamification/settings.py and change
 
@@ -45,13 +52,17 @@ Go to canvas_gamification/settings.py and change
 
     DEBUG=True
 
-Ensure Python is installed, then upgrade/install pip
+Python
+++++++
+
+Ensure Python3 is installed, then upgrade/install pip
 
 .. code-block:: bash
 
     python3 -m pip install pip --upgrade
 
-Then install Pipenv
+Optionally you set virtual environment for python
+install Pipenv
 
 .. code-block:: bash
 
@@ -63,37 +74,34 @@ Next navigate to the project directory, once in the project directory create a v
 
     pipenv shell
 
-Install Django
-
-.. code-block:: bash
-
-    pipenv install Django
-
 To install all necessary dependencies
 
 .. code-block:: bash
 
     pip install -r requirements.txt
 
-Then apply the migrations
+Judge0
+++++++
+
+To be able to execute user's code you need to have judge0
+up and running. docker-compose.dev.yml is ready to run judge0.
+Environment variables in env/gamification.dev.env is set to use
+this instance of judge0.
 
 .. code-block:: bash
 
-    ./manage.py migrate
+    sudo docker-compose -f docker-compose.dev.yml up -d
 
-or
+Run the Website
++++++++++++++++
+
+Then apply the migrations
 
 .. code-block:: bash
 
     python3 manage.py migrate
 
-Finally you can run the server by
-
-.. code-block:: bash
-
-    ./manage.py runserver
-
-or
+Now you can run the server by
 
 .. code-block:: bash
 
@@ -103,26 +111,50 @@ To initialize sample questions you can use
 
 .. code-block:: bash
 
-    ./manage.py populate-db --all
+    python3 manage.py populate-db --all
 
-or
+Admin User
+++++++++++
+
+To use the website you need an admin user.
+Create a super use by
 
 .. code-block:: bash
 
-    python3 manage.py populate-db --all
+    python3 manage.py createsuperuser
+
+You also need to give this user a teacher access to the website.
+
+#. Open the website (Normally at localhost:8000)
+#. Login with the super user you just created
+#. Go to the admin section by clicking
+   on the admin button at the top right of the screen
+#. Go to the users section and click on your user
+#. Scroll down and change the role from student to teacher
+#. Save the user and open the website again
 
 Tests
 -----
 
 .. code-block:: bash
 
-    ./manage.py test
+    python3 manage.py test
 
 Docker
 ------
 
-A docker file is provided to run the website.
-It is recommended to use the provided docker compose.
+For local development, it is recommended not to use docker
+for the website but only for judge0 which is provided in
+docker-compose.dev.yml
+
+For production, copy env/gamification.sample.env to env/gamification.env.
+Fill the variables in it and run the server by
+
+.. code-block:: bash
+
+    sudo docker-compose up -d
+
+The server should be up and running on port 80
 
 Documentation
 =============
