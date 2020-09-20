@@ -5,9 +5,11 @@ from django.utils import timezone
 from fuzzywuzzy import process
 
 from accounts.models import MyUser
+from canvas import canvasapi_mock
 
 
 class CanvasCourse(models.Model):
+    mock = models.BooleanField(default=False)
     name = models.CharField(max_length=500)
     url = models.URLField()
     course_id = models.IntegerField()
@@ -34,6 +36,8 @@ class CanvasCourse(models.Model):
 
     @property
     def canvas(self):
+        if self.mock:
+            return canvasapi_mock.Canvas(self.url, self.token)
         if not self._canvas:
             self._canvas = canvasapi.Canvas(self.url, self.token)
         return self._canvas
