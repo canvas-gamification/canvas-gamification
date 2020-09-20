@@ -23,6 +23,17 @@ Supported Types of Questions
 Getting Started
 ===============
 
+Cloning the Project
+-------------------
+
+If you are using windown please run this command
+before you clone the project. It will prevent the line endings
+to change from LF ro CRLF.
+
+.. code-block:: bash
+
+    git config --global core.autocrlf input
+
 Dependencies
 ------------
 
