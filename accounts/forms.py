@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 from accounts.models import MyUser
 from canvas_gamification.settings import RECAPTCHA_URL, RECAPTCHA_KEY
+from utils.recaptcha import validate_recaptcha
 
 
 class PasswordWidget(forms.PasswordInput):
@@ -91,14 +92,7 @@ class SignupForm(auth_forms.UserCreationForm):
     def is_valid(self):
         response = self.data.get('g-recaptcha-response', None)
 
-        r = requests.post(RECAPTCHA_URL, {
-            'secret': RECAPTCHA_KEY,
-            'response': response,
-        })
-
-        data = r.json()
-
-        if not data['success']:
+        if not validate_recaptcha(response):
             self.add_error(None, 'reCaptcha should be validate')
             return False
 

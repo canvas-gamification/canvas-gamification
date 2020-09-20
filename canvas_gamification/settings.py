@@ -241,8 +241,12 @@ else:
 JUDGE0_HOST = os.environ['JUDGE0_HOST']
 JUDGE0_PASSWORD = os.environ['JUDGE0_PASSWORD']
 
-RECAPTCHA_KEY = os.environ['RECAPTCHA_KEY']
-RECAPTCHA_URL = os.environ['RECAPTCHA_URL']
+if DEBUG:
+    RECAPTCHA_KEY = ""
+    RECAPTCHA_URL = ""
+else:
+    RECAPTCHA_KEY = os.environ['RECAPTCHA_KEY']
+    RECAPTCHA_URL = os.environ['RECAPTCHA_URL']
 
 
 if HEROKU:

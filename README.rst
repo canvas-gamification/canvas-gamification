@@ -39,6 +39,7 @@ Dependencies
 * reCaptcha
     * For production, you need to obtain your reCaptcha key and provide it in env files.
     * `Details <https://www.google.com/recaptcha/about/>`__
+    * For local development, recaptcha will be automatically validated
 
 Local Dev
 ---------
