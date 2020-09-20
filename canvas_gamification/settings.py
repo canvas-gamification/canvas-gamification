@@ -32,7 +32,7 @@ DEBUG = False
 HEROKU = False
 
 if DEBUG:
-    read_env(os.path.join(BASE_DIR, 'env', 'gamification.env'))
+    read_env(os.path.join(BASE_DIR, 'env', 'gamification.dev.env'))
 
 if HEROKU:
     ALLOWED_HOSTS = ['canvas-gamification.herokuapp.com']
@@ -226,13 +226,17 @@ LOGOUT_REDIRECT_URL = reverse_lazy('homepage')
 if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True
 
-EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS']
-EMAIL_HOST = os.environ['EMAIL_HOST']
-EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
-EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
-EMAIL_PORT = os.environ['EMAIL_PORT']
-EMAIL_ACTIVATION = os.environ['EMAIL_ACTIVATION']
-EMAIL_PASSWORD_RESET = os.environ['EMAIL_PASSWORD_RESET']
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS']
+    EMAIL_HOST = os.environ['EMAIL_HOST']
+    EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+    EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+    EMAIL_PORT = os.environ['EMAIL_PORT']
+    EMAIL_ACTIVATION = os.environ['EMAIL_ACTIVATION']
+    EMAIL_PASSWORD_RESET = os.environ['EMAIL_PASSWORD_RESET']
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 JUDGE0_HOST = os.environ['JUDGE0_HOST']
 JUDGE0_PASSWORD = os.environ['JUDGE0_PASSWORD']

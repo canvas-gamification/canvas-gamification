@@ -29,12 +29,13 @@ Dependencies
 * Python 3.7
     * *Required Packages* is listed in requirements.txt
 * Docker
-    * Required to run Judge0 locally and deploying the website
+    * Required to run judge0 locally or deploying the website
     * `Installation <https://docs.docker.com/desktop/>`__
 * Judge0 server
     * Provided in docker compose
 * Mailing System
-    * Requires an SMTP mailing service. Provide the details in env files.
+    * For production requires an SMTP mailing service. Provide the details in env files.
+    * For local development the email will be printed in console.
 * reCaptcha
     * For production, you need to obtain your reCaptcha key and provide it in env files.
     * `Details <https://www.google.com/recaptcha/about/>`__
