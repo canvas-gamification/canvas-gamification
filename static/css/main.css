@@ -8,7 +8,16 @@ nav {
 
 header {
     background: #EEEEEE;
-    margin: 5em 0 0 0;
+    margin: 4.75em 0 0 0;
+}
+
+.main-content {
+    margin: 2em 0 0 2.5%;
+    width: 97.5%;
+}
+
+.alert {
+    width: 50%;
 }
 
 .font-weight-semibold {
