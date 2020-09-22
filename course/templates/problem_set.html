@@ -48,6 +48,7 @@
                     Author
                 </th>
             {% endif %}
+            <th scope="col" data-sortable="true">Event</th>
             <th scope="col" data-sortable="true">Category</th>
             <th scope="col" data-sortable="true">Sub&nbsp;Category</th>
             <th scope="col" data-sortable="true">Difficulty</th>
@@ -68,6 +69,7 @@
                     <td>{{ uqj.question.title }}</td>
                     <td>{{ uqj.question.author }}</td>
                 {% endif %}
+                <td>{{ uqj.question.event }}</td>
                 <td>{{ uqj.question.category.parent }}</td>
                 <td>{{ uqj.question.category.name }}</td>
                 <td>{{ uqj.question.get_difficulty_display | safe }}</td>
