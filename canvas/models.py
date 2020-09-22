@@ -184,6 +184,9 @@ class Event(models.Model):
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
 
+    def __str__(self):
+        return self.name
+
     def is_allowed_to_open(self, user):
         return self.start_date <= timezone.now() <= self.end_date and self.course.is_registered(user)
 
