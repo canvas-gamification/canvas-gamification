@@ -133,7 +133,7 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
 
 
 def create_java_question(pk=None, title=None, text=None, max_submission_allowed=None, tutorial=None, author=None,
-                         category=None, difficulty=None, is_verified=None, test_cases=None):
+                         category=None, difficulty=None, is_verified=None, junit_template=None, additional_file_name=None):
     if not max_submission_allowed:
         max_submission_allowed = 5
     if not is_verified:
@@ -141,12 +141,29 @@ def create_java_question(pk=None, title=None, text=None, max_submission_allowed=
 
     from course.models.models import JavaQuestion
     if pk:
-        JavaQuestion.objects.filter(pk=pk).update(title=title, text=text, max_submission_allowed=max_submission_allowed,
-                                                  tutorial=tutorial, author=author, category=category,
-                                                  difficulty=difficulty, is_verified=is_verified, test_cases=test_cases)
+        JavaQuestion.objects.filter(pk=pk).update(
+            title=title,
+            text=text,
+            max_submission_allowed=max_submission_allowed,
+            tutorial=tutorial,
+            author=author,
+            category=category,
+            difficulty=difficulty,
+            is_verified=is_verified,
+            junit_template=junit_template,
+            additional_file_name=additional_file_name
+        )
     else:
-        question = JavaQuestion(title=title, text=text, max_submission_allowed=max_submission_allowed,
-                                tutorial=tutorial,
-                                author=author, category=category, difficulty=difficulty, is_verified=is_verified,
-                                test_cases=test_cases)
+        question = JavaQuestion(
+            title=title,
+            text=text,
+            max_submission_allowed=max_submission_allowed,
+            tutorial=tutorial,
+            author=author,
+            category=category,
+            difficulty=difficulty,
+            is_verified=is_verified,
+            junit_template=junit_template,
+            additional_file_name=additional_file_name
+        )
         question.save()

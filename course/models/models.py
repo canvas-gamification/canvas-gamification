@@ -12,7 +12,7 @@ from polymorphic.models import PolymorphicModel
 from accounts.models import MyUser
 from canvas.models import Event
 from course.fields import JSONField
-from course.grader import MultipleChoiceGrader, JavaGrader
+from course.grader import MultipleChoiceGrader, JunitGrader
 from course.utils.utils import get_token_value, ensure_uqj
 from course.utils.variables import render_text, generate_variables
 from general.models import Action
@@ -115,9 +115,10 @@ class CheckboxQuestion(MultipleChoiceQuestion):
 
 
 class JavaQuestion(VariableQuestion):
-    test_cases = JSONField()
+    junit_template = models.TextField()
+    additional_file_name = models.CharField(max_length=100, null=True, blank=True, default=None)
 
-    grader = JavaGrader()
+    grader = JunitGrader()
 
 
 def random_seed():

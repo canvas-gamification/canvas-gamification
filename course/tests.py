@@ -16,11 +16,32 @@ class ProblemTestCase(TestCase):
         self.category.save()
 
         for i in range(10):
-            create_multiple_choice_question(title="title", text='text', answer='a', max_submission_allowed=999,
-                                            tutorial='tt', author=self.user, category=self.category, difficulty="EASY",
-                                            is_verified=True, variables='[]', choices={'a':'a', 'b':'b'}, visible_distractor_count=3)
-            create_java_question(title='title', text='text', max_submission_allowed=999, tutorial='tutorial', author=self.user,
-                                 category=self.category, difficulty='EASY', is_verified=True, test_cases=[{'input':'a', 'output':'b'}])
+            create_multiple_choice_question(
+                title="title",
+                text='text',
+                answer='a',
+                max_submission_allowed=999,
+                tutorial='tt',
+                author=self.user,
+                category=self.category,
+                difficulty="EASY",
+                is_verified=True,
+                variables='[]',
+                choices={'a':'a', 'b':'b'},
+                visible_distractor_count=3
+            )
+            create_java_question(
+                title='title',
+                text='text',
+                max_submission_allowed=999,
+                tutorial='tutorial',
+                author=self.user,
+                category=self.category,
+                difficulty='EASY',
+                is_verified=True,
+                junit_template='',
+                additional_file_name='a.java'
+            )
 
         MyUser.objects.create_user('test_user2', "test2@s202.ok.ubc.ca", "aaaaaaaa")
 

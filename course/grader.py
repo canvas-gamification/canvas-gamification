@@ -27,59 +27,7 @@ class MultipleChoiceGrader(Grader):
             return True, 1 - number_of_submissions / (number_of_choices - 1)
 
 
-class JavaGrader(Grader):
-    HEADERS = {
-        'X-Auth-Token': JUDGE0_PASSWORD,
-    }
-    BASE_URL = JUDGE0_HOST
-
-    def grade(self, submission):
-        if submission.in_progress:
-            self.evaluate(submission)
-        if submission.in_progress:
-            return False, 0
-
-        total_test_cases = len(submission.question.test_cases)
-        correct_test_cases = 0
-
-        for i, result in enumerate(submission.results):
-            if result['status']['id'] == 3:
-                correct_test_cases += 1
-
-        return correct_test_cases == total_test_cases, correct_test_cases / total_test_cases
-
-    def evaluate(self, submission):
-        submission.results = []
-
-        for i, test_case in enumerate(submission.question.test_cases):
-            token = submission.tokens[i]
-            r = requests.get(
-                "{}/submissions/{}?base64_encoded=false".format(self.BASE_URL, token),
-                headers=self.HEADERS,
-            )
-            submission.results.append(r.json())
-
-    def submit(self, submission):
-        submission.tokens = []
-
-        for test_case in submission.question.test_cases:
-            r = requests.post(
-                "{}/submissions".format(self.BASE_URL),
-                data={
-                    "base64_encoded": False,
-                    "wait": False,
-                    "source_code": submission.answer,
-                    "language_id": 4,
-                    "stdin": test_case['input'],
-                    "expected_output": test_case['output'],
-                },
-                headers=self.HEADERS,
-            )
-            submission.tokens.append(r.json()['token'])
-        self.evaluate(submission)
-
-
-class ParsonsGrader(Grader):
+class JunitGrader(Grader):
     HEADERS = {
         'X-Auth-Token': JUDGE0_PASSWORD,
     }

@@ -80,5 +80,6 @@ class Command(BaseCommand):
                     category=QuestionCategory.objects.first() if QuestionCategory.objects.all().exists() else None,
                     difficulty="EASY",
                     is_verified=True,
-                    test_cases=question['test_cases'],
+                    junit_template=question['junit_template'],
+                    additional_file_name=question['additional_file_name']
                 )

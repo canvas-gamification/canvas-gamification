@@ -1,9 +1,8 @@
-from course.grader import ParsonsGrader
+from course.grader import JunitGrader
 from course.models.models import VariableQuestion, CodeSubmission
 from course.fields import JSONField
 from django.db import models
 import base64
-import random
 
 
 class ParsonsQuestion(VariableQuestion):
@@ -11,7 +10,7 @@ class ParsonsQuestion(VariableQuestion):
     junit_template = models.TextField()
     additional_file_name = models.CharField(max_length=100, null=True, blank=True, default=None)
 
-    grader = ParsonsGrader()
+    grader = JunitGrader()
 
 
 class ParsonsSubmission(CodeSubmission):
