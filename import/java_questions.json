@@ -1,16 +1,8 @@
 [
   {
     "title": "Java Question 1",
-    "text": "Write a Java program that reads and integer and prints if the input is \"Odd\" or \"Even\"",
-    "test_cases": [
-      {
-        "input": 2,
-        "output": "Even"
-      },
-      {
-        "input": 3,
-        "output": "Odd"
-      }
-    ]
+    "text": "Write a Java Calculator class that can add 2 numbers",
+    "additional_file_name": "Calculator.java",
+    "junit_template": "import static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport org.junit.jupiter.api.Test;\n\nclass MainTest {\n   \n    private final Calculator calculator = new Calculator();\n\n    @Test\n    void addition() {\n        assertEquals(2, calculator.add(1, 1));\n    }\n}"
   }
 ]
