@@ -12,12 +12,12 @@
             <div class="alert-success">You have successfully registered.</div>
         {% else %}
             {% if name %}
-                <div class="main-text">
+                <div>
                     {% if failed %}
                         <div class="alert-danger">No matching record found. Please make sure your name is spelled correctly
                         </div>
                     {% endif %}
-                    <h6 class="main-text">Please enter your name exactly as it appears on Canvas:</h6>
+                    <h6 class="font-weight-semibold">Please enter your name exactly as it appears on Canvas:</h6>
                 </div>
                 <form class="form-inline" method="post">
                     {% csrf_token %}
@@ -25,7 +25,7 @@
                         <label class="sr-only" for="inlineFormInput">Name</label>
                         <input class="form-control" id="inlineFormInput" type="text" name="name" placeholder="John Smith"
                                {% if failed %}value="{{ name }}"{% endif %}>
-                        <button type="submit" class="btn btn-primary ml-2">Submit</button>
+                        <button type="submit" class="btn btn-primary ml-2 font-weight-semibold">Submit</button>
                     </div>
                 </form>
             {% endif %}

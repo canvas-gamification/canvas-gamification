@@ -1,7 +1,5 @@
 body {
     font-size: 0.9rem;
-    font-weight: 525;
-    font-family: Arial, serif;
 }
 
 nav {
@@ -11,7 +9,10 @@ nav {
 header {
     background: #EEEEEE;
     margin: 5em 0 0 0;
-    font-family: "Arial", serif;
+}
+
+.font-weight-semibold {
+    font-weight: 525;
 }
 
 label.required:before {
