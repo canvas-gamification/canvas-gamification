@@ -20,7 +20,7 @@
                             No matching record found. Please make sure your name is spelled correctly.
                         </div>
                     {% endif %}
-                    <h6 class="font-weight-semibold">Please enter your name exactly as it appears on Canvas:</h6>
+                    <h6 class="font-weight-semibold">Please enter your name exactly as it appears on Canvas:<h6>
                 </div>
                 <form class="form-inline" method="post">
                     {% csrf_token %}
@@ -34,17 +34,18 @@
             {% endif %}
             {% if guessed_name %}
                 <div>
-                    Please verify that this is your name.
+                    Please verify that this is your full name:
                 </div>
                 <form method="post">
                     {% csrf_token %}
-                    <label>
-                        Your Full Name:
-                        <input class="form-control" type="text" name="confirmed_name" value="{{ guessed_name }}"
-                               readonly>
-                    </label>
-                    <input type="submit" class="btn btn-success" value="Confirm">
-                    <button type="button" class="btn btn-danger" onclick="location = location">Try Again</button>
+                    <div class="form-group">
+                        <label class="sr-only" for="inlineFormInput">Your Full Name:</label>
+                        <input class="form-control" id="inlineFormInput" type="text" name="confirmed_name" value="{{ guessed_name }}"
+                                   readonly>
+
+                        <button type="submit" class="btn btn-success ml-2 font-weight-semibold">Confirm</button>
+                        <button type="button" class="btn btn-danger ml-2 font-weight-semibold" onclick="location = location">Try Again</button>
+                    </div>
                 </form>
             {% endif %}
             {% if verification %}
@@ -52,17 +53,17 @@
                     <div class="alert alert-danger font-weight-semibold" role="alert">Verification Failed</div>
                 {% endif %}
                 <div>
-                    Your verification assignment has been graded in canvas.<br>
-                    Please provide your grade in verification assignment to confirm your identity.<br>
+                    <span class="font-weight-semibold">Your verification assignment has been graded in canvas.<br>
+                        Please provide your grade in the verification assignment to confirm your identity.<br></span>
                     Attempts Remaining: {{ attempts }}
                 </div>
                 <form method="post">
                     {% csrf_token %}
-                    <label>
+                    <label class="font-weight-semibold">
                         Verification Code:
                         <input class="form-control" type="text" name="code">
                     </label>
-                    <input type="submit" class="btn btn-success">
+                    <button type="submit" class="btn btn-success ml-2 font-weight-semibold">Submit</button>
                 </form>
             {% endif %}
         {% endif %}
