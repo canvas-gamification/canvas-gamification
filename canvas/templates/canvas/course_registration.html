@@ -1,35 +1,32 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    Courses Registration
+    Course Registration
 {% endblock %}
 
 {% block content %}
     {% if blocked %}
-        <div class="alert-danger">Registration has been blocked fo you. Please contact your instructor.</div>
+        <div class="alert-danger">Registration has been blocked for you. Please contact your instructor.</div>
     {% else %}
         {% if success %}
             <div class="alert-success">You have successfully registered.</div>
         {% else %}
             {% if name %}
-                <div>
+                <div class="main-text">
                     {% if failed %}
-                        <div class="alert-danger">No matching record found. Please make sure you spelled your name
-                            correctly
+                        <div class="alert-danger">No matching record found. Please make sure your name is spelled correctly
                         </div>
                     {% endif %}
-                    Please enter your name exactly as it appears on Canvas.
-
-
+                    <h6 class="main-text">Please enter your name exactly as it appears on Canvas:</h6>
                 </div>
-                <form method="post">
+                <form class="form-inline" method="post">
                     {% csrf_token %}
-                    <label>
-                        Name:
-                        <input class="form-control" type="text" name="name"
+                    <div class="form-group">
+                        <label class="sr-only" for="inlineFormInput">Name</label>
+                        <input class="form-control" id="inlineFormInput" type="text" name="name" placeholder="John Smith"
                                {% if failed %}value="{{ name }}"{% endif %}>
-                    </label>
-                    <input type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary ml-2">Submit</button>
+                    </div>
                 </form>
             {% endif %}
             {% if guessed_name %}
