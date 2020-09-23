@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from rest_framework.reverse import reverse_lazy
@@ -12,6 +13,7 @@ def name_registration_view(request, course, course_reg):
             name = request.POST.get("name", "")
             guessed_name = course.guess_user(name)
             if guessed_name is None:
+                messages.add_message(request, messages.ERROR, 'No matching record found. Please make sure your name is spelled correctly.')
                 return render(request, 'canvas/course_registration.html', {
                     'name': name,
                     'failed': True,
@@ -42,6 +44,8 @@ def verify_registration_view(request, course, course_reg):
                 'success': True,
             })
         else:
+            messages.add_message(request, messages.ERROR,
+                                 'Verification Failed.')
             return render(request, 'canvas/course_registration.html', {
                 'verification_failed': True,
                 'verification': True,
@@ -67,6 +71,8 @@ def register_course_view(request, pk):
         course_reg.save()
 
     if course_reg.is_blocked:
+        messages.add_message(request, messages.ERROR,
+                             'Registration has been blocked for you. Please contact your instructor.')
         return render(request, 'canvas/course_registration.html', {
             'blocked': True,
         })
@@ -77,6 +83,8 @@ def register_course_view(request, pk):
     if not course_reg.is_verified:
         return verify_registration_view(request, course, course_reg)
 
+    messages.add_message(request, messages.SUCCESS,
+                         'You have successfully registered.')
     return render(request, 'canvas/course_registration.html', {
         'success': True,
     })

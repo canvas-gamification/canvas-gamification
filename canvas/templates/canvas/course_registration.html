@@ -5,66 +5,48 @@
 {% endblock %}
 
 {% block content %}
-    {% if blocked %}
-        <div class="alert alert-danger" role="alert">
-            Registration has been blocked for you. Please contact your instructor.
+    {% if name %}
+        <div>
+            <h6 class="font-weight-semibold">Please enter your name exactly as it appears on Canvas:<h6>
         </div>
-    {% else %}
-        {% if success %}
-            <div class="alert alert-success" role="alert">You have successfully registered.</div>
-        {% else %}
-            {% if name %}
-                <div>
-                    {% if failed %}
-                        <div class="alert alert-danger" role="alert">
-                            No matching record found. Please make sure your name is spelled correctly.
-                        </div>
-                    {% endif %}
-                    <h6 class="font-weight-semibold">Please enter your name exactly as it appears on Canvas:<h6>
-                </div>
-                <form class="form-inline" method="post">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label class="sr-only" for="inlineFormInput1">Name</label>
-                        <input class="form-control" id="inlineFormInput1" type="text" name="name" placeholder="John Smith"
-                               {% if failed %}value="{{ name }}"{% endif %}>
-                        <button type="submit" class="btn btn-primary ml-2 font-weight-semibold">Submit</button>
-                    </div>
-                </form>
-            {% endif %}
-            {% if guessed_name %}
-                <div>
-                    <h6 class="font-weight-semibold">Please verify that this is your full name:</h6>
-                </div>
-                <form class="form-inline" method="post">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label class="sr-only" for="inlineFormInput2">Your Full Name:</label>
-                        <input class="form-control" id="inlineFormInput2" type="text" name="confirmed_name" value="{{ guessed_name }}"
-                                   readonly>
-                        <button type="submit" class="btn btn-success ml-2 font-weight-semibold">Confirm</button>
-                        <button type="button" class="btn btn-danger ml-2 font-weight-semibold" onclick="location = location">Try Again</button>
-                    </div>
-                </form>
-            {% endif %}
-            {% if verification %}
-                {% if verification_failed %}
-                    <div class="alert alert-danger" role="alert">Verification Failed</div>
-                {% endif %}
-                <div>
-                    <h6 class="font-weight-semibold" style="line-height: 1.6;">Your verification assignment has been graded in Canvas.<br>
-                        Please enter your grade from the verification assignment:<br></h6>
-                </div>
-                <form class="form-inline mt-md-3" method="post">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label class="sr-only" for="inlineFormInput3">Verification Code:</label>
-                        <input class="form-control" id="inlineFormInput3" type="text" name="code" placeholder="e.g. 1234">
-                        <button type="submit" class="btn btn-success ml-2 font-weight-semibold">Submit</button>
-                    </div>
-                </form>
-                <h6 class="mt-md-3">Attempts Remaining: {{ attempts }}</h6>
-            {% endif %}
-        {% endif %}
+        <form class="form-inline" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="sr-only" for="inlineFormInput1">Name</label>
+                <input class="form-control" id="inlineFormInput1" type="text" name="name" placeholder="John Smith"
+                       {% if failed %}value="{{ name }}"{% endif %}>
+                <button type="submit" class="btn btn-primary ml-2 font-weight-semibold">Submit</button>
+            </div>
+        </form>
+    {% endif %}
+    {% if guessed_name %}
+        <div>
+            <h6 class="font-weight-semibold">Please verify that this is your full name:</h6>
+        </div>
+        <form class="form-inline" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="sr-only" for="inlineFormInput2">Your Full Name:</label>
+                <input class="form-control" id="inlineFormInput2" type="text" name="confirmed_name" value="{{ guessed_name }}"
+                           readonly>
+                <button type="submit" class="btn btn-success ml-2 font-weight-semibold">Confirm</button>
+                <button type="button" class="btn btn-outline-danger ml-2 font-weight-semibold" onclick="location = location">Try Again</button>
+            </div>
+        </form>
+    {% endif %}
+    {% if verification %}
+        <div>
+            <h6 class="font-weight-semibold" style="line-height: 1.6;">Your verification assignment has been graded in Canvas.<br>
+                Please enter your grade from the verification assignment:<br></h6>
+        </div>
+        <form class="form-inline mt-md-3" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="sr-only" for="inlineFormInput3">Verification Code:</label>
+                <input class="form-control" id="inlineFormInput3" type="text" name="code" placeholder="e.g. 1234">
+                <button type="submit" class="btn btn-success ml-2 font-weight-semibold">Submit</button>
+            </div>
+        </form>
+        <h6 class="mt-md-3">Attempts Remaining: {{ attempts }}</h6>
     {% endif %}
 {% endblock %}
