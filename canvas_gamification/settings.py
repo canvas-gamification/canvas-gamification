@@ -39,7 +39,7 @@ if HEROKU:
 elif DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = ['web', 'localhost']
+    ALLOWED_HOSTS = [os.environ['SERVER_NAME'], ]
 
 # Application definition
 
