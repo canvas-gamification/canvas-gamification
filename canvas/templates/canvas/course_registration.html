@@ -6,17 +6,17 @@
 
 {% block content %}
     {% if blocked %}
-        <div class="alert alert-danger font-weight-semibold" role="alert">
+        <div class="alert alert-danger" role="alert">
             Registration has been blocked for you. Please contact your instructor.
         </div>
     {% else %}
         {% if success %}
-            <div class="alert alert-success font-weight-semibold" role="alert">You have successfully registered.</div>
+            <div class="alert alert-success" role="alert">You have successfully registered.</div>
         {% else %}
             {% if name %}
                 <div>
                     {% if failed %}
-                        <div class="alert alert-danger font-weight-semibold" role="alert">
+                        <div class="alert alert-danger" role="alert">
                             No matching record found. Please make sure your name is spelled correctly.
                         </div>
                     {% endif %}
@@ -49,7 +49,7 @@
             {% endif %}
             {% if verification %}
                 {% if verification_failed %}
-                    <div class="alert alert-danger font-weight-semibold" role="alert">Verification Failed</div>
+                    <div class="alert alert-danger" role="alert">Verification Failed</div>
                 {% endif %}
                 <div>
                     <h6 class="font-weight-semibold" style="line-height: 1.6;">Your verification assignment has been graded in Canvas.<br>
