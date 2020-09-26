@@ -2,8 +2,10 @@ from django import forms
 from django.forms import TextInput, widgets, Textarea
 from django.template.loader import render_to_string
 from djrichtextfield.widgets import RichTextWidget
+
+from canvas.models import Event
+
 from course.fields import JSONFormField
-from django.contrib.staticfiles.storage import staticfiles_storage
 from course.models.models import DIFFICULTY_CHOICES, QuestionCategory
 from course.widgets import JSONEditor
 
@@ -54,6 +56,15 @@ class ProblemCreateForm(forms.ModelForm):
         please don't add any variables
         and delete the existing ones.
         """
+    )
+
+    event = forms.ModelChoiceField(
+        label="Type",
+        required=False,
+        queryset=Event.objects.all(),
+        widget=widgets.Select(attrs={
+            'class': 'form-control',
+        })
     )
 
 

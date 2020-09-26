@@ -17,7 +17,7 @@ class CheckboxQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = CheckboxQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'visible_distractor_count', 'variables')
+            'title', 'difficulty', 'category', 'text', 'visible_distractor_count', 'variables', 'event')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -36,7 +36,7 @@ class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = MultipleChoiceQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'visible_distractor_count', 'variables')
+            'title', 'difficulty', 'category', 'text', 'visible_distractor_count', 'variables', 'event')
 
     visible_distractor_count = forms.ChoiceField(
         choices=[('999', 'All'), ('2', '2'), ('3', '3')],

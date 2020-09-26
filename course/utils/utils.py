@@ -69,7 +69,7 @@ class QuestionCreateException(Exception):
 def create_multiple_choice_question(pk=None, title=None, text=None, answer=None, max_submission_allowed=None,
                                     tutorial=None, author=None, category=None, difficulty=None, is_verified=None,
                                     variables=None, choices=None, visible_distractor_count=None, answer_text=None,
-                                    distractors=None):
+                                    distractors=None, event=None):
     if not answer and not answer_text:
         raise QuestionCreateException(
             message="answer or answer_text should be provided!",
@@ -112,7 +112,8 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
                                                             category=category, difficulty=difficulty,
                                                             is_verified=is_verified,
                                                             variables=variables, choices=choices,
-                                                            visible_distractor_count=visible_distractor_count)
+                                                            visible_distractor_count=visible_distractor_count,
+                                                            event=event)
     else:
         try:
             question = MultipleChoiceQuestion(title=title, text=text, answer=answer,
@@ -120,7 +121,8 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
                                               author=author,
                                               category=category, difficulty=difficulty, is_verified=is_verified,
                                               variables=variables, choices=choices,
-                                              visible_distractor_count=visible_distractor_count)
+                                              visible_distractor_count=visible_distractor_count,
+                                              event=event)
             question.save()
         except Exception as e:
             print(e)
@@ -133,7 +135,8 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
 
 
 def create_java_question(pk=None, title=None, text=None, max_submission_allowed=None, tutorial=None, author=None,
-                         category=None, difficulty=None, is_verified=None, junit_template=None, additional_file_name=None):
+                         category=None, difficulty=None, is_verified=None, junit_template=None, additional_file_name=None,
+                         event=None):
     if not max_submission_allowed:
         max_submission_allowed = 5
     if not is_verified:
@@ -151,7 +154,8 @@ def create_java_question(pk=None, title=None, text=None, max_submission_allowed=
             difficulty=difficulty,
             is_verified=is_verified,
             junit_template=junit_template,
-            additional_file_name=additional_file_name
+            additional_file_name=additional_file_name,
+            event=event
         )
     else:
         question = JavaQuestion(
@@ -164,6 +168,7 @@ def create_java_question(pk=None, title=None, text=None, max_submission_allowed=
             difficulty=difficulty,
             is_verified=is_verified,
             junit_template=junit_template,
-            additional_file_name=additional_file_name
+            additional_file_name=additional_file_name,
+            event=event
         )
         question.save()
