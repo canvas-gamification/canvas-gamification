@@ -1,4 +1,3 @@
-import djangosphinx
 from django.contrib import messages
 from django.forms import formset_factory
 from django.shortcuts import render
@@ -31,6 +30,7 @@ def _multiple_choice_question_create_view(request, header, question_form_class, 
                     answer_text=correct_answer_formset.forms[0].cleaned_data['text'],
                     distractors=[form.cleaned_data['text'] for form in distractor_answer_formset.forms if
                                  not form.cleaned_data['DELETE']],
+                    event=form.cleaned_data['event']
                 )
                 messages.add_message(request, messages.SUCCESS, 'Problem was created successfully')
                 form = question_form_class()
@@ -110,6 +110,7 @@ def _multiple_choice_question_edit_view(request, question):
                     answer_text=correct_answer_formset.forms[0].cleaned_data['text'],
                     distractors=[form.cleaned_data['text'] for form in distractor_answer_formset.forms if
                                  not form.cleaned_data['DELETE']],
+                    event=form.cleaned_data['event'],
                 )
                 messages.add_message(request, messages.SUCCESS, 'Problem saved successfully')
             except QuestionCreateException as e:
