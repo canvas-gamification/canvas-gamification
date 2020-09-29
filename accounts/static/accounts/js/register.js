@@ -1,5 +1,7 @@
 $(function () {
-    $("input[open_modal=\"true\"]").on("change", function () {
+    const open_modal = "input[open_modal=\"true\"]";
+
+    $(open_modal).on("change", function () {
         if ($(this).is(":checked")) {
             $("#registration_modal").modal({backdrop: "static", keyboard: false});
         }
@@ -10,14 +12,14 @@ $(function () {
     });
 
     $("#cancel_terms_and_conditions").on("click", function () {
-        if ($("input[open_modal=\"true\"]").is(":checked")) {
-            $("input[open_modal=\"true\"]").prop("checked", false).trigger("change");
+        if ($(open_modal).is(":checked")) {
+            $(open_modal).prop("checked", false).trigger("change");
         }
     });
 
     $("#consent_terms_and_conditions").on("click", function () {
-        if (!$("input[open_modal=\"true\"]").is(":checked")) {
-            $("input[open_modal=\"true\"]").prop("checked", true).trigger("change");
+        if (!$(open_modal).is(":checked")) {
+            $(open_modal).prop("checked", true).trigger("change");
         }
     });
 });
