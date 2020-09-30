@@ -57,11 +57,11 @@
                     Hello, {{ user.username | safe }}
                 {% endif %}
                 </span>
-                <span class="navbar-text ml-2" style="float: right">
+                <span class="navbar-text ml-1" style="float: right">
                     Tokens: {{ user.tokens | floatformat:2 | safe }}
                 </span>
                 <li class="nav-item dropdown" style="float: right">
-                    <a class="nav-link dropdown-toggle ml-2" href="#" id="navbarDropdown" role="button"
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                        data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false" style="float: right">
                         Account
