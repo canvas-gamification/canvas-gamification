@@ -63,7 +63,7 @@
 
     <h2>Use Tokens</h2>
     <p>Available Tokens: <span id="available_tokens">{{ course_reg.available_tokens | floatformat:2 }}</span></p>
-    <p>Remaining Tokens: <span id="remaining_tokens"></span></p>
+    <p id="remaining_tokens_text">Remaining Tokens: <span id="remaining_tokens">{{ course_reg.available_tokens | floatformat:2 }}</span></p>
 
     <table class="table table-hover" data-toggle="table">
         <thead>
@@ -81,7 +81,7 @@
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ tup.assignment_name }}</td>
-                <td>{{ tup.tokens_required }}</td>
+                <td id="req_tokens_{{ forloop.counter0 }}">{{ tup.tokens_required }}</td>
                 <td>{{ tup.points_given }}</td>
                 <td>{{ tup.maximum_number_of_use }}</td>
                 <td>
@@ -107,6 +107,5 @@
         </tbody>
     </table>
     <button class="my-1 btn btn-primary" id="submit_button">Confirm Changes</button>
-
 
 {% endblock %}
