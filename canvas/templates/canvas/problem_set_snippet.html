@@ -26,7 +26,7 @@
             <td>
                 <a href="{% url 'course:question_view' uqj.question.pk %}" class="btn btn-primary">Open</a>
                 {% if user.is_teacher %}
-                    <a href="{% url 'course:question_edit' uqj.question.pk %}" class="btn btn-primary">Edit</a>
+                    <a href="{% url 'course:question_edit' uqj.question.pk %}" class="btn btn-warning">Edit</a>
                 {% endif %}
             </td>
         </tr>
