@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block header %}
     Courses Registration
 {% endblock %}
 
 {% block content %}
+
     {% if blocked %}
         <div class="alert-danger">Registration has been blocked fo you. Please contact your instructor.</div>
     {% else %}
