@@ -1,4 +1,4 @@
-from django.forms import RadioSelect
+from django.forms import RadioSelect, Select
 from django.forms import Textarea
 
 
@@ -8,6 +8,10 @@ class RadioInlineSelect(RadioSelect):
 
     def __init__(self, attr=None, choices=()):
         super().__init__(attr, choices)
+
+
+class DynamicSelect(Select):
+    template_name = 'widgets/dynamic_select.html'
 
 
 class JSONEditor(Textarea):

@@ -14,6 +14,7 @@ class CanvasCourse(models.Model):
     url = models.URLField()
     course_id = models.IntegerField()
     token = models.CharField(max_length=500)
+    instructor = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
 
     allow_registration = models.BooleanField(default=False)
     visible_to_students = models.BooleanField(default=False)
@@ -105,6 +106,9 @@ class CanvasCourse(models.Model):
     def is_registered(self, user):
         return self.canvascourseregistration_set.filter(user=user, is_verified=True, is_blocked=False).exists()
 
+    def is_instructor(self, user):
+        return user.is_staff or self.instructor == user
+
     def save(self, *args, **kwargs):
         self.create_verification_assignment_group()
         self.create_verification_assignment()
@@ -188,7 +192,8 @@ class Event(models.Model):
         return self.name
 
     def is_allowed_to_open(self, user):
-        return self.start_date <= timezone.now() <= self.end_date and self.course.is_registered(user)
+        return self.course.is_instructor(user) or \
+               self.start_date <= timezone.now() <= self.end_date and self.course.is_registered(user)
 
 
 class TokenUseOption(models.Model):

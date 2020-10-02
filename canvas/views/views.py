@@ -21,12 +21,20 @@ def course_list_view(request):
 def course_view(request, pk):
     course = get_object_or_404(CanvasCourse, pk=pk)
 
+    is_instructor = course.is_instructor(request.user)
+    if is_instructor:
+        uqjs = UserQuestionJunction.objects.filter(user=request.user, question__course=course).all()
+    else:
+        uqjs = UserQuestionJunction.objects.none()
+
     qs = CanvasCourseRegistration.objects.filter(user=request.user, course=course)
     course_reg = qs.get() if qs.exists() else None
 
     return render(request, 'canvas/course.html', {
         'course': course,
-        'course_reg': course_reg
+        'course_reg': course_reg,
+        'uqjs': uqjs,
+        'is_instructor': is_instructor,
     })
 
 
@@ -41,5 +49,16 @@ def event_problem_set(request, event_id):
     return render(request, 'canvas/event_problem_set.html', {
         'event': event,
         'uqjs': uqjs,
+        'is_instructor': event.course.is_instructor(request.user),
     })
 
+
+@user_passes_test(teacher_check)
+def events_options_view(request):
+
+    course_id = request.GET.get('course_id', -1)
+    course = get_object_or_404(CanvasCourse, pk=course_id)
+
+    return render(request, 'canvas/course_event_options.html', {
+        'events': course.events.all(),
+    })

@@ -12,7 +12,7 @@ from course.utils.utils import get_user_question_junction
 
 def _parsons_question_create_view(request, header):
     if request.method == 'POST':
-        form = ParsonsQuestionForm(request.POST)
+        form = ParsonsQuestionForm(request.user, request.POST)
 
         if form.is_valid():
             question = form.save()
@@ -22,9 +22,9 @@ def _parsons_question_create_view(request, header):
 
             messages.add_message(request, messages.SUCCESS, 'Question was created successfully')
 
-            form = ParsonsQuestionForm()
+            form = ParsonsQuestionForm(request.user)
     else:
-        form = ParsonsQuestionForm()
+        form = ParsonsQuestionForm(request.user)
 
     return render(request, 'problem_create.html', {
         'form': form,
@@ -34,7 +34,7 @@ def _parsons_question_create_view(request, header):
 
 def _parsons_question_edit_view(request, question):
     if request.method == 'POST':
-        form = ParsonsQuestionForm(request.POST)
+        form = ParsonsQuestionForm(request.user, request.POST)
 
         if form.is_valid():
             edited_question = form.save()
@@ -45,7 +45,7 @@ def _parsons_question_edit_view(request, question):
 
             messages.add_message(request, messages.SUCCESS, 'Question was edited successfully')
     else:
-        form = ParsonsQuestionForm(instance=question)
+        form = ParsonsQuestionForm(request.user, instance=question)
 
     return render(request, 'problem_create.html', {
         'form': form,
