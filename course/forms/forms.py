@@ -5,7 +5,6 @@ from djrichtextfield.widgets import RichTextWidget
 from rest_framework.reverse import reverse_lazy
 
 from canvas.models import Event, CanvasCourse
-
 from course.fields import JSONFormField
 from course.models.models import DIFFICULTY_CHOICES, QuestionCategory
 from course.widgets import JSONEditor, DynamicSelect

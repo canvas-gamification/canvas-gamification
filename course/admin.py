@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib import admin
-
 # Register your models here.
 from djrichtextfield.widgets import RichTextWidget
 
@@ -23,8 +22,8 @@ class QuestionAdminForm(forms.ModelForm):
 
 
 class QuestionAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'title', 'author', 'category', 'difficulty', 'is_verified', )
-    list_filter = ('author', 'category', 'difficulty', 'is_verified', )
+    list_display = ('__str__', 'title', 'author', 'category', 'difficulty', 'is_verified',)
+    list_filter = ('author', 'category', 'difficulty', 'is_verified',)
     form = QuestionAdminForm
 
 

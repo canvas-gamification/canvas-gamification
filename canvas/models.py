@@ -192,8 +192,9 @@ class Event(models.Model):
         return self.name
 
     def is_allowed_to_open(self, user):
-        return self.course.is_instructor(user) or \
-               self.start_date <= timezone.now() <= self.end_date and self.course.is_registered(user)
+        if self.course.is_instructor(user):
+            return True
+        return self.start_date <= timezone.now() <= self.end_date and self.course.is_registered(user)
 
 
 class TokenUseOption(models.Model):

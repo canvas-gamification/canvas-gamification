@@ -4,7 +4,7 @@ on:
   # Run tests for any PRs.
   pull_request:
   push:
-    branches: 
+    branches:
       - master
 
 env:

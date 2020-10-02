@@ -1,5 +1,5 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from rest_framework.reverse import reverse_lazy
@@ -13,7 +13,8 @@ def name_registration_view(request, course, course_reg):
             name = request.POST.get("name", "")
             guessed_name = course.guess_user(name)
             if guessed_name is None:
-                messages.add_message(request, messages.ERROR, 'No matching record found. Please make sure your name is spelled correctly.')
+                messages.add_message(request, messages.ERROR,
+                                     'No matching record found. Please make sure your name is spelled correctly.')
                 return render(request, 'canvas/course_registration.html', {
                     'name': name,
                     'failed': True,

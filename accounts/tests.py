@@ -24,7 +24,6 @@ class AccountFormsTestCase(TestCase):
         self.client = Client()
 
     def test_recaptcha(self):
-
         form = SignupForm({
             'email': 'a@a.com',
             'username': '123',

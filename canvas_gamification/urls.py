@@ -18,8 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 
-from general.views import faq
 from canvas_gamification import views
+from general.views import faq
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,7 +29,8 @@ urlpatterns = [
     path('faq/', faq, name='faq'),
     path('homepage/', views.homepage, name='homepage'),
     path('actions/', views.action_view, name='actions'),
-    path('terms-and-conditions/', TemplateView.as_view(template_name='terms_and_conditions.html'), name='terms_and_conditions'),
+    path('terms-and-conditions/', TemplateView.as_view(template_name='terms_and_conditions.html'),
+         name='terms_and_conditions'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/', include('api.urls', namespace='api')),
     path('canvas/', include('canvas.urls', namespace='canvas')),

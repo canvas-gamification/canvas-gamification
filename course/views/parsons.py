@@ -1,7 +1,5 @@
 from django.contrib import messages
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse_lazy
 
 from course.exceptions import SubmissionException
 from course.forms.parsons import ParsonsQuestionForm
@@ -66,7 +64,7 @@ def _parsons_question_view(request, question):
         code = request.POST.get("code", "")
 
         try:
-            submission = submit_solution(question, request.user, code)
+            submit_solution(question, request.user, code)
             messages.add_message(request, messages.INFO, "Your Code has been submitted and being evaluated!")
         except SubmissionException as e:
             messages.add_message(request, messages.ERROR, "{}".format(e))

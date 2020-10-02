@@ -1,4 +1,5 @@
 from django.test import TestCase, Client
+
 from accounts.models import MyUser
 from course.models.models import QuestionCategory, Question
 from course.utils.utils import create_multiple_choice_question, create_java_question
@@ -27,7 +28,7 @@ class ProblemTestCase(TestCase):
                 difficulty="EASY",
                 is_verified=True,
                 variables='[]',
-                choices={'a':'a', 'b':'b'},
+                choices={'a': 'a', 'b': 'b'},
                 visible_distractor_count=3
             )
             create_java_question(
