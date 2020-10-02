@@ -1,4 +1,4 @@
-name: Docker
+name: DockerTest
 
 on:
   # Run tests for any PRs.
