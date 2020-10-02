@@ -49,6 +49,7 @@ def event_problem_set(request, event_id):
     return render(request, 'canvas/event_problem_set.html', {
         'event': event,
         'uqjs': uqjs,
+        'is_instructor': event.course.is_instructor(request.user),
     })
 
 
