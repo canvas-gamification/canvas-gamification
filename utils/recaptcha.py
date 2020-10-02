@@ -16,7 +16,7 @@ def validate_recaptcha(response):
             'response': response,
         })
         data = r.json()
-    except (ConnectionError, RequestException) as e:
+    except (ConnectionError, RequestException):
         logger = logging.getLogger(__name__)
         logger.error(traceback.format_exc())
         return False

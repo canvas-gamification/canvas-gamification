@@ -1,7 +1,7 @@
 from django.urls import path
 
-from canvas.views.views import course_list_view, course_view, event_problem_set, events_options_view
 from canvas.views.register_views import register_course_view
+from canvas.views.views import course_list_view, course_view, event_problem_set, events_options_view
 
 urlpatterns = [
     path('<int:pk>', course_view, name='course'),

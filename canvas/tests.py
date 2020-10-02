@@ -1,5 +1,4 @@
 from django.test import TestCase
-
 # Create your tests here.
 from django.utils import timezone
 
@@ -19,7 +18,7 @@ class MockCourseTestCase(TestCase):
             allow_registration=True,
             visible_to_students=True,
             start_date=timezone.now(),
-            end_date=timezone.now()+timezone.timedelta(days=10),
+            end_date=timezone.now() + timezone.timedelta(days=10),
 
             verification_assignment_group_name="test",
             verification_assignment_name="test",

@@ -5,7 +5,6 @@ from general.models import FAQ
 
 
 def faq(request):
-
     faqs = FAQ.objects.all()
 
     return render(request, 'faq.html', {

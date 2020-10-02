@@ -10,7 +10,7 @@ services:
       - judge0-db
       - judge0-redis
     ports:
-    - "3000:3000"
+      - "3000:3000"
     restart: always
 
   judge0-workers:

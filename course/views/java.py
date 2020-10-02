@@ -1,7 +1,5 @@
 from django.contrib import messages
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse_lazy
 
 from course.exceptions import SubmissionException
 from course.forms.java import JavaQuestionForm
@@ -81,7 +79,7 @@ def _java_question_view(request, question):
             answer_text = answer_file.read().decode("ascii", "ignore")
 
         try:
-            submission = submit_solution(question, request.user, answer_text)
+            submit_solution(question, request.user, answer_text)
             messages.add_message(request, messages.INFO, "Your Code has been submitted and being evaluated!")
         except SubmissionException as e:
             messages.add_message(request, messages.ERROR, "{}".format(e))

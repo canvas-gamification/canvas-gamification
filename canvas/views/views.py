@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import user_passes_test
-from django.http import HttpResponse, Http404
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
@@ -39,7 +39,6 @@ def course_view(request, pk):
 
 
 def event_problem_set(request, event_id):
-
     event = get_object_or_404(Event, pk=event_id)
     if not event.is_allowed_to_open(request.user):
         raise Http404()
@@ -55,7 +54,6 @@ def event_problem_set(request, event_id):
 
 @user_passes_test(teacher_check)
 def events_options_view(request):
-
     course_id = request.GET.get('course_id', -1)
     course = get_object_or_404(CanvasCourse, pk=course_id)
 
