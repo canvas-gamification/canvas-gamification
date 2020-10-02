@@ -107,7 +107,7 @@ class CanvasCourse(models.Model):
         return self.canvascourseregistration_set.filter(user=user, is_verified=True, is_blocked=False).exists()
 
     def is_instructor(self, user):
-        return self.instructor == user
+        return user.is_staff or self.instructor == user
 
     def save(self, *args, **kwargs):
         self.create_verification_assignment_group()

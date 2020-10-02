@@ -21,6 +21,12 @@ class ProblemCreateForm(forms.ModelForm):
 
         if 'course' in self.data:
             course_id = int(self.data.get('course', -1))
+        elif 'instance' in kwargs and kwargs.get('instance').course:
+            course_id = kwargs.get('instance').course.pk
+        else:
+            course_id = None
+
+        if course_id:
             self.fields['event'].queryset = Event.objects.filter(course_id=course_id).all()
 
     title = forms.CharField(

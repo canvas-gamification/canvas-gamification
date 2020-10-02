@@ -21,12 +21,20 @@ def course_list_view(request):
 def course_view(request, pk):
     course = get_object_or_404(CanvasCourse, pk=pk)
 
+    is_instructor = course.is_instructor(request.user)
+    if is_instructor:
+        uqjs = UserQuestionJunction.objects.filter(user=request.user, question__course=course).all()
+    else:
+        uqjs = UserQuestionJunction.objects.none()
+
     qs = CanvasCourseRegistration.objects.filter(user=request.user, course=course)
     course_reg = qs.get() if qs.exists() else None
 
     return render(request, 'canvas/course.html', {
         'course': course,
-        'course_reg': course_reg
+        'course_reg': course_reg,
+        'uqjs': uqjs,
+        'is_instructor': is_instructor,
     })
 
 
