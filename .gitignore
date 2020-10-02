@@ -12,6 +12,8 @@ env/gamification.env
 __pycache__/
 *.py[cod]
 *$py.class
+Pipfile
+Pipfile.lock
 
 # Sphinx documentation
 docs/_build/
