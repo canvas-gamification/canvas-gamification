@@ -1,0 +1,37 @@
+<select name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
+    {% for group_name, group_choices, group_index in widget.optgroups %}
+        {% if group_name %}
+            <optgroup label="{{ group_name }}">
+        {% endif %}
+    {% for option in group_choices %}
+        {% include option.template_name with widget=option %}
+    {% endfor %}
+    {% if group_name %}
+        </optgroup>
+    {% endif %}
+    {% endfor %}
+</select>
+
+<script>
+    const select = $("select[name={{ widget.name }}]");
+    const parent = $("#" + select.attr('options_parent_id'));
+
+    parent.change(function () {
+        const url = select.attr("options_url");
+        const parameter_value = parent.val();
+        const parameter_name = select.attr("options_parameter_name");
+
+        let data = {}
+        data[parameter_name] = parameter_value
+
+        $.ajax({
+            url: url,
+            data: data,
+            success: function (data) {
+                select.html(data);
+            }
+        });
+
+    });
+</script>
+</script>

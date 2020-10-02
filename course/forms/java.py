@@ -6,7 +6,8 @@ class JavaQuestionForm(JunitProblemCreateForm):
     class Meta:
         model = JavaQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'junit_template', 'additional_file_name', 'variables', 'event')
+            'title', 'difficulty', 'category', 'course', 'event', 'text', 'junit_template', 'additional_file_name',
+            'variables')
         exclude = ('answer',)
 
     answer = None

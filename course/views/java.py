@@ -12,7 +12,7 @@ from course.utils.utils import get_user_question_junction
 
 def _java_question_create_view(request, header, question_form_class):
     if request.method == 'POST':
-        form = question_form_class(request.POST)
+        form = question_form_class(request.user, request.POST)
 
         if form.is_valid():
             question = form.save()
@@ -22,9 +22,9 @@ def _java_question_create_view(request, header, question_form_class):
 
             messages.add_message(request, messages.SUCCESS, 'Question was created successfully')
 
-            form = question_form_class()
+            form = question_form_class(request.user)
     else:
-        form = question_form_class()
+        form = question_form_class(request.user)
 
     return render(request, 'problem_create.html', {
         'form': form,
@@ -34,7 +34,7 @@ def _java_question_create_view(request, header, question_form_class):
 
 def _java_question_edit_view(request, question):
     if request.method == 'POST':
-        form = JavaQuestionForm(request.POST)
+        form = JavaQuestionForm(request.user, request.POST)
 
         if form.is_valid():
             edited_question = form.save()
@@ -45,7 +45,7 @@ def _java_question_edit_view(request, question):
 
             messages.add_message(request, messages.SUCCESS, 'Question was edited successfully')
     else:
-        form = JavaQuestionForm(instance=question)
+        form = JavaQuestionForm(request.user, instance=question)
 
     return render(request, 'problem_create.html', {
         'form': form,

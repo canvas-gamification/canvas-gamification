@@ -43,3 +43,13 @@ def event_problem_set(request, event_id):
         'uqjs': uqjs,
     })
 
+
+@user_passes_test(teacher_check)
+def events_options_view(request):
+
+    course_id = request.GET.get('course_id', -1)
+    course = get_object_or_404(CanvasCourse, pk=course_id)
+
+    return render(request, 'canvas/course_event_options.html', {
+        'events': course.events.all(),
+    })
