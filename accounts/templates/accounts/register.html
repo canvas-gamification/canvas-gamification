@@ -16,9 +16,9 @@
         <div class="form-group">
             <div class="custom-checkbox custom-control">
                 {{ form.consent }}
-                <label for="id_consent" class="custom-control-label">I agree to the <a href="javascript:void(0)"
-                                                                                       id="terms_and_conditions_link">Terms
-                    and Conditions</a></label>
+                <label for="id_consent" class="custom-control-label">I have read the <a href="javascript:void(0)"
+                                                                                       id="terms_and_conditions_link">Informed
+                Consent Form</a></label>
                 <div class="invalid-feedback">
                     You must agree with our Terms and Conditions
                 </div>
@@ -45,14 +45,14 @@
             <!--Modal Content-->
             <div class="modal-content" style="background: #fff">
                 <div class="modal-header">
-                    <h3 class="modal-header-title">Terms and Conditions</h3>
+                    <h3 class="modal-header-title">Informed Consent</h3>
                 </div>
                 <div class="modal-body">
                     {% include 'terms_and_conditions_snippet.html' %}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel_terms_and_conditions">
-                        Cancel
+                        I Do Not Consent
                     </button>
                     <button type="button" class="btn btn-primary" data-dismiss="modal"
                             id="consent_terms_and_conditions">I Consent

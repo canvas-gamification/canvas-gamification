@@ -12,8 +12,8 @@ $(function () {
     });
 
     $("#cancel_terms_and_conditions").on("click", function () {
-        if ($(open_modal).is(":checked")) {
-            $(open_modal).prop("checked", false).trigger("change");
+        if (!$(open_modal).is(":checked")) {
+            $(open_modal).prop("checked", true).trigger("change");
         }
     });
 
@@ -21,5 +21,6 @@ $(function () {
         if (!$(open_modal).is(":checked")) {
             $(open_modal).prop("checked", true).trigger("change");
         }
+    $("#informed_consent_form").submit();
     });
 });
