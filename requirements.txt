@@ -29,3 +29,4 @@ django-extensions==3.0.2
 ipython==7.16.1
 fuzzywuzzy==0.18.0
 python-Levenshtein==0.12.0
+flake8==3.8.3

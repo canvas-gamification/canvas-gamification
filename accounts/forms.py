@@ -1,11 +1,8 @@
-import requests
 from django import forms
 from django.contrib.auth import password_validation, forms as auth_forms
-from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 from accounts.models import MyUser
-from canvas_gamification.settings import RECAPTCHA_URL, RECAPTCHA_KEY
 from utils.recaptcha import validate_recaptcha
 
 
@@ -79,7 +76,10 @@ class SignupForm(auth_forms.UserCreationForm):
 
     consent = forms.BooleanField(
         label="",
-        widget=forms.CheckboxInput(attrs={'class': 'custom-control-input'}),
+        widget=forms.CheckboxInput(attrs={
+            'class': 'custom-control-input',
+            'open_modal': 'true',
+        }),
         required=True,
     )
 

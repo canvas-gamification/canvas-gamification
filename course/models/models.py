@@ -10,7 +10,7 @@ from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
 
 from accounts.models import MyUser
-from canvas.models import Event
+from canvas.models import Event, CanvasCourse
 from course.fields import JSONField
 from course.grader import MultipleChoiceGrader, JunitGrader
 from course.utils.utils import get_token_value, ensure_uqj
@@ -68,7 +68,10 @@ class Question(PolymorphicModel):
     author = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
     category = models.ForeignKey(QuestionCategory, on_delete=models.SET_NULL, null=True, blank=True)
     difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES, default="EASY")
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='question_set', null=True, blank=True,
+
+    course = models.ForeignKey(CanvasCourse, on_delete=models.SET_NULL, related_name='question_set', null=True,
+                               blank=True, db_index=True)
+    event = models.ForeignKey(Event, on_delete=models.SET_NULL, related_name='question_set', null=True, blank=True,
                               db_index=True)
 
     is_verified = models.BooleanField(default=False)

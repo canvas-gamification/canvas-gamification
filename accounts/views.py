@@ -3,7 +3,6 @@ from django.contrib.auth import login, views as auth_views
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import render
-
 # Create your views here.
 from django.urls import reverse_lazy
 from django.utils.encoding import force_text

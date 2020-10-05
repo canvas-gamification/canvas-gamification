@@ -2,18 +2,31 @@ from django import forms
 from django.forms import TextInput, widgets, Textarea
 from django.template.loader import render_to_string
 from djrichtextfield.widgets import RichTextWidget
+from rest_framework.reverse import reverse_lazy
+
+from canvas.models import Event, CanvasCourse
 from course.fields import JSONFormField
-from django.contrib.staticfiles.storage import staticfiles_storage
 from course.models.models import DIFFICULTY_CHOICES, QuestionCategory
-from course.widgets import JSONEditor
+from course.widgets import JSONEditor, DynamicSelect
 
 
 class ProblemCreateForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.fields['difficulty'].widget.attrs.update({'class': 'form-control'})
         self.fields['difficulty'].initial = "EASY"
+        self.fields['course'].queryset = CanvasCourse.objects.filter(instructor=user).all()
+
+        if 'course' in self.data:
+            course_id = int(self.data.get('course', -1))
+        elif 'instance' in kwargs and kwargs.get('instance').course:
+            course_id = kwargs.get('instance').course.pk
+        else:
+            course_id = None
+
+        if course_id:
+            self.fields['event'].queryset = Event.objects.filter(course_id=course_id).all()
 
     title = forms.CharField(
         label="Question Name",
@@ -32,6 +45,27 @@ class ProblemCreateForm(forms.ModelForm):
         queryset=QuestionCategory.objects.filter(parent__isnull=False).all(),
         widget=widgets.Select(attrs={
             'class': 'form-control',
+        })
+    )
+
+    course = forms.ModelChoiceField(
+        label="Course",
+        required=False,
+        queryset=CanvasCourse.objects.none(),
+        widget=widgets.Select(attrs={
+            'class': 'form-control',
+        })
+    )
+
+    event = forms.ModelChoiceField(
+        label="Type",
+        required=False,
+        queryset=Event.objects.none(),
+        widget=DynamicSelect(attrs={
+            'class': 'form-control',
+            'options_url': reverse_lazy('canvas:course_events_options'),
+            'options_parameter_name': 'course_id',
+            'options_parent_id': 'id_course',  # TODO: find a way not to hard code this
         })
     )
 

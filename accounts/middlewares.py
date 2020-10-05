@@ -1,8 +1,7 @@
-from django.http import QueryDict
+from django.contrib.auth import login
 from django.shortcuts import redirect
 
 from accounts.forms import LoginForm
-from django.contrib.auth import login
 
 
 def login_overlay_middleware(get_response):

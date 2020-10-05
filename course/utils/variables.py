@@ -34,7 +34,6 @@ def render_text(text, variables):
 
 
 def _generate_variable(attrs, variables, random):
-
     vtype = attrs.get('type', None)
     vmin = evaluate(render_text(attrs.get('min', 0), variables))
     vmax = evaluate(render_text(attrs.get('max', 1), variables))

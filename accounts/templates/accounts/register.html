@@ -5,6 +5,7 @@
 {% block script %}
     <!-- reCaptcha JavaScript -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="{% static 'accounts/js/register.js' %}"></script>
 {% endblock %}
 
 {% block form %}
@@ -15,8 +16,8 @@
         <div class="form-group">
             <div class="custom-checkbox custom-control">
                 {{ form.consent }}
-                <label for="id_consent" class="custom-control-label">I agree to the <a
-                        href="{% url 'terms_and_conditions' %}" target="_blank" rel="noopener noreferrer">Terms
+                <label for="id_consent" class="custom-control-label">I agree to the <a href="javascript:void(0)"
+                                                                                       id="terms_and_conditions_link">Terms
                     and Conditions</a></label>
                 <div class="invalid-feedback">
                     You must agree with our Terms and Conditions
@@ -36,4 +37,28 @@
             Already have an account? <a href="{% url 'accounts:login' %}">Login</a>
         </div>
     </form>
+
+    <!--Terms and Conditions Modal-->
+    <div class="modal" role="dialog" id="registration_modal">
+        <div class="modal-dialog modal-lg">
+
+            <!--Modal Content-->
+            <div class="modal-content" style="background: #fff">
+                <div class="modal-header">
+                    <h3 class="modal-header-title">Terms and Conditions</h3>
+                </div>
+                <div class="modal-body">
+                    {% include 'terms_and_conditions_snippet.html' %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel_terms_and_conditions">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                            id="consent_terms_and_conditions">I Consent
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -1,9 +1,9 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Q, Count
 from django.forms import formset_factory
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.contrib import messages
 from rest_framework.reverse import reverse_lazy
 
 from accounts.utils.decorators import show_login
@@ -13,13 +13,13 @@ from course.forms.multiple_choice import CheckboxQuestionForm, MultipleChoiceQue
 from course.models.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
     QuestionCategory, DIFFICULTY_CHOICES, TokenValue, Submission, UserQuestionJunction
 from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
-from course.utils.utils import get_token_value, get_user_question_junction
+from course.utils.utils import get_user_question_junction
 from course.views.java import _java_question_create_view, _java_question_view, _java_submission_detail_view, \
     _java_question_edit_view
 from course.views.multiple_choice import _multiple_choice_question_create_view, _multiple_choice_question_view, \
     _multiple_choice_question_edit_view
-from course.views.parsons import _parsons_question_create_view, _parsons_question_view, _parsons_submission_detail_view, \
-    _parsons_question_edit_view
+from course.views.parsons import _parsons_question_create_view, _parsons_question_view, \
+    _parsons_submission_detail_view, _parsons_question_edit_view
 
 
 def teacher_check(user):

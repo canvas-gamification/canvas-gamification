@@ -1,7 +1,5 @@
 from django.contrib import messages
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse_lazy
 
 from course.exceptions import SubmissionException
 from course.forms.parsons import ParsonsQuestionForm
@@ -12,7 +10,7 @@ from course.utils.utils import get_user_question_junction
 
 def _parsons_question_create_view(request, header):
     if request.method == 'POST':
-        form = ParsonsQuestionForm(request.POST)
+        form = ParsonsQuestionForm(request.user, request.POST)
 
         if form.is_valid():
             question = form.save()
@@ -22,9 +20,9 @@ def _parsons_question_create_view(request, header):
 
             messages.add_message(request, messages.SUCCESS, 'Question was created successfully')
 
-            form = ParsonsQuestionForm()
+            form = ParsonsQuestionForm(request.user)
     else:
-        form = ParsonsQuestionForm()
+        form = ParsonsQuestionForm(request.user)
 
     return render(request, 'problem_create.html', {
         'form': form,
@@ -34,7 +32,7 @@ def _parsons_question_create_view(request, header):
 
 def _parsons_question_edit_view(request, question):
     if request.method == 'POST':
-        form = ParsonsQuestionForm(request.POST)
+        form = ParsonsQuestionForm(request.user, request.POST)
 
         if form.is_valid():
             edited_question = form.save()
@@ -45,7 +43,7 @@ def _parsons_question_edit_view(request, question):
 
             messages.add_message(request, messages.SUCCESS, 'Question was edited successfully')
     else:
-        form = ParsonsQuestionForm(instance=question)
+        form = ParsonsQuestionForm(request.user, instance=question)
 
     return render(request, 'problem_create.html', {
         'form': form,
@@ -66,7 +64,7 @@ def _parsons_question_view(request, question):
         code = request.POST.get("code", "")
 
         try:
-            submission = submit_solution(question, request.user, code)
+            submit_solution(question, request.user, code)
             messages.add_message(request, messages.INFO, "Your Code has been submitted and being evaluated!")
         except SubmissionException as e:
             messages.add_message(request, messages.ERROR, "{}".format(e))
@@ -75,6 +73,6 @@ def _parsons_question_view(request, question):
 
 
 def _parsons_submission_detail_view(request, submission):
-    return render(request, 'parsons_submission_detail.html', {
+    return render(request, 'code_submission_detail.html', {
         'submission': submission,
     })

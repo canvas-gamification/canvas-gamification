@@ -13,30 +13,11 @@ class ChoiceProblemCreateForm(ProblemCreateForm):
     )
 
 
-class CheckboxQuestionForm(ChoiceProblemCreateForm):
-    class Meta:
-        model = CheckboxQuestion
-        fields = (
-            'title', 'difficulty', 'category', 'text', 'visible_distractor_count', 'variables')
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    visible_distractor_count = forms.ChoiceField(
-        choices=[('999', 'All'), ('2', '2'), ('3', '3')],
-        initial='All',
-        widget=RadioInlineSelect()
-    )
-
-    answer = None
-    choices = None
-
-
 class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = MultipleChoiceQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'visible_distractor_count', 'variables')
+            'title', 'difficulty', 'category', 'course', 'event', 'text', 'visible_distractor_count', 'variables')
 
     visible_distractor_count = forms.ChoiceField(
         choices=[('999', 'All'), ('2', '2'), ('3', '3')],
@@ -46,6 +27,13 @@ class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
 
     choices = None
     answer = None
+
+
+class CheckboxQuestionForm(MultipleChoiceQuestionForm):
+    class Meta:
+        model = CheckboxQuestion
+        fields = (
+            'title', 'difficulty', 'category', 'course', 'event', 'text', 'visible_distractor_count', 'variables')
 
 
 class ChoiceForm(forms.Form):

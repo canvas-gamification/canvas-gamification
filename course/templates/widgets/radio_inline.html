@@ -1,11 +1,11 @@
 {% with id=widget.attrs.id %}
     <div id="{{ id }}">
         {% for group, options, index in widget.optgroups %}
-        {% for option in options %}
-            <div class="form-check-inline">
-                {% include option.template_name with widget=option %}
-            </div>
-        {% endfor %}
+            {% for option in options %}
+                <div class="form-check-inline">
+                    {% include option.template_name with widget=option %}
+                </div>
+            {% endfor %}
         {% endfor %}
     </div>
 {% endwith %}
