@@ -11,7 +11,6 @@ class FAQ(models.Model):
 
 
 class Action(models.Model):
-
     COMPLETE = 'Complete'
     PENDING = 'Pending'
 

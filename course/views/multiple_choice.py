@@ -2,10 +2,10 @@ from django.contrib import messages
 from django.forms import formset_factory
 from django.shortcuts import render
 
+from course.exceptions import SubmissionException
 from course.forms.multiple_choice import MultipleChoiceQuestionForm, ChoiceForm
 from course.models.models import MultipleChoiceSubmission
-from course.utils.submissions import submit_solution, get_all_submissions
-from course.exceptions import SubmissionException
+from course.utils.submissions import submit_solution
 from course.utils.utils import create_multiple_choice_question, QuestionCreateException, get_user_question_junction
 
 
@@ -14,12 +14,12 @@ def _multiple_choice_question_create_view(request, header, question_form_class, 
     if request.method == 'POST':
         correct_answer_formset = correct_answer_formset_class(request.POST, prefix='correct')
         distractor_answer_formset = distractor_answer_formset_class(request.POST, prefix='distractor')
-        form = question_form_class(request.POST)
+        form = question_form_class(request.user, request.POST)
 
         if correct_answer_formset.is_valid() and distractor_answer_formset.is_valid() and form.is_valid():
 
             try:
-                question = create_multiple_choice_question(
+                create_multiple_choice_question(
                     title=form.cleaned_data['title'],
                     text=form.cleaned_data['text'],
                     author=request.user,
@@ -30,17 +30,18 @@ def _multiple_choice_question_create_view(request, header, question_form_class, 
                     answer_text=correct_answer_formset.forms[0].cleaned_data['text'],
                     distractors=[form.cleaned_data['text'] for form in distractor_answer_formset.forms if
                                  not form.cleaned_data['DELETE']],
-                    event=form.cleaned_data['event']
+                    course=form.cleaned_data['course'],
+                    event=form.cleaned_data['event'],
                 )
                 messages.add_message(request, messages.SUCCESS, 'Problem was created successfully')
-                form = question_form_class()
+                form = question_form_class(request.user)
                 correct_answer_formset = correct_answer_formset_class(prefix='correct')
                 distractor_answer_formset = distractor_answer_formset_class(prefix='distractor')
 
             except QuestionCreateException as e:
                 messages.add_message(request, messages.ERROR, e.user_message)
     else:
-        form = question_form_class()
+        form = question_form_class(request.user)
 
         correct_answer_formset = correct_answer_formset_class(prefix='correct')
         distractor_answer_formset = distractor_answer_formset_class(prefix='distractor')
@@ -68,7 +69,8 @@ def _multiple_choice_question_view(request, question, template_name):
                 received_tokens = get_user_question_junction(request.user, question).tokens_received
                 messages.add_message(
                     request, messages.SUCCESS,
-                    'Answer submitted. Your answer was correct. You received {} tokens'.format(round(received_tokens,2)),
+                    'Answer submitted. Your answer was correct. You received {} tokens'.format(
+                        round(received_tokens, 2)),
                 )
             else:
                 messages.add_message(
@@ -92,7 +94,7 @@ def _multiple_choice_question_edit_view(request, question):
     if request.method == 'POST':
         correct_answer_formset = correct_answer_formset_class(request.POST, prefix='correct')
         distractor_answer_formset = distractor_answer_formset_class(request.POST, prefix='distractor')
-        form = MultipleChoiceQuestionForm(request.POST)
+        form = MultipleChoiceQuestionForm(request.user, request.POST)
 
         if correct_answer_formset.is_valid() and distractor_answer_formset.is_valid() and form.is_valid():
             try:
@@ -110,6 +112,7 @@ def _multiple_choice_question_edit_view(request, question):
                     answer_text=correct_answer_formset.forms[0].cleaned_data['text'],
                     distractors=[form.cleaned_data['text'] for form in distractor_answer_formset.forms if
                                  not form.cleaned_data['DELETE']],
+                    course=form.cleaned_data['course'],
                     event=form.cleaned_data['event'],
                 )
                 messages.add_message(request, messages.SUCCESS, 'Problem saved successfully')
@@ -117,13 +120,16 @@ def _multiple_choice_question_edit_view(request, question):
                 messages.add_message(request, messages.ERROR, e.user_message)
 
     else:
-        form = MultipleChoiceQuestionForm(instance=question)
+        form = MultipleChoiceQuestionForm(request.user, instance=question)
 
-        correct_answer_formset = correct_answer_formset_class(prefix='correct',
-                                                              initial=[{'text': question.choices[question.answer]}])
-        distractor_answer_formset = distractor_answer_formset_class(prefix='distractor', initial=
-        [{'text': value} for name, value in question.choices.items() if name != question.answer]
-                                                                    )
+        correct_answer_formset = correct_answer_formset_class(
+            prefix='correct',
+            initial=[{'text': question.choices[question.answer]}]
+        )
+        distractor_answer_formset = distractor_answer_formset_class(
+            prefix='distractor',
+            initial=[{'text': value} for name, value in question.choices.items() if name != question.answer]
+        )
 
     return render(request, 'problem_create.html', {
         'form': form,
@@ -131,4 +137,3 @@ def _multiple_choice_question_edit_view(request, question):
         'distractor_answer_formset': distractor_answer_formset,
         'header': 'Edit Question',
     })
-
