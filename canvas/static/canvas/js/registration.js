@@ -18,7 +18,7 @@ $(function () {
         }
 
         checkOverMax(e, element);
-        calculate(element.id);
+        calculate();
     });
 });
 
@@ -42,14 +42,13 @@ function unuseTokensOption(id) {
     input.trigger("change"); //manually triggers 'change' event on the relevant input element
 }
 
-function calculate(fullID) {
-    let id = parseInt(fullID.slice(17)); //extracts id number out of id string
-
+function calculate() {
     //sum(tokenSum * tokens req of each row)
     let tokenSum = 0;
     $(".token-input").each(function () {
+        let id = parseInt($(this).attr("id").slice(17)); //extracts id number out of id string
         //tokenSum is multiplied by tokens required for that row to give tokens used (tentatively)
-        let reqTokens = parseInt($("#req_tokens_"+id).text());
+        let reqTokens = parseInt($("#req_tokens_"+id).text()); //find required tokens for this row
         let currVal = $(this).val().length == 0 ? 0 : parseInt($(this).val()); //uses 0 if the input field is empty
         tokenSum += currVal * reqTokens;
     });
@@ -57,7 +56,7 @@ function calculate(fullID) {
     $("#remaining_tokens").text(parseInt($("#available_tokens").text()) - tokenSum);
     const remTokens = $("#remaining_tokens").text();
 
-    //handle the case where user spends more tokens than they have
+    //handle the case where user is trying to spend more tokens than they have
     if(remTokens < 0) {
         $("#submit_button").attr("disabled", true); //disable 'confirm changes' button
         $("#remaining_tokens_text").attr("style", "color: red; font-weight: bold;"); //remaining tokens text becomes red as a warning
@@ -65,4 +64,6 @@ function calculate(fullID) {
         $("#submit_button").attr("disabled", false); //re-enable 'confirm changes' button
         $("#remaining_tokens_text").attr("style", ""); //remaining tokens text resets to default
     }
+
+    console.log("Recalculate");
 }
