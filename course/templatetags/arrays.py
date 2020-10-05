@@ -4,8 +4,8 @@ register = template.Library()
 
 
 @register.filter
-def return_item(l, i):
+def return_item(arr, i):
     try:
-        return l[i]
-    except:
+        return arr[i]
+    except Exception:
         return None

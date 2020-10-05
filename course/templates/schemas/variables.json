@@ -8,147 +8,147 @@
   "items": {
     "type": "object",
     "oneOf": [
-    {
-      "title": "Integer",
-      "additionalProperties": false,
-      "required": [
-        "type",
-        "min",
-        "max",
-        "name"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "int"
-          ],
-          "options": {
-            "hidden": true
+      {
+        "title": "Integer",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "min",
+          "max",
+          "name"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "int"
+            ],
+            "options": {
+              "hidden": true
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "min": {
+            "type": "string",
+            "title": "Minimum Value"
+          },
+          "max": {
+            "type": "string",
+            "title": "Maximum Value"
           }
         },
-        "name": {
-          "type": "string"
-        },
-        "min": {
-          "type": "string",
-          "title": "Minimum Value"
-        },
-        "max": {
-          "type": "string",
-          "title": "Maximum Value"
+        "type": "object",
+        "options": {
+          "keep_oneof_values": false
         }
       },
-      "type": "object",
-      "options": {
-        "keep_oneof_values": false
-      }
-    },
-    {
-      "title": "Float",
-      "additionalProperties": false,
-      "required": [
-        "type",
-        "min",
-        "max",
-        "precision",
-        "name"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "float"
-          ],
-          "options": {
-            "hidden": true
+      {
+        "title": "Float",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "min",
+          "max",
+          "precision",
+          "name"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "float"
+            ],
+            "options": {
+              "hidden": true
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "min": {
+            "type": "string",
+            "title": "Minimum Value"
+          },
+          "max": {
+            "type": "string",
+            "title": "Maximum Value"
+          },
+          "precision": {
+            "type": "number",
+            "title": "Number of digits after the decimal point"
           }
         },
-        "name": {
-          "type": "string"
-        },
-        "min": {
-          "type": "string",
-          "title": "Minimum Value"
-        },
-        "max": {
-          "type": "string",
-          "title": "Maximum Value"
-        },
-        "precision": {
-          "type": "number",
-          "title": "Number of digits after the decimal point"
+        "type": "object",
+        "options": {
+          "keep_oneof_values": false
         }
       },
-      "type": "object",
-      "options": {
-        "keep_oneof_values": false
-      }
-    },
-    {
-      "title": "Enum",
-      "additionalProperties": false,
-      "required": [
-        "type",
-        "values",
-        "name"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "enum"
-          ],
-          "options": {
-            "hidden": true
+      {
+        "title": "Enum",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "values",
+          "name"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "enum"
+            ],
+            "options": {
+              "hidden": true
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "format": "table",
+            "items": {
+              "type": "string"
+            }
           }
         },
-        "name": {
-          "type": "string"
-        },
-        "values": {
-          "type": "array",
-          "format": "table",
-          "items": {
+        "type": "object",
+        "options": {
+          "keep_oneof_values": false
+        }
+      },
+      {
+        "title": "Expression",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "expression",
+          "name"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "expression"
+            ],
+            "options": {
+              "hidden": true
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "expression": {
             "type": "string"
           }
-        }
-      },
-      "type": "object",
-      "options": {
-        "keep_oneof_values": false
-      }
-    },
-    {
-      "title": "Expression",
-      "additionalProperties": false,
-      "required": [
-        "type",
-        "expression",
-        "name"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "expression"
-          ],
-          "options": {
-            "hidden": true
-          }
         },
-        "name": {
-          "type": "string"
-        },
-        "expression": {
-          "type": "string"
+        "type": "object",
+        "options": {
+          "keep_oneof_values": false
         }
-      },
-      "type": "object",
-      "options": {
-        "keep_oneof_values": false
       }
-    }
-  ]
+    ]
   }
 }

@@ -9,8 +9,8 @@ class ParsonsQuestionForm(JunitProblemCreateForm):
     class Meta:
         model = ParsonsQuestion
         fields = (
-            'title', 'difficulty', 'category', 'text', 'lines', 'junit_template', 'additional_file_name', 'variables',
-            'event')
+            'title', 'difficulty', 'category', 'course', 'event', 'text', 'lines', 'junit_template',
+            'additional_file_name', 'variables')
         exclude = ('answer',)
 
     answer = None

@@ -1,5 +1,6 @@
-import jsonfield
 import json
+
+import jsonfield
 
 
 class JSONField(jsonfield.JSONField):
