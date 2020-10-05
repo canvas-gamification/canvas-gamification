@@ -59,11 +59,11 @@ function calculate() {
     //handle the case where user is trying to spend more tokens than they have
     if(remTokens < 0) {
         $("#submit_button").attr("disabled", true); //disable 'confirm changes' button
+        $("#submit_button").addClass("btn-secondary");
         $("#remaining_tokens_text").attr("style", "color: red; font-weight: bold;"); //remaining tokens text becomes red as a warning
     } else {
         $("#submit_button").attr("disabled", false); //re-enable 'confirm changes' button
+        $("#submit_button").removeClass("btn-secondary");
         $("#remaining_tokens_text").attr("style", ""); //remaining tokens text resets to default
     }
-
-    console.log("Recalculate");
 }
