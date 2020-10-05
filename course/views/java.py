@@ -88,6 +88,6 @@ def _java_question_view(request, question):
 
 
 def _java_submission_detail_view(request, submission):
-    return render(request, 'java_submission_detail.html', {
+    return render(request, 'code_submission_detail.html', {
         'submission': submission,
     })
