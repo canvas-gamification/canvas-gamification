@@ -1,3 +1,5 @@
+import base64
+import copy
 import json
 import random
 from datetime import datetime
@@ -367,6 +369,14 @@ class CodeSubmission(Submission):
 
     def submit(self):
         self.question.grader.submit(self)
+
+    def get_decoded_results(self):
+        results = copy.deepcopy(self.results)
+        for result in results:
+            result['compile_output'] = base64.b64decode(result['compile_output'] or "").decode('utf-8')
+            result['stdout'] = base64.b64decode(result['stdout'] or "").decode('utf-8')
+            result['stderr'] = base64.b64decode(result['stderr'] or "").decode('utf-8')
+        return results
 
 
 class JavaSubmission(CodeSubmission):
