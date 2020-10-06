@@ -1,5 +1,3 @@
-import base64
-
 from django.db import models
 
 from course.fields import JSONField
