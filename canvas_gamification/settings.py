@@ -226,8 +226,8 @@ if DEBUG:
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    EMAIL_ACTIVATION = 'test@gamification.com'
-    EMAIL_PASSWORD_RESET = 'test@gamification.com'
+    EMAIL_ACTIVATION = "test@gamification.com"
+    EMAIL_PASSWORD_RESET = "test@gamification.com"
 else:
     EMAIL_USE_TLS = os.environ['EMAIL_USE_TLS']
     EMAIL_HOST = os.environ['EMAIL_HOST']

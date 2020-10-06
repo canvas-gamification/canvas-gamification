@@ -1,5 +1,3 @@
-<h4>INFORMED CONSENT</h4>
-
 <h5>Introduction</h5>
 <p>
     You are invited to participate in a study that involves the development of an educational software.
@@ -74,3 +72,27 @@
     The grades we collect will only be used for research analysis purposes and will not include any names or personal
     identifiers.
 </p>
+
+
+<form id="informed_consent_form" url="{% url 'api:user_consent-list' %}">
+    <div class="form-group">
+        <label for="legal_last_name">Type in your last name:</label>
+        <input type="text" id="legal_last_name" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="legal_first_name">Type in your first name:</label>
+        <input type="text" id="legal_first_name" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="student_number">Type in your student number (this is only needed in case there are students with the
+            same first and last name):</label>
+        <input type="text" id="student_number" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="date">Type in today's date:</label>
+        <input type="text" id="date" class="form-control">
+    </div>
+</form>

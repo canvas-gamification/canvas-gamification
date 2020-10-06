@@ -49,11 +49,11 @@
 
     <h2> Code </h2>
     <pre>
-        <code class="language-java">{{ submission.code }}</code>
+        <code class="language-java">{{ submission.answer }}</code>
     </pre>
     <h2>Test Cases</h2>
     <div class="accordion" id="accordionTestCase">
-        {% for result in submission.results %}
+        {% for result in submission.get_decoded_results %}
             <div class="card">
                 <div class="card-header" id="heading{{ forloop.counter }}">
                     <h2 class="mb-0">
@@ -83,7 +83,9 @@
                                     Standard Output
                                 </td>
                                 <td>
+                                <pre>
                                     {{ result.stdout | safe }}
+                                </pre>
                                 </td>
                             </tr>
                             <tr>

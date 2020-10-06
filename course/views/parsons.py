@@ -73,6 +73,6 @@ def _parsons_question_view(request, question):
 
 
 def _parsons_submission_detail_view(request, submission):
-    return render(request, 'parsons_submission_detail.html', {
+    return render(request, 'code_submission_detail.html', {
         'submission': submission,
     })
