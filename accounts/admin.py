@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from accounts.models import MyUser
+from accounts.models import MyUser, UserConsent
 
 
 class MyUserAdmin(admin.ModelAdmin):
@@ -9,3 +9,4 @@ class MyUserAdmin(admin.ModelAdmin):
 
 
 admin.site.register(MyUser, MyUserAdmin)
+admin.site.register(UserConsent)

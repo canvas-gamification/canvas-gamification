@@ -38,3 +38,10 @@ class MyUser(AbstractUser):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         ensure_uqj(self, None)
+
+
+class UserConsent(models.Model):
+    legal_first_name = models.CharField(max_length=100, null=True, blank=True)
+    legal_last_name = models.CharField(max_length=100, null=True, blank=True)
+    student_number = models.CharField(max_length=100, null=True, blank=True)
+    date = models.CharField(max_length=100, null=True, blank=True)
