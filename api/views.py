@@ -1,6 +1,4 @@
 # Create your views here.
-from django.http import Http404, HttpResponseBadRequest
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, mixins
 
 from api.permissions import TeacherAccessPermission
