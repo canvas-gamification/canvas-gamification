@@ -1,0 +1,9 @@
+.code_lines {
+    -moz-tab-size: 2; /* Firefox */
+    tab-size: 2;
+}
+
+#parsons_submission_detail {
+    -moz-tab-size: 2; /* Firefox */
+    tab-size: 2;
+}
