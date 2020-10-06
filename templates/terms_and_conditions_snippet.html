@@ -73,7 +73,8 @@
     identifiers.
 </p>
 
-<form id="informed_consent_form">
+
+<form id="informed_consent_form" url="{% url 'api:user_consent-list' %}">
     <div class="form-group">
         <label for="lastName">Type in your last name:</label>
         <input type="text" id="lastName" class="form-control">
