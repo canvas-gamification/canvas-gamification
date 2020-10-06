@@ -41,9 +41,6 @@ function submit() {
         method: "POST",
         success: function () {
             registration_modal.modal("hide");
-        },
-        error: function () {
-            alert("Error");
         }
     });
 }
