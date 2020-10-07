@@ -16,7 +16,7 @@
             <div class="left-container">
                 {% for line in uqj.get_lines %}
                 <div class="container-object">
-                    <pre class="ts-2 my-0">{{ line }}</pre>
+                    <pre class="code_lines ts-2 my-0">{{ line }}</pre>
                 </div>
                 {% endfor %}
             </div>
@@ -38,7 +38,7 @@
         });
 
     function calculate_source_code() {
-        let parsons_lines = $(".right-container pre.ts-2");
+        let parsons_lines = $(".right-container pre.code_lines");
         let code = "";
         parsons_lines.each(function (i, e) {
             let line_value = $(e);
@@ -49,7 +49,7 @@
     }
 
     function determine_indents() {
-        let parsons_lines = $(".right-container pre.ts-2");
+        let parsons_lines = $(".right-container pre.code_lines");
         let count = 0;
         parsons_lines.each(function (i, e) {
             let line_value = $(e);
@@ -70,7 +70,7 @@
     }
 
     function remove_left_container_indents() {
-        let parsons_lines = $(".left-container pre.ts-2");
+        let parsons_lines = $(".left-container pre.code_lines");
         parsons_lines.each(function (i, e) {
             let line_value = $(e);
             let line = line_value.text().trim();
