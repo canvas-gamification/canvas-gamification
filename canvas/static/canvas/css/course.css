@@ -1,0 +1,21 @@
+.token-input {
+    border-width: 0px;
+    height: 100%;
+    border-radius: 5px;
+    background-color: #fafafa;
+    padding-left: 5px;
+}
+
+.token-input-button-plus {
+    background-color: #28a745;
+    border-radius: 5px;
+}
+
+.token-input-button-minus {
+    background-color: #dc3545;
+    border-radius: 5px;
+}
+
+.button-icon {
+    color: #fff;
+}
