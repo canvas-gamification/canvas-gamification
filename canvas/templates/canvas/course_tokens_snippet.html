@@ -1,4 +1,6 @@
-<p>Available Tokens: {{ course_reg.available_tokens | floatformat:2 }}</p>
+<p>Available Tokens: <span id="available_tokens">{{ course_reg.available_tokens | floatformat:2 }}</span></p>
+<p id="remaining_tokens_text">Remaining Tokens:
+     <span id="remaining_tokens">{{ course_reg.available_tokens | floatformat:2 }}</span></p>
 
 <table class="table table-hover" data-toggle="table">
     <thead>
@@ -16,24 +18,25 @@
         <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ tup.assignment_name }}</td>
-            <td>{{ tup.tokens_required }}</td>
+            <td id="req_tokens_{{ forloop.counter0 }}">{{ tup.tokens_required }}</td>
             <td>{{ tup.points_given }}</td>
             <td>{{ tup.maximum_number_of_use }}</td>
             <td>
                 <div style="white-space: nowrap; display: flex">
                     <div class="action-icon" style="background-color: red; border-radius: 10px 0 0 10px">
-                        <a href="">
+                        <span onclick="unuseTokensOption({{ forloop.counter0 }})">
                             <i class="fa fa-minus"
                                style="color: white"></i>
-                        </a>
+                        </span>
                     </div>
                     <div style="background-color: antiquewhite; display: inline-block">
-                        <input class="no-spin-button" type="number" style="height: 100%;">
+                        <input class="no-spin-button token-input" id="use_tokens_input_{{ forloop.counter0 }}"
+                               type="number" max="{{ tup.maximum_number_of_use }}" value=0 style="height: 100%;">
                     </div>
                     <div class="action-icon" style="background-color: green; border-radius: 0 10px 10px 0">
-                        <a href="">
+                        <span onclick="useTokensOption({{ forloop.counter0 }})">
                             <i class="fa fa-plus" style="color: white"></i>
-                        </a>
+                        </span>
                     </div>
                 </div>
             </td>
@@ -41,4 +44,4 @@
     {% endfor %}
     </tbody>
 </table>
-<button class="my-1 btn btn-primary">Confirm Changes</button>
+<button class="my-1 btn btn-primary" id="submit_button">Confirm Changes</button>
