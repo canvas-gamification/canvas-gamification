@@ -1,47 +1,111 @@
 {% extends 'base_question_view.html' %}
 
+{% load static %}
+
+{% block script %}
+{{ block.super}}
+<link rel="stylesheet" href="{% static 'course/css/parsons.css' %}"/>
+{% endblock %}
 
 {% block submit_form %}
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h5>Lines</h5>
-                <div class="left-container">
-                    {% for line in uqj.get_lines %}
-                        <div class="container-object">{{ line }}</div>
-                    {% endfor %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Lines</h5>
+            <div class="left-container">
+                {% for line in uqj.get_lines %}
+                <div class="container-object">
+                    <pre class="code_lines ts-2 my-0">{{ line }}</pre>
                 </div>
+                {% endfor %}
             </div>
-            <div class="col-md-6">
-                <h5>Your Solution</h5>
-                <div class="right-container">
+        </div>
+        <div class="col-md-6">
+            <h5>Your Solution</h5>
+            <div class="right-container">
 
-                </div>
             </div>
         </div>
     </div>
-    <script>
-        drake = dragula([$(".left-container")[0], $('.right-container')[0]])
-            .on('drop', function (e1, target, source, sibling) {
-                calculate_source_code();
+</div>
+<script>
+    drake = dragula([$(".left-container")[0], $(".right-container")[0]])
+        .on("drop", function (e1, target, source, sibling) {
+            determine_indents();
+            remove_left_container_indents();
+            calculate_source_code();
+        });
+
+    function calculate_source_code() {
+        let parsons_lines = $(".right-container pre.code_lines");
+        let code = "";
+        parsons_lines.each(function (i, e) {
+            let line_value = $(e);
+            let line = line_value.text();
+            code += line + "\n";
+        });
+        $("#source_code").val(code);
+    }
+
+    function determine_indents() {
+        let parsons_lines = $(".right-container pre.code_lines");
+        let count = 0;
+        parsons_lines.each(function (i, e) {
+            let line_value = $(e);
+            let line = line_value.text().trim();
+            line_value.text(line);
+            if (line.charAt(line.length - 1) == "{") {
+                line_value.text(indent(line, count));
+                count++;
+            }
+            else if (line.charAt(line.length - 1) == "}") {
+                count--;
+                line_value.text(indent(line, count));
+            }
+            else if (count > 0) {
+                line_value.text(indent(line, count));
+            }
+        });
+    }
+
+    function remove_left_container_indents() {
+        let parsons_lines = $(".left-container pre.code_lines");
+        parsons_lines.each(function (i, e) {
+            let line_value = $(e);
+            let line = line_value.text().trim();
+            line_value.text(line);
+        });
+    }
+
+    /**
+     * Indents the given string.
+     * @param str The string to be indented
+     * @param numOfIndents The amount of indentations to place at the beginning of the line in str.
+     * @param opt_spacesPerIndent Optional. Can be used to specify the number of spaces for indent.
+     * @returns {string} The new string with the correct number of indents at the beginning.
+     */
+
+    function indent(str, numOfIndents, opt_spacesPerIndent) {
+        str = str.replace(/^(?=.)/gm, new Array(numOfIndents + 1).join("\t"));
+        numOfIndents = new Array(opt_spacesPerIndent + 1 || 0).join(" "); // re-use
+        return opt_spacesPerIndent
+            ? str.replace(/^\t+/g, function (tabs) {
+                return tabs.replace(/./g, numOfIndents);
             })
+            : str;
+    }
+</script>
+<div class="my-3">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
 
-        function calculate_source_code() {
-            let code = $('.right-container').children().text();
-            $('#source_code').val(code);
-        }
-    </script>
-    <div class="my-3">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
+        <input type="hidden" id="source_code" name="code" class="form-control">
 
-            <input type="hidden" id="source_code" name="code" class="form-control">
-
-            <div class="form-group my-3">
-                <button type="submit" class="btn btn-success"> Submit</button>
-            </div>
-        </form>
-    </div>
+        <div class="form-group my-3">
+            <button type="submit" class="btn btn-success"> Submit</button>
+        </div>
+    </form>
+</div>
 
 {% endblock %}

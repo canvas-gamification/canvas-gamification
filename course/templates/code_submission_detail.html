@@ -4,6 +4,7 @@
 
 {% block script %}
     <link rel="stylesheet" href="{% static 'highlight/9.18.1/styles/default.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'course/css/parsons.css' %}"/>
     <script src="{% static 'highlight/9.18.1/highlight.min.js' %}"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 {% endblock %}
@@ -49,7 +50,7 @@
 
     <h2> Code </h2>
     <pre>
-        <code class="language-java">{{ submission.answer }}</code>
+        <code class="language-java ts-2">{{ submission.answer }}</code>
     </pre>
     <h2>Test Cases</h2>
     <div class="accordion" id="accordionTestCase">
