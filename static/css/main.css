@@ -32,6 +32,11 @@ label.required:before {
 
 .no-spin-button::-webkit-inner-spin-button,
 .no-spin-button::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.no-spin-button {
+    -moz-appearance:textfield;
+    color: red;
 }
