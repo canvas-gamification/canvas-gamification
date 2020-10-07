@@ -53,11 +53,7 @@
             <th scope="col" data-sortable="true">Sub&nbsp;Category</th>
             <th scope="col" data-sortable="true">Difficulty</th>
             <th scope="col" data-sortable="true">Token&nbsp;Value</th>
-            <th scope="col" data-sortable="true">Status</th>
-            {% if user.is_teacher %}
-                <th scope="col" data-sortable="true">Avg&nbsp;Success</th>
-            {% endif %}
-            <th scope="col" data-sortable="true">Num&nbsp;Attempts</th>
+            <th scope="col" data-sortable="true">Avg&nbsp;Success</th>
             <th scope="col">Action</th>
         </tr>
         </thead>
@@ -75,39 +71,27 @@
                 <td>{{ uqj.question.get_difficulty_display | safe }}</td>
                 <td>{{ uqj.question.token_value | floatformat:0 }}</td>
                 <td>
-                    {{ uqj.status }}
-                </td>
-                {% if user.is_teacher %}
-                    <td>
-                        {{ uqj.question.success_rate | to_percentage }}
-                    </td>
-                {% endif %}
-                <td>
-                    {{ uqj.num_attempts }}
+                    {{ uqj.question.success_rate | to_percentage }}
                 </td>
                 <td>
-                    {% if user.is_teacher %}
-                        <div style="white-space: nowrap; display: flex">
-                            <div class="action-icon" style="background-color: #0e84b5; border-radius: 10px 0 0 10px">
-                                <a href="{% url 'course:question_view' uqj.question.pk %}">
-                                    <i class="fa fa-search"
-                                       style="color: white"></i>
-                                </a>
-                            </div>
-                            <div class="action-icon" style="background-color: antiquewhite">
-                                <a href="{% url 'course:question_edit' uqj.question.pk %}">
-                                    <i class="fa fa-pencil-alt" style="color: black"></i>
-                                </a>
-                            </div>
-                            <div class="action-icon" style="background-color: red; border-radius: 0 10px 10px 0">
-                                <a href="{% url 'course:question_delete' uqj.question.pk %}">
-                                    <i class="fa fa-trash-alt" style="color: white"></i>
-                                </a>
-                            </div>
+                    <div style="white-space: nowrap; display: flex">
+                        <div class="action-icon" style="background-color: #0e84b5; border-radius: 10px 0 0 10px">
+                            <a href="{% url 'course:question_view' uqj.question.pk %}">
+                                <i class="fa fa-search"
+                                   style="color: white"></i>
+                            </a>
                         </div>
-                    {% else %}
-                        <a href="{% url 'course:question_view' uqj.question.pk %}" class="btn btn-primary">Open</a>
-                    {% endif %}
+                        <div class="action-icon" style="background-color: antiquewhite">
+                            <a href="{% url 'course:question_edit' uqj.question.pk %}">
+                                <i class="fa fa-pencil-alt" style="color: black"></i>
+                            </a>
+                        </div>
+                        <div class="action-icon" style="background-color: red; border-radius: 0 10px 10px 0">
+                            <a href="{% url 'course:question_delete' uqj.question.pk %}">
+                                <i class="fa fa-trash-alt" style="color: white"></i>
+                            </a>
+                        </div>
+                    </div>
                 </td>
             </tr>
         {% endfor %}
