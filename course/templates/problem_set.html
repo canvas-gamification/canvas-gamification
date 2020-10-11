@@ -75,18 +75,18 @@
                 </td>
                 <td>
                     <div style="white-space: nowrap; display: flex">
-                        <div class="action-icon" style="background-color: #0e84b5; border-radius: 10px 0 0 10px">
+                        <div class="action-icon" style="background-color: #0e84b5;">
                             <a href="{% url 'course:question_view' uqj.question.pk %}">
                                 <i class="fa fa-search"
                                    style="color: white"></i>
                             </a>
                         </div>
-                        <div class="action-icon" style="background-color: antiquewhite">
+                        <div class="action-icon mx-2" style="background-color: antiquewhite">
                             <a href="{% url 'course:question_edit' uqj.question.pk %}">
                                 <i class="fa fa-pencil-alt" style="color: black"></i>
                             </a>
                         </div>
-                        <div class="action-icon" style="background-color: red; border-radius: 0 10px 10px 0">
+                        <div class="action-icon" style="background-color: red;">
                             <a href="{% url 'course:question_delete' uqj.question.pk %}">
                                 <i class="fa fa-trash-alt" style="color: white"></i>
                             </a>
