@@ -28,6 +28,7 @@ label.required:before {
     font-size: 2rem;
     text-align: center;
     padding: 0;
+    border-radius: 5px;
 }
 
 .no-spin-button::-webkit-inner-spin-button,
@@ -38,5 +39,4 @@ label.required:before {
 
 .no-spin-button {
     -moz-appearance:textfield;
-    color: red;
 }
