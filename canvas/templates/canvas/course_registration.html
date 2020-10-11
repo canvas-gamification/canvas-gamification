@@ -6,7 +6,7 @@
 
 {% block content %}
     {% if not blocked %}
-        {% if name %}
+        {% if show_input %}
             <div>
                 <h6>Please enter your name exactly as it appears on Canvas:</h6>
             </div>
@@ -51,6 +51,9 @@
                 </div>
             </form>
             <h6 class="mt-md-3">Attempts Remaining: {{ attempts }}</h6>
+        {% endif %}
+        {% if success %}
+            <a href="{% url 'canvas:course' course.pk %}" class="btn btn-primary">Open Course</a>
         {% endif %}
     {% endif %}
 {% endblock %}

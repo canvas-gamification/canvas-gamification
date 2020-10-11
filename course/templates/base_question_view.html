@@ -22,6 +22,8 @@
             <th scope="col">Category</th>
             <th scope="col">Difficulty</th>
             <th scope="col">Token&nbspValue</th>
+            <th scope="col">Status</th>
+            <th scope="col">Num&nbsp;Attempts</th>
         </tr>
         </thead>
         <tbody>
@@ -31,6 +33,8 @@
             <td>{{ question.category }}</td>
             <td>{{ question.get_difficulty_display | safe }}</td>
             <td>{{ question.token_value | floatformat:0 }}</td>
+            <td>{{ uqj.status }}</td>
+            <td>{{ uqj.num_attempts }}</td>
         </tr>
         </tbody>
     </table>

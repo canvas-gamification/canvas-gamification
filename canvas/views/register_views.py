@@ -17,6 +17,7 @@ def name_registration_view(request, course, course_reg):
                                      'No matching record found. Please make sure your name is spelled correctly.')
                 return render(request, 'canvas/course_registration.html', {
                     'name': name,
+                    'show_input': True,
                     'failed': True,
                 })
 
@@ -32,7 +33,7 @@ def name_registration_view(request, course, course_reg):
             return HttpResponseRedirect(reverse_lazy('canvas:course_register', kwargs={'pk': course.pk}))
 
     return render(request, 'canvas/course_registration.html', {
-        'name': True,
+        'show_input': True,
     })
 
 
@@ -41,14 +42,16 @@ def verify_registration_view(request, course, course_reg):
         code = request.POST.get('code', -1)
         valid = course_reg.check_verification_code(code)
         if valid:
+            messages.add_message(request, messages.SUCCESS,
+                                 'You have successfully registered.')
             return render(request, 'canvas/course_registration.html', {
                 'success': True,
+                'course': course,
             })
         else:
             messages.add_message(request, messages.ERROR,
                                  'Verification Failed.')
             return render(request, 'canvas/course_registration.html', {
-                'verification_failed': True,
                 'verification': True,
                 'attempts': course_reg.verification_attempts,
             })
@@ -88,4 +91,5 @@ def register_course_view(request, pk):
                          'You have successfully registered.')
     return render(request, 'canvas/course_registration.html', {
         'success': True,
+        'course': course,
     })

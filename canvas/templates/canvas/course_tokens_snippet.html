@@ -1,3 +1,6 @@
+{% load static %}
+<link href="{% static 'canvas/css/course.css' %}" rel="stylesheet">
+
 <p>Available Tokens: <span id="available_tokens">{{ course_reg.available_tokens | floatformat:2 }}</span></p>
 <p id="remaining_tokens_text">Remaining Tokens:
      <span id="remaining_tokens">{{ course_reg.available_tokens | floatformat:2 }}</span></p>
@@ -23,19 +26,18 @@
             <td>{{ tup.maximum_number_of_use }}</td>
             <td>
                 <div style="white-space: nowrap; display: flex">
-                    <div class="action-icon" style="background-color: red; border-radius: 10px 0 0 10px">
+                    <div class="action-icon token-input-button-minus mr-2">
                         <span onclick="unuseTokensOption({{ forloop.counter0 }})">
-                            <i class="fa fa-minus"
-                               style="color: white"></i>
+                            <i class="fa fa-minus button-icon"></i>
                         </span>
                     </div>
-                    <div style="background-color: antiquewhite; display: inline-block">
+                    <div style="display: inline-block">
                         <input class="no-spin-button token-input" id="use_tokens_input_{{ forloop.counter0 }}"
-                               type="number" max="{{ tup.maximum_number_of_use }}" value=0 style="height: 100%;">
+                               type="number" placeholder="0" type="number" max="{{ tup.maximum_number_of_use }}">
                     </div>
-                    <div class="action-icon" style="background-color: green; border-radius: 0 10px 10px 0">
+                    <div class="action-icon token-input-button-plus ml-2">
                         <span onclick="useTokensOption({{ forloop.counter0 }})">
-                            <i class="fa fa-plus" style="color: white"></i>
+                            <i class="fa fa-plus button-icon"></i>
                         </span>
                     </div>
                 </div>
