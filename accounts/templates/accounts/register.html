@@ -5,25 +5,12 @@
 {% block script %}
 <!-- reCaptcha JavaScript -->
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<script src="{% static 'accounts/js/register.js' %}"></script>
 {% endblock %}
 
 {% block form %}
 <h4 class="card-title">Register</h4>
 <form method="POST" novalidate="">
     {% include 'accounts/form.html' %}
-
-    <div class="form-group">
-        <div class="custom-checkbox custom-control">
-            {{ form.consent }}
-            <label for="id_consent" class="custom-control-label">I have read the <a href="javascript:void(0)"
-                                                                                    id="terms_and_conditions_link">Informed
-                Consent Form</a></label>
-            <div class="invalid-feedback">
-                You must agree with our Terms and Conditions
-            </div>
-        </div>
-    </div>
 
     <div class=" form-group g-recaptcha"
          data-sitekey="6LeEo8MUAAAAAOzXHyRF-Mq7O6MNvqUwIXsQbC_U"></div>

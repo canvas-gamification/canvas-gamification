@@ -74,15 +74,6 @@ class SignupForm(auth_forms.UserCreationForm):
         strip=False,
     )
 
-    consent = forms.BooleanField(
-        label="",
-        widget=forms.CheckboxInput(attrs={
-            'class': 'custom-control-input',
-            'open_modal': 'true',
-        }),
-        required=True,
-    )
-
     def clean(self):
         data = super().clean()
         if 'email' in data:
