@@ -59,6 +59,7 @@ def activate(request, uidb64, token):
 def activate_test(request):
     return render(request, 'accounts/activation_confirm.html')
 
+
 class UserProfileView(UpdateView):
     model = MyUser
     template_name = 'accounts/profile.html'
