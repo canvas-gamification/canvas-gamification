@@ -24,28 +24,4 @@
         Already have an account? <a href="{% url 'accounts:login' %}">Login</a>
     </div>
 </form>
-
-<!--Terms and Conditions Modal-->
-<div class="modal" role="dialog" id="registration_modal">
-    <div class="modal-dialog modal-lg">
-
-        <!--Modal Content-->
-        <div class="modal-content" style="background: #fff">
-            <div class="modal-header">
-                <h3 class="modal-header-title">Informed Consent</h3>
-            </div>
-            <div class="modal-body">
-                {% include 'terms_and_conditions_snippet.html' %}
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="close_consent_modal">
-                    I Do Not Consent
-                </button>
-                <button type="button" class="btn btn-primary"
-                        id="consent_terms_and_conditions">I Consent
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}

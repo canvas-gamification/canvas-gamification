@@ -1,13 +1,4 @@
-$(function () {
-    const registration_modal = $("#registration_modal");
-
-    $(window).on("load", function (){
-        registration_modal.modal({backdrop: "static", keyboard: false});
-    });
-});
-
 function submit() {
-    const registration_modal = $("#registration_modal");
     const url = $("#informed_consent_form").attr("url");
     $.ajax({
         url: url,
@@ -20,7 +11,6 @@ function submit() {
         dataType: "json",
         method: "POST",
         success: function () {
-            registration_modal.modal("hide");
         }
     });
 }

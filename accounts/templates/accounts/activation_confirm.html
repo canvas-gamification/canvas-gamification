@@ -14,12 +14,10 @@
     </div>
     <div class="form-group">
         <button type="submit" class="btn btn-primary btn-block" id="menu-toggle"
-                onclick="window.location='{% url 'accounts:profile' %}';">Complete Profile
+                onclick="submit()">I Consent
         </button>
-    </div>
-    <div class="form-group">
-        <button type="submit" class="btn btn-primary btn-block" id="menu-toggle"
-                onclick="window.location='{% url 'homepage' %}';">Go Home
+    <button type="submit" class="btn btn-primary btn-block" id="menu-toggle"
+                onclick="window.location='{% url 'homepage' %}';">I Do Not Consent
         </button>
     </div>
 {% endblock %}
