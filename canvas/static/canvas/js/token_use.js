@@ -1,15 +1,16 @@
 $(function () {
+    const token_input = $(".token-input");
 
-    $(".token-input").on("keyup keydown", function (e) {
+    token_input.on("keyup keydown", function (e) {
         let element = e.target;
-
-        if (e.key == 'Backspace' || e.key == 'Delete') return; //user can only delete/backspace when over max
-        else if (e.keyCode < 48 || (e.keyCode > 57 && e.keyCode <= 96) || e.keyCode > 105) e.preventDefault(); //keycodes for non-number keys
-
+        if (e.keyCode < 48 || (e.keyCode > 57 && e.keyCode <= 96) || e.keyCode > 105){
+            if(e.key !== 'Backspace' && e.key !== 'Delete')
+                e.preventDefault(); //keycodes for non-number keys
+        }
         $(element).trigger("change") //manually trigger 'change' event on key presses
     });
 
-    $(".token-input").on("change", function (e) { //manually triggered when buttons are used to toggle value
+    token_input.on("change", function (e) { //manually triggered when buttons are used to toggle value
         let element = e.target;
 
         if (parseInt($(element).val()) < 0) { //check if value is negative
@@ -53,17 +54,19 @@ function calculate() {
         tokenSum += currVal * reqTokens;
     });
 
-    $("#remaining_tokens").text(parseInt($("#available_tokens").text()) - tokenSum);
-    const remTokens = $("#remaining_tokens").text();
+    const remaining_tokens = $("#remaining_tokens");
+    remaining_tokens.text(parseInt($("#available_tokens").text()) - tokenSum);
+    const remTokens = remaining_tokens.text();
 
     //handle the case where user is trying to spend more tokens than they have
+    const submit_button = $("#submit_button");
     if(remTokens < 0) {
-        $("#submit_button").attr("disabled", true); //disable 'confirm changes' button
-        $("#submit_button").addClass("btn-secondary");
+        submit_button.attr("disabled", true); //disable 'confirm changes' button
+        submit_button.addClass("btn-secondary");
         $("#remaining_tokens_text").attr("style", "color: red; font-weight: bold;"); //remaining tokens text becomes red as a warning
     } else {
-        $("#submit_button").attr("disabled", false); //re-enable 'confirm changes' button
-        $("#submit_button").removeClass("btn-secondary");
+        submit_button.attr("disabled", false); //re-enable 'confirm changes' button
+        submit_button.removeClass("btn-secondary");
         $("#remaining_tokens_text").attr("style", ""); //remaining tokens text resets to default
     }
 }
