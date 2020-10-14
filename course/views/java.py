@@ -32,15 +32,10 @@ def _java_question_create_view(request, header, question_form_class):
 
 def _java_question_edit_view(request, question):
     if request.method == 'POST':
-        form = JavaQuestionForm(request.user, request.POST)
+        form = JavaQuestionForm(request.user, request.POST, instance=question)
 
         if form.is_valid():
-            edited_question = form.save()
-            edited_question.pk = question.pk
-            edited_question.id = question.id
-            edited_question.is_verified = request.user.is_teacher()
-            edited_question.save()
-
+            form.save()
             messages.add_message(request, messages.SUCCESS, 'Question was edited successfully')
     else:
         form = JavaQuestionForm(request.user, instance=question)
