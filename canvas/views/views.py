@@ -6,8 +6,8 @@ from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
-from canvas.models import CanvasCourse, CanvasCourseRegistration, Event
-from canvas.utils.token_use import get_token_use, update_token_use, TokenUseException
+from canvas.models import CanvasCourse, Event
+from canvas.utils.token_use import update_token_use, TokenUseException
 from canvas.utils.utils import get_course_registration
 from course.models.models import UserQuestionJunction
 from course.views.views import teacher_check
