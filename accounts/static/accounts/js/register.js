@@ -20,7 +20,7 @@ function submit() {
         success: function () {
             window.location.href = success_url;
         },
-        failure: function () {
+        failed: function () {
             alert("Error. Please Try Again.");
         }
     });
