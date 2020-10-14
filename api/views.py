@@ -1,7 +1,8 @@
 # Create your views here.
 from rest_framework import viewsets, mixins
+from rest_framework.permissions import IsAuthenticated
 
-from api.permissions import TeacherAccessPermission
+from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, UserConsentSerializer
 from course.models.models import Question, MultipleChoiceQuestion
 
@@ -20,3 +21,4 @@ class MultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
 
 class UserConsentViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = UserConsentSerializer
+    permission_classes = [UserConsentPermission, ]
