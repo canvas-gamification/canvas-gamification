@@ -74,7 +74,7 @@
 </p>
 
 
-<form id="informed_consent_form" url="{% url 'api:user_consent-list' %}">
+<form id="informed_consent_form" url="{% url 'api:user_consent-list' %}">{% csrf_token %}
     <div class="form-group">
         <label for="legal_last_name">Type in your last name:</label>
         <input type="text" id="legal_last_name" class="form-control">
