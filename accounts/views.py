@@ -76,11 +76,11 @@ class UserProfileView(UpdateView):
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
-        consent = self.request.user.userconsent_set
+        consent = self.request.user.userconsent_set.all()
 
         if consent.exist():
             data.update({
-                'consent': consent.all()[0].pk
+                'consent': consent[0].pk
             })
         else:
             data.update({
