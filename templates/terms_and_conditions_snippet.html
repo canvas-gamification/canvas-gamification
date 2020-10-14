@@ -74,7 +74,7 @@
 </p>
 
 
-<form id="informed_consent_form" url="{% url 'api:user_consent-list' %}">
+<form id="informed_consent_form" url="{% url 'api:user_consent-list' %}" success_url="{% url 'canvas:course_list' %}">
     {% csrf_token %}
     <input type="hidden" name="user_id" value="{{ request.user.id }}">
     <div class="form-group">
