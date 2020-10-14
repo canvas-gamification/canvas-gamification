@@ -41,6 +41,7 @@ class MyUser(AbstractUser):
 
 
 class UserConsent(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=False)
     legal_first_name = models.CharField(max_length=100, null=True, blank=True)
     legal_last_name = models.CharField(max_length=100, null=True, blank=True)
     student_number = models.CharField(max_length=100, null=True, blank=True)
