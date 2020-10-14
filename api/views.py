@@ -1,6 +1,5 @@
 # Create your views here.
 from rest_framework import viewsets, mixins
-from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import UserConsent
 from api.permissions import TeacherAccessPermission, UserConsentPermission
@@ -24,5 +23,3 @@ class UserConsentViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, view
     serializer_class = UserConsentSerializer
     permission_classes = [UserConsentPermission, ]
     queryset = UserConsent.objects.all()
-
-
