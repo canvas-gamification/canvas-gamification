@@ -1,11 +1,13 @@
 from django.contrib.auth.decorators import user_passes_test
-from django.http import Http404
+from django.contrib import messages
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 from canvas.models import CanvasCourse, CanvasCourseRegistration, Event
 from course.models.models import UserQuestionJunction
 from course.views.views import teacher_check
+from canvas.forms.forms import CreateEventForm
 
 
 def course_list_view(request):
@@ -51,7 +53,6 @@ def event_problem_set(request, event_id):
         'is_instructor': event.course.is_instructor(request.user),
     })
 
-
 @user_passes_test(teacher_check)
 def events_options_view(request):
     course_id = request.GET.get('course_id', -1)
@@ -59,4 +60,31 @@ def events_options_view(request):
 
     return render(request, 'canvas/course_event_options.html', {
         'events': course.events.all(),
+    })
+
+def create_event_view(request):
+    if request.method == 'POST':
+        form = CreateEventForm(request.POST)
+        if form.is_valid():
+            name = form.cleand_data['name']
+            course = form.cleand_data['course']
+            count_for_tokens = form.cleand_data['count_for_tokens']
+            start_dt = form.cleand_data['start_datetime']
+            end_dt = form.cleand_data['end_datetime']
+
+            try:
+                new_event = Event(name, course, count_for_tokens, start_dt, end_dt)
+                new_event.save()
+                messages.add_message(request, messages.SUCCESS, 'Event created successfully')
+            except:
+                messages.add_message(request, messages.ERROR, 'Error in event creation.')
+            # redirect to a new URL:
+            return HttpResponseRedirect('.')
+
+            # if a GET (or any other method) we'll create a blank form
+    else:
+        form = CreateEventForm()
+
+    return render(request, 'canvas/event_create.html', {
+        'form': form,
     })

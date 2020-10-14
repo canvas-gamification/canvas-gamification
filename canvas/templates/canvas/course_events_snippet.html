@@ -1,7 +1,7 @@
 {% load event_grade %}
 
 {% if request.user.is_teacher %}
-    <a class="btn btn-primary my-1" href="#">Add an Event</a>
+    <a class="btn btn-primary my-1" href="{% url 'canvas:create_event' %}">Add an Event</a>
     <a class="btn btn-primary my-1" href="#">Import an Event</a>
 {% endif %}
 <table class="table table-hover" data-toggle="table">
