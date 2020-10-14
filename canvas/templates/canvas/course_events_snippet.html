@@ -1,3 +1,5 @@
+{% load event_grade %}
+
 {% if request.user.is_teacher %}
     <a class="btn btn-primary my-1" href="#">Add an Event</a>
     <a class="btn btn-primary my-1" href="#">Import an Event</a>
@@ -18,7 +20,7 @@
             <td>{{ event.name }}</td>
             <td>{{ event.start_date }}</td>
             <td>{{ event.end_date }}</td>
-            <td></td>
+            <td>{{ event|total_event_grade:request.user }}</td>
             <td><a class="btn btn-primary" href="{% url 'canvas:event_problem_set' event.id %}">Open</a></td>
         </tr>
     {% endfor %}
