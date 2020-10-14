@@ -13,4 +13,12 @@
         Change
         Password
     </button>
+    <hr>
+    {% if consent %}
+        <div class="my-1">You have consented to our Informed Consent Form, if you wish to withdraw please click on the button below</div>
+        <button type="button" class="btn btn-warning">Withdraw Your Consent</button>
+    {% else %}
+        <div class="my-1">You have not consented to our Informed Consent Form, if you wish to consent please click on the button below</div>
+        <a href="{% url 'accounts:consent' %}" type="submit" class="btn btn-primary">Consent</a>
+    {% endif %}
 {% endblock %}

@@ -14,3 +14,6 @@ class UserConsentPermission(permissions.IsAuthenticated):
             return int(request.data['user']) == request.user.id
         except Exception:
             return False
+
+    def has_object_permission(self, request, view, obj):
+        return request.user == obj.user
