@@ -26,6 +26,8 @@
                     <div class="brand">
                         <img src="{% static 'accounts/img/logo.jpg' %}" alt="logo">
                     </div>
+
+                {% block card %}
                     <div class="card fat">
                         <div class="card-body">
 
@@ -43,6 +45,7 @@
                             {% endblock %}
                         </div>
                     </div>
+                {% endblock %}
                     <div class="footer">
                         Copyright &copy; 2019 &mdash; Keyvan Khademi
                     </div>
