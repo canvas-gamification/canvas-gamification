@@ -21,7 +21,7 @@ function submit() {
         success: function () {
             window.location.href = success_url;
         },
-        failed: function () {
+        error: function () {
             alert("Error. Please Try Again.");
         }
     });
