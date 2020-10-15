@@ -9,10 +9,11 @@ function submit() {
             'X-CSRFToken': csrftoken
         },
         data: {
+            consent: true,
             user: user_id,
             legal_first_name: $("#legal_first_name").val(),
             legal_last_name: $("#legal_last_name").val(),
-            student_number: $("#student_number").val(),
+            // student_number: $("#student_number").val(),
             date: $("#date").val()
         },
         dataType: "json",
