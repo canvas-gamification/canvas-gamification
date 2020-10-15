@@ -22,7 +22,7 @@
         <div class="my-1">You have consented to our Informed Consent Form, if you wish to withdraw please click on the
             button below
         </div>
-        <button type="button" class="btn btn-warning" onclick="withdraw('{% url 'api:user_consent-detail' consent %}')">
+        <button type="button" class="btn btn-warning" onclick="withdraw('{% url 'api:user_consent-list' %}', {{ request.user.id }})">
             Withdraw Your Consent
         </button>
     {% else %}

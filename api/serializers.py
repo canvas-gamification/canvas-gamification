@@ -22,4 +22,4 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
 class UserConsentSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserConsent
-        fields = ['user', 'legal_first_name', 'legal_last_name', 'student_number', 'date']
+        fields = ['user', 'consent', 'legal_first_name', 'legal_last_name', 'student_number', 'date']

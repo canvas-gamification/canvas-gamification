@@ -1,4 +1,4 @@
-function withdraw(url) {
+function withdraw(url, user_id) {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     $.ajax({
         url: url,
@@ -6,11 +6,15 @@ function withdraw(url) {
             'X-CSRFToken': csrftoken
         },
         dataType: "json",
-        method: "DELETE",
+        method: "POST",
+        data: {
+            consent: false,
+            user: user_id
+        },
         success: function () {
             location.reload();
         },
-        failed: function () {
+        error: function () {
             alert("Failed. Please Try Again.");
         }
     });
