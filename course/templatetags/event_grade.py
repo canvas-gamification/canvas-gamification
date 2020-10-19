@@ -1,20 +1,17 @@
 from django import template
+from course.models.models import UserQuestionJunction
 
 register = template.Library()
 
 
 @register.filter
 def total_event_grade(event, user):
-    # calculate the total grade from all question submissions for an event, for this user
-    total_event_grade = 0
-    for question in event.question_set.all():
-        for uqj in question.user_junctions.all():
-            if not user == uqj.user:
-                continue
-            curr_uqj_grade = 0
-            for submission in uqj.submissions.all():
-                curr_grade = submission.grade
-                if curr_grade > curr_uqj_grade:
-                    curr_uqj_grade = curr_grade
-            total_event_grade += curr_uqj_grade
-    return total_event_grade
+    uqjs = UserQuestionJunction.objects.filter(user=user, question__event=event).all()
+    token_value = 0
+    tokens_recv = 0
+    for uqj in uqjs:
+        token_value += uqj.question.token_value
+        tokens_recv += uqj.tokens_received
+
+    # return '{} / {}'.format(tokens_recv, token_value)
+    return '{:.2f}%'.format(tokens_recv * 100/token_value)
