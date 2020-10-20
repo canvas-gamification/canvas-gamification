@@ -53,6 +53,7 @@ def event_problem_set(request, event_id):
         'is_instructor': event.course.is_instructor(request.user),
     })
 
+
 @user_passes_test(teacher_check)
 def events_options_view(request):
     course_id = request.GET.get('course_id', -1)
@@ -62,26 +63,22 @@ def events_options_view(request):
         'events': course.events.all(),
     })
 
+
 def create_event_view(request):
     if request.method == 'POST':
         form = CreateEventForm(request.POST)
         if form.is_valid():
-            name = form.cleand_data['name']
-            course = form.cleand_data['course']
-            count_for_tokens = form.cleand_data['count_for_tokens']
-            start_dt = form.cleand_data['start_datetime']
-            end_dt = form.cleand_data['end_datetime']
-
             try:
-                new_event = Event(name, course, count_for_tokens, start_dt, end_dt)
+                new_event = Event(name=form.cleaned_data['name'], course=form.cleaned_data['course'],
+                                  count_for_tokens=form.cleaned_data['count_for_tokens'],
+                                  start_date=form.cleaned_data['start_datetime'],
+                                  end_date=form.cleaned_data['end_datetime'])
                 new_event.save()
                 messages.add_message(request, messages.SUCCESS, 'Event created successfully')
             except:
                 messages.add_message(request, messages.ERROR, 'Error in event creation.')
-            # redirect to a new URL:
-            return HttpResponseRedirect('.')
 
-            # if a GET (or any other method) we'll create a blank form
+            return HttpResponseRedirect('.')
     else:
         form = CreateEventForm()
 
