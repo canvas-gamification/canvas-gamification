@@ -14,4 +14,7 @@ def total_event_grade(event, user):
         tokens_recv += uqj.tokens_received
 
     # return '{} / {}'.format(tokens_recv, token_value)
-    return '{:.2f}%'.format(tokens_recv * 100/token_value)
+    if not token_value == 0:
+        return '{:.2f}%'.format(tokens_recv * 100/token_value)
+    else:
+        return 'N/A'
