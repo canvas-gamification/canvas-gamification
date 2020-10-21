@@ -1,46 +1,53 @@
 {% load static %}
 <link href="{% static 'canvas/css/course.css' %}" rel="stylesheet">
 
-<p>Available Tokens: {{ course_reg.available_tokens | floatformat:2 }}</p>
-
-<table class="table table-hover" data-toggle="table">
-    <thead>
-    <tr>
-        <th scope="col">#</th>
-        <th scope="col">Assignment&nbsp;Name</th>
-        <th scope="col">Tokens&nbsp;Required</th>
-        <th scope="col">Extra&nbsp;Grade&nbsp;Given</th>
-        <th scope="col">Max&nbsp;Use</th>
-        <th scope="col">Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for tup in course.token_use_options.all %}
+<p>Available Tokens: <span id="available_tokens">{{ course_reg.total_tokens_received | floatformat:2 }}</span></p>
+<p id="remaining_tokens_text">Remaining Tokens:
+    <span id="remaining_tokens">{{ course_reg.available_tokens | floatformat:2 }}</span></p>
+<form method="post">
+    {% csrf_token %}
+    <table class="table table-hover" data-toggle="table">
+        <thead>
         <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ tup.assignment_name }}</td>
-            <td>{{ tup.tokens_required }}</td>
-            <td>{{ tup.points_given }}</td>
-            <td>{{ tup.maximum_number_of_use }}</td>
-            <td>
-                <div style="white-space: nowrap; display: flex">
-                    <div class="action-icon mr-2" style="background-color: #dc3545;">
-                        <a href="">
-                            <i class="fa fa-minus button-icon"></i>
-                        </a>
-                    </div>
-                    <div style="display: inline-block">
-                        <input class="no-spin-button token-input" type="number" placeholder="0">
-                    </div>
-                    <div class="action-icon ml-2" style="background-color: #28a745;">
-                        <a href="">
-                            <i class="fa fa-plus button-icon"></i>
-                        </a>
-                    </div>
-                </div>
-            </td>
+            <th scope="col">#</th>
+            <th scope="col">Assignment&nbsp;Name</th>
+            <th scope="col">Tokens&nbsp;Required</th>
+            <th scope="col">Extra&nbsp;Grade&nbsp;Given</th>
+            <th scope="col">Max&nbsp;Use</th>
+            <th scope="col">Actions</th>
         </tr>
-    {% endfor %}
-    </tbody>
-</table>
-<button class="my-1 btn btn-primary">Confirm Changes</button>
+        </thead>
+        <tbody>
+        {% for token_use in course_reg.get_token_uses %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ token_use.option.assignment_name }}</td>
+                <td id="req_tokens_{{ token_use.option.id }}">{{ token_use.option.tokens_required }}</td>
+                <td>{{ token_use.option.points_given }}</td>
+                <td>{{ token_use.option.maximum_number_of_use }}</td>
+                <td>
+                    <div style="white-space: nowrap; display: flex">
+                        <div class="action-icon mr-2" style="background-color: #dc3545;">
+                        <span onclick="unuseTokensOption({{ token_use.option.id }})">
+                            <i class="fa fa-minus button-icon"></i>
+                        </span>
+                        </div>
+                        <div style="display: inline-block">
+                            <input class="no-spin-button token-input" name="token_use#{{ token_use.option.id }}"
+                                   id="use_tokens_input_{{ token_use.option.id }}"
+                                   value="{{ token_use.num_used }}"
+                                   type="number" placeholder="0" max="{{ token_use.option.maximum_number_of_use }}">
+                        </div>
+                        <div class="action-icon ml-2" style="background-color: #28a745;">
+                        <span onclick="useTokensOption({{ token_use.option.id }})">
+                            <i class="fa fa-plus button-icon"></i>
+                        </span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <button class="my-1 btn btn-primary" id="submit_button">Confirm Changes</button>
+</form>

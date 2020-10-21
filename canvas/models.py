@@ -1,11 +1,12 @@
 import canvasapi
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, F, FloatField
 from django.utils import timezone
 from fuzzywuzzy import process
 
 from accounts.models import MyUser
 from canvas import canvasapi_mock
+from canvas.utils.token_use import get_token_use
 
 
 class CanvasCourse(models.Model):
@@ -135,6 +136,9 @@ class CanvasCourseRegistration(models.Model):
     class Meta:
         unique_together = ('course', 'user')
 
+    def get_token_uses(self):
+        return [get_token_use(self.user, tup['id']) for tup in self.course.token_use_options.values('id')]
+
     @property
     def canvas_user(self):
         if self.canvas_user_id is None:
@@ -165,19 +169,21 @@ class CanvasCourseRegistration(models.Model):
         return False
 
     @property
-    def available_tokens(self):
+    def total_tokens_received(self):
         event_ids = [x['id'] for x in self.course.events.filter(count_for_tokens=True).values('id')]
-        tokens_gained = self.user.question_junctions.filter(question__event_id__in=event_ids). \
-            aggregate(Sum('tokens_received'))['tokens_received__sum']
-        tokens_used = self.user.token_uses.filter(option__course=self.course). \
-            aggregate(Sum('option__tokens_required'))['option__tokens_required__sum']
+        return self.user.question_junctions.filter(question__event_id__in=event_ids)\
+            .aggregate(Sum('tokens_received'))['tokens_received__sum'] or 0
 
-        if not tokens_gained:
-            tokens_gained = 0
+    @property
+    def available_tokens(self):
+        tokens_used = self.user.token_uses.filter(option__course=self.course). \
+            aggregate(available_tokens=Sum(F('option__tokens_required') * F('num_used'), output_field=FloatField()))[
+            'available_tokens']
+
         if not tokens_used:
             tokens_used = 0
 
-        return tokens_gained - tokens_used
+        return self.total_tokens_received - tokens_used
 
 
 class Event(models.Model):
@@ -226,12 +232,13 @@ class TokenUseOption(models.Model):
 class TokenUse(models.Model):
     option = models.ForeignKey(TokenUseOption, on_delete=models.CASCADE, related_name='token_uses')
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='token_uses')
+    num_used = models.IntegerField(default=0)
 
     def apply(self):
         course_reg = CanvasCourseRegistration.objects.get(user=self.user, course=self.option.course)
         self.option.course.course.submissions_bulk_update(grade_data={
             course_reg.canvas_user_id: {
-                'posted_grade': self.option.points_given,
+                'posted_grade': self.option.points_given * self.num_used,
             }
         })
 
