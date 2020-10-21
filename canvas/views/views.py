@@ -8,6 +8,7 @@ from canvas.models import CanvasCourse, CanvasCourseRegistration, Event
 from course.models.models import UserQuestionJunction
 from course.views.views import teacher_check
 from canvas.forms.forms import CreateEventForm
+from canvas.utils.utils import EventCreateException, create_event
 
 
 def course_list_view(request):
@@ -69,13 +70,12 @@ def create_event_view(request):
         form = CreateEventForm(request.POST)
         if form.is_valid():
             try:
-                new_event = Event(name=form.cleaned_data['name'], course=form.cleaned_data['course'],
+                create_event(name=form.cleaned_data['name'], course=form.cleaned_data['course'],
                                   count_for_tokens=form.cleaned_data['count_for_tokens'],
                                   start_date=form.cleaned_data['start_datetime'],
                                   end_date=form.cleaned_data['end_datetime'])
-                new_event.save()
                 messages.add_message(request, messages.SUCCESS, 'Event created successfully')
-            except:
+            except EventCreateException:
                 messages.add_message(request, messages.ERROR, 'Error in event creation.')
 
             return HttpResponseRedirect('.')
