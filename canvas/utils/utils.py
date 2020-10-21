@@ -1,3 +1,4 @@
+
 class EventCreateException(Exception):
 
     def __init__(self, message, user_message):
@@ -20,3 +21,10 @@ def create_event(name=None, course=None, count_for_tokens=None, start_date=None,
             message="Invalid list of arguments to create MultipleChoiceQuestion",
             user_message="Cannot create question due to an unknown error, please contact developers"
         )
+
+def get_course_registration(user, course):
+    from canvas.models import CanvasCourseRegistration
+
+    qs = CanvasCourseRegistration.objects.filter(user=user, course=course)
+    return qs.get() if qs.exists() else None
+

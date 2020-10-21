@@ -1,10 +1,15 @@
+import re
+
+from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
-from canvas.models import CanvasCourse, CanvasCourseRegistration, Event
+from canvas.models import CanvasCourse, Event
+from canvas.utils.token_use import update_token_use, TokenUseException
+from canvas.utils.utils import get_course_registration
 from course.models.models import UserQuestionJunction
 from course.views.views import teacher_check
 from canvas.forms.forms import CreateEventForm
@@ -24,14 +29,27 @@ def course_list_view(request):
 def course_view(request, pk):
     course = get_object_or_404(CanvasCourse, pk=pk)
 
+    if request.method == 'POST':
+        token_use_data = {}
+        for key in request.POST.keys():
+            match = re.fullmatch(r"token_use#(\d+)", key)
+            if match:
+                token_use_option_id = int(match.group(1))
+                token_use_num = int(request.POST.get(key, '0') or 0)
+                token_use_data[token_use_option_id] = token_use_num
+        try:
+            update_token_use(request.user, course, token_use_data)
+            messages.add_message(request, messages.SUCCESS, "Tokens Updated Successfully")
+        except TokenUseException:
+            messages.add_message(request, messages.ERROR, "Invalid Use of Tokens")
+
     is_instructor = course.is_instructor(request.user)
     if is_instructor:
         uqjs = UserQuestionJunction.objects.filter(user=request.user, question__course=course).all()
     else:
         uqjs = UserQuestionJunction.objects.none()
 
-    qs = CanvasCourseRegistration.objects.filter(user=request.user, course=course)
-    course_reg = qs.get() if qs.exists() else None
+    course_reg = get_course_registration(request.user, course)
 
     return render(request, 'canvas/course.html', {
         'course': course,

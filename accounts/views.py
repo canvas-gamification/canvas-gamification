@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login, views as auth_views
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.contrib.auth.tokens import default_token_generator
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 # Create your views here.
 from django.urls import reverse_lazy
@@ -48,12 +49,16 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return render(request, 'accounts/activation_confirm.html')
+        return HttpResponseRedirect(reverse_lazy('accounts:consent'))
     else:
         return render(request, 'accounts/message.html', {
             'title': "Something went wrong",
             'message': 'Activation link is invalid!',
         })
+
+
+def consent_view(request):
+    return render(request, 'accounts/consent.html')
 
 
 class UserProfileView(UpdateView):
@@ -68,6 +73,16 @@ class UserProfileView(UpdateView):
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, "Profile Updated Successfully!")
         return reverse_lazy('homepage')
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        consents = self.request.user.userconsent_set.order_by('-created_at').all()
+
+        data.update({
+            'consent': consents.exists() and consents.first().consent
+        })
+
+        return data
 
 
 class PasswordChangeView(auth_views.PasswordChangeView):
