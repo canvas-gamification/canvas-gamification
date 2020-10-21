@@ -1,6 +1,5 @@
 from django import forms
-from django.forms import Form, TextInput, CheckboxInput, DateTimeInput, DateInput, TimeInput, SplitDateTimeWidget, \
-    Select
+from django.forms import TextInput, CheckboxInput, DateTimeInput, Select
 from canvas.models import CanvasCourse
 from datetime import datetime
 
