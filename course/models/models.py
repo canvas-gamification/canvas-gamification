@@ -1,5 +1,4 @@
 import base64
-import copy
 import json
 import random
 from datetime import datetime
