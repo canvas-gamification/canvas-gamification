@@ -71,46 +71,20 @@
                     <div class="card-body">
                         <table class="table table-bordered">
                             <tbody>
-                            <tr class="{% if result.status.id == 3 %}table-success{% else %}table-danger{% endif %}">
+                            <tr>
+                                <td>
+                                    Test&nbsp;Name
+                                </td>
+                                <td>
+                                    {{ result.name }}
+                                </td>
+                            </tr>
+                            <tr class="{% if result.status == "PASS" %}table-success{% else %}table-danger{% endif %}">
                                 <td>
                                     Status
                                 </td>
                                 <td>
-                                    {{ result.status.description | safe }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Standard Output
-                                </td>
-                                <td>
-                                <pre>
-                                    {{ result.stdout | safe }}
-                                </pre>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Standard Error
-                                </td>
-                                <td>
-                                    {{ result.stderr | safe }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Compile Output
-                                </td>
-                                <td>
-                                    {{ result.compile_output | safe }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Time
-                                </td>
-                                <td>
-                                    {{ result.time | safe }}s
+                                    {{ result.status | safe }}
                                 </td>
                             </tr>
                             <tr>
@@ -126,8 +100,17 @@
                     </div>
                 </div>
             </div>
-
+        {% empty %}
+            <p>No tests found</p>
+            <p>This is usually due to compilation error or the test is still running, see compile output or refresh the page</p>
         {% endfor %}
+
+    </div>
+    <h2>Compile Output</h2>
+    <div class="my-3">
+        <pre>
+            {{ submission.get_decoded_stderr }}
+        </pre>
     </div>
 
 {% endblock %}

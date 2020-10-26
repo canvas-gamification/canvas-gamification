@@ -2,7 +2,7 @@ version: '3'
 
 services:
   judge0-server:
-    image: judge0/api:1.9.0-extra
+    image: judge0/api:1.9.0
     volumes:
       - ./env/judge0.env:/judge0.conf:ro
     privileged: true
@@ -14,7 +14,7 @@ services:
     restart: always
 
   judge0-workers:
-    image: judge0/api:1.9.0-extra
+    image: judge0/api:1.9.0
     command: ["./scripts/workers"]
     volumes:
       - ./env/judge0.env:/judge0.conf:ro
