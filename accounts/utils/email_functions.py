@@ -31,3 +31,17 @@ def send_activation_email(request, user):
         mail_subject, message, from_email=settings.EMAIL_ACTIVATION, to=[to_email]
     )
     email.send()
+
+
+def send_contact_us_email(fullname, email, comment):
+    mail_subject = 'Contact Us Question'
+    message = render_to_string('accounts/contact_us_email.html', {
+        'fullname': fullname,
+        'email': email,
+        'comment': comment,
+    })
+    to_email = 'carsonricca28@gmail.com'
+    email = EmailMessage(
+        mail_subject, message, from_email=settings.EMAIL_ACTIVATION, to=[to_email]
+    )
+    email.send()
