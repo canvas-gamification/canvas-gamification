@@ -1,6 +1,7 @@
 from functools import reduce
 from django import template
 from course.models.models import UserQuestionJunction
+from accounts.models import MyUser
 from django.db.models import Sum, F, Count, FloatField, ExpressionWrapper
 from course.utils.utils import get_token_value
 
@@ -9,7 +10,7 @@ register = template.Library()
 
 @register.filter
 def total_event_grade(event, user):
-    uqjs = UserQuestionJunction.objects.filter(user=user, question__event=event)
+    uqjs = user.question_junctions.filter(question__event=event)
     token_recv = uqjs.aggregate(total=Sum(F('tokens_received')))['total']
 
     question_types = uqjs.all().values('question__category', 'question__difficulty').annotate(num_questions=Count('id'))
