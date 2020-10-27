@@ -1,9 +1,6 @@
-import re
-
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
-from django.contrib import messages
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
@@ -13,7 +10,6 @@ from canvas.utils.utils import get_course_registration
 from course.models.models import UserQuestionJunction
 from course.views.views import teacher_check
 from canvas.forms.forms import CreateEventForm
-from canvas.utils.utils import EventCreateException, create_event
 
 
 def course_list_view(request):
@@ -58,6 +54,7 @@ def course_view(request, pk):
         'is_instructor': is_instructor,
     })
 
+
 def event_problem_set(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     if not event.is_allowed_to_open(request.user):
@@ -87,16 +84,17 @@ def create_event_view(request, pk):
     course.is_instructor(request.user)
     if request.method == 'POST':
         if course.is_instructor(request.user):
-            form = CreateEventForm(pk, request.POST)
+            form = CreateEventForm(request.POST)
             if form.is_valid():
                 new_event = form.save(commit=False)
                 new_event.course = course
                 new_event.save()
                 messages.add_message(request, messages.SUCCESS, 'Event created successfully.')
         else:
-            messages.add_message(request, messages.ERROR, 'You do not have permission to create an event in this course.')
+            messages.add_message(request, messages.ERROR,
+                                 'You do not have permission to create an event in this course.')
     else:
-        form = CreateEventForm(pk)
+        form = CreateEventForm()
 
     return render(request, 'canvas/event_create.html', {
         'form': form,

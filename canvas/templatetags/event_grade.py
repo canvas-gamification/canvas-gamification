@@ -1,8 +1,6 @@
 from functools import reduce
 from django import template
-from course.models.models import UserQuestionJunction
-from accounts.models import MyUser
-from django.db.models import Sum, F, Count, FloatField, ExpressionWrapper
+from django.db.models import Sum, F, Count
 from course.utils.utils import get_token_value
 
 register = template.Library()

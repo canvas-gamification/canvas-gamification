@@ -1,23 +1,9 @@
 from django import forms
 from canvas.models import Event
 from datetime import datetime
-from canvas.models import CanvasCourse
-from django.shortcuts import get_object_or_404
 
 
 class CreateEventForm(forms.ModelForm):
-    def __init__(self, course_pk: int, *args, **kwargs):
-        super(CreateEventForm, self).__init__(*args, **kwargs)
-        # self.fields['course'] = forms.ModelChoiceField(
-        #     label="Course",
-        #     queryset=CanvasCourse.objects.filter(pk=course_pk),
-        #     widget=forms.Select(
-        #         attrs={'class': 'form-control'}
-        #     )
-        # )
-
-    # initial=get_object_or_404(CanvasCourse, pk=course_pk)
-
     name = forms.CharField(
         label="Event Name",
         widget=forms.TextInput(attrs={'class': 'form-control'})
