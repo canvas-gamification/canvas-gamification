@@ -58,7 +58,6 @@ def course_view(request, pk):
         'is_instructor': is_instructor,
     })
 
-
 def event_problem_set(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     if not event.is_allowed_to_open(request.user):
@@ -83,23 +82,23 @@ def events_options_view(request):
     })
 
 
-def create_event_view(request):
+def create_event_view(request, pk):
+    course = get_object_or_404(CanvasCourse, pk=pk)
+    course.is_instructor(request.user)
     if request.method == 'POST':
-        form = CreateEventForm(request.POST)
-        if form.is_valid():
-            try:
-                create_event(name=form.cleaned_data['name'], course=form.cleaned_data['course'],
-                             count_for_tokens=form.cleaned_data['count_for_tokens'],
-                             start_date=form.cleaned_data['start_datetime'],
-                             end_date=form.cleaned_data['end_datetime'])
-                messages.add_message(request, messages.SUCCESS, 'Event created successfully')
-            except EventCreateException:
-                messages.add_message(request, messages.ERROR, 'Error in event creation.')
-
-            return HttpResponseRedirect('.')
+        if course.is_instructor(request.user):
+            form = CreateEventForm(pk, request.POST)
+            if form.is_valid():
+                new_event = form.save(commit=False)
+                new_event.course = course
+                new_event.save()
+                messages.add_message(request, messages.SUCCESS, 'Event created successfully.')
+        else:
+            messages.add_message(request, messages.ERROR, 'You do not have permission to create an event in this course.')
     else:
-        form = CreateEventForm()
+        form = CreateEventForm(pk)
 
     return render(request, 'canvas/event_create.html', {
         'form': form,
+        'course': course,
     })

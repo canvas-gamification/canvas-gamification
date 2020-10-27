@@ -1,37 +1,47 @@
 from django import forms
-from django.forms import TextInput, CheckboxInput, DateTimeInput, Select
-from canvas.models import CanvasCourse
+from canvas.models import Event
 from datetime import datetime
+from canvas.models import CanvasCourse
+from django.shortcuts import get_object_or_404
 
 
-class CreateEventForm(forms.Form):
+class CreateEventForm(forms.ModelForm):
+    def __init__(self, course_pk: int, *args, **kwargs):
+        super(CreateEventForm, self).__init__(*args, **kwargs)
+        # self.fields['course'] = forms.ModelChoiceField(
+        #     label="Course",
+        #     queryset=CanvasCourse.objects.filter(pk=course_pk),
+        #     widget=forms.Select(
+        #         attrs={'class': 'form-control'}
+        #     )
+        # )
+
+    # initial=get_object_or_404(CanvasCourse, pk=course_pk)
+
     name = forms.CharField(
         label="Event Name",
-        max_length=500,
-        widget=TextInput(attrs={'class': 'form-control'})
+        widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
-    course = forms.ModelChoiceField(
-        label="Course",
-        queryset=CanvasCourse.objects.all(),
-        widget=Select(
-            attrs={'class': 'form-control'}
-        ),
-    )
     count_for_tokens = forms.BooleanField(
         label="Does this event count for tokens?",
-        widget=CheckboxInput(attrs={'class': 'form-control'}),
+        widget=forms.CheckboxInput(attrs={'class': 'form-control'}),
         required=False
     )
 
-    start_datetime = forms.DateTimeField(
-        label="Start Date/Time (YYYY-MM-DD HH:MM:SS)",
-        widget=DateTimeInput(attrs={'class': 'form-control date'}),
+    start_date = forms.DateTimeField(
+        label="Start Date",
+        widget=forms.DateTimeInput(attrs={'class': 'form-control datetimepicker'}),
         initial=datetime.now()
     )
 
-    end_datetime = forms.DateTimeField(
-        label="End Date/Time (YYYY-MM-DD HH:MM:SS)",
-        widget=DateTimeInput(attrs={'class': 'form-control date'}),
+    end_date = forms.DateTimeField(
+        label="End Date",
+        widget=forms.DateTimeInput(attrs={'class': 'form-control datetimepicker'}),
         initial=datetime.now()
     )
+
+    class Meta:
+        model = Event
+        # fields = ['name', 'course', 'count_for_tokens', 'start_date', 'end_date']
+        fields = ['name', 'count_for_tokens', 'start_date', 'end_date']
