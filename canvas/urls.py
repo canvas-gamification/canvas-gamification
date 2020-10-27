@@ -9,6 +9,6 @@ urlpatterns = [
     path('events-options', events_options_view, name='course_events_options'),
     path('event/<int:event_id>/problem-set', event_problem_set, name='event_problem_set'),
     path('', course_list_view, name='course_list'),
-    path('create-event', create_event_view, name='create_event')
+    path('<int:pk>/create-event', create_event_view, name='create_event')
 ]
 app_name = 'canvas'
