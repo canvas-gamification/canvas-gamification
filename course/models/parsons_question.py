@@ -1,7 +1,7 @@
 from django.db import models
 
 from course.fields import JSONField
-from course.grader import JunitGrader
+from course.grader.grader import JunitGrader
 from course.models.models import VariableQuestion, CodeSubmission
 
 

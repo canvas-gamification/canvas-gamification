@@ -1,5 +1,4 @@
 import base64
-import copy
 import json
 import random
 from datetime import datetime
@@ -14,7 +13,8 @@ from polymorphic.models import PolymorphicModel
 from accounts.models import MyUser
 from canvas.models import Event, CanvasCourse
 from course.fields import JSONField
-from course.grader import MultipleChoiceGrader, JunitGrader
+from course.grader.grader import MultipleChoiceGrader, JunitGrader
+from course.utils.junit_xml import parse_junit_xml
 from course.utils.utils import get_token_value, ensure_uqj
 from course.utils.variables import render_text, generate_variables
 from general.models import Action
@@ -371,13 +371,12 @@ class CodeSubmission(Submission):
     def submit(self):
         self.question.grader.submit(self)
 
+    def get_decoded_stderr(self):
+        return base64.b64decode(self.results[0]['stderr'] or "").decode('utf-8')
+
     def get_decoded_results(self):
-        results = copy.deepcopy(self.results)
-        for result in results:
-            result['compile_output'] = base64.b64decode(result['compile_output'] or "").decode('utf-8')
-            result['stdout'] = base64.b64decode(result['stdout'] or "").decode('utf-8')
-            result['stderr'] = base64.b64decode(result['stderr'] or "").decode('utf-8')
-        return results
+        stdout = base64.b64decode(self.results[0]['stdout'] or "").decode('utf-8')
+        return parse_junit_xml(stdout)
 
 
 class JavaSubmission(CodeSubmission):

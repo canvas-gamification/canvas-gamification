@@ -18,7 +18,7 @@ class ProblemCreateForm(forms.ModelForm):
         self.fields['difficulty'].initial = "EASY"
         self.fields['course'].queryset = CanvasCourse.objects.filter(instructor=user).all()
 
-        if 'course' in self.data:
+        if 'course' in self.data and self.data['course']:
             course_id = int(self.data.get('course', -1))
         elif 'instance' in kwargs and kwargs.get('instance').course:
             course_id = kwargs.get('instance').course.pk
