@@ -3,8 +3,8 @@ from rest_framework import viewsets, mixins
 
 from accounts.models import UserConsent
 from api.permissions import TeacherAccessPermission, UserConsentPermission
-from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, UserConsentSerializer, \
-    ContactUsSerializer
+from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer,\
+    UserConsentSerializer, ContactUsSerializer
 from course.models.models import Question, MultipleChoiceQuestion
 
 
