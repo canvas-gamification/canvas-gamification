@@ -12,10 +12,9 @@ class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [TeacherAccessPermission, ]
 
 
-class MultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
-    queryset = MultipleChoiceQuestion.objects.all()
+class SampleMultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
+    queryset = MultipleChoiceQuestion.objects.filter(is_sample=True).all()
     serializer_class = MultipleChoiceQuestionSerializer
-    permission_classes = [TeacherAccessPermission, ]
 
 
 class UserConsentViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

@@ -1,10 +1,10 @@
 from rest_framework.routers import DefaultRouter
 
-from api.views import QuestionViewSet, MultipleChoiceQuestionViewSet, UserConsentViewSet
+from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
-router.register(r'multiple-choice-question', MultipleChoiceQuestionViewSet, basename='multiple_choice_question')
+router.register(r'sample-multiple-choice-question', SampleMultipleChoiceQuestionViewSet, basename='sample_multiple_choice_question')
 router.register(r'user-consent', UserConsentViewSet, basename='user_consent')
 
 app_name = 'api'

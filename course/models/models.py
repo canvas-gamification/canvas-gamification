@@ -70,6 +70,7 @@ class Question(PolymorphicModel):
     author = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
     category = models.ForeignKey(QuestionCategory, on_delete=models.SET_NULL, null=True, blank=True)
     difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES, default="EASY")
+    is_sample = models.BooleanField(default=False)
 
     course = models.ForeignKey(CanvasCourse, on_delete=models.SET_NULL, related_name='question_set', null=True,
                                blank=True, db_index=True)
