@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from accounts.models import UserConsent
 from course.models.models import Question, MultipleChoiceQuestion
+from general.models import ContactUs
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -23,3 +24,9 @@ class UserConsentSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserConsent
         fields = ['user', 'consent', 'legal_first_name', 'legal_last_name', 'student_number', 'date']
+
+
+class ContactUsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactUs
+        fields = ['fullname', 'email', 'comment']

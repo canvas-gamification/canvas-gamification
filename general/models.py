@@ -4,6 +4,8 @@ from django.db import models
 # Create your models here.
 from djrichtextfield.models import RichTextField
 
+from accounts.utils.email_functions import send_contact_us_email
+
 
 class FAQ(models.Model):
     question = models.CharField(max_length=200)
@@ -30,3 +32,16 @@ class Action(models.Model):
     def create_action(cls, user, description, token_change, status):
         action = Action(user=user, description=description, token_change=token_change, status=status)
         action.save()
+
+
+class ContactUs(models.Model):
+    class Meta:
+        verbose_name_plural = 'Contact Us'
+
+    fullname = models.CharField(max_length=100)
+    email = models.EmailField()
+    comment = models.TextField()
+
+    def save(self, **kwargs):
+        super().save(**kwargs)
+        send_contact_us_email(self.fullname, self.email, self.comment)
