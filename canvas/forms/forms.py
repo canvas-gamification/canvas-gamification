@@ -29,5 +29,4 @@ class CreateEventForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        # fields = ['name', 'course', 'count_for_tokens', 'start_date', 'end_date']
         fields = ['name', 'count_for_tokens', 'start_date', 'end_date']
