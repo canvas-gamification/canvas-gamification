@@ -186,8 +186,16 @@ class CanvasCourseRegistration(models.Model):
         return self.total_tokens_received - tokens_used
 
 
+EVENT_TYPE_CHOICES = [
+    ("PRACTICE", "PRACTICE"),
+    ("ASSIGNMENT", "ASSIGNMENT"),
+    ("EXAM", "EXAM")
+]
+
+
 class Event(models.Model):
     name = models.CharField(max_length=500)
+    type = models.CharField(max_length=500, choices=EVENT_TYPE_CHOICES, default="PRACTICE")
     course = models.ForeignKey(CanvasCourse, related_name='events', on_delete=models.CASCADE)
     count_for_tokens = models.BooleanField()
 
