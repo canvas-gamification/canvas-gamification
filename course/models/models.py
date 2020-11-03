@@ -383,11 +383,12 @@ class CodeSubmission(Submission):
 
     def get_passed_test_results(self):
         all_tests = self.get_decoded_results()
-        return list(filter(get_passed_tests, all_tests))
+        # return list(filter(get_passed_tests, all_tests))
+        return list(filter(lambda test: test["status"] == "PASS", all_tests))
 
     def get_failed_test_results(self):
         all_tests = self.get_decoded_results()
-        return list(filter(get_failed_tests, all_tests))
+        return list(filter(lambda test: test["status"] == "FAIL", all_tests))
 
     def get_num_tests(self):
         return len(self.get_decoded_results())
