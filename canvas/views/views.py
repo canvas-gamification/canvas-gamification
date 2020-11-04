@@ -82,7 +82,6 @@ def events_options_view(request):
 
 def create_event_view(request, pk):
     course = get_object_or_404(CanvasCourse, pk=pk)
-    course.is_instructor(request.user)
     if request.method == 'POST':
         if course.is_instructor(request.user):
             form = CreateEventForm(request.POST)
