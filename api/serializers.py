@@ -3,6 +3,7 @@ from rest_framework import serializers
 from accounts.models import UserConsent
 from course.models.models import Question, MultipleChoiceQuestion
 from general.models import ContactUs
+from utils.recaptcha import validate_recaptcha
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -29,4 +30,15 @@ class UserConsentSerializer(serializers.ModelSerializer):
 class ContactUsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactUs
-        fields = ['fullname', 'email', 'comment']
+        fields = ['fullname', 'email', 'comment', 'recaptcha_key']
+
+    recaptcha_key = serializers.CharField(write_only=True)
+
+    def validate_recaptcha_key(self, value):
+        if not validate_recaptcha(value):
+            raise serializers.ValidationError('reCaptcha should be validate')
+        return value
+
+    def create(self, validated_data):
+        validated_data.pop('recaptcha_key', None)
+        return super().create(validated_data)
