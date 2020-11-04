@@ -378,6 +378,20 @@ class CodeSubmission(Submission):
         stdout = base64.b64decode(self.results[0]['stdout'] or "").decode('utf-8')
         return parse_junit_xml(stdout)
 
+    def get_formatted_test_results(self):
+        return str(len(self.get_passed_test_results())) + "/" + str(self.get_num_tests())
+
+    def get_passed_test_results(self):
+        all_tests = self.get_decoded_results()
+        return list(filter(lambda test: test["status"] == "PASS", all_tests))
+
+    def get_failed_test_results(self):
+        all_tests = self.get_decoded_results()
+        return list(filter(lambda test: test["status"] == "FAIL", all_tests))
+
+    def get_num_tests(self):
+        return len(self.get_decoded_results())
+
 
 class JavaSubmission(CodeSubmission):
     pass

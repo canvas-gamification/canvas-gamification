@@ -11,106 +11,105 @@
 
 {% block content %}
 
-    <h1>Submission Detail</h1>
+    <div class="card">
+        <div class="card-header">
+            <h2>Submission Details</h2>
+        </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>
+                        Question
+                    </th>
+                    <th>
+                        Time Submitted
+                    </th>
+                    <th>
+                        Grade
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        {{ submission.question.title }}
+                    </td>
+                    <td>
+                        {{ submission.submission_time }}
+                    </td>
+                    <td>
+                        {{ submission.grade }}
+                    </td>
+                    <td>
+                        {{ submission.status }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+    </div>
 
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>
-                Question
-            </th>
-            <th>
-                Time Submitted
-            </th>
-            <th>
-                Grade
-            </th>
-            <th>
-                Status
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-                {{ submission.question.title }}
-            </td>
-            <td>
-                {{ submission.submission_time }}
-            </td>
-            <td>
-                {{ submission.grade }}
-            </td>
-            <td>
-                {{ submission.status }}
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="card">
+        <div class="card-header"><h2> Code </h2></div>
+        <div class="card-body">
+            <pre>
+                <code class="language-java ts-2">{{ submission.answer }}</code>
+            </pre>
+        </div>
+    </div>
 
-    <h2> Code </h2>
-    <pre>
-        <code class="language-java ts-2">{{ submission.answer }}</code>
-    </pre>
-    <h2>Test Cases</h2>
-    <div class="accordion" id="accordionTestCase">
-        {% for result in submission.get_decoded_results %}
-            <div class="card">
-                <div class="card-header" id="heading{{ forloop.counter }}">
-                    <h2 class="mb-0">
-                        <button class="btn btn-info" type="button" data-toggle="collapse"
-                                data-target="#collapse{{ forloop.counter }}"
-                                aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
-                            Test Case {{ forloop.counter }}
-                        </button>
-                    </h2>
-                </div>
-
-                <div id="collapse{{ forloop.counter }}" class="collapse" aria-labelledby="heading{{ forloop.counter }}"
-                     data-parent="#accordionTestCase">
-                    <div class="card-body">
-                        <table class="table table-bordered">
-                            <tbody>
-                            <tr>
-                                <td>
-                                    Test&nbsp;Name
-                                </td>
-                                <td>
-                                    {{ result.name }}
-                                </td>
-                            </tr>
-                            <tr class="{% if result.status == "PASS" %}table-success{% else %}table-danger{% endif %}">
-                                <td>
-                                    Status
-                                </td>
-                                <td>
-                                    {{ result.status | safe }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Message
-                                </td>
-                                <td>
-                                    {{ result.message | safe }}
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    <div class="card">
+        <div class="card-header"><h2>Compile Output</h2></div>
+        <div class="card-body">
+            <div class="my-3">
+                {% if submission.get_decoded_stderr %}
+                    <pre>
+                        {{ submission.get_decoded_stderr }}
+                    </pre>
+                    {% else %}
+                    <p>Compiled successfully!</p>
+                {% endif %}
             </div>
-        {% empty %}
-            <p>No tests found</p>
-            <p>This is usually due to compilation error or the test is still running, see compile output or refresh the page</p>
-        {% endfor %}
-
-    </div>
-    <h2>Compile Output</h2>
-    <div class="my-3">
-        <pre>
-            {{ submission.get_decoded_stderr }}
-        </pre>
+        </div>
     </div>
 
+    {% if submission.uqj.question.event.type != "EXAM" %}
+    <div class="card">
+        <div class="card-header"><h2>Your Feedback</h2></div>
+        <div class="card-body">
+            {% if submission.get_decoded_results %}
+            <div>
+                <h5>Score: {{ submission.get_formatted_test_results }}</h5>
+            </div>
+            <div>
+                {% if submission.get_passed_test_results %}
+                    <h5>What went well:</h5>
+                    <ul>
+                        {% for result in submission.get_passed_test_results %}
+                            <li>{{ result.name }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% if submission.get_failed_test_results %}
+                    <h5>Still needs some work: </h5>
+                    <ul>
+                        {% for result in submission.get_failed_test_results %}
+                            <li>{{ result.message }}</li>
+                        {% endfor %}
+                    </ul>
+                    <p>If there are multiple issues, attempt to fix the first issue as that might solve subsequent issues</p>
+                {% endif %}
+            </div>
+            {% else %}
+                <p>No feedback</p>
+                <p>This is usually due to compilation error or your answer is still being evaluated, see compile output or refresh the page</p>
+            {% endif %}
+            <button class="btn btn-info"
+                onclick="window.location.href='{% url 'course:question_view' submission.uqj.question.pk %}'">Re-Attempt
+            </button>
+        </div>
+    </div>
+    {% endif %}
 {% endblock %}
