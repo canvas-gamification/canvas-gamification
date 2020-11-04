@@ -1,5 +1,7 @@
 {% load static %}
-<link href="{% static 'canvas/css/course.css' %}" rel="stylesheet">
+{% block style %}
+    <link href="{% static 'canvas/css/course.css' %}" rel="stylesheet">
+{% endblock %}
 
 <p>Available Tokens: <span id="available_tokens">{{ course_reg.total_tokens_received | floatformat:2 }}</span></p>
 <p id="remaining_tokens_text">Remaining Tokens:
