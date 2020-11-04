@@ -2,6 +2,7 @@ from functools import reduce
 from django.db.models import Sum, F, Count
 from course.utils.utils import get_token_value
 
+
 def get_total_event_grade(event, user):
     uqjs = user.question_junctions.filter(question__event=event)
     token_recv = uqjs.aggregate(total=Sum(F('tokens_received')))['total']
@@ -17,6 +18,7 @@ def get_total_event_grade(event, user):
         return '{:.2f}%'.format(token_recv * 100 / token_value)
     else:
         return 'N/A'
+
 
 def get_course_registration(user, course):
     from canvas.models import CanvasCourseRegistration
