@@ -1,6 +1,7 @@
 from rest_framework.routers import DefaultRouter
 
-from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, QuestionCategoryViewSet
+from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
+    QuestionCategoryViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')

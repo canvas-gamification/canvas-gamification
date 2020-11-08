@@ -44,6 +44,7 @@ class ContactUsSerializer(serializers.ModelSerializer):
         validated_data.pop('recaptcha_key', None)
         return super().create(validated_data)
 
+
 class QuestionCategorySerializer(serializers.ModelSerializer):
     numQues = serializers.SerializerMethodField('count_questions')
     avgSuccess = serializers.SerializerMethodField('get_avg_success')

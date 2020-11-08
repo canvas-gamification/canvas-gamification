@@ -28,6 +28,7 @@ class UserConsentViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 class ContactUsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = ContactUsSerializer
 
+
 class QuestionCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = QuestionCategory.objects.all()
     serializer_class = QuestionCategorySerializer
