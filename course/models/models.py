@@ -107,6 +107,8 @@ class Question(PolymorphicModel):
     def has_view_permission(self, user):
         if user.is_teacher:
             return True
+        if not self.event:
+            return False
         return self.event.has_view_permission(user)
 
     def has_edit_permission(self, user):
