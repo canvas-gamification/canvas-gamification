@@ -1,3 +1,4 @@
+{% load canvas %}
 {% if request.user.is_teacher %}
     <a class="btn btn-primary my-1" href="#">Add an Event</a>
     <a class="btn btn-primary my-1" href="#">Import an Event</a>
@@ -8,6 +9,7 @@
         <th scope="col">Name</th>
         <th scope="col">Start&nbsp;Date</th>
         <th scope="col">End&nbsp;Date</th>
+        <th scope="col">Status</th>
         <th scope="col">Grade</th>
         <th scope="col">Actions</th>
     </tr>
@@ -18,8 +20,14 @@
             <td>{{ event.name }}</td>
             <td>{{ event.start_date }}</td>
             <td>{{ event.end_date }}</td>
+            <td>{{ event.status }}</td>
             <td></td>
-            <td><a class="btn btn-primary" href="{% url 'canvas:event_problem_set' event.id %}">Open</a></td>
+            <td>
+                {% is_allowed_to_open_event event request.user as allowed_to_open %}
+                {% if allowed_to_open %}
+                    <a class="btn btn-primary" href="{% url 'canvas:event_problem_set' event.id %}">Open</a>
+                {% endif %}
+            </td>
         </tr>
     {% endfor %}
     </tbody>

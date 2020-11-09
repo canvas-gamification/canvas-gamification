@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header %}
+    403 - Access Denied
+{% endblock %}
+
+{% block content %}
+    <div class="w-100">
+        <img src="{% static 'accounts/img/logo.jpg' %}" alt="Logo" style="display: block;" class="m-auto">
+        <div class="text-center">
+            Access Denied. <a href="{% url 'accounts:login' %}?next={{ request.path }}">Try logging in.</a>
+        </div>
+    </div>
+{% endblock %}

@@ -15,7 +15,7 @@ def _java_question_create_view(request, header, question_form_class):
         if form.is_valid():
             question = form.save()
             question.author = request.user
-            question.is_verified = request.user.is_teacher()
+            question.is_verified = request.user.is_teacher
             question.save()
 
             messages.add_message(request, messages.SUCCESS, 'Question was created successfully')

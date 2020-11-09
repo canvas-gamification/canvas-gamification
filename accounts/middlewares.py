@@ -2,6 +2,7 @@ from django.contrib.auth import login
 from django.shortcuts import redirect
 
 from accounts.forms import LoginForm
+from accounts.models import MyAnonymousUser
 
 
 def login_overlay_middleware(get_response):
@@ -18,6 +19,9 @@ def login_overlay_middleware(get_response):
         else:
             login_form = LoginForm(request, prefix="login")
         request.login_form = login_form
+
+        if request.user.is_anonymous:
+            request.user = MyAnonymousUser()
 
         response = get_response(request)
 

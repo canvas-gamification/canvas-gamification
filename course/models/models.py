@@ -104,6 +104,14 @@ class Question(PolymorphicModel):
         super().save(*args, **kwargs)
         ensure_uqj(None, self)
 
+    def has_view_permission(self, user):
+        if user.is_teacher:
+            return True
+        return self.event.has_view_permission(user)
+
+    def has_edit_permission(self, user):
+        return user.is_teacher
+
 
 class VariableQuestion(Question):
     variables = JSONField()
@@ -153,7 +161,7 @@ class UserQuestionJunction(models.Model):
 
     @property
     def is_allowed_to_submit(self):
-        if self.user.is_teacher():
+        if self.user.is_teacher:
             return True
         if self.opened_tutorial:
             return False
