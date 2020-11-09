@@ -1,9 +1,5 @@
-from django.conf import settings
-from django.contrib import auth
 from django.contrib.auth import login
 from django.shortcuts import redirect
-from django.utils.deprecation import MiddlewareMixin
-from django.utils.functional import SimpleLazyObject
 
 from accounts.forms import LoginForm
 from accounts.models import MyAnonymousUser

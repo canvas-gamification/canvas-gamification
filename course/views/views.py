@@ -6,7 +6,6 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from rest_framework.reverse import reverse_lazy
 
-from accounts.utils.decorators import show_login
 from course.forms.forms import ProblemFilterForm
 from course.forms.java import JavaQuestionForm
 from course.forms.multiple_choice import CheckboxQuestionForm, MultipleChoiceQuestionForm, ChoiceForm
