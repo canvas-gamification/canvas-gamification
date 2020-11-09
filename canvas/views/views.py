@@ -2,7 +2,6 @@ import re
 
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
-from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
@@ -15,7 +14,7 @@ from course.views.views import teacher_check
 
 def course_list_view(request):
     courses = CanvasCourse.objects.all()
-    if not request.user.is_authenticated or not request.user.is_teacher():
+    if not request.user.is_authenticated or not request.user.is_teacher:
         courses.filter(visible_to_students=True)
 
     return render(request, 'canvas/course_list.html', {
@@ -61,8 +60,9 @@ def course_view(request, pk):
 
 def event_problem_set(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
+
     if not event.has_view_permission(request.user):
-        raise Http404()
+        return render(request, "403.html", status=403)
 
     uqjs = UserQuestionJunction.objects.filter(user=request.user, question__event=event).all()
 

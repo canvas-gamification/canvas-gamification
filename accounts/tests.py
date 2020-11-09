@@ -15,7 +15,7 @@ class AccountsTestCase(TestCase):
 
     def test_teacher(self):
         user = MyUser.objects.get()
-        self.assertFalse(user.is_teacher())
+        self.assertFalse(user.is_teacher)
 
 
 class AccountFormsTestCase(TestCase):

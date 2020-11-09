@@ -15,7 +15,7 @@ def _parsons_question_create_view(request, header):
         if form.is_valid():
             question = form.save()
             question.author = request.user
-            question.is_verified = request.user.is_teacher()
+            question.is_verified = request.user.is_teacher
             question.save()
 
             messages.add_message(request, messages.SUCCESS, 'Question was created successfully')
@@ -38,7 +38,7 @@ def _parsons_question_edit_view(request, question):
             edited_question = form.save()
             edited_question.pk = question.pk
             edited_question.id = question.id
-            edited_question.is_verified = request.user.is_teacher()
+            edited_question.is_verified = request.user.is_teacher
             edited_question.save()
 
             messages.add_message(request, messages.SUCCESS, 'Question was edited successfully')

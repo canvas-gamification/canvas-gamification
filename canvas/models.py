@@ -105,6 +105,8 @@ class CanvasCourse(models.Model):
         return process.extractOne(name, choices, score_cutoff=95)
 
     def is_registered(self, user):
+        if user.is_anonymous:
+            return False
         return self.canvascourseregistration_set.filter(user=user, is_verified=True, is_blocked=False).exists()
 
     def is_instructor(self, user):
@@ -211,10 +213,22 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
+    def is_open(self):
+        return self.start_date <= timezone.now() <= self.end_date
+
+    @property
+    def status(self):
+        now = timezone.now()
+        if now < self.start_date:
+            return "Not available yet"
+        if now > self.end_date:
+            return "Closed"
+        return "Open"
+
     def has_view_permission(self, user):
         if self.course.is_instructor(user) or user.is_teacher:
             return True
-        return self.start_date <= timezone.now() <= self.end_date and self.course.is_registered(user)
+        return self.is_open() and self.course.is_registered(user)
 
     def has_edit_permission(self, user):
         return self.course.is_instructor(user) or user.is_teacher
