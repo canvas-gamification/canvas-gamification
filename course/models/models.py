@@ -231,6 +231,10 @@ class UserQuestionJunction(models.Model):
             return "Unsolved"
         return "New"
 
+    @property
+    def formatted_current_tokens_received(self):
+        return str(self.tokens_received) + "/" + str(self.question.token_value)
+
     def save(self, **kwargs):
         self.is_solved = self.submissions.filter(is_correct=True).exists()
         self.is_partially_solved = not self.is_solved and self.submissions.filter(is_partially_correct=True).exists()

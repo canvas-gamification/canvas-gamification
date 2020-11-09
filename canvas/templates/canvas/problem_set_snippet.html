@@ -4,8 +4,8 @@
         <th scope="col">#</th>
         <th scope="col">Category</th>
         <th scope="col">Sub&nbsp;Category</th>
-        <th scope="col">Difficulty</th>
-        <th scope="col">Token&nbsp;Value</th>
+        <th scope="col">Format</th>
+        <th scope="col">Tokens&nbsp;Earned</th>
         <th scope="col">Status</th>
         <th scope="col">Num&nbsp;Attempts</th>
         <th scope="col">Action</th>
@@ -17,8 +17,8 @@
             <th scope="row">{{ forloop.counter }}</th>
             <td>{{ uqj.question.category.parent }}</td>
             <td>{{ uqj.question.category.name }}</td>
-            <td>{{ uqj.question.get_difficulty_display | safe }}</td>
-            <td>{{ uqj.question.token_value | floatformat:0 }}</td>
+            <td>{{ uqj.question.type_name }}</td>
+            <td>{{ uqj.formatted_current_tokens_received }}</td>
             <td>{{ uqj.status }}</td>
             <td>
                 {{ uqj.num_attempts }} / {{ uqj.question.max_submission_allowed }}
