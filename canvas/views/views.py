@@ -26,6 +26,9 @@ def course_list_view(request):
 def course_view(request, pk):
     course = get_object_or_404(CanvasCourse, pk=pk)
 
+    if not course.has_view_permission(request.user):
+        return render(request, "403.html", status=403)
+
     if request.method == 'POST':
         token_use_data = {}
         for key in request.POST.keys():
@@ -40,7 +43,7 @@ def course_view(request, pk):
         except TokenUseException:
             messages.add_message(request, messages.ERROR, "Invalid Use of Tokens")
 
-    is_instructor = course.is_instructor(request.user)
+    is_instructor = course.has_edit_permission(request.user)
     if is_instructor:
         uqjs = UserQuestionJunction.objects.filter(user=request.user, question__course=course).all()
     else:
@@ -58,7 +61,7 @@ def course_view(request, pk):
 
 def event_problem_set(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
-    if not event.is_allowed_to_open(request.user):
+    if not event.has_view_permission(request.user):
         raise Http404()
 
     uqjs = UserQuestionJunction.objects.filter(user=request.user, question__event=event).all()
@@ -66,7 +69,7 @@ def event_problem_set(request, event_id):
     return render(request, 'canvas/event_problem_set.html', {
         'event': event,
         'uqjs': uqjs,
-        'is_instructor': event.course.is_instructor(request.user),
+        'is_instructor': event.course.has_edit_permission(request.user),
     })
 
 

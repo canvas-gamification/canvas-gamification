@@ -108,7 +108,13 @@ class CanvasCourse(models.Model):
         return self.canvascourseregistration_set.filter(user=user, is_verified=True, is_blocked=False).exists()
 
     def is_instructor(self, user):
-        return user.is_staff or self.instructor == user
+        return self.instructor == user
+
+    def has_view_permission(self, user):
+        return user.is_teacher or self.is_instructor(user) or self.is_registered(user)
+
+    def has_edit_permission(self, user):
+        return user.is_teacher or self.is_instructor(user)
 
     def save(self, *args, **kwargs):
         self.create_verification_assignment_group()
@@ -205,10 +211,13 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
-    def is_allowed_to_open(self, user):
-        if self.course.is_instructor(user):
+    def has_view_permission(self, user):
+        if self.course.is_instructor(user) or user.is_teacher:
             return True
         return self.start_date <= timezone.now() <= self.end_date and self.course.is_registered(user)
+
+    def has_edit_permission(self, user):
+        return self.course.is_instructor(user) or user.is_teacher
 
 
 class TokenUseOption(models.Model):

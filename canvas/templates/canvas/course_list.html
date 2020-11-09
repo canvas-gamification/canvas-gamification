@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load canvas %}
 {% block header %}
     Courses
 {% endblock %}
@@ -21,8 +21,15 @@
                 <td>{{ course.name }}</td>
                 <td>{{ course.status }}</td>
                 <td>
-                    <a href="{% url 'canvas:course' course.pk %}" class="btn btn-primary">Open</a>
-                    <a href="{% url 'canvas:course_register' course.pk %}" class="btn btn-primary">Register</a>
+                    {% is_allowed_to_open course request.user as allowed_to_open %}
+                    {% if allowed_to_open %}
+                        <a href="{% url 'canvas:course' course.pk %}" class="btn btn-primary">Open</a>
+                    {% endif %}
+
+                    {% is_registered course request.user as registered %}
+                    {% if not registered %}
+                        <a href="{% url 'canvas:course_register' course.pk %}" class="btn btn-primary">Register</a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
