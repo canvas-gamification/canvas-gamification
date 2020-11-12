@@ -68,7 +68,7 @@ def event_problem_set(request, event_id):
 
     uqjs_dict = {}
     for i in range(len(uqjs)):
-        uqjs_dict[i+1] = uqjs[i]
+        uqjs_dict[i + 1] = uqjs[i]
 
     return render(request, 'canvas/event_problem_set.html', {
         'event': event,
