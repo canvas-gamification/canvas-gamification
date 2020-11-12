@@ -5,7 +5,7 @@ from course.exceptions import SubmissionException
 from course.forms.java import JavaQuestionForm
 from course.models.models import JavaSubmission
 from course.utils.submissions import submit_solution
-from course.utils.utils import get_user_question_junction
+from course.utils.utils import get_user_question_junction, get_question_title
 
 
 def _java_question_create_view(request, header, question_form_class):
@@ -46,12 +46,13 @@ def _java_question_edit_view(request, question):
     })
 
 
-def _java_question_view(request, question):
+def _java_question_view(request, question, key):
     def return_render():
         return render(request, 'java_question.html', {
             'question': question,
             'uqj': get_user_question_junction(request.user, question),
             'submission_class': JavaSubmission,
+            'title': get_question_title(request.user, question, key)
         })
 
     if request.method == "POST":
