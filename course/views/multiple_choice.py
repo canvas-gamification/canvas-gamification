@@ -6,7 +6,8 @@ from course.exceptions import SubmissionException
 from course.forms.multiple_choice import MultipleChoiceQuestionForm, ChoiceForm
 from course.models.models import MultipleChoiceSubmission
 from course.utils.submissions import submit_solution
-from course.utils.utils import create_multiple_choice_question, QuestionCreateException, get_user_question_junction, get_question_title
+from course.utils.utils import create_multiple_choice_question, QuestionCreateException, get_user_question_junction, \
+    get_question_title
 
 
 def _multiple_choice_question_create_view(request, header, question_form_class, correct_answer_formset_class,
