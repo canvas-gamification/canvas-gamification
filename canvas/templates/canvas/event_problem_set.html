@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 
+{% block header %}
+    {{ event.name }}
+{% endblock %}
+
 {% block content %}
-    <h2>{{ event.name }} Questions</h2>
+    <h2>Questions</h2>
     {% include 'canvas/problem_set_snippet.html' %}
 {% endblock %}
