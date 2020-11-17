@@ -66,9 +66,13 @@ def event_problem_set(request, event_id):
 
     uqjs = UserQuestionJunction.objects.filter(user=request.user, question__event=event).all()
 
+    uqjs_dict = {}
+    for i in range(len(uqjs)):
+        uqjs_dict[i + 1] = uqjs[i]
+
     return render(request, 'canvas/event_problem_set.html', {
         'event': event,
-        'uqjs': uqjs,
+        'uqjs': uqjs_dict,
         'is_instructor': event.course.has_edit_permission(request.user),
     })
 

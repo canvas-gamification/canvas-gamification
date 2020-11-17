@@ -12,15 +12,16 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML"></script>
 {% endblock %}
 
+{% block header %}
+    {{ "Question Summary" }}
+{% endblock %}
+
 {% block content %}
 
     <table class="table">
         <thead>
         <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Type</th>
             <th scope="col">Category</th>
-            <th scope="col">Difficulty</th>
             <th scope="col">Token&nbspValue</th>
             <th scope="col">Status</th>
             <th scope="col">Num&nbsp;Attempts</th>
@@ -28,25 +29,23 @@
         </thead>
         <tbody>
         <tr class="{% if question.is_solved %}table-success{% endif %}{% if question.is_wrong %}table-danger{% endif %}{% if question.is_partially_correct %}table-warning{% endif %}">
-            <td>{{ question.pk }}</td>
-            <td>{{ question.type_name | title }}</td>
             <td>{{ question.category }}</td>
-            <td>{{ question.get_difficulty_display | safe }}</td>
             <td>{{ question.token_value | floatformat:0 }}</td>
             <td>{{ uqj.status }}</td>
-            <td>{{ uqj.num_attempts }}</td>
+            <td>{{ uqj.formatted_num_attempts }}</td>
         </tr>
         </tbody>
     </table>
 
     <div class="card">
-        <div class="card-header"><h1>{{ question.title }}</h1></div>
+    <div class="card-header"><h1>{{ title }}</h1></div>
         <div class="card-body">
             <div>{% autoescape off %}{{ uqj.get_rendered_text }}{% endautoescape %}</div>
         </div>
     </div>
 
     <div class="card my-1">
+        <div class="card-header"><h1>My Answer</h1></div>
         <div class="card-body">
             {% if uqj.is_allowed_to_submit %}
                 {% block submit_form %}
@@ -64,7 +63,11 @@
         {% include 'variables_debug_snippet.html' %}
     {% endif %}
 
-    <h2>My Past Submissions</h2>
-    {% include 'past_submissions_snippet.html' with submissions=uqj.submissions.all %}
+    <div class="card my-1">
+        <div class="card-header"><h1>My Past Submissions</h1></div>
+        <div class="card-body">
+            {% include 'past_submissions_snippet.html' with submissions=uqj.submissions.all %}
+        </div>
+    </div>
 
 {% endblock %}

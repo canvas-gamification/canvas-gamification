@@ -175,3 +175,12 @@ def create_java_question(pk=None, title=None, text=None, max_submission_allowed=
             event=event,
         )
         question.save()
+
+
+def get_question_title(user, question, key):
+    if key is None:
+        return question.title
+    elif question.course.is_instructor(user) and key is not None:
+        return "Question " + str(key) + " - " + question.title
+    else:
+        return "Question " + str(key)

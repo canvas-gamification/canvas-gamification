@@ -219,6 +219,9 @@ class UserQuestionJunction(models.Model):
     def num_attempts(self):
         return self.submissions.count()
 
+    def formatted_num_attempts(self):
+        return str(self.num_attempts()) + "/" + str(self.question.max_submission_allowed)
+
     @property
     def status_class(self):
         if self.is_solved:

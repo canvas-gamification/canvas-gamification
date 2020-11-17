@@ -57,7 +57,7 @@ def parsons_question_create_view(request):
     return _parsons_question_create_view(request, 'New Parsons Question')
 
 
-def question_view(request, pk):
+def question_view(request, pk, key=None):
     question = get_object_or_404(Question, pk=pk)
 
     if not question.has_view_permission(request.user):
@@ -67,16 +67,16 @@ def question_view(request, pk):
     uqj.viewed()
 
     if isinstance(question, JavaQuestion):
-        return _java_question_view(request, question)
+        return _java_question_view(request, question, key)
 
     if isinstance(question, CheckboxQuestion):
-        return _multiple_choice_question_view(request, question, 'checkbox_question.html')
+        return _multiple_choice_question_view(request, question, 'checkbox_question.html', key)
 
     if isinstance(question, MultipleChoiceQuestion):
-        return _multiple_choice_question_view(request, question, 'multiple_choice_question.html')
+        return _multiple_choice_question_view(request, question, 'multiple_choice_question.html', key)
 
     if isinstance(question, ParsonsQuestion):
-        return _parsons_question_view(request, question)
+        return _parsons_question_view(request, question, key)
 
     raise Http404()
 
