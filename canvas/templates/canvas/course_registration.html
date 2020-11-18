@@ -37,6 +37,22 @@
                 </div>
             </form>
         {% endif %}
+        {% if show_student_number_input %}
+            <div>
+                <h6>Please enter your student number (it will not be stored).</h6>
+            </div>
+            <form class="form-inline" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="sr-only" for="inline_form_input2">Your Full Name:</label>
+                    <input class="form-control" id="inline_form_input2" type="text" name="student_number"
+                           {% if failed %}value="{{ student_id }}"{% endif %}>
+                    <button type="submit" class="btn btn-success ml-2">Confirm</button>
+                    <button type="button" class="btn btn-outline-danger ml-2" onclick="location = location">Try Again
+                    </button>
+                </div>
+            </form>
+        {% endif %}
         {% if verification %}
             <div>
                 <h6 style="line-height: 1.6;">Your verification assignment has been graded in Canvas.<br>

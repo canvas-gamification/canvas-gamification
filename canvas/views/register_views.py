@@ -20,7 +20,13 @@ def name_registration_view(request, course, course_reg):
                     'show_input': True,
                     'failed': True,
                 })
-
+            elif guessed_name == 'multiple_students_exist':
+                messages.add_message(request, messages.ERROR,
+                                     'Multiple students with this name exist. Please enter your student number to '
+                                     'confirm your identity.')
+                return render(request, 'canvas/course_registration.html', {
+                    'show_student_number_input': True
+                })
             return render(request, 'canvas/course_registration.html', {
                 'guessed_name': guessed_name[0],
             })
@@ -31,7 +37,20 @@ def name_registration_view(request, course, course_reg):
             course_reg.canvas_user_id = canvas_user.id
             course_reg.save()
             return HttpResponseRedirect(reverse_lazy('canvas:course_register', kwargs={'pk': course.pk}))
-
+        elif 'student_number' in request.POST:
+            student_number = request.POST.get("student_number", "")
+            canvas_user = course.get_user(student_id=request.POST.get('student_number', ''))
+            if canvas_user is None:
+                messages.add_message(request, messages.ERROR,
+                                     'No matching record found. Please make sure your id is correct.')
+                return render(request, 'canvas/course_registration.html', {
+                    'student_id': student_number,
+                    'show_student_number_input': True,
+                    'failed': True,
+                })
+            return render(request, 'canvas/course_registration.html', {
+                'guessed_name': canvas_user.name,
+            })
     return render(request, 'canvas/course_registration.html', {
         'show_input': True,
     })
