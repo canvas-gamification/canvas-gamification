@@ -4,7 +4,7 @@ from accounts.models import UserConsent
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 from general.models import ContactUs
 from utils.recaptcha import validate_recaptcha
-from utils.category_api import count_category_questions, get_avg_question_success
+from utils.category_api import count_category_questions, get_avg_question_success, get_link_id
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -46,8 +46,12 @@ class ContactUsSerializer(serializers.ModelSerializer):
 
 
 class QuestionCategorySerializer(serializers.ModelSerializer):
+    linkedTo = serializers.SerializerMethodField('link_to_ids')
     numQues = serializers.SerializerMethodField('count_questions')
     avgSuccess = serializers.SerializerMethodField('get_avg_success')
+
+    def link_to_ids(self, category):
+        return get_link_id(category)
 
     def count_questions(self, category):
         return count_category_questions(category.pk)
@@ -57,4 +61,4 @@ class QuestionCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuestionCategory
-        fields = ['pk', 'name', 'description', 'parent', 'numQues', 'avgSuccess']
+        fields = ['pk', 'name', 'description', 'parent', 'numQues', 'avgSuccess', 'linkedTo']

@@ -1,5 +1,15 @@
 from django.db.models import Count
-from course.models.models import Question
+from course.models.models import Question, QuestionCategory
+from django.shortcuts import get_object_or_404
+
+
+def get_link_id(category):
+    linked_to = category.links_to.values_list('pk', flat=True)
+
+    if not linked_to:
+        return None
+    else:
+        return linked_to
 
 
 def count_category_questions(pk):
