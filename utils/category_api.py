@@ -1,6 +1,5 @@
 from django.db.models import Count
-from course.models.models import Question, QuestionCategory
-from django.shortcuts import get_object_or_404
+from course.models.models import Question
 
 
 def get_link_id(category):
