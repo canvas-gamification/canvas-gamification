@@ -13,6 +13,7 @@ urlpatterns = [
     path('question/<int:pk>/delete', question_delete_view, name='question_delete'),
     path('question/<int:pk>/edit', question_edit_view, name='question_edit'),
     path('question/<int:pk>/', question_view, name='question_view'),
+    path('question/<int:pk>/key/<int:key>', question_view, name='question_view'),
     path('problem-set', problem_set_view, name='problem_set'),
     path('token-values', token_values_table_view, name='token_values'),
 ]

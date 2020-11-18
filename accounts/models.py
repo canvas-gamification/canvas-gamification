@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, AnonymousUser
 # Create your models here.
 from django.db import models
 
@@ -13,6 +13,12 @@ USER_ROLE_CHOICES = [
 ]
 
 
+class MyAnonymousUser(AnonymousUser):
+    @property
+    def is_teacher(self):
+        return False
+
+
 class MyUser(AbstractUser):
     role = models.CharField(max_length=100, choices=USER_ROLE_CHOICES, default=STUDENT)
     email = models.EmailField('email address', blank=True, unique=True)
@@ -21,9 +27,11 @@ class MyUser(AbstractUser):
     def tokens(self):
         return self.actions.all().aggregate(models.Sum('token_change'))['token_change__sum']
 
+    @property
     def is_teacher(self):
         return self.role == TEACHER
 
+    @property
     def is_student(self):
         return self.role == STUDENT
 

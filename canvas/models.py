@@ -105,10 +105,18 @@ class CanvasCourse(models.Model):
         return process.extractOne(name, choices, score_cutoff=95)
 
     def is_registered(self, user):
+        if user.is_anonymous:
+            return False
         return self.canvascourseregistration_set.filter(user=user, is_verified=True, is_blocked=False).exists()
 
     def is_instructor(self, user):
-        return user.is_staff or self.instructor == user
+        return self.instructor == user
+
+    def has_view_permission(self, user):
+        return user.is_teacher or self.is_instructor(user) or self.is_registered(user)
+
+    def has_edit_permission(self, user):
+        return user.is_teacher or self.is_instructor(user)
 
     def save(self, *args, **kwargs):
         self.create_verification_assignment_group()
@@ -186,8 +194,16 @@ class CanvasCourseRegistration(models.Model):
         return self.total_tokens_received - tokens_used
 
 
+EVENT_TYPE_CHOICES = [
+    ("PRACTICE", "PRACTICE"),
+    ("ASSIGNMENT", "ASSIGNMENT"),
+    ("EXAM", "EXAM")
+]
+
+
 class Event(models.Model):
     name = models.CharField(max_length=500)
+    type = models.CharField(max_length=500, choices=EVENT_TYPE_CHOICES, default="PRACTICE")
     course = models.ForeignKey(CanvasCourse, related_name='events', on_delete=models.CASCADE)
     count_for_tokens = models.BooleanField()
 
@@ -197,10 +213,25 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
-    def is_allowed_to_open(self, user):
-        if self.course.is_instructor(user):
+    def is_open(self):
+        return self.start_date <= timezone.now() <= self.end_date
+
+    @property
+    def status(self):
+        now = timezone.now()
+        if now < self.start_date:
+            return "Not available yet"
+        if now > self.end_date:
+            return "Closed"
+        return "Open"
+
+    def has_view_permission(self, user):
+        if self.course.is_instructor(user) or user.is_teacher:
             return True
-        return self.start_date <= timezone.now() <= self.end_date and self.course.is_registered(user)
+        return self.is_open() and self.course.is_registered(user)
+
+    def has_edit_permission(self, user):
+        return self.course.is_instructor(user) or user.is_teacher
 
 
 class TokenUseOption(models.Model):

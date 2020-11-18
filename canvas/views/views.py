@@ -1,7 +1,6 @@
 import re
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
-from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
@@ -15,7 +14,7 @@ from canvas.forms.forms import CreateEventForm
 
 def course_list_view(request):
     courses = CanvasCourse.objects.all()
-    if not request.user.is_authenticated or not request.user.is_teacher():
+    if not request.user.is_authenticated or not request.user.is_teacher:
         courses.filter(visible_to_students=True)
 
     return render(request, 'canvas/course_list.html', {
@@ -25,6 +24,9 @@ def course_list_view(request):
 
 def course_view(request, pk):
     course = get_object_or_404(CanvasCourse, pk=pk)
+
+    if not course.has_view_permission(request.user):
+        return render(request, "403.html", status=403)
 
     if request.method == 'POST':
         token_use_data = {}
@@ -40,7 +42,7 @@ def course_view(request, pk):
         except TokenUseException:
             messages.add_message(request, messages.ERROR, "Invalid Use of Tokens")
 
-    is_instructor = course.is_instructor(request.user)
+    is_instructor = course.has_edit_permission(request.user)
     if is_instructor:
         uqjs = UserQuestionJunction.objects.filter(user=request.user, question__course=course).all()
     else:
@@ -58,15 +60,20 @@ def course_view(request, pk):
 
 def event_problem_set(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
-    if not event.is_allowed_to_open(request.user):
-        raise Http404()
+
+    if not event.has_view_permission(request.user):
+        return render(request, "403.html", status=403)
 
     uqjs = UserQuestionJunction.objects.filter(user=request.user, question__event=event).all()
 
+    uqjs_dict = {}
+    for i in range(len(uqjs)):
+        uqjs_dict[i + 1] = uqjs[i]
+
     return render(request, 'canvas/event_problem_set.html', {
         'event': event,
-        'uqjs': uqjs,
-        'is_instructor': event.course.is_instructor(request.user),
+        'uqjs': uqjs_dict,
+        'is_instructor': event.course.has_edit_permission(request.user),
     })
 
 

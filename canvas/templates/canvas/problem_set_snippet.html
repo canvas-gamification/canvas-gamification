@@ -4,27 +4,27 @@
         <th scope="col">#</th>
         <th scope="col">Category</th>
         <th scope="col">Sub&nbsp;Category</th>
-        <th scope="col">Difficulty</th>
-        <th scope="col">Token&nbsp;Value</th>
+        <th scope="col">Format</th>
+        <th scope="col">Tokens&nbsp;Earned</th>
         <th scope="col">Status</th>
         <th scope="col">Num&nbsp;Attempts</th>
         <th scope="col">Action</th>
     </tr>
     </thead>
     <tbody>
-    {% for uqj in uqjs %}
+    {% for key, uqj in uqjs.items %}
         <tr class="{{ uqj.status_class }}">
             <th scope="row">{{ forloop.counter }}</th>
             <td>{{ uqj.question.category.parent }}</td>
             <td>{{ uqj.question.category.name }}</td>
-            <td>{{ uqj.question.get_difficulty_display | safe }}</td>
-            <td>{{ uqj.question.token_value | floatformat:0 }}</td>
+            <td>{{ uqj.question.type_name }}</td>
+            <td>{{ uqj.formatted_current_tokens_received }}</td>
             <td>{{ uqj.status }}</td>
             <td>
                 {{ uqj.num_attempts }} / {{ uqj.question.max_submission_allowed }}
             </td>
             <td>
-                <a href="{% url 'course:question_view' uqj.question.pk %}" class="btn btn-primary">Open</a>
+                <a href="{% url 'course:question_view' pk=uqj.question.pk key=key %}" class="btn btn-primary">Open</a>
                 {% if user.is_teacher %}
                     <a href="{% url 'course:question_edit' uqj.question.pk %}" class="btn btn-warning">Edit</a>
                 {% endif %}

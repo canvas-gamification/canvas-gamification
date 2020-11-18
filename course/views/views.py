@@ -6,7 +6,6 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from rest_framework.reverse import reverse_lazy
 
-from accounts.utils.decorators import show_login
 from course.forms.forms import ProblemFilterForm
 from course.forms.java import JavaQuestionForm
 from course.forms.multiple_choice import CheckboxQuestionForm, MultipleChoiceQuestionForm, ChoiceForm
@@ -23,7 +22,7 @@ from course.views.parsons import _parsons_question_create_view, _parsons_questio
 
 
 def teacher_check(user):
-    return not user.is_anonymous and user.is_teacher()
+    return not user.is_anonymous and user.is_teacher
 
 
 @user_passes_test(teacher_check)
@@ -58,24 +57,26 @@ def parsons_question_create_view(request):
     return _parsons_question_create_view(request, 'New Parsons Question')
 
 
-@show_login('You need to be logged in to submit an answer')
-def question_view(request, pk):
+def question_view(request, pk, key=None):
     question = get_object_or_404(Question, pk=pk)
+
+    if not question.has_view_permission(request.user):
+        return render(request, '403.html', status=403)
 
     uqj = get_user_question_junction(request.user, question)
     uqj.viewed()
 
     if isinstance(question, JavaQuestion):
-        return _java_question_view(request, question)
+        return _java_question_view(request, question, key)
 
     if isinstance(question, CheckboxQuestion):
-        return _multiple_choice_question_view(request, question, 'checkbox_question.html')
+        return _multiple_choice_question_view(request, question, 'checkbox_question.html', key)
 
     if isinstance(question, MultipleChoiceQuestion):
-        return _multiple_choice_question_view(request, question, 'multiple_choice_question.html')
+        return _multiple_choice_question_view(request, question, 'multiple_choice_question.html', key)
 
     if isinstance(question, ParsonsQuestion):
-        return _parsons_question_view(request, question)
+        return _parsons_question_view(request, question, key)
 
     raise Http404()
 

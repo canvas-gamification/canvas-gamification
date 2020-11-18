@@ -5,7 +5,7 @@ from course.exceptions import SubmissionException
 from course.forms.parsons import ParsonsQuestionForm
 from course.models.parsons_question import ParsonsSubmission
 from course.utils.submissions import submit_solution
-from course.utils.utils import get_user_question_junction
+from course.utils.utils import get_user_question_junction, get_question_title
 
 
 def _parsons_question_create_view(request, header):
@@ -15,7 +15,7 @@ def _parsons_question_create_view(request, header):
         if form.is_valid():
             question = form.save()
             question.author = request.user
-            question.is_verified = request.user.is_teacher()
+            question.is_verified = request.user.is_teacher
             question.save()
 
             messages.add_message(request, messages.SUCCESS, 'Question was created successfully')
@@ -38,7 +38,7 @@ def _parsons_question_edit_view(request, question):
             edited_question = form.save()
             edited_question.pk = question.pk
             edited_question.id = question.id
-            edited_question.is_verified = request.user.is_teacher()
+            edited_question.is_verified = request.user.is_teacher
             edited_question.save()
 
             messages.add_message(request, messages.SUCCESS, 'Question was edited successfully')
@@ -51,12 +51,13 @@ def _parsons_question_edit_view(request, question):
     })
 
 
-def _parsons_question_view(request, question):
+def _parsons_question_view(request, question, key):
     def return_render():
         return render(request, 'parsons_question.html', {
             'question': question,
             'uqj': get_user_question_junction(request.user, question),
             'submission_class': ParsonsSubmission,
+            'title': get_question_title(request.user, question, key)
         })
 
     if request.method == "POST":

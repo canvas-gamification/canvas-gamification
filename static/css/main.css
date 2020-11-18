@@ -24,10 +24,16 @@ label.required:before {
 
 .action-icon {
     display: inline-block;
-    width: 50px;
-    font-size: 2rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
     text-align: center;
     padding: 0;
+    border-radius: 5px;
+}
+
+.action-icon .fa {
+    vertical-align: middle
 }
 
 .no-spin-button::-webkit-inner-spin-button,
@@ -38,5 +44,4 @@ label.required:before {
 
 .no-spin-button {
     -moz-appearance:textfield;
-    color: red;
 }

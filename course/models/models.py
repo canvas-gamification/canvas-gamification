@@ -1,5 +1,4 @@
 import base64
-import copy
 import json
 import random
 from datetime import datetime
@@ -14,7 +13,8 @@ from polymorphic.models import PolymorphicModel
 from accounts.models import MyUser
 from canvas.models import Event, CanvasCourse
 from course.fields import JSONField
-from course.grader import MultipleChoiceGrader, JunitGrader
+from course.grader.grader import MultipleChoiceGrader, JunitGrader
+from course.utils.junit_xml import parse_junit_xml
 from course.utils.utils import get_token_value, ensure_uqj
 from course.utils.variables import render_text, generate_variables
 from general.models import Action
@@ -70,6 +70,7 @@ class Question(PolymorphicModel):
     author = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
     category = models.ForeignKey(QuestionCategory, on_delete=models.SET_NULL, null=True, blank=True)
     difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES, default="EASY")
+    is_sample = models.BooleanField(default=False)
 
     course = models.ForeignKey(CanvasCourse, on_delete=models.SET_NULL, related_name='question_set', null=True,
                                blank=True, db_index=True)
@@ -102,6 +103,16 @@ class Question(PolymorphicModel):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         ensure_uqj(None, self)
+
+    def has_view_permission(self, user):
+        if user.is_teacher:
+            return True
+        if not self.event:
+            return False
+        return self.event.has_view_permission(user)
+
+    def has_edit_permission(self, user):
+        return user.is_teacher
 
 
 class VariableQuestion(Question):
@@ -152,7 +163,7 @@ class UserQuestionJunction(models.Model):
 
     @property
     def is_allowed_to_submit(self):
-        if self.user.is_teacher():
+        if self.user.is_teacher:
             return True
         if self.opened_tutorial:
             return False
@@ -208,6 +219,9 @@ class UserQuestionJunction(models.Model):
     def num_attempts(self):
         return self.submissions.count()
 
+    def formatted_num_attempts(self):
+        return str(self.num_attempts()) + "/" + str(self.question.max_submission_allowed)
+
     @property
     def status_class(self):
         if self.is_solved:
@@ -229,6 +243,10 @@ class UserQuestionJunction(models.Model):
         if self.last_viewed:
             return "Unsolved"
         return "New"
+
+    @property
+    def formatted_current_tokens_received(self):
+        return str(self.tokens_received) + "/" + str(self.question.token_value)
 
     def save(self, **kwargs):
         self.is_solved = self.submissions.filter(is_correct=True).exists()
@@ -370,13 +388,26 @@ class CodeSubmission(Submission):
     def submit(self):
         self.question.grader.submit(self)
 
+    def get_decoded_stderr(self):
+        return base64.b64decode(self.results[0]['stderr'] or "").decode('utf-8')
+
     def get_decoded_results(self):
-        results = copy.deepcopy(self.results)
-        for result in results:
-            result['compile_output'] = base64.b64decode(result['compile_output'] or "").decode('utf-8')
-            result['stdout'] = base64.b64decode(result['stdout'] or "").decode('utf-8')
-            result['stderr'] = base64.b64decode(result['stderr'] or "").decode('utf-8')
-        return results
+        stdout = base64.b64decode(self.results[0]['stdout'] or "").decode('utf-8')
+        return parse_junit_xml(stdout)
+
+    def get_formatted_test_results(self):
+        return str(len(self.get_passed_test_results())) + "/" + str(self.get_num_tests())
+
+    def get_passed_test_results(self):
+        all_tests = self.get_decoded_results()
+        return list(filter(lambda test: test["status"] == "PASS", all_tests))
+
+    def get_failed_test_results(self):
+        all_tests = self.get_decoded_results()
+        return list(filter(lambda test: test["status"] == "FAIL", all_tests))
+
+    def get_num_tests(self):
+        return len(self.get_decoded_results())
 
 
 class JavaSubmission(CodeSubmission):
