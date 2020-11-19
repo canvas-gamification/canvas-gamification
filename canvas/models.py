@@ -103,9 +103,7 @@ class CanvasCourse(models.Model):
     def guess_user(self, name):
         choices = [x.name for x in self.course.get_users()]
         student_names = process.extractBests(name, choices, score_cutoff=95)
-        if len(student_names) > 1:
-            return 'multiple_students_exist'
-        return student_names[0]
+        return [x[0] for x in student_names]
 
     def is_registered(self, user):
         if user.is_anonymous:
@@ -164,6 +162,10 @@ class CanvasCourseRegistration(models.Model):
                 'posted_grade': self.verification_code,
             }
         })
+
+    def set_canvas_user(self, canvas_user):
+        self.canvas_user_id = canvas_user.id
+        self.save()
 
     def check_verification_code(self, code):
         if self.is_blocked:
