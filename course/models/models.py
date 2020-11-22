@@ -24,7 +24,7 @@ class QuestionCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
-    links_to = models.ManyToManyField('self', related_name="linked_by", symmetrical=False, blank=True)
+    next_categories = models.ManyToManyField('self', related_name="prev_categories", symmetrical=False, blank=True)
 
     def __str__(self):
         if self.parent is None:
