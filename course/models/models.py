@@ -132,9 +132,12 @@ class CheckboxQuestion(MultipleChoiceQuestion):
 
 class JavaQuestion(VariableQuestion):
     junit_template = models.TextField()
-    additional_file_name = models.CharField(max_length=100, null=True, blank=True, default=None)
+    input_file_names = JSONField()
 
     grader = JunitGrader()
+
+    def get_input_file_names(self):
+        return " ".join(self.input_file_names)
 
 
 def random_seed():
@@ -409,6 +412,15 @@ class CodeSubmission(Submission):
     def get_num_tests(self):
         return len(self.get_decoded_results())
 
+    def get_answer_files(self):
+        raise NotImplementedError()
+
+    def no_file_answer(self):
+        return False
+
 
 class JavaSubmission(CodeSubmission):
-    pass
+    answer_files = JSONField()
+
+    def get_answer_files(self):
+        return self.answer_files

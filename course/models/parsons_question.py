@@ -12,6 +12,17 @@ class ParsonsQuestion(VariableQuestion):
 
     grader = JunitGrader()
 
+    def get_input_file_names(self):
+        return self.additional_file_name
+
 
 class ParsonsSubmission(CodeSubmission):
-    pass
+    def no_file_answer(self):
+        return self.question.additional_file_name is None
+
+    def get_answer_files(self):
+        if self.no_file_answer():
+            return {}
+        return {
+            self.question.additional_file_name: self.answer
+        }

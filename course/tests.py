@@ -41,7 +41,7 @@ class ProblemTestCase(TestCase):
                 difficulty='EASY',
                 is_verified=True,
                 junit_template='',
-                additional_file_name='a.java'
+                input_file_names=['A.java', 'B.java', 'C.java']
             )
 
         MyUser.objects.create_user('test_user2', "test2@s202.ok.ubc.ca", "aaaaaaaa")

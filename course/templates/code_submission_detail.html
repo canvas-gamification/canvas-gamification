@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load static %}
+{% load arrays %}
 
 {% block script %}
     <link rel="stylesheet" href="{% static 'highlight/9.18.1/styles/default.min.css' %}"/>
@@ -11,56 +12,69 @@
 
 {% block content %}
 
-    <div class="card">
+    <div class="card my-3">
         <div class="card-header">
             <h2>Submission Details</h2>
         </div>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>
-                        Question
-                    </th>
-                    <th>
-                        Time Submitted
-                    </th>
-                    <th>
-                        Grade
-                    </th>
-                    <th>
-                        Status
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>
-                        {{ submission.question.title }}
-                    </td>
-                    <td>
-                        {{ submission.submission_time }}
-                    </td>
-                    <td>
-                        {{ submission.grade }}
-                    </td>
-                    <td>
-                        {{ submission.status }}
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>
+                    Question
+                </th>
+                <th>
+                    Time Submitted
+                </th>
+                <th>
+                    Grade
+                </th>
+                <th>
+                    Status
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    {{ submission.question.title }}
+                </td>
+                <td>
+                    {{ submission.submission_time }}
+                </td>
+                <td>
+                    {{ submission.grade }}
+                </td>
+                <td>
+                    {{ submission.status }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 
-    <div class="card">
-        <div class="card-header"><h2> Code </h2></div>
-        <div class="card-body">
+    {% if submission.no_file_answer %}
+        <div class="card my-3">
+            <div class="card-header"><h2> Code </h2></div>
+            <div class="card-body">
             <pre>
                 <code class="language-java ts-2">{{ submission.answer }}</code>
             </pre>
+            </div>
         </div>
-    </div>
+    {% endif %}
 
-    <div class="card">
+    {% for name, code in submission.get_answer_files.items %}
+        <div class="card my-3">
+            <div class="card-header"><h2> {{ name }} </h2></div>
+            <div class="card-body">
+            <pre>
+                <code class="language-java ts-2">{{ code }}</code>
+            </pre>
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="card my-3">
         <div class="card-header"><h2>Compile Output</h2></div>
         <div class="card-body">
             <div class="my-3">
@@ -68,7 +82,7 @@
                     <pre>
                         {{ submission.get_decoded_stderr }}
                     </pre>
-                    {% else %}
+                {% else %}
                     <p>Compiled successfully!</p>
                 {% endif %}
             </div>
@@ -76,40 +90,43 @@
     </div>
 
     {% if submission.uqj.question.event.type != "EXAM" %}
-    <div class="card">
-        <div class="card-header"><h2>Your Feedback</h2></div>
-        <div class="card-body">
-            {% if submission.get_decoded_results %}
-            <div>
-                <h5>Score: {{ submission.get_formatted_test_results }}</h5>
-            </div>
-            <div>
-                {% if submission.get_passed_test_results %}
-                    <h5>What went well:</h5>
-                    <ul>
-                        {% for result in submission.get_passed_test_results %}
-                            <li>{{ result.name }}</li>
-                        {% endfor %}
-                    </ul>
+        <div class="card my-3">
+            <div class="card-header"><h2>Your Feedback</h2></div>
+            <div class="card-body">
+                {% if submission.get_decoded_results %}
+                    <div>
+                        <h5>Score: {{ submission.get_formatted_test_results }}</h5>
+                    </div>
+                    <div>
+                        {% if submission.get_passed_test_results %}
+                            <h5>What went well:</h5>
+                            <ul>
+                                {% for result in submission.get_passed_test_results %}
+                                    <li>{{ result.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% if submission.get_failed_test_results %}
+                            <h5>Still needs some work: </h5>
+                            <ul>
+                                {% for result in submission.get_failed_test_results %}
+                                    <li>{{ result.message }}</li>
+                                {% endfor %}
+                            </ul>
+                            <p>If there are multiple issues, attempt to fix the first issue as that might solve
+                                subsequent issues</p>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p>No feedback</p>
+                    <p>This is usually due to compilation error or your answer is still being evaluated, see compile
+                        output or refresh the page</p>
                 {% endif %}
-                {% if submission.get_failed_test_results %}
-                    <h5>Still needs some work: </h5>
-                    <ul>
-                        {% for result in submission.get_failed_test_results %}
-                            <li>{{ result.message }}</li>
-                        {% endfor %}
-                    </ul>
-                    <p>If there are multiple issues, attempt to fix the first issue as that might solve subsequent issues</p>
-                {% endif %}
+                <button class="btn btn-info"
+                        onclick="window.location.href='{% url 'course:question_view' submission.uqj.question.pk %}'">
+                    Re-Attempt
+                </button>
             </div>
-            {% else %}
-                <p>No feedback</p>
-                <p>This is usually due to compilation error or your answer is still being evaluated, see compile output or refresh the page</p>
-            {% endif %}
-            <button class="btn btn-info"
-                onclick="window.location.href='{% url 'course:question_view' submission.uqj.question.pk %}'">Re-Attempt
-            </button>
         </div>
-    </div>
     {% endif %}
 {% endblock %}

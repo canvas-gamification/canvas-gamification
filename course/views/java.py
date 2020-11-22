@@ -4,7 +4,6 @@ from django.shortcuts import render
 from course.exceptions import SubmissionException
 from course.forms.java import JavaQuestionForm
 from course.models.models import JavaSubmission
-from course.utils.submissions import submit_solution
 from course.utils.utils import get_user_question_junction, get_question_title
 
 
@@ -57,25 +56,17 @@ def _java_question_view(request, question, key):
 
     if request.method == "POST":
 
-        answer_text = request.POST.get('answer-text', "")
-        answer_file = request.FILES.get('answer-file', None)
-
-        answer_text = answer_text.strip()
-
-        if answer_text == "" and not answer_file:
-            messages.add_message(request, messages.ERROR, "Please either submit the code as text or upload a java file")
-            return return_render()
-
-        if answer_text != "" and answer_file:
-            messages.add_message(request, messages.ERROR,
-                                 "Both text and file was submitted please. Please only submit a text or a file")
-            return return_render()
-
-        if answer_file:
-            answer_text = answer_file.read().decode("ascii", "ignore")
+        print(request.POST)
+        file_names = question.input_file_names
+        answer_dict = {}
+        for file_name in file_names:
+            if file_name not in request.POST:
+                messages.add_message(request, messages.ERROR, "{} is required".format(file_name))
+                return return_render()
+            answer_dict[file_name] = request.POST[file_name]
 
         try:
-            submit_solution(question, request.user, answer_text)
+            submit_solution(question, request.user, answer_dict)
             messages.add_message(request, messages.INFO, "Your Code has been submitted and being evaluated!")
         except SubmissionException as e:
             messages.add_message(request, messages.ERROR, "{}".format(e))
@@ -87,3 +78,20 @@ def _java_submission_detail_view(request, submission):
     return render(request, 'code_submission_detail.html', {
         'submission': submission,
     })
+
+
+def submit_solution(question, user, answer_dict):
+    uqj = get_user_question_junction(user, question)
+
+    if not uqj.is_allowed_to_submit:
+        raise SubmissionException("You are not allowed to submit")
+
+    submission = JavaSubmission()
+    submission.answer_files = answer_dict
+    submission.uqj = uqj
+
+    submission.submit()
+    submission.save()
+    uqj.save()
+
+    return submission

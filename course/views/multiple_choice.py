@@ -5,7 +5,6 @@ from django.shortcuts import render
 from course.exceptions import SubmissionException
 from course.forms.multiple_choice import MultipleChoiceQuestionForm, ChoiceForm
 from course.models.models import MultipleChoiceSubmission
-from course.utils.submissions import submit_solution
 from course.utils.utils import create_multiple_choice_question, QuestionCreateException, get_user_question_junction, \
     get_question_title
 
@@ -139,3 +138,23 @@ def _multiple_choice_question_edit_view(request, question):
         'distractor_answer_formset': distractor_answer_formset,
         'header': 'Edit Question',
     })
+
+
+def submit_solution(question, user, solution):
+    uqj = get_user_question_junction(user, question)
+
+    if uqj.submissions.filter(answer=solution).exists():
+        raise SubmissionException("You have already submitted this answer!")
+
+    if not uqj.is_allowed_to_submit:
+        raise SubmissionException("You are not allowed to submit")
+
+    submission = MultipleChoiceSubmission()
+    submission.answer = solution
+    submission.uqj = uqj
+
+    submission.submit()
+    submission.save()
+    uqj.save()
+
+    return submission
