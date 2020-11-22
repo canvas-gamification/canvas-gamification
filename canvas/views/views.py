@@ -89,17 +89,17 @@ def events_options_view(request):
 
 def create_event_view(request, pk):
     course = get_object_or_404(CanvasCourse, pk=pk)
+
+    if not course.has_edit_permission(request.user):
+        return render(request, "403.html", status=403)
+
     if request.method == 'POST':
-        if course.is_instructor(request.user):
-            form = CreateEventForm(request.POST)
-            if form.is_valid():
-                new_event = form.save(commit=False)
-                new_event.course = course
-                new_event.save()
-                messages.add_message(request, messages.SUCCESS, 'Event created successfully.')
-        else:
-            messages.add_message(request, messages.ERROR,
-                                 'You do not have permission to create an event in this course.')
+        form = CreateEventForm(request.POST)
+        if form.is_valid():
+            new_event = form.save(commit=False)
+            new_event.course = course
+            new_event.save()
+            messages.add_message(request, messages.SUCCESS, 'Event created successfully.')
     else:
         form = CreateEventForm()
 
