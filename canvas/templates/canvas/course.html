@@ -10,6 +10,11 @@
     <script src="{% static 'canvas/js/token_use.js' %}"></script>
 {% endblock %}
 
+{% block style %}
+    {{ block.super }}
+    <link href="{% static 'canvas/css/course.css' %}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <table class="table">
         <thead>
