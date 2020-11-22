@@ -2,7 +2,7 @@ from django.db.models import Count
 from course.models.models import Question
 
 
-def get_link_id(category):
+def get_next_categories_id(category):
     linked_to = category.links_to.values_list('pk', flat=True)
 
     if not linked_to:
