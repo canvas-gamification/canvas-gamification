@@ -424,4 +424,3 @@ class JavaSubmission(CodeSubmission):
 
     def get_answer_files(self):
         return self.answer_files
-
