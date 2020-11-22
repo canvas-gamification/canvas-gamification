@@ -34,40 +34,10 @@
                          aria-labelledby="{{ forloop.counter0 }}-tab">
                         <div>{{ filename }}</div>
                         <div class="form-group">
-                            <div style="position: relative; height: 30rem">
-                                <pre id="editor-{{ forloop.counter0 }}"></pre>
-                            </div>
                             <input type="hidden" id="input-{{ forloop.counter0 }}" name="{{ filename }}"
                                    class="form-control"/>
+                            {% include 'snippets/java_editor_snippet.html' with id=forloop.counter0 %}
                         </div>
-                        <style type="text/css" media="screen">
-                            #editor-{{ forloop.counter0 }} {
-                                position: absolute;
-                                top: 0;
-                                right: 0;
-                                bottom: 0;
-                                left: 0;
-                            }
-                        </style>
-                        <script>
-                            {
-                                let editor = ace.edit('editor-{{ forloop.counter0 }}');
-                                editor.setTheme("ace/theme/monokai");
-                                editor.session.setMode("ace/mode/java");
-                                editor.session.setTabSize(4);
-                                editor.session.setUseSoftTabs(true);
-                                editor.setOptions({
-                                    enableBasicAutocompletion: true,
-                                    enableSnippets: true,
-                                    enableLiveAutocompletion: true
-                                });
-                                editor.resize();
-                                editor.session.on('change', function () {
-                                    const val = editor.getSession().getValue();
-                                    $("#input-{{ forloop.counter0 }}").val(val);
-                                });
-                            }
-                        </script>
                     </div>
                 {% endfor %}
             </div>
