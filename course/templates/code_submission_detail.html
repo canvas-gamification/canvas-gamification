@@ -79,6 +79,7 @@
         <div class="card-body">
             <div class="my-3">
                 {% if submission.get_decoded_stderr %}
+                    <p>The following error occurred: </p>
                     <pre>
                         {{ submission.get_decoded_stderr }}
                     </pre>
