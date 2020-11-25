@@ -77,3 +77,20 @@ class QuestionCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = QuestionCategory
         fields = ['pk', 'name', 'description', 'parent', 'numQues', 'avgSuccess', 'userSuccessRate']
+
+class UserQuestionCategorySerializer(serializers.ModelSerializer):
+    # perhaps model serializer is not needed -- specify things to return instead of a Meta class
+    # user in request is required
+    userSuccessRate = serializers.SerializerMethodField('user_success_rate')
+    avgSuccess = serializers.SerializerMethodField('get_avg_success')
+
+    def user_success_rate(self, category):
+        user_id = self.context['request'].query_params.get('userId', None)
+        return get_user_success_rate(user_id, category.pk)
+
+    def get_avg_success(self, category):
+        return get_avg_question_success(category.pk)
+
+    class Meta:
+        model = QuestionCategory
+        fields = ['pk', 'name', 'avgSuccess', 'userSuccessRate']

@@ -26,6 +26,9 @@ def success_rate(total_tried, total_solved):
 
 
 def get_question_success_rate(questions):
+    # tried ==> total tokens possible for this set of questions
+    # solved ==> total tokens recv from this set
+    # None unless tried > 3
     questions_tried = questions.annotate(Count('user_junctions__submissions')).filter(
         user_junctions__submissions__count__gt=0)
     total_tried = questions_tried.count()
