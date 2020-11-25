@@ -7,7 +7,6 @@ from course.models.models import QuestionCategory, MultipleChoiceQuestion, JavaQ
 from course.utils.utils import create_multiple_choice_question, create_java_question
 
 
-
 class Command(BaseCommand):
     help = 'Populate Database with sample problems'
 
