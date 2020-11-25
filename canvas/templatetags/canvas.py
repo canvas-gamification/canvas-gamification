@@ -35,9 +35,3 @@ def event_button_text(event, user):
         return "Not Available"
     else:
         return "Open"
-
-
-
-
-
-
