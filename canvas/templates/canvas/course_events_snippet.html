@@ -11,7 +11,6 @@
         <th scope="col">Name</th>
         <th scope="col">Start&nbsp;Date</th>
         <th scope="col">End&nbsp;Date</th>
-        <th scope="col">Status</th>
         <th scope="col">Grade</th>
         <th scope="col">Actions</th>
     </tr>
@@ -22,12 +21,14 @@
             <td>{{ event.name }}</td>
             <td>{{ event.start_date }}</td>
             <td>{{ event.end_date }}</td>
-            <td>{{ event.status }}</td>
             <td>{{ event|total_event_grade:request.user }}</td>
             <td>
                 {% is_allowed_to_open_event event request.user as allowed_to_open %}
+                {% event_button_text event request.user as event_btn_text %}
                 {% if allowed_to_open %}
-                    <a class="btn btn-primary" href="{% url 'canvas:event_problem_set' event.id %}">Open</a>
+                    <a class="btn btn-primary" href="{% url 'canvas:event_problem_set' event.id %}">{{ event_btn_text }}</a>
+                {% else %}
+                    <button class="btn btn-outline-info" disabled href="www.google.com">{{ event_btn_text }}</button>
                 {% endif %}
             </td>
         </tr>
