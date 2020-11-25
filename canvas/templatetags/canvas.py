@@ -21,17 +21,17 @@ def is_allowed_to_open_event(event, user):
 @register.simple_tag
 def event_button_text(event, user):
     if event.has_edit_permission(user):
-        return "Edit"
-    if event.is_open() and event.course.is_registered(user):
+        return "Open"
+    if event.is_allowed_to_open(user):
         if event.type == "EXAM":
             return "Take Exam"
         elif event.type == "ASSIGNMENT":
             return "Complete Assignment"
         else:
             return "Start Practice"
-    elif event.status == "Closed" and event.course.is_registered(user):
+    elif event.can_view_results(user):
         return "View Results"
-    elif event.status == "Not available yet" and event.course.is_registered(user):
+    elif event.cannot_access_event_yet(user):
         return "Not Available"
     else:
         return "Open"
