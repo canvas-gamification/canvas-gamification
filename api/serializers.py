@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from accounts.models import MyUser, UserConsent
+from accounts.models import UserConsent
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 from general.models import ContactUs
 from utils.recaptcha import validate_recaptcha
@@ -43,6 +43,7 @@ class ContactUsSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('recaptcha_key', None)
         return super().create(validated_data)
+
 
 class QuestionCategorySerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
