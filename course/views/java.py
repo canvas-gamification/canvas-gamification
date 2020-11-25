@@ -67,7 +67,8 @@ def _java_question_view(request, question, key):
 
         try:
             submit_solution(question, request.user, answer_dict)
-            messages.add_message(request, messages.INFO, "Your Code has been submitted and being evaluated!")
+            messages.add_message(request, messages.INFO,
+                                 "Your Code has been submitted and is being evaluated! Refresh page to view results.")
         except SubmissionException as e:
             messages.add_message(request, messages.ERROR, "{}".format(e))
 
