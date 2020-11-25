@@ -1,9 +1,11 @@
 import json
 
+from django.shortcuts import get_object_or_404
 from django.core.management import BaseCommand
 
 from course.models.models import QuestionCategory, MultipleChoiceQuestion, JavaQuestion
 from course.utils.utils import create_multiple_choice_question, create_java_question
+
 
 
 class Command(BaseCommand):
@@ -42,6 +44,14 @@ class Command(BaseCommand):
             categories = json.loads(f.read())
             for group_name, sub_categories in categories.items():
                 self.create_category_cluster(group_name, sub_categories)
+
+        with open('import/category-links.json') as f:
+            category_links = json.loads(f.read())
+            for category_id, next_categories in category_links.items():
+                category = get_object_or_404(QuestionCategory, pk=category_id)
+                for next_category_id in next_categories:
+                    next_category = get_object_or_404(QuestionCategory, pk=next_category_id)
+                    category.next_categories.add(next_category)
 
     def populate_multiple_choice_questions(self):
         MultipleChoiceQuestion.objects.all().delete()
