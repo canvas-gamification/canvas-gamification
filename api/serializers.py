@@ -4,7 +4,7 @@ from accounts.models import MyUser, UserConsent
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 from general.models import ContactUs
 from utils.recaptcha import validate_recaptcha
-from utils.category_api import count_category_questions, get_avg_question_success
+from api.utils.category_api import count_category_questions, get_avg_question_success, get_user_success_rate
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -44,8 +44,22 @@ class ContactUsSerializer(serializers.ModelSerializer):
         validated_data.pop('recaptcha_key', None)
         return super().create(validated_data)
 
-
 class QuestionCategorySerializer(serializers.ModelSerializer):
+    def __init__(self, *args, **kwargs):
+        super(QuestionCategorySerializer, self).__init__(*args, **kwargs)
+
+        user_stats_fields = ['userSuccessRate', 'avgSuccess']
+        user_pk = self.context['request'].query_params.get('userId', None)
+
+        if user_pk is None:
+            self.fields.pop('userSuccessRate')
+        else:
+            allowed = set(user_stats_fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
+
+    userSuccessRate = serializers.SerializerMethodField('user_success_rate')
     numQues = serializers.SerializerMethodField('count_questions')
     avgSuccess = serializers.SerializerMethodField('get_avg_success')
 
@@ -55,12 +69,10 @@ class QuestionCategorySerializer(serializers.ModelSerializer):
     def get_avg_success(self, category):
         return get_avg_question_success(category.pk)
 
+    def user_success_rate(self, category):
+        user_id = self.context['request'].query_params.get('userId', None)
+        return get_user_success_rate(user_id, category.pk)
+
     class Meta:
         model = QuestionCategory
-        fields = ['pk', 'name', 'description', 'parent', 'numQues', 'avgSuccess']
-
-
-class UserStatsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MyUser
-        fields = ['pk']
+        fields = ['pk', 'name', 'description', 'parent', 'numQues', 'avgSuccess', 'userSuccessRate']
