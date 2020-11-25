@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    Course Registration
+{% endblock %}
+
+{% block content %}
+    <div>
+        <h6>Please verify that this is your full name:</h6>
+    </div>
+    <form class="form-inline" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="sr-only" for="inline_form_input2">Your Full Name:</label>
+            <input class="form-control" id="inline_form_input2" type="text" name="confirmed_name"
+                   value="{{ guessed_name }}"
+                   readonly>
+            <button type="submit" class="btn btn-success ml-2">Confirm</button>
+            <button type="button" class="btn btn-outline-danger ml-2" onclick="location = location">Try Again
+            </button>
+        </div>
+    </form>
+
+    <a href="{% url 'canvas:course_list' %}" class="btn btn-primary my-3">Back</a>
+{% endblock %}

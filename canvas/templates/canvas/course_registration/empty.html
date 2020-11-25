@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    Course Registration
+{% endblock %}
+
+{% block content %}
+    <a href="{% url 'canvas:course_list' %}" class="btn btn-primary">Back</a>
+    {% if course %}
+        <a href="{% url 'canvas:course' course.pk %}" class="btn btn-success">Open Course</a>
+    {% endif %}
+{% endblock %}

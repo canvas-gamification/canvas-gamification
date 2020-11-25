@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    Course Registration
+{% endblock %}
+
+{% block content %}
+    <div>
+        <h6 style="line-height: 1.6;">Your verification assignment has been graded in Canvas.<br>
+            Please enter your grade from the verification assignment:<br></h6>
+    </div>
+    <form class="form-inline mt-md-3" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="sr-only" for="code">Verification Code:</label>
+            <input class="form-control" id="code" type="text" name="code" placeholder="e.g. 1234">
+            <button type="submit" class="btn btn-success ml-2">Submit</button>
+        </div>
+    </form>
+    <h6 class="mt-md-3">Attempts Remaining: {{ attempts }}</h6>
+    <a href="{% url 'canvas:course_list' %}" class="btn btn-primary my-3">Back</a>
+{% endblock %}

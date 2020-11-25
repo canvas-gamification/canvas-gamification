@@ -13,6 +13,7 @@ services:
       - web
     ports:
       - 80:80
+    restart: always
 
   web:
     build: .
@@ -23,6 +24,7 @@ services:
     depends_on:
       - db
     command: ['./runserver.sh']
+    restart: always
 
   db:
     image: postgres:9.6

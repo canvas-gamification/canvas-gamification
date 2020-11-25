@@ -1,5 +1,4 @@
 import re
-
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, get_object_or_404
@@ -10,6 +9,7 @@ from canvas.utils.token_use import update_token_use, TokenUseException
 from canvas.utils.utils import get_course_registration
 from course.models.models import UserQuestionJunction
 from course.views.views import teacher_check
+from canvas.forms.forms import CreateEventForm
 
 
 def course_list_view(request):
@@ -84,4 +84,26 @@ def events_options_view(request):
 
     return render(request, 'canvas/course_event_options.html', {
         'events': course.events.all(),
+    })
+
+
+def create_event_view(request, pk):
+    course = get_object_or_404(CanvasCourse, pk=pk)
+
+    if not course.has_edit_permission(request.user):
+        return render(request, "403.html", status=403)
+
+    if request.method == 'POST':
+        form = CreateEventForm(request.POST)
+        if form.is_valid():
+            new_event = form.save(commit=False)
+            new_event.course = course
+            new_event.save()
+            messages.add_message(request, messages.SUCCESS, 'Event created successfully.')
+    else:
+        form = CreateEventForm()
+
+    return render(request, 'canvas/event_create.html', {
+        'form': form,
+        'course': course,
     })

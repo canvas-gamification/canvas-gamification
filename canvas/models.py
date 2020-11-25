@@ -94,15 +94,16 @@ class CanvasCourse(models.Model):
         })
         self.verification_assignment_id = a.id
 
-    def get_user(self, name=None, id=None):
+    def get_user(self, name=None, id=None, student_id=None):
         for user in self.course.get_users():
-            if user.id == id or user.name == name:
+            if user.id == id or user.name == name or user.sis_user_id == student_id:
                 return user
         return None
 
     def guess_user(self, name):
         choices = [x.name for x in self.course.get_users()]
-        return process.extractOne(name, choices, score_cutoff=95)
+        student_names = process.extractBests(name, choices, score_cutoff=95)
+        return [x[0] for x in student_names]
 
     def is_registered(self, user):
         if user.is_anonymous:
@@ -162,6 +163,10 @@ class CanvasCourseRegistration(models.Model):
             }
         })
 
+    def set_canvas_user(self, canvas_user):
+        self.canvas_user_id = canvas_user.id
+        self.save()
+
     def check_verification_code(self, code):
         if self.is_blocked:
             return False
@@ -179,8 +184,8 @@ class CanvasCourseRegistration(models.Model):
     @property
     def total_tokens_received(self):
         event_ids = [x['id'] for x in self.course.events.filter(count_for_tokens=True).values('id')]
-        return self.user.question_junctions.filter(question__event_id__in=event_ids)\
-            .aggregate(Sum('tokens_received'))['tokens_received__sum'] or 0
+        return self.user.question_junctions.filter(question__event_id__in=event_ids) \
+                   .aggregate(Sum('tokens_received'))['tokens_received__sum'] or 0
 
     @property
     def available_tokens(self):

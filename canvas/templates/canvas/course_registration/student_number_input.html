@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    Course Registration
+{% endblock %}
+
+{% block content %}
+    <div>
+        <h6>Please enter your student number (it will not be stored).</h6>
+    </div>
+    <form class="form-inline" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="sr-only" for="student_number">Your Student Number:</label>
+            <input class="form-control" id="student_number" type="text" name="student_number" value="{{ student_number }}">
+            <button type="submit" class="btn btn-success ml-2">Confirm</button>
+            <button type="button" class="btn btn-outline-danger ml-2" onclick="location = location">Try Again
+            </button>
+        </div>
+    </form>
+    <a href="{% url 'canvas:course_list' %}" class="btn btn-primary my-3">Back</a>
+{% endblock %}

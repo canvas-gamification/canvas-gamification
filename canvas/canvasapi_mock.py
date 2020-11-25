@@ -21,7 +21,11 @@ class Course(object):
         return Assignment()
 
     def get_users(self, **kwargs):
-        return [User() for x in range(10)]
+        return [
+            User(1, 'Firstname Lastname', '00000000'),
+            User(2, 'multiple student', '12345678'),
+            User(3, 'multiple student', '13579135')
+        ]
 
     def submissions_bulk_update(self, **kwargs):
         pass
@@ -39,5 +43,7 @@ class Assignment(object):
 
 
 class User(object):
-    id = 1
-    name = "Firstname Lastname"
+    def __init__(self, id, name, student_id):
+        self.id = id
+        self.name = name
+        self.sis_user_id = student_id

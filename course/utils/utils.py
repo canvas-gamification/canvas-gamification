@@ -136,7 +136,7 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
 
 def create_java_question(pk=None, title=None, text=None, max_submission_allowed=None, tutorial=None, author=None,
                          category=None, difficulty=None, is_verified=None, junit_template=None,
-                         additional_file_name=None,
+                         input_file_names=None,
                          course=None, event=None):
     if not max_submission_allowed:
         max_submission_allowed = 5
@@ -155,7 +155,7 @@ def create_java_question(pk=None, title=None, text=None, max_submission_allowed=
             difficulty=difficulty,
             is_verified=is_verified,
             junit_template=junit_template,
-            additional_file_name=additional_file_name,
+            input_file_names=input_file_names,
             course=course,
             event=event,
         )
@@ -170,7 +170,7 @@ def create_java_question(pk=None, title=None, text=None, max_submission_allowed=
             difficulty=difficulty,
             is_verified=is_verified,
             junit_template=junit_template,
-            additional_file_name=additional_file_name,
+            input_file_names=input_file_names,
             course=course,
             event=event,
         )
