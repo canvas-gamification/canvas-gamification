@@ -15,7 +15,7 @@ def is_allowed_to_open_course(course, user):
 
 @register.simple_tag
 def is_allowed_to_open_event(event, user):
-    return event.has_view_permission(user) or event.status == "Closed"
+    return event.has_view_permission(user) or event.can_view_results(user)
 
 
 @register.simple_tag
