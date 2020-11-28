@@ -101,6 +101,7 @@ class Question(PolymorphicModel):
         return total_solved / total_tried
 
     def save(self, *args, **kwargs):
+        self.max_submission_allowed = 10 if self.event.type == 'EXAM' else 100
         super().save(*args, **kwargs)
         ensure_uqj(None, self)
 
