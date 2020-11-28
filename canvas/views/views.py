@@ -107,3 +107,20 @@ def create_event_view(request, pk):
         'form': form,
         'course': course,
     })
+
+
+def edit_event_view(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    if request.method == 'POST':
+        form = CreateEventForm(request.POST, instance=event)
+
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.SUCCESS, 'Event was edited successfully')
+    else:
+        form = CreateEventForm(instance=event)
+
+    return render(request, 'canvas/event_create.html', {
+        'form': form,
+        'event': event
+    })
