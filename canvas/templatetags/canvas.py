@@ -19,6 +19,11 @@ def is_allowed_to_open_event(event, user):
 
 
 @register.simple_tag
+def is_allowed_to_edit_event(event, user):
+    return event.has_edit_permission(user)
+
+
+@register.simple_tag
 def event_button_text(event, user):
     if event.has_edit_permission(user):
         return "Open"
