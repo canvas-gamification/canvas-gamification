@@ -40,3 +40,11 @@ def event_button_text(event, user):
         return "Not Available"
     else:
         return "Open"
+
+
+@register.simple_tag
+def tokens_column_name(event):
+    if event != '' and event.is_exam_and_open():
+        return "Tokens Worth"
+    else:
+        return "Tokens Earned"

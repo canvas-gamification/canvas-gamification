@@ -1,3 +1,7 @@
+{% load canvas %}
+{% tokens_column_name event as tokens_column_name %}
+
+
 <table class="table table-hover" data-toggle="table">
     <thead>
     <tr>
@@ -5,7 +9,9 @@
         <th scope="col">Category</th>
         <th scope="col">Sub&nbsp;Category</th>
         <th scope="col">Format</th>
-        <th scope="col">Tokens&nbsp;Earned</th>
+        <th scope="col">
+            {{ tokens_column_name }}
+        </th>
         <th scope="col">Status</th>
         <th scope="col">Num&nbsp;Attempts</th>
         <th scope="col">Action</th>
