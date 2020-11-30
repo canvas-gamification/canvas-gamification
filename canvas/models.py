@@ -227,6 +227,9 @@ class Event(models.Model):
     def is_not_available_yet(self):
         return self.start_date > timezone.now()
 
+    def is_exam(self):
+        return self.type == "EXAM"
+
     @property
     def status(self):
         if self.is_not_available_yet():
