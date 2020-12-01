@@ -227,6 +227,9 @@ class Event(models.Model):
     def is_not_available_yet(self):
         return self.start_date > timezone.now()
 
+    def is_exam(self):
+        return self.type == "EXAM"
+
     @property
     def status(self):
         if self.is_not_available_yet():
@@ -251,6 +254,9 @@ class Event(models.Model):
 
     def cannot_access_event_yet(self, user):
         return self.is_not_available_yet() and self.course.is_registered(user)
+
+    def is_exam_and_open(self):
+        return self.is_exam() and self.is_open()
 
 
 class TokenUseOption(models.Model):

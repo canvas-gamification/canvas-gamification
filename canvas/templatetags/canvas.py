@@ -1,4 +1,5 @@
 from django import template
+from course.models.models import Event
 
 register = template.Library()
 
@@ -40,3 +41,11 @@ def event_button_text(event, user):
         return "Not Available"
     else:
         return "Open"
+
+
+@register.simple_tag
+def tokens_column_name(event):
+    if isinstance(event, Event) and event.is_exam_and_open():
+        return "Tokens Worth"
+    else:
+        return "Tokens Earned"
