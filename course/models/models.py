@@ -63,7 +63,7 @@ class Question(PolymorphicModel):
     title = models.CharField(max_length=300, null=True, blank=True)
     text = RichTextField(null=True, blank=True)
     answer = models.TextField(null=True, blank=True)
-    max_submission_allowed = models.IntegerField(default=5, blank=True)
+    max_submission_allowed = models.IntegerField(default=None, blank=True)
     tutorial = RichTextField(null=True, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
     time_modified = models.DateTimeField(auto_now=True)
@@ -101,7 +101,9 @@ class Question(PolymorphicModel):
         return total_solved / total_tried
 
     def save(self, *args, **kwargs):
-        self.max_submission_allowed = 10 if self.event.type == 'EXAM' else 100
+        if self.max_submission_allowed is None:
+            self.max_submission_allowed = self.get_max_submissions(self.event)
+
         super().save(*args, **kwargs)
         ensure_uqj(None, self)
 
@@ -114,6 +116,9 @@ class Question(PolymorphicModel):
 
     def has_edit_permission(self, user):
         return user.is_teacher
+
+    def get_max_submissions(self, event):
+        return 10 if event.type == "EXAM" else 100
 
 
 class VariableQuestion(Question):
