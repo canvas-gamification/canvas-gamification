@@ -102,7 +102,7 @@ class Question(PolymorphicModel):
 
     def save(self, *args, **kwargs):
         if self.max_submission_allowed is None:
-            self.max_submission_allowed = self.get_max_submissions(self.event)
+            self.max_submission_allowed = 10 if self.event is not None and self.event.type == "EXAM" else 100
 
         super().save(*args, **kwargs)
         ensure_uqj(None, self)
@@ -116,9 +116,6 @@ class Question(PolymorphicModel):
 
     def has_edit_permission(self, user):
         return user.is_teacher
-
-    def get_max_submissions(self, event):
-        return 10 if event.type == "EXAM" else 100
 
 
 class VariableQuestion(Question):
