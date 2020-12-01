@@ -249,9 +249,8 @@ class UserQuestionJunction(models.Model):
 
     @property
     def formatted_current_tokens_received(self):
-        is_exam_open = self.question.event.type == 'EXAM' and self.question.event.is_open()
-        return str(self.tokens_received) + "/" + str(self.question.token_value)if not is_exam_open else \
-            str(self.question.token_value)
+        return str(self.question.token_value) if self.question.event.is_exam_and_open() \
+            else str(self.tokens_received) + "/" + str(self.question.token_value)
 
     def save(self, **kwargs):
         self.is_solved = self.submissions.filter(is_correct=True).exists()
