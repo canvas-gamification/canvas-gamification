@@ -49,3 +49,11 @@ def tokens_column_name(event):
         return "Tokens Worth"
     else:
         return "Tokens Earned"
+
+
+@register.simple_tag
+def exam_question_status(event, uqj):
+    if event.is_exam and uqj.num_attempts() > 0:
+        return "Submitted"
+    else:
+        return "Not Submitted"
