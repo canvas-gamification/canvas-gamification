@@ -29,28 +29,49 @@ class Command(BaseCommand):
         if options['java']:
             self.populate_java_questions()
 
-    def create_category_cluster(self, group_name, sub_categories):
-        parent = QuestionCategory(name=group_name, description=group_name)
-        parent.save()
-
-        for category in sub_categories:
-            QuestionCategory(name=category, description=category, parent=parent).save()
-
     def populate_categories(self):
-        QuestionCategory.objects.all().delete()
+        for q in QuestionCategory.objects.all():
+            q.question_set.all().delete()
+            q.delete()
 
         with open('import/categories.json') as f:
-            categories = json.loads(f.read())
-            for group_name, sub_categories in categories.items():
-                self.create_category_cluster(group_name, sub_categories)
-
-        with open('import/category-links.json') as f:
             category_links = json.loads(f.read())
-            for category_id, next_categories in category_links.items():
-                category = get_object_or_404(QuestionCategory, pk=category_id)
-                for next_category_id in next_categories:
-                    next_category = get_object_or_404(QuestionCategory, pk=next_category_id)
-                    category.next_categories.add(next_category)
+
+            def get_top_categories(category_tuple):
+                if category_tuple[1]['parent'] is None:
+                    return True
+                else:
+                    return False
+
+            top_categories = filter(get_top_categories, category_links.items())
+
+            for parent_id, parent_data in top_categories:
+                print("parent", parent_id)
+                parent_name = parent_data['name']
+                parent = QuestionCategory(pk=parent_id, name=parent_name, description=parent_name)
+                parent.save()
+
+                def get_child_categories(category_tuple):
+                    return category_tuple[1]['parent'] == int(parent_id)
+
+                child_categories = filter(get_child_categories, category_links.items())
+
+                for child_id, child_data in child_categories:
+                    child_name = child_data['name']
+                    child = QuestionCategory(pk=child_id, name=child_name, description=child_name, parent=parent)
+                    print("--", child_id)
+                    child.save()
+
+            for category_id, category_data in category_links.items():
+                print("Next:", category_id)
+                category = get_object_or_404(QuestionCategory, pk=int(category_id))
+                next_categories = category_data['linkedTo']
+                if next_categories is not None:
+                    for next_category_id in next_categories:
+                        print("--", next_category_id)
+                        next_category = get_object_or_404(QuestionCategory, pk=next_category_id)
+                        category.next_categories.add(next_category)
+                    category.save()
 
     def populate_multiple_choice_questions(self):
         MultipleChoiceQuestion.objects.all().delete()
