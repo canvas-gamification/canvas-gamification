@@ -67,19 +67,18 @@ def _multiple_choice_question_view(request, question, template_name, key):
 
             if hasattr(question, 'event') and question.event.is_exam:
                 messages.add_message(request, messages.INFO, 'Your submission was received.')
+            elif submission.is_correct:
+                received_tokens = get_user_question_junction(request.user, question).tokens_received
+                messages.add_message(
+                    request, messages.SUCCESS,
+                    'Answer submitted. Your answer was correct. You received {} tokens'.format(
+                        round(received_tokens, 2)),
+                )
             else:
-                if submission.is_correct:
-                    received_tokens = get_user_question_junction(request.user, question).tokens_received
-                    messages.add_message(
-                        request, messages.SUCCESS,
-                        'Answer submitted. Your answer was correct. You received {} tokens'.format(
-                            round(received_tokens, 2)),
-                    )
-                else:
-                    messages.add_message(
-                        request, messages.ERROR,
-                        'Answer submitted. Your answer was wrong',
-                    )
+                messages.add_message(
+                    request, messages.ERROR,
+                    'Answer submitted. Your answer was wrong',
+                )
 
         except SubmissionException as e:
             messages.add_message(request, messages.ERROR, "{}".format(e))
