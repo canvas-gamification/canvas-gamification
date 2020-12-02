@@ -252,7 +252,8 @@ class UserQuestionJunction(models.Model):
 
     @property
     def formatted_current_tokens_received(self):
-        return str(self.question.token_value) if self.question.event.is_exam_and_open() \
+        return str(self.question.token_value) \
+            if hasattr(self.question, 'event') and self.question.event.is_exam_and_open() \
             else str(self.tokens_received) + "/" + str(self.question.token_value)
 
     def save(self, **kwargs):
@@ -342,12 +343,13 @@ class Submission(PolymorphicModel):
         if not self.finalized:
             self.calculate_grade(commit=False)
 
-        if not self.in_progress and self.is_correct or self.is_partially_correct:
+        if not self.in_progress and (self.is_correct or self.is_partially_correct) \
+                or (hasattr(self.question, 'event') and self.question.event.is_exam):
             user_question_junction = self.uqj
             received_tokens = self.grade * get_token_value(self.question.category, self.question.difficulty)
             token_change = received_tokens - user_question_junction.tokens_received
 
-            if token_change > 0:
+            if (hasattr(self.uqj.question, 'event') and self.uqj.question.event.is_exam) or token_change > 0:
                 user_question_junction.tokens_received = received_tokens
                 user_question_junction.save()
 

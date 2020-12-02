@@ -20,7 +20,8 @@
     </thead>
     <tbody>
     {% for key, uqj in uqjs.items %}
-        <tr class="{{ uqj.status_class }}">
+        {% row_class uqj event as row_class_name %}
+        <tr class="{{ row_class_name }}">
             <th scope="row">{{ forloop.counter }}</th>
             <td>{{ uqj.question.category.parent }}</td>
             <td>{{ uqj.question.category.name }}</td>

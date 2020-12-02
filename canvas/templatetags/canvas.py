@@ -57,3 +57,11 @@ def exam_question_status(event, uqj):
         return "Submitted"
     else:
         return "Not Submitted"
+
+
+@register.simple_tag
+def row_class(uqj, event):
+    if isinstance(event, Event) and event.is_exam:
+        return ""
+    else:
+        return uqj.status_class
