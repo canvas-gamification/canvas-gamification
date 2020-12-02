@@ -1,7 +1,8 @@
 from functools import reduce
 from django.db.models import Sum, F, Count
-from course.models.models import Question
+from course.models.models import Question, QuestionCategory
 from course.utils.utils import get_token_value
+from django.shortcuts import get_object_or_404
 
 
 def get_next_categories_id(category):
@@ -18,14 +19,15 @@ def count_category_questions(pk):
 
 
 def get_avg_question_success(pk):
-    questions = Question.objects.filter(category__pk=pk)
-    tokens_recv = questions.aggregate(total=Sum(F('user_junctions__tokens_received')))['total']
-    question_types = questions.all().values('category', 'difficulty').annotate(num_questions=Count('id'))
+    questions = get_object_or_404(QuestionCategory, pk=pk).question_set.all()
+    tokens_recv = 0
+    tokens_value = 0
+    for question in questions:
+        uqjs = question.user_junctions
+        tokens_recv += uqjs.aggregate(total=Sum(F('tokens_received')))['total']
+        num_uqjs = uqjs.annotate(Count('submissions')).filter(submissions__count__gt=0)
 
-    def group_token_value(total, curr):
-        return get_token_value(curr['category'], curr['difficulty']) * curr['num_questions'] + total
-
-    tokens_value = reduce(group_token_value, question_types, 0)
+        tokens_value += get_token_value(question.category, question.difficulty) * len(num_uqjs)
 
     return success_rate(tokens_value, tokens_recv)
 
