@@ -59,6 +59,7 @@ class QuestionCategorySerializer(serializers.ModelSerializer):
         model = QuestionCategory
         fields = ['pk', 'name', 'description', 'parent', 'numQuestions', 'avgSuccess']
 
+
 class UserQuestionCategorySerializer(serializers.Serializer):
     avgUserSuccess = serializers.SerializerMethodField('user_success')
     avgCategorySuccess = serializers.SerializerMethodField('category_success')
