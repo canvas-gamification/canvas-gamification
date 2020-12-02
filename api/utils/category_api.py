@@ -1,4 +1,3 @@
-from functools import reduce
 from django.db.models import Sum, F, Count
 from course.models.models import Question, QuestionCategory
 from course.utils.utils import get_token_value
