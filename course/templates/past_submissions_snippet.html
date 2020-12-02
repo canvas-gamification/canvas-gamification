@@ -23,7 +23,9 @@
     {% if event.is_exam %}
         {% return_last_item submissions as graded_submission  %}
         <tr class="table">
-            <th scope="row">1</th>
+            {% if graded_submission %}
+                <th scope="row">1</th>
+            {% endif %}
             {% if graded_submission.show_answer %}
                 <td>{{ graded_submission.answer_display }}</td>
             {% endif %}
