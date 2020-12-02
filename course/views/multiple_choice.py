@@ -66,7 +66,7 @@ def _multiple_choice_question_view(request, question, template_name, key):
             submission = submit_solution(question, request.user, answer)
 
             # TODO: after rebasing .is_exam() needs to become .is_exam
-            if not question.event.is_exam():
+            if not question.event.is_exam:
                 if submission.is_correct:
                     received_tokens = get_user_question_junction(request.user, question).tokens_received
                     messages.add_message(

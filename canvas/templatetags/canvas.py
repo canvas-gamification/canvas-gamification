@@ -59,10 +59,9 @@ def exam_question_status(event, uqj):
         return "Not Submitted"
 
 
-# TODO: confirm if the colours should be added after exam is closed
 @register.simple_tag
 def row_class(uqj, event):
-    if isinstance(event, Event) and event.is_exam_and_open():
+    if isinstance(event, Event) and event.is_exam:
         return ""
     else:
         return uqj.status_class
