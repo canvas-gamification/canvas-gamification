@@ -65,18 +65,21 @@ def _multiple_choice_question_view(request, question, template_name, key):
         try:
             submission = submit_solution(question, request.user, answer)
 
-            if submission.is_correct:
-                received_tokens = get_user_question_junction(request.user, question).tokens_received
-                messages.add_message(
-                    request, messages.SUCCESS,
-                    'Answer submitted. Your answer was correct. You received {} tokens'.format(
-                        round(received_tokens, 2)),
-                )
-            else:
-                messages.add_message(
-                    request, messages.ERROR,
-                    'Answer submitted. Your answer was wrong',
-                )
+            # TODO: after rebasing .is_exam() needs to become .is_exam
+            if not question.event.is_exam():
+                if submission.is_correct:
+                    received_tokens = get_user_question_junction(request.user, question).tokens_received
+                    messages.add_message(
+                        request, messages.SUCCESS,
+                        'Answer submitted. Your answer was correct. You received {} tokens'.format(
+                            round(received_tokens, 2)),
+                    )
+                else:
+                    messages.add_message(
+                        request, messages.ERROR,
+                        'Answer submitted. Your answer was wrong',
+                    )
+
         except SubmissionException as e:
             messages.add_message(request, messages.ERROR, "{}".format(e))
 

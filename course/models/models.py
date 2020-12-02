@@ -342,12 +342,12 @@ class Submission(PolymorphicModel):
         if not self.finalized:
             self.calculate_grade(commit=False)
 
-        if not self.in_progress and self.is_correct or self.is_partially_correct:
+        if (not self.in_progress and self.is_correct or self.is_partially_correct) or self.question.event.is_exam():
             user_question_junction = self.uqj
             received_tokens = self.grade * get_token_value(self.question.category, self.question.difficulty)
             token_change = received_tokens - user_question_junction.tokens_received
 
-            if token_change > 0:
+            if self.uqj.question.event.is_exam() or token_change > 0:
                 user_question_junction.tokens_received = received_tokens
                 user_question_junction.save()
 

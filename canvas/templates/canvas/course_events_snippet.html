@@ -21,7 +21,11 @@
             <td>{{ event.name }}</td>
             <td>{{ event.start_date }}</td>
             <td>{{ event.end_date }}</td>
-            <td>{{ event|total_event_grade:request.user }}</td>
+            {% if event.is_exam_and_open %}
+                <td>Not Available Yet</td>
+            {% else %}
+                <td>{{ event|total_event_grade:request.user }}</td>
+            {% endif %}
             <td>
                 {% is_allowed_to_open_event event request.user as allowed_to_open %}
                 {% is_allowed_to_edit_event  event request.user as allowed_to_edit %}
