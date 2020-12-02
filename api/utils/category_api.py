@@ -1,16 +1,15 @@
 from django.db.models import Sum, F, Count
-from course.models.models import Question
 from course.utils.utils import get_token_value
 
 
-def count_category_questions(pk):
-    return Question.objects.filter(category__pk=pk).count()
+def count_category_questions(category):
+    return category.question_set.count()
 
 
-def get_avg_question_success(category):
+def get_avg_category_success(category):
     questions = category.question_set.annotate(Count('user_junctions__submissions')).filter(
         user_junctions__submissions__count__gt=3)
-    return get_avg_category_success(questions)
+    return avg_category_success(questions)
 
 
 def get_user_success_rate(user_pk, category):
@@ -18,16 +17,16 @@ def get_user_success_rate(user_pk, category):
         return None
 
     questions = category.question_set.filter(user_junctions__user__pk=user_pk)
-    return get_avg_category_success(questions)
+    return avg_category_success(questions)
 
 
-def success_rate(total_tried, total_solved):
-    if total_tried == 0:
+def get_percentage(numerator, denominator):
+    if denominator == 0:
         return 0
-    return total_solved * 100 / total_tried
+    return numerator * 100 / denominator
 
 
-def get_avg_category_success(questions):
+def avg_category_success(questions):
     tokens_recv = 0
     tokens_value = 0
 
@@ -41,4 +40,4 @@ def get_avg_category_success(questions):
 
         tokens_value += get_token_value(question.category, question.difficulty) * len(num_uqjs)
 
-    return success_rate(tokens_value, tokens_recv)
+    return get_percentage(tokens_value, tokens_recv)

@@ -4,7 +4,7 @@ from accounts.models import UserConsent
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 from general.models import ContactUs
 from utils.recaptcha import validate_recaptcha
-from api.utils.category_api import count_category_questions, get_avg_question_success, get_user_success_rate
+from api.utils.category_api import count_category_questions, get_avg_category_success, get_user_success_rate
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -50,10 +50,10 @@ class QuestionCategorySerializer(serializers.ModelSerializer):
     avgSuccess = serializers.SerializerMethodField('get_avg_success')
 
     def count_questions(self, category):
-        return count_category_questions(category.pk)
+        return count_category_questions(category)
 
     def get_avg_success(self, category):
-        return get_avg_question_success(category.pk)
+        return get_avg_category_success(category)
 
     class Meta:
         model = QuestionCategory
@@ -68,4 +68,4 @@ class UserQuestionCategorySerializer(serializers.Serializer):
         return get_user_success_rate(user_id, category)
 
     def category_success(self, category):
-        return get_avg_question_success(category)
+        return get_avg_category_success(category)
