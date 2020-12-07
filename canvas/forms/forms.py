@@ -32,9 +32,7 @@ class CreateEventForm(forms.ModelForm):
         label="Event Type",
         required=False,
         choices=EVENT_TYPE_CHOICES,
-        widget=widgets.Select(attrs={
-            'class': 'form-control'
-         })
+        widget=widgets.Select(attrs={'class': 'form-control'})
     )
 
     class Meta:
