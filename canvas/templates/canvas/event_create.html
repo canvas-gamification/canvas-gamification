@@ -13,30 +13,36 @@
 {% endblock %}
 
 {% block header %}
-    Create Event for {{ course.name }}
+    {% if header %}
+        {{ header }} Event for {{ event.course.name }}
+    {% else %}
+        Create Event for {{ course.name }}
+    {% endif %}
 {% endblock %}
 
 {% block content %}
-    <form method="post" class="" style="align-content: left;">
+    <form method="post" class="">
         {% csrf_token %}
         {% for field in form %}
-            <div class="form-group">
-                {% if field.label %}
-                    <h6 class="form-label">
-                        {{ field.label_tag }}
-                    </h6>
-                {% endif %}
-                {% if field.errors %}
-                    {% for error in field.errors %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ error }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-                {{ field }}
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {% if field.label %}
+                        <h3 class="form-label">
+                            {{ field.label_tag }}
+                        </h3>
+                    {% endif %}
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ error }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {{ field }}
+                </div>
                 {% if field.help_text %}
                     <small class="form-text text-muted">{{ field.help_text }}</small>
                 {% endif %}

@@ -122,5 +122,6 @@ def edit_event_view(request, pk):
 
     return render(request, 'canvas/event_create.html', {
         'form': form,
-        'event': event
+        'event': event,
+        'header': 'Edit'
     })
