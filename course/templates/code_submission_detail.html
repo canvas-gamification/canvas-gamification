@@ -99,6 +99,9 @@
                         <h5>Score: {{ submission.get_formatted_test_results }}</h5>
                     </div>
                     <div>
+                        <h5>Tokens Earned: {{ submission.formatted_tokens_received }}</h5>
+                    </div>
+                    <div>
                         {% if submission.get_passed_test_results %}
                             <h5>What went well:</h5>
                             <ul>

@@ -10,6 +10,9 @@
         {% if not event.is_exam_and_open %}
             <th scope="col">Grade</th>
         {% endif %}
+        {% if not event.is_exam_and_open %}
+            <th scope="col">Tokens Received</th>
+        {% endif %}
         <th scope="col">Time&nbspSubmitted</th>
         {% if not event.is_exam_and_open %}
             <th scope="col">Status</th>
@@ -32,6 +35,9 @@
             {% if not event.is_exam_and_open %}
                 <td>{{ graded_submission.grade | floatformat:2 }}</td>
             {% endif %}
+            {% if not event.is_exam_and_open %}
+                <td>{{ graded_submission.formatted_tokens_received }}</td>
+            {% endif %}
             <td>{{ graded_submission.submission_time }}</td>
             {% if not event.is_exam_and_open %}
                 <td>{{ graded_submission.status }}</td>
@@ -52,6 +58,7 @@
                 <td>{{ submission.answer_display }}</td>
             {% endif %}
             <td>{{ submission.grade | floatformat:2 }}</td>
+            <td>{{ submission.formatted_tokens_received }}</td>
             <td>{{ submission.submission_time }}</td>
             <td>{{ submission.status }}</td>
             {% if submission_class.show_detail %}
