@@ -324,7 +324,7 @@ class Submission(PolymorphicModel):
     @property
     def formatted_tokens_received(self):
         return str(self.tokens_received) + "/" + str(get_token_value(self.question.category, self.question.difficulty))
-    
+
     def calculate_grade(self, commit=True):
         if self.finalized:
             return
