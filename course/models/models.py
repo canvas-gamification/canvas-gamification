@@ -100,6 +100,14 @@ class Question(PolymorphicModel):
             return 0
         return total_solved / total_tried
 
+    @property
+    def is_exam(self):
+        return self.event is not None and self.event.is_exam
+
+    @property
+    def is_exam_and_open(self):
+        return self.event is not None and self.event.is_exam_and_open()
+
     def save(self, *args, **kwargs):
         if self.max_submission_allowed is None:
             self.max_submission_allowed = 10 if self.event is not None and self.event.type == "EXAM" else 100
@@ -252,9 +260,9 @@ class UserQuestionJunction(models.Model):
 
     @property
     def formatted_current_tokens_received(self):
-        return str(self.question.token_value) \
-            if hasattr(self.question, 'event') and self.question.event.is_exam_and_open() \
-            else str(self.tokens_received) + "/" + str(self.question.token_value)
+        if self.question.is_exam_and_open:
+            return str(self.question.token_value)
+        return str(self.tokens_received) + "/" + str(self.question.token_value)
 
     def save(self, **kwargs):
         self.is_solved = self.submissions.filter(is_correct=True).exists()
@@ -343,13 +351,12 @@ class Submission(PolymorphicModel):
         if not self.finalized:
             self.calculate_grade(commit=False)
 
-        if not self.in_progress and (self.is_correct or self.is_partially_correct) \
-                or (hasattr(self.question, 'event') and self.question.event.is_exam):
+        if not self.in_progress and (self.is_correct or self.is_partially_correct or self.question.is_exam):
             user_question_junction = self.uqj
             received_tokens = self.grade * get_token_value(self.question.category, self.question.difficulty)
             token_change = received_tokens - user_question_junction.tokens_received
 
-            if (hasattr(self.uqj.question, 'event') and self.uqj.question.event.is_exam) or token_change > 0:
+            if self.question.is_exam or token_change > 0:
                 user_question_junction.tokens_received = received_tokens
                 user_question_junction.save()
 

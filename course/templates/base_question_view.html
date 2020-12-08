@@ -23,7 +23,7 @@
         <tr>
             <th scope="col">Category</th>
             <th scope="col">Token&nbspValue</th>
-            {% if not question.event.is_exam %}
+            {% if not question.is_exam %}
                 <th scope="col">Status</th>
             {% endif %}
             <th scope="col">Num&nbsp;Attempts</th>
@@ -33,7 +33,7 @@
         <tr class="{% if question.is_solved %}table-success{% endif %}{% if question.is_wrong %}table-danger{% endif %}{% if question.is_partially_correct %}table-warning{% endif %}">
             <td>{{ question.category }}</td>
             <td>{{ question.token_value | floatformat:0 }}</td>
-            {% if not question.event.is_exam %}
+            {% if not question.is_exam %}
                 <td>{{ uqj.status }}</td>
             {% endif %}
             <td>{{ uqj.formatted_num_attempts }}</td>
