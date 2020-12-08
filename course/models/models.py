@@ -319,11 +319,15 @@ class Submission(PolymorphicModel):
 
     @property
     def tokens_received(self):
-        return self.grade * get_token_value(self.question.category, self.question.difficulty)
+        return self.uqj.tokens_received
+
+    @property
+    def token_value(self):
+        return get_token_value(self.question.category, self.question.difficulty)
 
     @property
     def formatted_tokens_received(self):
-        return str(self.tokens_received) + "/" + str(get_token_value(self.question.category, self.question.difficulty))
+        return str(self.tokens_received) + "/" + str(self.token_value)
 
     def calculate_grade(self, commit=True):
         if self.finalized:
@@ -354,7 +358,7 @@ class Submission(PolymorphicModel):
         if not self.in_progress and (self.is_correct or self.is_partially_correct) \
                 or (hasattr(self.question, 'event') and self.question.event.is_exam):
             user_question_junction = self.uqj
-            received_tokens = self.tokens_received
+            received_tokens = self.grade * self.token_value
             token_change = received_tokens - user_question_junction.tokens_received
 
             if (hasattr(self.uqj.question, 'event') and self.uqj.question.event.is_exam) or token_change > 0:
