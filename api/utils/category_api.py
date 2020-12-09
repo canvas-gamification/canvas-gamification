@@ -32,7 +32,7 @@ def avg_category_success(questions):
 
     if not questions:
         return None
-      
+
     for question in questions:
         uqjs = question.user_junctions
         tokens_recv += uqjs.aggregate(total=Sum(F('tokens_received')))['total']

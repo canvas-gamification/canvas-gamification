@@ -4,8 +4,8 @@ from accounts.models import UserConsent
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 from general.models import ContactUs
 from utils.recaptcha import validate_recaptcha
-from api.utils.category_api import count_category_questions, get_avg_category_success, get_user_success_rate, get_next_categories_id
-
+from api.utils.category_api import count_category_questions, get_avg_category_success, get_user_success_rate, \
+    get_next_categories_id
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -62,7 +62,6 @@ class QuestionCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuestionCategory
-
         fields = ['pk', 'name', 'description', 'parent', 'numQuestions', 'avgSuccess', 'nextCategories']
 
 
