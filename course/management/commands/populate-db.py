@@ -28,20 +28,25 @@ class Command(BaseCommand):
         if options['java']:
             self.populate_java_questions()
 
-    def create_category_cluster(self, group_name, sub_categories):
-        parent = QuestionCategory(name=group_name, description=group_name)
-        parent.save()
-
-        for category in sub_categories:
-            QuestionCategory(name=category, description=category, parent=parent).save()
-
     def populate_categories(self):
         QuestionCategory.objects.all().delete()
 
         with open('import/categories.json') as f:
             categories = json.loads(f.read())
-            for group_name, sub_categories in categories.items():
-                self.create_category_cluster(group_name, sub_categories)
+
+            for uid, category_dict in categories.items():
+                category = QuestionCategory(name=category_dict['name'], description=category_dict['name'])
+                category.save()
+                categories[uid]['obj'] = category
+
+            for uid, category_dict in categories.items():
+                parent = category_dict['parent']
+                if parent is not None:
+                    category_dict['obj'].parent = categories[str(parent)]['obj']
+
+                links = [categories[str(linked_id)]['obj'] for linked_id in category_dict['linkedTo']]
+                category_dict['obj'].next_categories.set(links)
+                category_dict['obj'].save()
 
     def populate_multiple_choice_questions(self):
         MultipleChoiceQuestion.objects.all().delete()
@@ -81,5 +86,5 @@ class Command(BaseCommand):
                     difficulty="EASY",
                     is_verified=True,
                     junit_template=question['junit_template'],
-                    additional_file_name=question['additional_file_name']
+                    input_file_names=question['input_file_names']
                 )
