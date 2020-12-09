@@ -1,6 +1,5 @@
 import json
 
-from django.shortcuts import get_object_or_404
 from django.core.management import BaseCommand
 
 from course.models.models import QuestionCategory, MultipleChoiceQuestion, JavaQuestion
@@ -30,48 +29,24 @@ class Command(BaseCommand):
             self.populate_java_questions()
 
     def populate_categories(self):
-        for q in QuestionCategory.objects.all():
-            q.question_set.all().delete()
-            q.delete()
+        QuestionCategory.objects.all().delete()
 
         with open('import/categories.json') as f:
-            category_links = json.loads(f.read())
+            categories = json.loads(f.read())
 
-            def get_top_categories(category_tuple):
-                if category_tuple[1]['parent'] is None:
-                    return True
-                else:
-                    return False
+            for uid, category_dict in categories.items():
+                category = QuestionCategory(name=category_dict['name'], description=category_dict['name'])
+                category.save()
+                categories[uid]['obj'] = category
 
-            top_categories = filter(get_top_categories, category_links.items())
+            for uid, category_dict in categories.items():
+                parent = category_dict['parent']
+                if parent is not None:
+                    category_dict['obj'].parent = categories[str(parent)]['obj']
 
-            for parent_id, parent_data in top_categories:
-                print("parent", parent_id)
-                parent_name = parent_data['name']
-                parent = QuestionCategory(pk=parent_id, name=parent_name, description=parent_name)
-                parent.save()
-
-                def get_child_categories(category_tuple):
-                    return category_tuple[1]['parent'] == int(parent_id)
-
-                child_categories = filter(get_child_categories, category_links.items())
-
-                for child_id, child_data in child_categories:
-                    child_name = child_data['name']
-                    child = QuestionCategory(pk=child_id, name=child_name, description=child_name, parent=parent)
-                    print("--", child_id)
-                    child.save()
-
-            for category_id, category_data in category_links.items():
-                print("Next:", category_id)
-                category = get_object_or_404(QuestionCategory, pk=int(category_id))
-                next_categories = category_data['linkedTo']
-                if next_categories is not None:
-                    for next_category_id in next_categories:
-                        print("--", next_category_id)
-                        next_category = get_object_or_404(QuestionCategory, pk=next_category_id)
-                        category.next_categories.add(next_category)
-                    category.save()
+                links = [categories[str(linked_id)]['obj'] for linked_id in category_dict['linkedTo']]
+                category_dict['obj'].next_categories.set(links)
+                category_dict['obj'].save()
 
     def populate_multiple_choice_questions(self):
         MultipleChoiceQuestion.objects.all().delete()
@@ -111,5 +86,5 @@ class Command(BaseCommand):
                     difficulty="EASY",
                     is_verified=True,
                     junit_template=question['junit_template'],
-                    additional_file_name=question['additional_file_name']
+                    input_file_names=question['input_file_names']
                 )

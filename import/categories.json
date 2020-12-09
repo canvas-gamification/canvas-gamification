@@ -42,7 +42,7 @@
   "6": {
     "name": "Casting",
     "parent": 1,
-    "linkedTo": null
+    "linkedTo": []
   },
   "7": {
     "name": "Arithmetic Operators",
@@ -54,7 +54,7 @@
   "8": {
     "name": "Simple Calculation Programs",
     "parent": 1,
-    "linkedTo": null
+    "linkedTo": []
   },
   "9": {
     "name": "Pre-Defined Classes",
@@ -111,17 +111,17 @@
   "16": {
     "name": "Programs with Changing Behaviours",
     "parent": 9,
-    "linkedTo": null
+    "linkedTo": []
   },
   "17": {
     "name": "Mathematical Programs",
     "parent": 9,
-    "linkedTo": null
+    "linkedTo": []
   },
   "18": {
     "name": "Programs Taking Sentence User Input",
     "parent": 9,
-    "linkedTo": null
+    "linkedTo": []
   },
   "19": {
     "name": "Simple Programs Taking Numeric User Input",
@@ -187,7 +187,7 @@
   "27": {
     "name": "Programs With Decision Points",
     "parent": 20,
-    "linkedTo": null
+    "linkedTo": []
   },
   "28": {
     "name": "Loops",
@@ -254,7 +254,7 @@
   "36": {
     "name": "Programs With Repetition",
     "parent": 28,
-    "linkedTo": null
+    "linkedTo": []
   },
   "37": {
     "name": "Methods",
@@ -303,7 +303,7 @@
   "43": {
     "name": "Modular Programs",
     "parent": 37,
-    "linkedTo": null
+    "linkedTo": []
   },
   "44": {
     "name": "Arrays",
@@ -362,12 +362,12 @@
   "51": {
     "name": "Programs Involving Multidimensional Data",
     "parent": 44,
-    "linkedTo": null
+    "linkedTo": []
   },
   "52": {
     "name": "Object Oriented Programming",
     "parent": null,
-    "linkedTo": null
+    "linkedTo": []
   },
   "53": {
     "name": "OOP Overview",
@@ -423,7 +423,7 @@
   "60": {
     "name": "Programs With Interesting Classes",
     "parent": 52,
-    "linkedTo": null
+    "linkedTo": []
   },
   "61": {
     "name": "Creating Objects From Classes",
