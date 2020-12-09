@@ -32,7 +32,6 @@ class ContactUsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 class QuestionCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = QuestionCategory.objects.all()
     serializer_class = QuestionCategorySerializer
-    permission_classes = [TeacherAccessPermission, ]
 
 
 class UserQuestionCategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
