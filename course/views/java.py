@@ -56,7 +56,6 @@ def _java_question_view(request, question, key):
 
     if request.method == "POST":
 
-        print(request.POST)
         file_names = question.input_file_names
         answer_dict = {}
         for file_name in file_names:

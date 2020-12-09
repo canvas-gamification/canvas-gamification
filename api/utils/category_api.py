@@ -32,7 +32,7 @@ def avg_category_success(questions):
 
     if not questions:
         return None
-
+      
     for question in questions:
         uqjs = question.user_junctions
         tokens_recv += uqjs.aggregate(total=Sum(F('tokens_received')))['total']
@@ -41,3 +41,12 @@ def avg_category_success(questions):
         tokens_value += get_token_value(question.category, question.difficulty) * len(num_uqjs)
 
     return get_percentage(tokens_value, tokens_recv)
+
+
+def get_next_categories_id(category):
+    linked_to = category.next_categories.values_list('pk', flat=True)
+
+    if not linked_to:
+        return None
+    else:
+        return linked_to

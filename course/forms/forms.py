@@ -58,7 +58,7 @@ class ProblemCreateForm(forms.ModelForm):
     )
 
     event = forms.ModelChoiceField(
-        label="Type",
+        label="Event Name",
         required=False,
         queryset=Event.objects.none(),
         widget=DynamicSelect(attrs={

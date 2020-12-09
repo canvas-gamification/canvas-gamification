@@ -24,6 +24,7 @@ class QuestionCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    next_categories = models.ManyToManyField('self', related_name="prev_categories", symmetrical=False, blank=True)
 
     def __str__(self):
         if self.parent is None:
@@ -63,7 +64,7 @@ class Question(PolymorphicModel):
     title = models.CharField(max_length=300, null=True, blank=True)
     text = RichTextField(null=True, blank=True)
     answer = models.TextField(null=True, blank=True)
-    max_submission_allowed = models.IntegerField(default=5, blank=True)
+    max_submission_allowed = models.IntegerField(default=None, blank=True)
     tutorial = RichTextField(null=True, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
     time_modified = models.DateTimeField(auto_now=True)
@@ -100,7 +101,18 @@ class Question(PolymorphicModel):
             return 0
         return total_solved / total_tried
 
+    @property
+    def is_exam(self):
+        return self.event is not None and self.event.is_exam
+
+    @property
+    def is_exam_and_open(self):
+        return self.event is not None and self.event.is_exam_and_open()
+
     def save(self, *args, **kwargs):
+        if self.max_submission_allowed is None:
+            self.max_submission_allowed = 10 if self.event is not None and self.event.type == "EXAM" else 100
+
         super().save(*args, **kwargs)
         ensure_uqj(None, self)
 
@@ -249,6 +261,8 @@ class UserQuestionJunction(models.Model):
 
     @property
     def formatted_current_tokens_received(self):
+        if self.question.is_exam_and_open:
+            return str(self.question.token_value)
         return str(self.tokens_received) + "/" + str(self.question.token_value)
 
     def save(self, **kwargs):
@@ -312,6 +326,18 @@ class Submission(PolymorphicModel):
 
         return "Wrong"
 
+    @property
+    def tokens_received(self):
+        return self.uqj.tokens_received
+
+    @property
+    def token_value(self):
+        return get_token_value(self.question.category, self.question.difficulty)
+
+    @property
+    def formatted_tokens_received(self):
+        return str(self.tokens_received) + "/" + str(self.token_value)
+
     def calculate_grade(self, commit=True):
         if self.finalized:
             return
@@ -338,12 +364,12 @@ class Submission(PolymorphicModel):
         if not self.finalized:
             self.calculate_grade(commit=False)
 
-        if not self.in_progress and self.is_correct or self.is_partially_correct:
+        if not self.in_progress and (self.is_correct or self.is_partially_correct or self.question.is_exam):
             user_question_junction = self.uqj
-            received_tokens = self.grade * get_token_value(self.question.category, self.question.difficulty)
+            received_tokens = self.grade * self.token_value
             token_change = received_tokens - user_question_junction.tokens_received
 
-            if token_change > 0:
+            if self.question.is_exam or token_change > 0:
                 user_question_junction.tokens_received = received_tokens
                 user_question_junction.save()
 
