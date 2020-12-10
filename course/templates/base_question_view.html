@@ -53,7 +53,10 @@
     </div>
 
     <div class="card my-1">
-        <div class="card-header"><h1>My Answer</h1></div>
+        <div class="card-header"><h1>
+            {% if question.is_multiple_choice and not question.is_open %}Possible Answers
+            {% else %} My Answer {% endif %}
+        </h1></div>
         <div class="card-body">
             {% if uqj.is_allowed_to_submit %}
                 {% block submit_form %}
