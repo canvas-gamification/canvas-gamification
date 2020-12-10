@@ -218,6 +218,7 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
+    @property
     def is_open(self):
         return self.start_date <= timezone.now() <= self.end_date
 
@@ -242,13 +243,13 @@ class Event(models.Model):
     def has_view_permission(self, user):
         if self.course.is_instructor(user) or user.is_teacher:
             return True
-        return self.is_open() and self.course.is_registered(user)
+        return self.is_open and self.course.is_registered(user)
 
     def has_edit_permission(self, user):
         return self.course.is_instructor(user) or user.is_teacher
 
     def is_allowed_to_open(self, user):
-        return self.course.is_registered(user) and self.is_open()
+        return self.course.is_registered(user) and self.is_open
 
     def can_view_results(self, user):
         return self.is_closed() and self.course.is_registered(user)
@@ -257,7 +258,7 @@ class Event(models.Model):
         return self.is_not_available_yet() and self.course.is_registered(user)
 
     def is_exam_and_open(self):
-        return self.is_exam and self.is_open()
+        return self.is_exam and self.is_open
 
 
 class TokenUseOption(models.Model):
