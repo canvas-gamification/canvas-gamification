@@ -60,6 +60,9 @@ class TokenValue(models.Model):
         unique_together = ('category', 'difficulty')
 
 
+QUESTION_TYPES = {'mc': 'multiple choice question', 'parsons': 'parsons question', 'java': 'java question'}
+
+
 class Question(PolymorphicModel):
     title = models.CharField(max_length=300, null=True, blank=True)
     text = RichTextField(null=True, blank=True)
@@ -86,6 +89,10 @@ class Question(PolymorphicModel):
     def type_name(self):
         return self._meta.verbose_name
 
+    @property
+    def is_multiple_choice(self):
+        return self.type_name == QUESTION_TYPES['mc']
+
     def __str__(self):
         return "{} ({})".format(self.type_name, self.id)
 
@@ -108,6 +115,10 @@ class Question(PolymorphicModel):
     @property
     def is_exam_and_open(self):
         return self.event is not None and self.event.is_exam_and_open()
+
+    @property
+    def is_open(self):
+        return self.event is not None and self.event.is_open
 
     def save(self, *args, **kwargs):
         if self.max_submission_allowed is None:
@@ -235,7 +246,7 @@ class UserQuestionJunction(models.Model):
         return self.submissions.count()
 
     def formatted_num_attempts(self):
-        return str(self.num_attempts()) + "/" + str(self.question.max_submission_allowed)
+        return "Used " + str(self.num_attempts()) + " out of " + str(self.question.max_submission_allowed)
 
     @property
     def status_class(self):
