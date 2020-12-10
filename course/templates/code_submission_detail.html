@@ -25,12 +25,15 @@
                 <th>
                     Time Submitted
                 </th>
-                <th>
-                    Grade
-                </th>
-                <th>
-                    Status
-                </th>
+                {% if not submission.uqj.question.event.is_exam_and_open %}
+                     <th>
+                        Grade
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                {% endif %}
+
             </tr>
             </thead>
             <tbody>
@@ -41,12 +44,14 @@
                 <td>
                     {{ submission.submission_time }}
                 </td>
-                <td>
-                    {{ submission.grade }}
-                </td>
-                <td>
-                    {{ submission.status }}
-                </td>
+                {% if not submission.uqj.question.event.is_exam_and_open %}
+                    <td>
+                        {{ submission.grade }}
+                    </td>
+                    <td>
+                        {{ submission.status }}
+                    </td>
+                {% endif %}
             </tr>
             </tbody>
         </table>
@@ -126,11 +131,14 @@
                     <p>This is usually due to compilation error or your answer is still being evaluated, see compile
                         output or refresh the page</p>
                 {% endif %}
-                <button class="btn btn-info"
-                        onclick="window.location.href='{% url 'course:question_view' submission.uqj.question.pk %}'">
-                    Re-Attempt
-                </button>
             </div>
         </div>
     {% endif %}
+    {% if submission.uqj.is_allowed_to_submit %}
+        <button class="btn btn-info"
+            onclick="window.location.href='{% url 'course:question_view' submission.uqj.question.pk %}'">
+        Re-Attempt
+    </button>
+    {% endif %}
+
 {% endblock %}

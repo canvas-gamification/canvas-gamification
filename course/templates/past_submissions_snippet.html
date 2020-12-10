@@ -1,4 +1,5 @@
-{% load arrays %}
+﻿{% load arrays %}
+{% load course %}
 
 <table class="table table-hover">
     <thead>
@@ -23,44 +24,23 @@
     </tr>
     </thead>
     <tbody>
-    {% if event.is_exam %}
-        {% return_last_item submissions as graded_submission  %}
-        <tr class="table">
-            {% if graded_submission %}
-                <th scope="row">1</th>
-            {% endif %}
-            {% if graded_submission.show_answer %}
-                <td>{{ graded_submission.answer_display }}</td>
-            {% endif %}
-            {% if not event.is_exam_and_open %}
-                <td>{{ graded_submission.grade | floatformat:2 }}</td>
-            {% endif %}
-            {% if not event.is_exam_and_open %}
-                <td>{{ graded_submission.formatted_tokens_received }}</td>
-            {% endif %}
-            <td>{{ graded_submission.submission_time }}</td>
-            {% if not event.is_exam_and_open %}
-                <td>{{ graded_submission.status }}</td>
-            {% endif %}
-            {% if graded_submission.show_detail %}
-                <td>
-                    <button class="btn btn-info"
-                            onclick="window.location.href='{% url 'course:submission_detail' graded_submission.pk %}'">Details
-                    </button>
-                </td>
-            {% endif %}
-        </tr>
-    {% else %}
     {% for submission in submissions reversed %}
-        <tr class="table-{{ submission.status_color }}">
+        {% row_class submission event as row_class_name %}
+        <tr class={{ row_class_name }}>
             <th scope="row">{{ forloop.revcounter }}</th>
             {% if submission_class.show_answer %}
                 <td>{{ submission.answer_display }}</td>
             {% endif %}
-            <td>{{ submission.grade | floatformat:2 }}</td>
-            <td>{{ submission.formatted_tokens_received }}</td>
+            {% if not event.is_exam_and_open %}
+                <td>{{ submission.grade | floatformat:2 }}</td>
+            {% endif %}
+            {% if not event.is_exam_and_open %}
+                <td>{{ submission.formatted_tokens_received }}</td>
+            {% endif %}
             <td>{{ submission.submission_time }}</td>
-            <td>{{ submission.status }}</td>
+            {% if not event.is_exam_and_open %}
+                <td>{{ submission.status }}</td>
+            {% endif %}
             {% if submission_class.show_detail %}
                 <td>
                     <button class="btn btn-info"
@@ -70,6 +50,5 @@
             {% endif %}
         </tr>
     {% endfor %}
-    {% endif %}
     </tbody>
 </table>
