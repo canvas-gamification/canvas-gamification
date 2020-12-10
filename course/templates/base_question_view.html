@@ -63,7 +63,11 @@
                 {% endblock %}
             {% else %}
                 {% if user.is_authenticated %}
-                    <p>Maximum number of submissions reached</p>
+                    {% if not question.is_open %}
+                        <p>Event has finished, submissions are closed</p>
+                    {% else %}
+                        <p>Maximum number of submissions reached</p>
+                    {% endif %}
                 {% else %}
                     <p>Please log in to submit</p>
                 {% endif %}

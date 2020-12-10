@@ -109,6 +109,10 @@ class Question(PolymorphicModel):
         return total_solved / total_tried
 
     @property
+    def is_open(self):
+        return self.event is not None and self.event.is_open
+
+    @property
     def is_exam(self):
         return self.event is not None and self.event.is_exam
 
@@ -196,7 +200,7 @@ class UserQuestionJunction(models.Model):
         if self.is_solved:
             return False
 
-        return self.submissions.count() < self.question.max_submission_allowed
+        return self.submissions.count() < self.question.max_submission_allowed and self.question.is_open
 
     def _get_variables(self):
         if not isinstance(self.question, VariableQuestion):
