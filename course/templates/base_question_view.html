@@ -22,7 +22,11 @@
         <thead>
         <tr>
             <th scope="col">Category</th>
-            <th scope="col">Token&nbspValue</th>
+            {% if question.event.is_exam %}
+                <th scope="col">Tokens Worth</th>
+            {% else %}
+                <th scope="col">Token&nbspValue</th>
+            {% endif %}
             {% if not question.event.is_exam %}
                 <th scope="col">Status</th>
             {% endif %}
@@ -70,6 +74,9 @@
     <div class="card my-1">
         <div class="card-header"><h1>My Past Submissions</h1></div>
         <div class="card-body">
+            {% if not question.event.is_exam %}
+                <b>Only the submission with the highest token received value will be awarded</b></p>
+            {% endif %}
             {% include 'past_submissions_snippet.html' with submissions=uqj.submissions.all event=uqj.question.event %}
         </div>
     </div>
