@@ -41,10 +41,11 @@
                     </div>
                 {% endfor %}
             </div>
-
-            <div class="form-group row ml-0">
-                <button type="submit" class="btn btn-success"> Submit</button>
-            </div>
+            {% if uqj.is_allowed_to_submit %}
+                <div class="form-group row ml-0">
+                    <button type="submit" class="btn btn-success"> Submit</button>
+                </div>
+            {% endif %}
         </form>
     </div>
 

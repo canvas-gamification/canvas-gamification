@@ -102,9 +102,11 @@
 
         <input type="hidden" id="source_code" name="code" class="form-control">
 
-        <div class="form-group my-3">
-            <button type="submit" class="btn btn-success"> Submit</button>
-        </div>
+        {% if uqj.is_allowed_to_submit %}
+            <div class="form-group my-3">
+                <button type="submit" class="btn btn-success"> Submit</button>
+            </div>
+        {% endif %}
     </form>
 </div>
 

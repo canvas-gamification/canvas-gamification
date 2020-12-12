@@ -189,8 +189,8 @@ class UserQuestionJunction(models.Model):
 
     @property
     def is_allowed_to_submit(self):
-        if self.user.is_teacher:
-            return True
+        # if self.user.is_teacher:
+        #     return True
         if self.opened_tutorial:
             return False
         if self.is_solved:
