@@ -120,10 +120,6 @@ class Question(PolymorphicModel):
     def is_exam_and_open(self):
         return self.event is not None and self.event.is_exam_and_open()
 
-    @property
-    def is_open(self):
-        return self.event is not None and self.event.is_open
-
     def save(self, *args, **kwargs):
         if self.max_submission_allowed is None:
             self.max_submission_allowed = 10 if self.event is not None and self.event.type == "EXAM" else 100
