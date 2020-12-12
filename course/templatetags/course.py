@@ -1,5 +1,6 @@
+from django import template
 from canvas.models import Event
-from canvas.templatetags.canvas import register
+register = template.Library()
 
 
 @register.simple_tag
