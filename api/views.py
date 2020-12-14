@@ -1,10 +1,10 @@
 # Create your views here.
 from rest_framework import viewsets, mixins
 
-from accounts.models import UserConsent
+from accounts.models import UserConsent, MyUser
 from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer,\
-    UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserQuestionCategorySerializer
+    UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 
 
@@ -34,6 +34,6 @@ class QuestionCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = QuestionCategorySerializer
 
 
-class UserQuestionCategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    queryset = QuestionCategory.objects.all()
-    serializer_class = UserQuestionCategorySerializer
+class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = MyUser.objects.all()
+    serializer_class = UserStatsSerializer

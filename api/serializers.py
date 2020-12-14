@@ -1,11 +1,9 @@
 from rest_framework import serializers
 
-from accounts.models import UserConsent
+from accounts.models import UserConsent, MyUser
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 from general.models import ContactUs
 from utils.recaptcha import validate_recaptcha
-from api.utils.category_api import count_category_questions, get_avg_category_success, get_user_success_rate, \
-    get_next_categories_id
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -52,26 +50,25 @@ class QuestionCategorySerializer(serializers.ModelSerializer):
     nextCategories = serializers.SerializerMethodField('next_categories_ids')
 
     def count_questions(self, category):
-        return count_category_questions(category)
+        return category.question_count
 
     def get_avg_success(self, category):
-        return get_avg_category_success(category)
+        return category.average_success
 
     def next_categories_ids(self, category):
-        return get_next_categories_id(category)
+        return category.next_category_ids
 
     class Meta:
         model = QuestionCategory
         fields = ['pk', 'name', 'description', 'parent', 'numQuestions', 'avgSuccess', 'nextCategories']
 
 
-class UserQuestionCategorySerializer(serializers.Serializer):
-    avgUserSuccess = serializers.SerializerMethodField('user_success')
-    avgCategorySuccess = serializers.SerializerMethodField('category_success')
+class UserStatsSerializer(serializers.ModelSerializer):
+    successRateByCategory = serializers.SerializerMethodField('success_rate_by_category')
 
-    def user_success(self, category):
-        user_id = self.context['request'].query_params.get('user', None)
-        return get_user_success_rate(user_id, category)
+    def success_rate_by_category(self, user):
+        return user.success_rate_by_category
 
-    def category_success(self, category):
-        return get_avg_category_success(category)
+    class Meta:
+        model = MyUser
+        fields = ['pk', 'successRateByCategory']

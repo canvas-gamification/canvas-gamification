@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser, AnonymousUser
 # Create your models here.
 from django.db import models
+from django.db.models import Count, Q
 
 from course.utils.utils import ensure_uqj
 
@@ -42,6 +43,18 @@ class MyUser(AbstractUser):
     @property
     def has_complete_profile(self):
         return self.has_name
+
+    @property
+    def success_rate_by_category(self):
+        data = list(
+            self.question_junctions.values('question__category')
+                .annotate(total=Count('*'), solved=Count('pk', filter=Q(is_solved=True)))
+        )
+        data = [{
+            'category': category['question__category'],
+            'avgSuccess': 0 if category['total'] == 0 else category['solved'] / category['total']
+        } for category in data]
+        return data
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

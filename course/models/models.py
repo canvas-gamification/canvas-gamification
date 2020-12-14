@@ -32,6 +32,22 @@ class QuestionCategory(models.Model):
         else:
             return "{} :: {}".format(self.parent, self.name)
 
+    @property
+    def average_success(self):
+        solved = UserQuestionJunction.objects.filter(question__category=self, is_solved=True).count()
+        total = UserQuestionJunction.objects.filter(question__category=self).count()
+        if total == 0:
+            return 0
+        return 100 * solved / total
+
+    @property
+    def question_count(self):
+        return self.question_set.count()
+
+    @property
+    def next_category_ids(self):
+        return self.next_categories.values_list('pk', flat=True)
+
 
 DIFFICULTY_CHOICES = [
     ("EASY", "EASY"),
