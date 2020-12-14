@@ -52,7 +52,7 @@ class MyUser(AbstractUser):
         )
         data = [{
             'category': category['question__category'],
-            'avgSuccess': 0 if category['total'] == 0 else category['solved'] / category['total']
+            'avgSuccess': 0 if category['total'] == 0 else 100 * category['solved'] / category['total']
         } for category in data]
         return data
 
