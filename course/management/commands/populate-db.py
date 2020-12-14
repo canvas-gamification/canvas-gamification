@@ -2,7 +2,7 @@ import json
 
 from django.core.management import BaseCommand
 
-from course.models.models import QuestionCategory, MultipleChoiceQuestion, JavaQuestion
+from course.models.models import QuestionCategory, MultipleChoiceQuestion, JavaQuestion, Question
 from course.utils.utils import create_multiple_choice_question, create_java_question
 
 
@@ -29,6 +29,7 @@ class Command(BaseCommand):
             self.populate_java_questions()
 
     def populate_categories(self):
+        Question.objects.update(category=None)
         QuestionCategory.objects.all().delete()
 
         with open('import/categories.json') as f:
