@@ -108,6 +108,5 @@ class JunitGrader(Grader):
             },
             headers=self.HEADERS,
         )
-        print(r.json())
         submission.tokens.append(r.json()['token'])
         self.evaluate(submission)
