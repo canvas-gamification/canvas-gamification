@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic import TemplateView
 from rest_framework.routers import DefaultRouter
 from rest_framework.schemas import get_schema_view
 
@@ -20,5 +21,9 @@ urlpatterns = [
         title="Canvas Gamification API",
         description="All the available APIs",
         version="1.0.0",
-    ), name='openapi-schema')
+    ), name='openapi-schema'),
+    path('docs/', TemplateView.as_view(
+        template_name='api/docs.html',
+        extra_context={'schema_url': 'api:openapi-schema'}
+    ), name='docs'),
 ] + router.urls

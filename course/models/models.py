@@ -4,7 +4,7 @@ import random
 from datetime import datetime
 
 from django.db import models
-from django.db.models import Count, Q, Sum
+from django.db.models import Count, Q
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
 from djrichtextfield.models import RichTextField
@@ -52,7 +52,6 @@ class QuestionCategory(models.Model):
                 cnt += cat.question_set.count()
             return cnt
         return self.question_set.count()
-
 
     @property
     def next_category_ids(self):
