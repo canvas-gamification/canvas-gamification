@@ -1,4 +1,6 @@
+from django.urls import path
 from rest_framework.routers import DefaultRouter
+from rest_framework.schemas import get_schema_view
 
 from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
     QuestionCategoryViewSet, UserStatsViewSet
@@ -13,4 +15,10 @@ router.register(r'question-category', QuestionCategoryViewSet, basename='questio
 router.register(r'user-stats', UserStatsViewSet, basename='user-stats')
 
 app_name = 'api'
-urlpatterns = router.urls
+urlpatterns = [
+    path('openapi', get_schema_view(
+        title="Canvas Gamification API",
+        description="All the available APIs",
+        version="1.0.0",
+    ), name='openapi-schema')
+] + router.urls
