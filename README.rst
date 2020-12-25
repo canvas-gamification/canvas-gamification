@@ -59,11 +59,6 @@ In local development you can set the environment variables in
 env/gamification.dev.env. All the field are pre populated
 so if you just want to run the website locally don't change it.
 
-Go to canvas_gamification/settings.py and change
-
-.. code-block:: bash
-
-    DEBUG=True
 
 Python
 ++++++
@@ -172,6 +167,9 @@ The server should be up and running on port 80
 Documentation
 =============
 
+Code Documentation
+------------------
+
 Documentation is located at "docs/" folder.
 
 Generate the html file by running this code under docs/ directory
@@ -179,6 +177,12 @@ Generate the html file by running this code under docs/ directory
 .. code-block:: bash
 
     make html
+
+API Documentation
+-----------------
+
+API Documentation is auto-generated from code
+and is accessible at /api/docs.
 
 Authors
 =======
