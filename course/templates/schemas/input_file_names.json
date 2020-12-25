@@ -1,9 +1,20 @@
 {
-  "title": "Input File Names",
+  "title": "Submission Files",
   "type": "array",
   "format": "table",
   "items": {
-    "type": "string",
-    "title": "File Name"
+    "type": "object",
+    "title": "Files",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Name of the file"
+      },
+      "template": {
+        "type": "string",
+        "description": "Initial template of the file",
+        "format": "textarea"
+      }
+    }
   }
 }

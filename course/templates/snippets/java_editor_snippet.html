@@ -23,6 +23,7 @@
             enableLiveAutocompletion: true
         });
         editor.resize();
+        editor.setValue($("#input-{{ id }}").val())
         editor.session.on('change', function () {
             const val = editor.getSession().getValue();
             $("#input-{{ id }}").val(val);

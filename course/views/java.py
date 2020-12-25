@@ -56,7 +56,7 @@ def _java_question_view(request, question, key):
 
     if request.method == "POST":
 
-        file_names = question.input_file_names
+        file_names = question.get_input_file_names_array()
         answer_dict = {}
         for file_name in file_names:
             if file_name not in request.POST:

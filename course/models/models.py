@@ -185,7 +185,13 @@ class JavaQuestion(VariableQuestion):
     grader = JunitGrader()
 
     def get_input_file_names(self):
-        return " ".join(self.input_file_names)
+        return " ".join(self.get_input_file_names_array())
+
+    def get_input_file_names_array(self):
+        return [x['name'] for x in self.input_file_names]
+
+    def get_input_files(self):
+        return self.input_file_names
 
 
 def random_seed():
