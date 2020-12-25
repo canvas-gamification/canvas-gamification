@@ -71,7 +71,20 @@ class ProblemTestCase(TestCase):
                 difficulty='EASY',
                 is_verified=True,
                 junit_template='',
-                input_file_names=['A.java', 'B.java', 'C.java'],
+                input_file_names=[
+                    {
+                        'name': 'A.java',
+                        'template': '',
+                    },
+                    {
+                        'name': 'B.java',
+                        'template': '',
+                    },
+                    {
+                        'name': 'C.java',
+                        'template': '',
+                    }
+                ],
                 event=self.event
             )
 

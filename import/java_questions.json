@@ -3,7 +3,14 @@
     "title": "Java Question 1",
     "text": "Write a Java Calculator class that can add 2 numbers",
     "input_file_names": [
-      "Calculator.java"
+      {
+        "name": "Calculator.java",
+        "template": "public class Calculator {\n    public int add(int x, int y) {\n        return x + y;\n    }\n}"
+      },
+      {
+        "name": "Calculator2.java",
+        "template": "public class Calculator2 {\n    public int sub(int x, int y) {\n        return x - y;\n    }\n}"
+      }
     ],
     "junit_template": "import static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport org.junit.jupiter.api.Test;\n\nclass MainTest {\n   \n    private final Calculator calculator = new Calculator();\n\n    @Test\n    void addition() {\n        assertEquals(2, calculator.add(1, 1));\n    }\n}"
   }
