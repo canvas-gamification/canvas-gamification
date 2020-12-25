@@ -157,12 +157,15 @@ DJRICHTEXTFIELD_CONFIG = {
     'profiles': {
         'basic': {
             'toolbar': [
-                {'items': ['Format', '-', 'Bold', 'Italic', '-',
+                {'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'CopyFormatting',
                            'RemoveFormat']},
-                {'items': ['Link', 'Unlink', 'Image', 'Table']},
+                {'items': ['Link', 'CodeSnippet', 'Code', 'base64image', 'Mathjax', 'SpecialChar']},
+                {'items': ['Styles', 'Format', 'Font', 'FontSize']},
                 {'items': ['Source']}
             ],
             'format_tags': 'p;h1;h2;h3',
+            'extraPlugins': ['codesnippet', 'codeTag', 'base64image'],
+            'mathJaxLib': '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML',
         },
         'advanced': {
             'extraPlugins': ['codesnippet', 'codeTag', 'base64image'],

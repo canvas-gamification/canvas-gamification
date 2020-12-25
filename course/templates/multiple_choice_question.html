@@ -7,7 +7,7 @@
         {% for key, text in uqj.get_rendered_choices.items %}
             <div class="form-group">
                 <input type="radio" id="answer-{{ key }}" name="answer" value="{{ key }}">
-                <label for="answer-{{ key }}">{{ text }}</label>
+                <label for="answer-{{ key }}">{% autoescape off %}{{ text }}{% endautoescape %}</label>
             </div>
         {% endfor %}
         {% if uqj.is_allowed_to_submit %}

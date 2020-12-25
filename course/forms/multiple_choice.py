@@ -1,4 +1,5 @@
 from django import forms
+from djrichtextfield.widgets import RichTextWidget
 
 from course.fields import JSONFormField
 from course.forms.forms import ProblemCreateForm
@@ -39,9 +40,7 @@ class CheckboxQuestionForm(MultipleChoiceQuestionForm):
 class ChoiceForm(forms.Form):
     text = forms.CharField(
         label='Answer',
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-        })
+        widget=RichTextWidget(field_settings='basic')
     )
 
     def __init__(self, *args, **kwargs):
