@@ -117,6 +117,7 @@ def problem_set_view(request):
     difficulty = request.GET.get('difficulty', None)
     solved = request.GET.get('solved', None)
     category = request.GET.get('category', None)
+    is_sample = request.GET.get('is_sample', None)
 
     q = Q(question__is_verified=True)
 
@@ -126,6 +127,9 @@ def problem_set_view(request):
         q = q & Q(question__difficulty=difficulty)
     if category:
         q = q & (Q(question__category=category) | Q(question__category__parent=category))
+
+    if is_sample:
+        q = q & Q(question__is_sample=True if is_sample == 'Yes' else False)
 
     if solved == 'Solved':
         q = q & Q(is_solved=True)

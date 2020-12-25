@@ -160,3 +160,12 @@ class ProblemFilterForm(forms.Form):
             'class': 'form-control',
         })
     )
+
+    is_sample = forms.ChoiceField(
+        label="Sample",
+        required=False,
+        choices=[('', 'All'), ('Yes', 'Yes'), ('No', 'No')],
+        widget=widgets.Select(attrs={
+            'class': 'form-control',
+        })
+    )
