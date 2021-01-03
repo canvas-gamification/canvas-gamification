@@ -162,6 +162,11 @@ class Question(PolymorphicModel):
     def has_edit_permission(self, user):
         return user.is_teacher
 
+    def get_duplicate_question(self):
+        dupe_q = self
+        dupe_q.pk = None
+        return dupe_q
+
 
 class VariableQuestion(Question):
     variables = JSONField()
@@ -172,6 +177,7 @@ class MultipleChoiceQuestion(VariableQuestion):
     visible_distractor_count = models.IntegerField()
 
     grader = MultipleChoiceGrader()
+
 
 
 class CheckboxQuestion(MultipleChoiceQuestion):
