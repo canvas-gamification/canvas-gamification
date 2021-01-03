@@ -6,7 +6,25 @@ from djrichtextfield.widgets import RichTextWidget
 from course.models.models import Question, VariableQuestion, MultipleChoiceQuestion, Submission, QuestionCategory, \
     CheckboxQuestion, JavaSubmission, JavaQuestion, TokenValue, MultipleChoiceSubmission, UserQuestionJunction
 from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
+import copy  # Python native copy functionality
 
+
+def duplicate_question(modeladmin, request, queryset):
+    '''
+    Django Admin Action that will duplicate selected question instances and set their author to the currently logged-in user
+    '''
+    # qitem refers to the instances of the selected questions
+    for qitem in queryset:
+        dupe_q = copy.deepcopy(qitem)
+        dupe_q.id = None  # Make it a new object
+        dupe_q.save()  # Save the object
+
+        # TODO: Update Author to Current User
+        current_author = None
+        if request.user.is_authenticated:
+            current_author = request.user.get_username()
+
+    duplicate_question.short_description = "Duplicate Selected Questions"
 
 class QuestionAdminForm(forms.ModelForm):
 
@@ -22,6 +40,7 @@ class QuestionAdminForm(forms.ModelForm):
 
 
 class QuestionAdmin(admin.ModelAdmin):
+    actions = [duplicate_question]
     list_display = ('__str__', 'title', 'author', 'category', 'difficulty', 'is_verified',)
     list_filter = ('author', 'category', 'difficulty', 'is_verified',)
     form = QuestionAdminForm
