@@ -16,13 +16,19 @@ def duplicate_question(modeladmin, request, queryset):
     # qitem refers to the instances of the selected questions
     for qitem in queryset:
         dupe_q = copy.deepcopy(qitem)
-        dupe_q.id = None  # Make it a new object
-        dupe_q.save()  # Save the object
+        # Code below makes the duplicate object turn into a new object with values intact
+        dupe_q.id = None
+        dupe_q.pk = None
+        dupe_q.variablequestion_ptr_id = None
+        dupe_q.question_ptr_id = None
 
         # TODO: Update Author to Current User
         current_author = None
         if request.user.is_authenticated:
-            current_author = request.user.get_username()
+            current_author = request.user
+
+        dupe_q.author = current_author  # Sets the duplicate question's author to current user
+        dupe_q.save()  # Save the object
 
     duplicate_question.short_description = "Duplicate Selected Questions"
 
