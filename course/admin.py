@@ -6,31 +6,24 @@ from djrichtextfield.widgets import RichTextWidget
 from course.models.models import Question, VariableQuestion, MultipleChoiceQuestion, Submission, QuestionCategory, \
     CheckboxQuestion, JavaSubmission, JavaQuestion, TokenValue, MultipleChoiceSubmission, UserQuestionJunction
 from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
-import copy  # Python native copy functionality
+import copy
 
 
-def duplicate_question(modeladmin, request, queryset):
+def clone_question(modeladmin, request, queryset):
     '''
     Django Admin Action that will duplicate selected question instances and set their author to the currently logged-in user
     '''
-    # qitem refers to the instances of the selected questions
-    for qitem in queryset:
-        dupe_q = copy.deepcopy(qitem)
-        # Code below makes the duplicate object turn into a new object with values intact
-        dupe_q.id = None
-        dupe_q.pk = None
-        dupe_q.variablequestion_ptr_id = None
-        dupe_q.question_ptr_id = None
-
-        # TODO: Update Author to Current User
+    # question_item refers to the instances of the selected questions
+    for question_item in queryset:
+        question_clone = question_item.clone()
         current_author = None
         if request.user.is_authenticated:
             current_author = request.user
 
-        dupe_q.author = current_author  # Sets the duplicate question's author to current user
-        dupe_q.save()  # Save the object
+        question_clone.author = current_author  # Sets the duplicate question's author to current user
+        question_clone.save()  # Save the object
 
-    duplicate_question.short_description = "Duplicate Selected Questions"
+    clone_question.short_description = "Clone Selected Questions"
 
 class QuestionAdminForm(forms.ModelForm):
 
@@ -46,7 +39,7 @@ class QuestionAdminForm(forms.ModelForm):
 
 
 class QuestionAdmin(admin.ModelAdmin):
-    actions = [duplicate_question]
+    actions = [clone_question]
     list_display = ('__str__', 'title', 'author', 'category', 'difficulty', 'is_verified',)
     list_filter = ('author', 'category', 'difficulty', 'is_verified',)
     form = QuestionAdminForm
