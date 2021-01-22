@@ -19,7 +19,7 @@ class SampleMultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
     serializer_class = MultipleChoiceQuestionSerializer
 
 
-class UserConsentViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class UserConsentViewSet(viewsets.ModelViewSet):
     serializer_class = UserConsentSerializer
     permission_classes = [UserConsentPermission, ]
     queryset = UserConsent.objects.all()

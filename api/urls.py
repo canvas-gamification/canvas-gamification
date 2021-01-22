@@ -15,6 +15,7 @@ router.register(r'user-consent', UserConsentViewSet, basename='user_consent')
 router.register(r'contact-us', ContactUsViewSet, basename='contact_us')
 router.register(r'question-category', QuestionCategoryViewSet, basename='question-category')
 router.register(r'user-stats', UserStatsViewSet, basename='user-stats')
+router.register(r'user-consent', UserConsentViewSet, basename='user-consent')
 
 app_name = 'api'
 urlpatterns = [
