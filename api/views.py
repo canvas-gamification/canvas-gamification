@@ -3,10 +3,10 @@ from rest_framework import viewsets, mixins
 
 from accounts.models import UserConsent, MyUser
 from accounts.utils.email_functions import send_activation_email
-from api.permissions import TeacherAccessPermission, UserConsentPermission
+from api.permissions import TeacherAccessPermission, UserConsentPermission, UserProfilePermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
     UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
-    UserRegistrationSerializer
+    UserRegistrationSerializer, UserProfileDetailsSerializer
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 
 
@@ -33,6 +33,15 @@ class UserRegistrationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     def create(self, request, *args, **kwargs):
         user = super().create(request, *args, **kwargs)
         send_activation_email(request, user)
+
+
+class UserProfileDetailsViewSet(viewsets.ModelViewSet):
+    queryset = MyUser.objects.all()
+    serializer_class = UserProfileDetailsSerializer
+    permission_classes = [UserProfilePermission, ]
+
+    def update(self, request, *args, **kwargs):
+        super().update(request, *args, **kwargs)
 
 
 class ContactUsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

@@ -5,7 +5,7 @@ from rest_framework.schemas import get_schema_view
 from rest_framework.authtoken import views
 
 from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
-    QuestionCategoryViewSet, UserStatsViewSet, UserRegistrationViewSet
+    QuestionCategoryViewSet, UserStatsViewSet, UserRegistrationViewSet, UserProfileDetailsViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
@@ -17,6 +17,7 @@ router.register(r'question-category', QuestionCategoryViewSet, basename='questio
 router.register(r'user-stats', UserStatsViewSet, basename='user-stats')
 router.register(r'user-consent', UserConsentViewSet, basename='user-consent')
 router.register(r'register', UserRegistrationViewSet, basename='register')
+router.register(r'update-profile', UserProfileDetailsViewSet, basename='update-profile')
 
 app_name = 'api'
 urlpatterns = [

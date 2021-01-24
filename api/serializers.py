@@ -31,6 +31,21 @@ class UserConsentSerializer(serializers.ModelSerializer):
         fields = ['user', 'consent', 'legal_first_name', 'legal_last_name', 'student_number', 'date']
 
 
+class UserProfileDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyUser
+        fields = ['first_name', 'last_name', 'email']
+
+    def update(self, instance, validated_data):
+        user = MyUser
+
+        user.first_name = validated_data.get('first_name')
+        user.last_name = validated_data.get('last_name')
+        user.email = validated_data.get('email')
+        user.save()
+        return user
+
+
 class UserRegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password1 = serializers.CharField()
@@ -41,7 +56,7 @@ class UserRegistrationSerializer(serializers.Serializer):
         pass
 
     def create(self, validated_data):
-        
+
         user = User.objects.create_user(
             validated_data.get('email'),
             validated_data.get('password'))
