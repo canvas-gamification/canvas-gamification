@@ -1,12 +1,13 @@
 # Create your views here.
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, generics
+from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import UserConsent, MyUser
 from accounts.utils.email_functions import send_activation_email
 from api.permissions import TeacherAccessPermission, UserConsentPermission, UserProfilePermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
     UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
-    UserRegistrationSerializer, UserProfileDetailsSerializer
+    UserRegistrationSerializer, UserProfileDetailsSerializer, ChangePasswordSerializer
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 
 
@@ -19,6 +20,12 @@ class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
 class SampleMultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
     queryset = MultipleChoiceQuestion.objects.filter(is_sample=True).all()
     serializer_class = MultipleChoiceQuestionSerializer
+
+
+class ChangePasswordViewSet(viewsets.ModelViewSet):
+    queryset = MyUser.objects.all()
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = ChangePasswordSerializer
 
 
 class UserConsentViewSet(viewsets.ModelViewSet):

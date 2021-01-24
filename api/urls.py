@@ -5,7 +5,7 @@ from rest_framework.schemas import get_schema_view
 from rest_framework.authtoken import views
 
 from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
-    QuestionCategoryViewSet, UserStatsViewSet, UserRegistrationViewSet, UserProfileDetailsViewSet
+    QuestionCategoryViewSet, UserStatsViewSet, UserRegistrationViewSet, UserProfileDetailsViewSet, ChangePasswordViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
@@ -18,6 +18,7 @@ router.register(r'user-stats', UserStatsViewSet, basename='user-stats')
 router.register(r'user-consent', UserConsentViewSet, basename='user-consent')
 router.register(r'register', UserRegistrationViewSet, basename='register')
 router.register(r'update-profile', UserProfileDetailsViewSet, basename='update-profile')
+router.register(r'change-password', ChangePasswordViewSet, basename='change-password')
 
 app_name = 'api'
 urlpatterns = [
