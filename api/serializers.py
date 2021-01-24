@@ -1,9 +1,13 @@
+from django.contrib.auth import get_user_model
+
 from rest_framework import serializers
 
 from accounts.models import UserConsent, MyUser
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 from general.models import ContactUs
 from utils.recaptcha import validate_recaptcha
+
+User = get_user_model()
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -25,6 +29,36 @@ class UserConsentSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserConsent
         fields = ['user', 'consent', 'legal_first_name', 'legal_last_name', 'student_number', 'date']
+
+
+class UserRegistrationSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password1 = serializers.CharField()
+    password2 = serializers.CharField()
+    recaptcha_key = serializers.CharField(write_only=True)
+
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        
+        user = User.objects.create_user(
+            validated_data.get('email'),
+            validated_data.get('password'))
+        user.is_active = False
+        user.email = validated_data.get('email')
+        user.save()
+        return user
+
+    def validate_recaptcha_key(self, value):
+        if not validate_recaptcha(value):
+            raise serializers.ValidationError('reCaptcha should be validate')
+        return value
+
+    def validate_password(self, value, value2):
+        if value != value2:
+            raise serializers.ValidationError('Password should match')
+        return value
 
 
 class ContactUsSerializer(serializers.ModelSerializer):
