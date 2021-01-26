@@ -72,3 +72,25 @@ class UserStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
         fields = ['pk', 'successRateByCategory']
+
+
+class UserActionsSerializer(serializers.ModelSerializer):
+    recentActions = serializers.SerializerMethodField('get_ordered_actions')
+
+    def get_ordered_actions(self, user):
+        return user.actions.order_by("-time_modified").all().values()
+
+    class Meta:
+        model = MyUser
+        fields = ['pk', 'recentActions']
+
+
+class ViewedQuestionsSerializer(serializers.ModelSerializer):
+    viewedQuestions = serializers.SerializerMethodField('get_viewed_questions')
+
+    def get_viewed_questions(self, user):
+        return user.question_junctions.order_by('-last_viewed').values()
+
+    class Meta:
+        model = MyUser
+        fields = ['pk', 'viewedQuestions']
