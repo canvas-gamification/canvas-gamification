@@ -45,6 +45,7 @@ class UserActionsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MyUser.objects.all()
     serializer_class = UserActionsSerializer
 
+
 class ViewedQuestionsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MyUser.objects.all()
     serializer_class = ViewedQuestionsSerializer
