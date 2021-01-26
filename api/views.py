@@ -4,10 +4,9 @@ from rest_framework import viewsets, mixins
 from accounts.models import UserConsent, MyUser
 from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
-    UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, UserActionsSerializer, \
-    ViewedQuestionsSerializer
+    UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
+    UserActionsSerializer, ViewedQuestionsSerializer
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
-from general.models import Action
 
 
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
