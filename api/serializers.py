@@ -58,19 +58,29 @@ class UserConsentSerializer(serializers.ModelSerializer):
         fields = ['user', 'consent', 'legal_first_name', 'legal_last_name', 'student_number', 'date']
 
 
-class UserProfileDetailsSerializer(serializers.ModelSerializer):
+class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
         fields = ['first_name', 'last_name', 'email']
 
-    def update(self, instance, validated_data):
-        user = MyUser
+    def validate_email(self, value):
+        user = self.context['request'].user
+        if User.objects.exclude(pk=user.pk).filter(email=value).exists():
+            raise serializers.ValidationError({"email": "This email is already in use."})
+        return value
 
-        user.first_name = validated_data.get('first_name')
-        user.last_name = validated_data.get('last_name')
-        user.email = validated_data.get('email')
-        user.save()
-        return user
+    def update(self, instance, validated_data):
+        user = self.context['request'].user
+
+        if user.pk != instance.pk:
+            raise serializers.ValidationError({"authorize": "You dont have permission for this user."})
+
+        instance.first_name = validated_data['first_name']
+        instance.last_name = validated_data['last_name']
+        instance.email = validated_data['email']
+
+        instance.save()
+        return instance
 
 
 class UserRegistrationSerializer(serializers.Serializer):

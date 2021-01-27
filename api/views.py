@@ -7,7 +7,7 @@ from accounts.utils.email_functions import send_activation_email
 from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
     UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
-    UserRegistrationSerializer, UserProfileDetailsSerializer, ChangePasswordSerializer
+    UserRegistrationSerializer, UpdateProfileSerializer, ChangePasswordSerializer
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 
 
@@ -42,13 +42,10 @@ class UserRegistrationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         send_activation_email(request, user)
 
 
-class UserProfileDetailsViewSet(viewsets.ModelViewSet):
+class UpdateProfileView(generics.UpdateAPIView):
     queryset = MyUser.objects.all()
-    serializer_class = UserProfileDetailsSerializer
-    permission_classes = [IsAuthenticated, ]
-
-    def update(self, request, *args, **kwargs):
-        super().update(request, *args, **kwargs)
+    serializer_class = UpdateProfileSerializer
+    permission_classes = (IsAuthenticated, )
 
 
 class ContactUsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
