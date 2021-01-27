@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accounts.models import UserConsent, MyUser
-from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
+from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory, TokenValue
 from general.models import ContactUs
 from utils.recaptcha import validate_recaptcha
 
@@ -61,6 +61,31 @@ class QuestionCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = QuestionCategory
         fields = ['pk', 'name', 'description', 'parent', 'numQuestions', 'avgSuccess', 'nextCategories']
+
+
+class UpdateListSerializer(serializers.ListSerializer):
+    # Can use this for any future serializers that need to be updated in batches
+
+    def update(self, instances, validated_data):
+        instance_hash = {index: instance for index, instance in enumerate(instances)}
+
+        result = [
+            self.child.update(instance_hash[index], attrs)
+            for index, attrs in enumerate(validated_data)
+        ]
+        return result
+
+
+class TokenValueSerializer(serializers.ModelSerializer):
+    def update(self, instance, validated_data):
+        instance.value = validated_data.get('value', instance.value)
+        instance.save()
+        return instance
+
+    class Meta:
+        model = TokenValue
+        fields = ['value', 'category', 'difficulty']
+        list_serializer_class = UpdateListSerializer
 
 
 class UserStatsSerializer(serializers.ModelSerializer):

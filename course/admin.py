@@ -6,7 +6,6 @@ from djrichtextfield.widgets import RichTextWidget
 from course.models.models import Question, VariableQuestion, MultipleChoiceQuestion, Submission, QuestionCategory, \
     CheckboxQuestion, JavaSubmission, JavaQuestion, TokenValue, MultipleChoiceSubmission, UserQuestionJunction
 from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
-import copy
 
 
 def clone_question(modeladmin, request, queryset):

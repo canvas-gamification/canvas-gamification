@@ -3,9 +3,9 @@ from rest_framework import viewsets, mixins
 
 from accounts.models import UserConsent, MyUser
 from api.permissions import TeacherAccessPermission, UserConsentPermission
-from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer,\
-    UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer
-from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
+from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
+    UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, TokenValueSerializer
+from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory, TokenValue
 
 
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -32,6 +32,12 @@ class ContactUsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 class QuestionCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = QuestionCategory.objects.all()
     serializer_class = QuestionCategorySerializer
+
+
+class TokenValueViewSet(viewsets.ModelViewSet):
+    queryset = TokenValue.objects.all()
+    serializer_class = TokenValueSerializer
+    permission_classes = [TeacherAccessPermission, ]
 
 
 class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
