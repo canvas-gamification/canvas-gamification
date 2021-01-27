@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import UserConsent, MyUser
 from accounts.utils.email_functions import send_activation_email
-from api.permissions import TeacherAccessPermission, UserConsentPermission, UserProfilePermission
+from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
     UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
     UserRegistrationSerializer, UserProfileDetailsSerializer, ChangePasswordSerializer
@@ -22,9 +22,9 @@ class SampleMultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
     serializer_class = MultipleChoiceQuestionSerializer
 
 
-class ChangePasswordViewSet(viewsets.ModelViewSet):
+class ChangePasswordView(generics.UpdateAPIView):
     queryset = MyUser.objects.all()
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = (IsAuthenticated, )
     serializer_class = ChangePasswordSerializer
 
 
@@ -45,7 +45,7 @@ class UserRegistrationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 class UserProfileDetailsViewSet(viewsets.ModelViewSet):
     queryset = MyUser.objects.all()
     serializer_class = UserProfileDetailsSerializer
-    permission_classes = [UserProfilePermission, ]
+    permission_classes = [IsAuthenticated, ]
 
     def update(self, request, *args, **kwargs):
         super().update(request, *args, **kwargs)

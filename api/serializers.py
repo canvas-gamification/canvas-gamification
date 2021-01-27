@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 
 from rest_framework import serializers
 
@@ -26,9 +27,13 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    password2 = serializers.CharField(write_only=True, required=True)
+    old_password = serializers.CharField(write_only=True, required=True)
+
     class Meta:
         model = MyUser
-        fields = ['old_password', 'password1', 'password2']
+        fields = ['old_password', 'password', 'password2']
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
