@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accounts.models import UserConsent, MyUser
-from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
+from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory, UserQuestionJunction
 from general.models import ContactUs
 from utils.recaptcha import validate_recaptcha
 
@@ -75,22 +75,40 @@ class UserStatsSerializer(serializers.ModelSerializer):
 
 
 class UserActionsSerializer(serializers.ModelSerializer):
-    recentActions = serializers.SerializerMethodField('get_ordered_actions')
+    actions = serializers.SerializerMethodField('get_actions')
 
-    def get_ordered_actions(self, user):
-        return user.actions.order_by("-time_modified").all().values()
-
-    class Meta:
-        model = MyUser
-        fields = ['pk', 'recentActions']
-
-
-class ViewedQuestionsSerializer(serializers.ModelSerializer):
-    viewedQuestions = serializers.SerializerMethodField('get_viewed_questions')
-
-    def get_viewed_questions(self, user):
-        return user.question_junctions.order_by('-last_viewed').values()
+    def get_actions(self, user):
+        is_recent = self.context['request'].query_params.get('recent', False)
+        if is_recent:
+            return user.actions.order_by("-time_modified").values()
+        else:
+            return user.actions.values()
 
     class Meta:
         model = MyUser
-        fields = ['pk', 'viewedQuestions']
+        fields = ['pk', 'actions']
+
+
+class UQJSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserQuestionJunction
+        exclude = ['user']
+        depth = 1
+
+
+class UserUQJSerializer(serializers.ModelSerializer):
+    question_junctions = serializers.SerializerMethodField()
+
+    def get_question_junctions(self, user):
+        is_recent = self.context['request'].query_params.get('recent', False)
+        if is_recent:
+            uqj_set = user.question_junctions.all().order_by('-last_viewed')
+        else:
+            uqj_set = user.question_junctions.all()
+
+        return UQJSerializer(uqj_set, many=True).data
+
+    class Meta:
+        model = MyUser
+        fields = ['pk', 'question_junctions']
+        depth = 2

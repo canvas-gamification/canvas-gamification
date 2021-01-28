@@ -5,8 +5,8 @@ from accounts.models import UserConsent, MyUser
 from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
     UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
-    UserActionsSerializer, ViewedQuestionsSerializer
-from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
+    UserActionsSerializer, UQJSerializer, UserUQJSerializer
+from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory, UserQuestionJunction
 
 
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -45,6 +45,6 @@ class UserActionsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserActionsSerializer
 
 
-class ViewedQuestionsViewSet(viewsets.ReadOnlyModelViewSet):
+class UQJViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MyUser.objects.all()
-    serializer_class = ViewedQuestionsSerializer
+    serializer_class = UserUQJSerializer
