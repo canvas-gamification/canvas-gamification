@@ -34,8 +34,9 @@ class UserConsentViewSet(viewsets.ModelViewSet):
     queryset = UserConsent.objects.all()
 
 
-class UserRegistrationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
+    queryset = MyUser.objects.all()
 
     def create(self, request, *args, **kwargs):
         user = super().create(request, *args, **kwargs)

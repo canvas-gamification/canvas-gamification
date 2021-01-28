@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 
 from accounts.models import UserConsent, MyUser
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
@@ -83,22 +84,24 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         return instance
 
 
-class UserRegistrationSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    password1 = serializers.CharField()
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True, validators=[UniqueValidator(queryset=MyUser.objects.all())])
+    password = serializers.CharField()
     password2 = serializers.CharField()
     recaptcha_key = serializers.CharField(write_only=True)
 
-    def update(self, instance, validated_data):
-        pass
+    class Meta:
+        model = MyUser
+        fields = ('email', 'password', 'password2', 'recaptcha_key')
 
     def create(self, validated_data):
 
         user = User.objects.create_user(
-            validated_data.get('email'),
-            validated_data.get('password'))
+            username=validated_data['email'],
+            email=validated_data['email'])
+        user.set_password(validated_data['password'])
+
         user.is_active = False
-        user.email = validated_data.get('email')
         user.save()
         return user
 
@@ -107,10 +110,10 @@ class UserRegistrationSerializer(serializers.Serializer):
             raise serializers.ValidationError('reCaptcha should be validate')
         return value
 
-    def validate_password(self, value, value2):
-        if value != value2:
-            raise serializers.ValidationError('Password should match')
-        return value
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
+        return attrs
 
 
 class ContactUsSerializer(serializers.ModelSerializer):
