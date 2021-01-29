@@ -5,8 +5,8 @@ from accounts.models import UserConsent, MyUser
 from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
     UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
-    UserActionsSerializer, UQJSerializer, UserUQJSerializer
-from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory, UserQuestionJunction
+    UserActionsSerializer, UserUQJSerializer
+from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 
 
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
