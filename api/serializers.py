@@ -77,7 +77,7 @@ class UserStatsSerializer(serializers.ModelSerializer):
 class ActionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Action
-        fields = '__all__'
+        exclude = ['user']
 
 
 class UQJSerializer(serializers.ModelSerializer):
