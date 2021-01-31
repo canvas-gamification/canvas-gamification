@@ -22,7 +22,7 @@ class SampleMultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
     serializer_class = MultipleChoiceQuestionSerializer
 
 
-class ChangePasswordView(generics.UpdateAPIView):
+class ResetPasswordViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
     queryset = MyUser.objects.all()
     permission_classes = (IsAuthenticated, )
     serializer_class = ChangePasswordSerializer
@@ -34,7 +34,7 @@ class UserConsentViewSet(viewsets.ModelViewSet):
     queryset = UserConsent.objects.all()
 
 
-class UserRegistrationView(generics.CreateAPIView):
+class UserRegistrationViewSet(viewsets.ModelViewSet):
     serializer_class = UserRegistrationSerializer
     queryset = MyUser.objects.all()
 
@@ -43,7 +43,7 @@ class UserRegistrationView(generics.CreateAPIView):
         send_activation_email(request, user)
 
 
-class UpdateProfileView(generics.UpdateAPIView):
+class UpdateProfileViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
     queryset = MyUser.objects.all()
     serializer_class = UpdateProfileSerializer
     permission_classes = (IsAuthenticated, )

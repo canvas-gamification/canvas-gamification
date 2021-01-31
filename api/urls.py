@@ -5,8 +5,7 @@ from rest_framework.schemas import get_schema_view
 from rest_framework.authtoken import views
 
 from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
-    QuestionCategoryViewSet, UserStatsViewSet, ChangePasswordView, UpdateProfileView, \
-    UserRegistrationView
+    QuestionCategoryViewSet, UserStatsViewSet, ResetPasswordViewSet, UserRegistrationViewSet, UpdateProfileViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
@@ -17,8 +16,9 @@ router.register(r'contact-us', ContactUsViewSet, basename='contact_us')
 router.register(r'question-category', QuestionCategoryViewSet, basename='question-category')
 router.register(r'user-stats', UserStatsViewSet, basename='user-stats')
 router.register(r'user-consent', UserConsentViewSet, basename='user-consent')
-# router.register(r'register', UserRegistrationViewSet, basename='register')
-
+router.register(r'reset-password', ResetPasswordViewSet, basename='reset-password')
+router.register(r'register', UserRegistrationViewSet, basename='register')
+router.register(r'update-profile', UpdateProfileViewSet, basename='update=profile')
 app_name = 'api'
 urlpatterns = [
     path('openapi', get_schema_view(
@@ -31,7 +31,4 @@ urlpatterns = [
         extra_context={'schema_url': 'api:openapi-schema'}
     ), name='docs'),
     path('api-token-auth/', views.obtain_auth_token),
-    path('change-password/<int:pk>/', ChangePasswordView.as_view(), name='change-password'),
-    path('update-profile/<int:pk>/', UpdateProfileView.as_view(), name='update-profile'),
-    path('register/', UserRegistrationView.as_view(), name='register')
 ] + router.urls

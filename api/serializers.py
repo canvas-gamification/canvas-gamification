@@ -87,12 +87,11 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
 class UserRegistrationSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True, validators=[UniqueValidator(queryset=MyUser.objects.all())])
     password = serializers.CharField()
-    password2 = serializers.CharField()
     recaptcha_key = serializers.CharField(write_only=True)
 
     class Meta:
         model = MyUser
-        fields = ('email', 'password', 'password2', 'recaptcha_key')
+        fields = ('email', 'password', 'recaptcha_key')
 
     def create(self, validated_data):
 
@@ -109,11 +108,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         if not validate_recaptcha(value):
             raise serializers.ValidationError('reCaptcha should be validate')
         return value
-
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
-        return attrs
 
 
 class ContactUsSerializer(serializers.ModelSerializer):
