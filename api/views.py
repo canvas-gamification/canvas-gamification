@@ -5,7 +5,7 @@ from accounts.models import UserConsent, MyUser
 from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
     UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
-    UserActionsSerializer, UserUQJSerializer
+    UQJSerializer, ActionsSerializer
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 
 
@@ -40,11 +40,23 @@ class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserStatsSerializer
 
 
-class UserActionsViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = MyUser.objects.all()
-    serializer_class = UserActionsSerializer
+class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = ActionsSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        is_recent = self.request.query_params.get('recent', False)
+        if is_recent:
+            return user.actions.all().order_by("-time_modified")
+        return user.actions.all()
 
 
 class UQJViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = MyUser.objects.all()
-    serializer_class = UserUQJSerializer
+    serializer_class = UQJSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        is_recent = self.request.query_params.get('recent', False)
+        if is_recent:
+            return user.question_junctions.all().order_by('-last_viewed')
+        return user.question_junctions.all()

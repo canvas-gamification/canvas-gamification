@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from accounts.models import UserConsent, MyUser
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory, UserQuestionJunction
-from general.models import ContactUs
+from general.models import ContactUs, Action
 from utils.recaptcha import validate_recaptcha
 
 
@@ -74,19 +74,10 @@ class UserStatsSerializer(serializers.ModelSerializer):
         fields = ['pk', 'successRateByCategory']
 
 
-class UserActionsSerializer(serializers.ModelSerializer):
-    actions = serializers.SerializerMethodField('get_actions')
-
-    def get_actions(self, user):
-        is_recent = self.context['request'].query_params.get('recent', False)
-        if is_recent:
-            return user.actions.order_by("-time_modified").values()
-        else:
-            return user.actions.values()
-
+class ActionsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = MyUser
-        fields = ['pk', 'actions']
+        model = Action
+        fields = '__all__'
 
 
 class UQJSerializer(serializers.ModelSerializer):
@@ -94,21 +85,3 @@ class UQJSerializer(serializers.ModelSerializer):
         model = UserQuestionJunction
         exclude = ['user']
         depth = 1
-
-
-class UserUQJSerializer(serializers.ModelSerializer):
-    question_junctions = serializers.SerializerMethodField()
-
-    def get_question_junctions(self, user):
-        is_recent = self.context['request'].query_params.get('recent', False)
-        if is_recent:
-            uqj_set = user.question_junctions.all().order_by('-last_viewed')
-        else:
-            uqj_set = user.question_junctions.all()
-
-        return UQJSerializer(uqj_set, many=True).data
-
-    class Meta:
-        model = MyUser
-        fields = ['pk', 'question_junctions']
-        depth = 2
