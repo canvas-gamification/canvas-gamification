@@ -7,7 +7,7 @@ from accounts.utils.email_functions import send_activation_email
 from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
     UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
-    UserRegistrationSerializer, UpdateProfileSerializer, ChangePasswordSerializer
+    UserRegistrationSerializer, UpdateProfileSerializer, ResetPasswordSerializer
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 
 
@@ -22,10 +22,9 @@ class SampleMultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
     serializer_class = MultipleChoiceQuestionSerializer
 
 
-class ResetPasswordViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
-    queryset = MyUser.objects.all()
-    permission_classes = (IsAuthenticated, )
-    serializer_class = ChangePasswordSerializer
+class ResetPasswordViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = ResetPasswordSerializer
 
 
 class UserConsentViewSet(viewsets.ModelViewSet):
@@ -43,10 +42,11 @@ class UserRegistrationViewSet(viewsets.ModelViewSet):
         send_activation_email(request, user)
 
 
-class UpdateProfileViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
-    queryset = MyUser.objects.all()
+class UpdateProfileViewSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        return MyUser.objects.filter(id=self.request.user.id)
     serializer_class = UpdateProfileSerializer
-    permission_classes = (IsAuthenticated, )
+    permission_classes = [IsAuthenticated, ]
 
 
 class ContactUsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
