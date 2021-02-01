@@ -3,6 +3,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import UserConsent, MyUser
+from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
     UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
@@ -44,10 +45,11 @@ class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
 class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Query Parameters
-    ?recent - if true, renders the list in recent first order
+    ?recent - if true, renders the list in most-recent-first order
     """
     serializer_class = ActionsSerializer
     permission_classes = [IsAuthenticated, ]
+    pagination_class = BasePagination
 
     def get_queryset(self):
         user = self.request.user
@@ -58,8 +60,13 @@ class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class UQJViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Query Parameters
+    ?recent - if true, renders the list in most-recent-first order
+    """
     serializer_class = UQJSerializer
     permission_classes = [IsAuthenticated, ]
+    pagination_class = BasePagination
 
     def get_queryset(self):
         user = self.request.user
