@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from accounts.models import UserConsent, MyUser
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
-from general.models import ContactUs
+from general.models import ContactUs, FAQ
 from utils.recaptcha import validate_recaptcha
 
 
@@ -72,3 +72,9 @@ class UserStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
         fields = ['pk', 'successRateByCategory']
+
+
+class FAQSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FAQ
+        fields = ['question', 'answer']
