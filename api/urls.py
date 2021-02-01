@@ -16,7 +16,7 @@ router.register(r'contact-us', ContactUsViewSet, basename='contact_us')
 router.register(r'question-category', QuestionCategoryViewSet, basename='question-category')
 router.register(r'user-stats', UserStatsViewSet, basename='user-stats')
 router.register(r'user-actions', ActionsViewSet, basename='user-actions')
-router.register(r'user-uqj', UQJViewSet, basename='user-uqj')
+router.register(r'uqj', UQJViewSet, basename='uqj')
 
 app_name = 'api'
 urlpatterns = [

@@ -1,5 +1,6 @@
 # Create your views here.
 from rest_framework import viewsets, mixins
+from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import UserConsent, MyUser
 from api.permissions import TeacherAccessPermission, UserConsentPermission
@@ -41,7 +42,12 @@ class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Query Parameters
+    ?recent - if true, renders the list in recent first order
+    """
     serializer_class = ActionsSerializer
+    permission_classes = [IsAuthenticated, ]
 
     def get_queryset(self):
         user = self.request.user
@@ -53,6 +59,7 @@ class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
 
 class UQJViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UQJSerializer
+    permission_classes = [IsAuthenticated, ]
 
     def get_queryset(self):
         user = self.request.user
