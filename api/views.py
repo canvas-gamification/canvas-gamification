@@ -1,4 +1,5 @@
 # Create your views here.
+from django.utils import timezone
 from rest_framework import viewsets, mixins
 
 from accounts.models import UserConsent, MyUser
@@ -43,20 +44,6 @@ class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CourseSerializer
 
-    """
-    if the user is not authenticated
-        return all the courses visible to students
-        and the is_registered attribute to false (manually set? in serializer?)
-    if its authenticated and is teacher
-        return all of the courses
-    if a student is authenticated
-        return all the courses with the correct value for is_registered (in serializer)
-    
-    also you should be able to filter the courses by is_registered
-    and you might also need to filter by is_active
-        which means the user should be registered and the course should be "In Session"
-    """
-
     def get_queryset(self):
         COURSE_ACTIVE = 'In Session'
         user = self.request.user
@@ -74,8 +61,9 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 queryset = queryset.filter(instructor=user)
             elif user.is_student:
                 if active:
-                    queryset = queryset.filter(status=COURSE_ACTIVE)
-                if registered or active:
-                    queryset = queryset.filter(is_registered=True)
+                    # queryset = queryset.filter(status=COURSE_ACTIVE)
+                    queryset = queryset.filter(allow_registration=False).filter(start_date__lte = timezone.now()).filter(end_date__gte=timezone.now())
+                # if registered or active:
+                #     queryset = queryset.filter(is_registered=True)
 
             return queryset.all()
