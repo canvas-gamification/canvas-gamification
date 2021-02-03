@@ -1,9 +1,8 @@
 # Create your views here.
-from rest_framework import viewsets, mixins, generics
+from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import UserConsent, MyUser
-from accounts.utils.email_functions import send_activation_email
 from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
     UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
@@ -33,13 +32,14 @@ class UserConsentViewSet(viewsets.ModelViewSet):
     queryset = UserConsent.objects.all()
 
 
-class UserRegistrationViewSet(viewsets.ModelViewSet):
+class UserRegistrationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = UserRegistrationSerializer
     queryset = MyUser.objects.all()
 
     def create(self, request, *args, **kwargs):
         user = super().create(request, *args, **kwargs)
-        send_activation_email(request, user)
+        # send_activation_email(request, user)
+        return user
 
 
 class UpdateProfileViewSet(viewsets.ModelViewSet):
