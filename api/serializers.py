@@ -84,7 +84,7 @@ class TokenValueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TokenValue
-        fields = ['value', 'category', 'difficulty']
+        fields = ['value', 'category', 'difficulty', 'pk']
         list_serializer_class = UpdateListSerializer
 
 

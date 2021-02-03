@@ -34,7 +34,7 @@ class QuestionCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = QuestionCategorySerializer
 
 
-class TokenValueViewSet(viewsets.ModelViewSet):
+class TokenValueViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
     queryset = TokenValue.objects.all()
     serializer_class = TokenValueSerializer
     permission_classes = [TeacherAccessPermission, ]
