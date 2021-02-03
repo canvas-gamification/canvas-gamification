@@ -1,5 +1,6 @@
 # Create your views here.
 from django.utils import timezone
+from django.db.models import Q
 from rest_framework import viewsets, mixins
 
 from accounts.models import UserConsent, MyUser
@@ -45,10 +46,9 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CourseSerializer
 
     def get_queryset(self):
-        COURSE_ACTIVE = 'In Session'
         user = self.request.user
-        # true = active courses, false = all courses
-        active = self.request.query_params.get('active', False)
+        # active = active courses, inactive = inactive courses, all = all courses
+        status = self.request.query_params.get('status', 'all')
         # true = filter by if user is registered, false = no filtering on registration status
         registered = self.request.query_params.get('registered', False)
 
@@ -60,10 +60,14 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             if user.is_teacher:
                 queryset = queryset.filter(instructor=user)
             elif user.is_student:
-                if active:
-                    # queryset = queryset.filter(status=COURSE_ACTIVE)
+                if status == 'active':
                     queryset = queryset.filter(allow_registration=False).filter(start_date__lte = timezone.now()).filter(end_date__gte=timezone.now())
-                # if registered or active:
+                elif status == 'inactive':
+                    # TODO: what is the inactive case?
+                    # Q(allow_registration=True) |
+                    queryset = queryset.filter(Q(start_date__gt=timezone.now()) | Q(
+                        end_date__lt=timezone.now()))
+                # if registered or status=='active':
                 #     queryset = queryset.filter(is_registered=True)
 
             return queryset.all()
