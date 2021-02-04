@@ -1,5 +1,5 @@
 # Create your views here.
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, filters
 from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import UserConsent, MyUser
@@ -50,6 +50,8 @@ class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ActionsSerializer
     permission_classes = [IsAuthenticated, ]
     pagination_class = BasePagination
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['time_modified', ]
 
     def get_queryset(self):
         user = self.request.user
