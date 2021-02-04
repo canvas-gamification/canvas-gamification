@@ -27,9 +27,15 @@ class ResetPasswordViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
 
 class UserConsentViewSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        return UserConsent.objects.filter(user=self.request.user.id)
+
     serializer_class = UserConsentSerializer
-    permission_classes = [UserConsentPermission, ]
-    queryset = UserConsent.objects.all()
+    permission_classes = [IsAuthenticated, ]
+
+    def perform_create(self, serializer):
+        request = serializer.context['request']
+        serializer.save(user=request.user)
 
 
 class UserRegistrationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -45,6 +51,7 @@ class UserRegistrationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 class UpdateProfileViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return MyUser.objects.filter(id=self.request.user.id)
+
     serializer_class = UpdateProfileSerializer
     permission_classes = [IsAuthenticated, ]
 

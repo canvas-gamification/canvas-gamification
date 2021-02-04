@@ -62,7 +62,7 @@ class MyUser(AbstractUser):
 
 
 class UserConsent(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=False)
+    user = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=False, related_name='user')
     created_at = models.DateTimeField(auto_now_add=True)
     consent = models.BooleanField(default=False)
 
