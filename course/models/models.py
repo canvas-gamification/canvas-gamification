@@ -162,13 +162,10 @@ class Question(PolymorphicModel):
     def has_edit_permission(self, user):
         return user.is_teacher
 
-    def clone(self):
-        question_clone = self
-        # Code below makes the duplicate object turn into a new object with values intact
-        question_clone.id = None
-        question_clone.pk = None
-        question_clone.question_ptr_id = None
-        return question_clone
+    def get_duplicate_question(self):
+        dupe_q = self
+        dupe_q.pk = None
+        return dupe_q
 
 
 class VariableQuestion(Question):
