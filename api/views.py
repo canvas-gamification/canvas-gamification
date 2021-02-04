@@ -73,7 +73,9 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                     # Q(allow_registration=True) |
                     queryset = queryset.filter(Q(start_date__gt=timezone.now()) | Q(
                         end_date__lt=timezone.now()))
-                # if registered or status=='active':
-                #     queryset = queryset.filter(is_registered=True)
+                if registered or status=='active':
+                    # TODO: filter manually by is registered
+                    pass
+                    # queryset = queryset.filter(is_registered=True)
 
             return queryset.all()
