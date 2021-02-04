@@ -43,6 +43,11 @@ class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Optional Parameters
+    ?status: 'active'|'inactive'|'all' => retrieve specific statuses of courses
+    ?registered: boolean => if true, retrieve courses user is registered in
+    """
     serializer_class = CourseSerializer
 
     def get_queryset(self):
@@ -61,7 +66,8 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 queryset = queryset.filter(instructor=user)
             elif user.is_student:
                 if status == 'active':
-                    queryset = queryset.filter(allow_registration=False).filter(start_date__lte = timezone.now()).filter(end_date__gte=timezone.now())
+                    queryset = queryset.filter(allow_registration=False).filter(start_date__lte=timezone.now()).filter(
+                        end_date__gte=timezone.now())
                 elif status == 'inactive':
                     # TODO: what is the inactive case?
                     # Q(allow_registration=True) |
