@@ -7,8 +7,10 @@ from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
     UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
-    UQJSerializer, ActionsSerializer
+    UQJSerializer, ActionsSerializer, FAQSerializer
+
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
+from general.models import FAQ
 
 
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -72,3 +74,8 @@ class UQJViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return user.question_junctions.all()
+
+
+class FAQViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = FAQ.objects.all()
+    serializer_class = FAQSerializer

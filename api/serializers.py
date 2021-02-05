@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from accounts.models import UserConsent, MyUser
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory, UserQuestionJunction
-from general.models import ContactUs, Action
+from general.models import ContactUs, Action, FAQ
 from utils.recaptcha import validate_recaptcha
 
 
@@ -85,3 +85,9 @@ class UQJSerializer(serializers.ModelSerializer):
         model = UserQuestionJunction
         exclude = ['user']
         depth = 1
+
+
+class FAQSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FAQ
+        fields = ['question', 'answer']
