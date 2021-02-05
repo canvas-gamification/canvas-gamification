@@ -45,7 +45,7 @@ class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
 class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Query Parameters
-    ?recent - if true, renders the list in most-recent-first order
+    + Standard ordering is applied
     """
     serializer_class = ActionsSerializer
     permission_classes = [IsAuthenticated, ]
@@ -55,24 +55,20 @@ class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        is_recent = self.request.query_params.get('recent', False)
-        if is_recent:
-            return user.actions.all().order_by("-time_modified")
         return user.actions.all()
 
 
 class UQJViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Query Parameters
-    ?recent - if true, renders the list in most-recent-first order
+    + Standard ordering is applied
     """
     serializer_class = UQJSerializer
     permission_classes = [IsAuthenticated, ]
     pagination_class = BasePagination
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['last_viewed', ]
 
     def get_queryset(self):
         user = self.request.user
-        is_recent = self.request.query_params.get('recent', False)
-        if is_recent:
-            return user.question_junctions.all().order_by('-last_viewed')
         return user.question_junctions.all()
