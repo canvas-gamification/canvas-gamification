@@ -46,36 +46,33 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Optional Parameters
     ?status: 'active'|'inactive'|'all' => retrieve specific statuses of courses
-    ?registered: boolean => if true, retrieve courses user is registered in
+    ?registered: boolean => if true, filter retrieved courses by if user is currently registered in them
     """
     serializer_class = CourseSerializer
 
     def get_queryset(self):
         user = self.request.user
-        # active = active courses, inactive = inactive courses, all = all courses
         status = self.request.query_params.get('status', 'all')
-        # true = filter by if user is registered, false = no filtering on registration status
         registered = self.request.query_params.get('registered', False)
 
         if not user.is_authenticated:
             return CanvasCourse.objects.filter(visible_to_students=True).all()
         else:
             queryset = CanvasCourse.objects
-            # if request comes from a teacher, return all the courses they instruct
             if user.is_teacher:
                 queryset = queryset.filter(instructor=user)
             elif user.is_student:
                 if status == 'active':
-                    queryset = queryset.filter(allow_registration=False).filter(start_date__lte=timezone.now()).filter(
-                        end_date__gte=timezone.now())
+                    # TODO: are courses still active if they do not allow registration because the course has begun?
+                    queryset = queryset.filter(allow_registration=True).filter(start_date__lte=timezone.now()) \
+                        .filter(end_date__gte=timezone.now())
                 elif status == 'inactive':
                     # TODO: what is the inactive case?
                     # Q(allow_registration=True) |
-                    queryset = queryset.filter(Q(start_date__gt=timezone.now()) | Q(
-                        end_date__lt=timezone.now()))
-                if registered or status=='active':
-                    # TODO: filter manually by is registered
-                    pass
-                    # queryset = queryset.filter(is_registered=True)
+                    queryset = queryset.filter(Q(start_date__gt=timezone.now()) | Q(end_date__lt=timezone.now()))
+                if registered or status == 'active':
+                    registered_ids = [registration.course.id
+                                      for registration in user.canvascourseregistration_set.all()]
+                    queryset = queryset.filter(pk__in=registered_ids)
 
             return queryset.all()
