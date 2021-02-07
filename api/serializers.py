@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
 from accounts.models import UserConsent, MyUser
+from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory, UserQuestionJunction
+from general.models import ContactUs, Action, FAQ
 from canvas.models import CanvasCourse
-from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
-from general.models import ContactUs
 from utils.recaptcha import validate_recaptcha
 
 
@@ -73,6 +73,25 @@ class UserStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
         fields = ['pk', 'successRateByCategory']
+
+
+class ActionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Action
+        exclude = ['user']
+
+
+class UQJSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserQuestionJunction
+        exclude = ['user']
+        depth = 1
+
+
+class FAQSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FAQ
+        fields = ['question', 'answer']
 
 
 class CourseSerializer(serializers.ModelSerializer):
