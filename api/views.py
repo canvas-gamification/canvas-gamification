@@ -1,10 +1,14 @@
 # Create your views here.
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, filters
+from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import UserConsent, MyUser
+from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
-    UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, FAQSerializer
+    UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
+    UQJSerializer, ActionsSerializer, FAQSerializer
+
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 from general.models import FAQ
 
@@ -38,6 +42,38 @@ class QuestionCategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MyUser.objects.all()
     serializer_class = UserStatsSerializer
+
+
+class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Query Parameters
+    + Standard ordering is applied
+    """
+    serializer_class = ActionsSerializer
+    permission_classes = [IsAuthenticated, ]
+    pagination_class = BasePagination
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['time_modified', ]
+
+    def get_queryset(self):
+        user = self.request.user
+        return user.actions.all()
+
+
+class UQJViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Query Parameters
+    + Standard ordering is applied
+    """
+    serializer_class = UQJSerializer
+    permission_classes = [IsAuthenticated, ]
+    pagination_class = BasePagination
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['last_viewed', ]
+
+    def get_queryset(self):
+        user = self.request.user
+        return user.question_junctions.all()
 
 
 class FAQViewSet(viewsets.ReadOnlyModelViewSet):
