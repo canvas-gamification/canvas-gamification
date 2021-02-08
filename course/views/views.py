@@ -110,21 +110,6 @@ def question_delete_view(request, pk):
 
     return HttpResponseRedirect(reverse_lazy('course:problem_set'))
 
-@user_passes_test(teacher_check)
-def question_clone_view(request, pk):
-    question = get_object_or_404(Question, pk=pk)
-
-    question_clone = question.clone()
-    current_author = None
-    if request.user.is_authenticated:
-        current_author = request.user
-
-    question_clone.author = current_author  # Sets the duplicate question's author to current user
-    question_clone.save()  # Save the object
-    messages.add_message(request, messages.SUCCESS, 'Question was cloned successfully')
-
-    return HttpResponseRedirect(reverse_lazy('course:problem_set'))
-
 
 @user_passes_test(teacher_check)
 def problem_set_view(request):

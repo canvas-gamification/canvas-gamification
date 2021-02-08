@@ -8,22 +8,6 @@ from course.models.models import Question, VariableQuestion, MultipleChoiceQuest
 from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
 
 
-def clone_question(modeladmin, request, queryset):
-    '''
-    Django Admin Action that will duplicate selected question instances and set their author to the currently logged-in user
-    '''
-    # question_item refers to the instances of the selected questions
-    for question_item in queryset:
-        question_clone = question_item.clone()
-        current_author = None
-        if request.user.is_authenticated:
-            current_author = request.user
-
-        question_clone.author = current_author  # Sets the duplicate question's author to current user
-        question_clone.save()  # Save the object
-
-    clone_question.short_description = "Clone Selected Questions"
-
 class QuestionAdminForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -38,7 +22,6 @@ class QuestionAdminForm(forms.ModelForm):
 
 
 class QuestionAdmin(admin.ModelAdmin):
-    actions = [clone_question]
     list_display = ('__str__', 'title', 'author', 'category', 'difficulty', 'is_verified',)
     list_filter = ('author', 'category', 'difficulty', 'is_verified',)
     form = QuestionAdminForm
