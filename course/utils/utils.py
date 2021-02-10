@@ -52,6 +52,20 @@ def get_token_value(category, difficulty):
     return TokenValue.objects.get(category=category, difficulty=difficulty).value
 
 
+def get_token_values():
+    from course.models.models import QuestionCategory
+    from course.models.models import DIFFICULTY_CHOICES
+    from course.models.models import TokenValue
+
+    categories = QuestionCategory.objects.filter(parent__isnull=False).all()
+
+    for category in categories:
+        for difficulty in [x for x, y in DIFFICULTY_CHOICES]:
+            get_token_value(category, difficulty)
+
+    return TokenValue.objects.all()
+
+
 def increment_char(c):
     return chr(ord(c) + 1)
 

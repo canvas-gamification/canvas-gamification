@@ -5,7 +5,8 @@ from accounts.models import UserConsent, MyUser
 from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
     UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, TokenValueSerializer
-from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory, TokenValue
+from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
+from course.utils.utils import get_token_values
 
 
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -34,10 +35,15 @@ class QuestionCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = QuestionCategorySerializer
 
 
-class TokenValueViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
-    queryset = TokenValue.objects.all()
+class TokenValueViewSet(viewsets.GenericViewSet,
+                        mixins.UpdateModelMixin,
+                        mixins.ListModelMixin,
+                        mixins.RetrieveModelMixin):
     serializer_class = TokenValueSerializer
     permission_classes = [TeacherAccessPermission, ]
+
+    def get_queryset(self):
+        return get_token_values()
 
 
 class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
