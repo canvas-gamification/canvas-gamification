@@ -7,10 +7,10 @@ from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission, UserConsentPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, \
     UserConsentSerializer, ContactUsSerializer, QuestionCategorySerializer, UserStatsSerializer, \
-    UQJSerializer, ActionsSerializer, FAQSerializer
-
+    UQJSerializer, ActionsSerializer, FAQSerializer, TokenValueSerializer
 from course.models.models import Question, MultipleChoiceQuestion, QuestionCategory
 from general.models import FAQ
+from course.utils.utils import get_token_values
 
 
 class QuestionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -37,6 +37,17 @@ class ContactUsViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 class QuestionCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = QuestionCategory.objects.all()
     serializer_class = QuestionCategorySerializer
+
+
+class TokenValueViewSet(viewsets.GenericViewSet,
+                        mixins.UpdateModelMixin,
+                        mixins.ListModelMixin,
+                        mixins.RetrieveModelMixin):
+    serializer_class = TokenValueSerializer
+    permission_classes = [TeacherAccessPermission, ]
+
+    def get_queryset(self):
+        return get_token_values()
 
 
 class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
