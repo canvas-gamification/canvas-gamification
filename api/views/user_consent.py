@@ -1,11 +1,17 @@
-from rest_framework import mixins, viewsets
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import UserConsent
-from api.permissions import UserConsentPermission
 from api.serializers import UserConsentSerializer
 
 
-class UserConsentViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class UserConsentViewSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        return UserConsent.objects.filter(user=self.request.user.id)
+
     serializer_class = UserConsentSerializer
-    permission_classes = [UserConsentPermission, ]
-    queryset = UserConsent.objects.all()
+    permission_classes = [IsAuthenticated, ]
+
+    def perform_create(self, serializer):
+        request = serializer.context['request']
+        serializer.save(user=request.user)
