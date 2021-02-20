@@ -5,7 +5,7 @@ from rest_framework.schemas import get_schema_view
 from rest_framework.authtoken import views
 
 from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
-    QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, CourseViewSet
+    QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, CourseViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
@@ -14,6 +14,7 @@ router.register(r'sample-multiple-choice-question', SampleMultipleChoiceQuestion
 router.register(r'user-consent', UserConsentViewSet, basename='user_consent')
 router.register(r'contact-us', ContactUsViewSet, basename='contact_us')
 router.register(r'question-category', QuestionCategoryViewSet, basename='question-category')
+router.register(r'token-values', TokenValueViewSet, basename='token_values')
 router.register(r'user-stats', UserStatsViewSet, basename='user-stats')
 router.register(r'user-actions', ActionsViewSet, basename='user-actions')
 router.register(r'uqj', UQJViewSet, basename='uqj')
