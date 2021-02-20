@@ -1,6 +1,4 @@
 # Create your views here.
-from django.utils import timezone
-from django.db.models import Q
 from rest_framework import viewsets, mixins, filters
 from rest_framework.permissions import IsAuthenticated
 
