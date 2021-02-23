@@ -112,7 +112,7 @@ class Question(PolymorphicModel):
 
     @property
     def author_name(self):
-        return self.author.username
+        return self.author.username if self.author else ""
 
     @property
     def category_name(self):
