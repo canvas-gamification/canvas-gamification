@@ -8,7 +8,7 @@ from api.serializers import UQJSerializer
 class UQJViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Query Parameters
-    + Standard ordering is applied
+    + Standard ordering is applied on the field 'last_viewed'
     """
     serializer_class = UQJSerializer
     permission_classes = [IsAuthenticated, ]
