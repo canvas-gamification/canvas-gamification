@@ -1,10 +1,14 @@
 from rest_framework import serializers
 
+from api.serializers.event import EventSerializer
+from api.serializers.token_use_option import TokenUseOptionSerializer
 from canvas.models import CanvasCourse
 
 
 class CourseSerializer(serializers.ModelSerializer):
     is_registered = serializers.SerializerMethodField('get_is_registered')
+    events = EventSerializer(many=True, read_only=True)
+    token_use_options = TokenUseOptionSerializer(many=True, read_only=True)
 
     def get_is_registered(self, course):
         user = None
@@ -21,4 +25,5 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = CanvasCourse
         fields = ['id', 'mock', 'name', 'url', 'course_id', 'token', 'allow_registration', 'visible_to_students',
-                  'start_date', 'end_date', 'instructor', 'status', 'is_registered']
+                  'start_date', 'end_date', 'instructor', 'status', 'is_registered', 'token_use_options',
+                  'question_set', 'events']

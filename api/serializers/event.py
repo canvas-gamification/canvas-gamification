@@ -1,0 +1,46 @@
+from rest_framework import serializers
+
+from canvas.models import Event
+
+
+class EventSerializer(serializers.ModelSerializer):
+    is_allowed_to_open = serializers.SerializerMethodField('get_is_allowed_to_open')
+    has_edit_permission = serializers.SerializerMethodField('get_has_edit_permission')
+
+    def get_user(self):
+        user = None
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
+
+        return user
+
+    def get_is_allowed_to_open(self, event):
+        user = self.get_user()
+        # if user is not logged in or the request has no user attached
+        if user is None or not user.is_authenticated:
+            return False
+
+        return event.is_allowed_to_open(user)
+
+    def get_has_edit_permission(self, event):
+        user = self.get_user()
+        # if user is not logged in or the request has no user attached
+        if user is None or not user.is_authenticated:
+            return False
+
+        return event.has_edit_permission(user)
+
+    class Meta:
+        model = Event
+        fields = ['id',
+                  'name',
+                  'type',
+                  'count_for_tokens',
+                  'start_date',
+                  'end_date',
+                  'course',
+                  'is_allowed_to_open',
+                  'has_edit_permission',
+                  'is_open',
+                  'is_exam']
