@@ -1,11 +1,8 @@
-from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
 from accounts.models import MyUser
 from utils.recaptcha import validate_recaptcha
-
-User = get_user_model()
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -19,7 +16,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ('email', 'password', 'password2', 'recaptcha_key')
 
     def create(self, validated_data):
-        user = User.objects.create_user(
+        user = MyUser.objects.create_user(
             username=validated_data['email'],
             email=validated_data['email'])
         user.set_password(validated_data['password'])

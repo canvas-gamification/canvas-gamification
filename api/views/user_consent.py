@@ -6,6 +6,7 @@ from api.serializers import UserConsentSerializer
 
 
 class UserConsentViewSet(viewsets.ModelViewSet):
+    # TODO: Check Authentication!!! and dont let people delete/edit
     def get_queryset(self):
         return UserConsent.objects.filter(user=self.request.user.id)
 
