@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from api.serializers import QuestionSerializer
 from api.serializers.event import EventSerializer
 from api.serializers.token_use_option import TokenUseOptionSerializer
 from canvas.models import CanvasCourse
@@ -9,6 +10,7 @@ class CourseSerializer(serializers.ModelSerializer):
     is_registered = serializers.SerializerMethodField('get_is_registered')
     events = EventSerializer(many=True, read_only=True)
     token_use_options = TokenUseOptionSerializer(many=True, read_only=True)
+    question_set = QuestionSerializer(many=True, read_only=True)
 
     def get_is_registered(self, course):
         user = None
