@@ -6,8 +6,7 @@ from rest_framework.authtoken import views
 
 from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
     QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet,\
-    CourseViewSet, MultipleChoiceQuestionViewSet
-
+    CourseViewSet, MultipleChoiceQuestionViewSet, UpdateProfileViewSet, UserRegistrationViewSet, ResetPasswordViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
@@ -23,6 +22,9 @@ router.register(r'user-actions', ActionsViewSet, basename='user-actions')
 router.register(r'uqj', UQJViewSet, basename='uqj')
 router.register(r'faq', FAQViewSet, basename='faq')
 router.register(r'course', CourseViewSet, basename='course')
+router.register(r'reset-password', ResetPasswordViewSet, basename='reset-password')
+router.register(r'register', UserRegistrationViewSet, basename='register')
+router.register(r'update-profile', UpdateProfileViewSet, basename='update=profile')
 
 app_name = 'api'
 urlpatterns = [
