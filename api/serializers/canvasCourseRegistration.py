@@ -10,9 +10,9 @@ class CanvasCourseRegistrationSerializer(serializers.ModelSerializer):
 
     def get_token_uses(self, course_reg):
         token_uses = course_reg.get_token_uses()
-        test = [TokenUseSerializer(token_use).data for token_use in token_uses]
+        token_uses = [TokenUseSerializer(token_use).data for token_use in token_uses]
 
-        return test
+        return token_uses
 
     def get_is_registered(self, course):
         user = None
