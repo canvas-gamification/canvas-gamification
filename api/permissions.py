@@ -6,6 +6,14 @@ class TeacherAccessPermission(permissions.IsAuthenticated):
         return super().has_permission(request, view) and request.user.is_teacher
 
 
+class TeacherOrAuthenticatedReadOnly(permissions.IsAuthenticated):
+    def has_permission(self, request, view):
+        authenticated = bool(request.user and request.user.is_authenticated)
+        teacher = authenticated and request.user.is_teacher
+        safe = request.method in permissions.SAFE_METHODS
+        return teacher or (safe and authenticated)
+
+
 class UserConsentPermission(permissions.IsAuthenticated):
     def has_permission(self, request, view):
         if 'user' not in request.data:
