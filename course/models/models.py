@@ -111,6 +111,26 @@ class Question(PolymorphicModel):
     grader = None
 
     @property
+    def author_name(self):
+        return self.author.username if self.author else ""
+
+    @property
+    def category_name(self):
+        return self.category.name if self.category else ""
+
+    @property
+    def parent_category_name(self):
+        return self.category.parent.name if self.category and self.category.parent else ""
+
+    @property
+    def course_name(self):
+        return self.course.name if self.course else ""
+
+    @property
+    def event_name(self):
+        return self.event.name if self.event else ""
+
+    @property
     def type_name(self):
         return self._meta.verbose_name
 

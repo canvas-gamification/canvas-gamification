@@ -5,7 +5,8 @@ from rest_framework.schemas import get_schema_view
 from rest_framework.authtoken import views
 
 from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
-    QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet
+    QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet,\
+    CourseViewSet, MultipleChoiceQuestionViewSet
 from api.views.register import UserRegistrationViewSet
 from api.views.reset_password import ResetPasswordViewSet
 from api.views.update_profile import UpdateProfileViewSet
@@ -14,6 +15,7 @@ router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
 router.register(r'sample-multiple-choice-question', SampleMultipleChoiceQuestionViewSet,
                 basename='sample_multiple_choice_question')
+router.register(r'multiple-choice-question', MultipleChoiceQuestionViewSet, basename='multiple_choice_question')
 router.register(r'user-consent', UserConsentViewSet, basename='user_consent')
 router.register(r'contact-us', ContactUsViewSet, basename='contact_us')
 router.register(r'question-category', QuestionCategoryViewSet, basename='question-category')
@@ -22,9 +24,11 @@ router.register(r'user-stats', UserStatsViewSet, basename='user-stats')
 router.register(r'user-actions', ActionsViewSet, basename='user-actions')
 router.register(r'uqj', UQJViewSet, basename='uqj')
 router.register(r'faq', FAQViewSet, basename='faq')
+router.register(r'course', CourseViewSet, basename='course')
 router.register(r'reset-password', ResetPasswordViewSet, basename='reset-password')
 router.register(r'register', UserRegistrationViewSet, basename='register')
 router.register(r'update-profile', UpdateProfileViewSet, basename='update=profile')
+
 app_name = 'api'
 urlpatterns = [
     path('openapi', get_schema_view(

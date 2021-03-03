@@ -8,3 +8,4 @@ from .token_value import TokenValueSerializer
 from .uqj import UQJSerializer
 from .user_consent import UserConsentSerializer
 from .user_stats import UserStatsSerializer
+from .course import CourseSerializer
