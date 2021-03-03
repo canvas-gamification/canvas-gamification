@@ -5,7 +5,8 @@ from rest_framework.schemas import get_schema_view
 from rest_framework.authtoken import views
 
 from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
-    QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, CourseViewSet
+    QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, \
+    CourseViewSet, CanvasCourseRegistrationViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
@@ -20,6 +21,7 @@ router.register(r'user-actions', ActionsViewSet, basename='user-actions')
 router.register(r'uqj', UQJViewSet, basename='uqj')
 router.register(r'faq', FAQViewSet, basename='faq')
 router.register(r'course', CourseViewSet, basename='course')
+router.register(r'course-registration', CanvasCourseRegistrationViewSet, basename='course-registration')
 
 app_name = 'api'
 urlpatterns = [

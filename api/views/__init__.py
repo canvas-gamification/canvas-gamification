@@ -9,3 +9,4 @@ from .uqj import UQJViewSet
 from .user_consent import UserConsentViewSet
 from .user_stats import UserStatsViewSet
 from .course import CourseViewSet
+from .canvasCourseRegistration import CanvasCourseRegistrationViewSet

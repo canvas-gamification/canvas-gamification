@@ -4,14 +4,12 @@ from canvas.models import TokenUseOption
 
 
 class TokenUseOptionSerializer(serializers.ModelSerializer):
-    def get_user(self):
-        user = None
-        request = self.context.get("request")
-        if request and hasattr(request, "user"):
-            user = request.user
-
-        return user
 
     class Meta:
         model = TokenUseOption
-        fields = '__all__'
+        fields = ['course',
+                  'tokens_required',
+                  'points_given',
+                  'maximum_number_of_use',
+                  'assignment_name',
+                  'assignment_id']

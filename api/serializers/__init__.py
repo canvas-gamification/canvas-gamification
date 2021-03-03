@@ -9,3 +9,4 @@ from .uqj import UQJSerializer
 from .user_consent import UserConsentSerializer
 from .user_stats import UserStatsSerializer
 from .course import CourseSerializer
+from .canvasCourseRegistration import CanvasCourseRegistrationSerializer
