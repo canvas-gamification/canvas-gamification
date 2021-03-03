@@ -6,10 +6,7 @@ from rest_framework.authtoken import views
 
 from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
     QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet,\
-    CourseViewSet, MultipleChoiceQuestionViewSet
-from api.views.register import UserRegistrationViewSet
-from api.views.reset_password import ResetPasswordViewSet
-from api.views.update_profile import UpdateProfileViewSet
+    CourseViewSet, MultipleChoiceQuestionViewSet, UpdateProfileViewSet, UserRegistrationViewSet, ResetPasswordViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')

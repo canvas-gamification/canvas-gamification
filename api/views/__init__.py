@@ -10,3 +10,6 @@ from .uqj import UQJViewSet
 from .user_consent import UserConsentViewSet
 from .user_stats import UserStatsViewSet
 from .course import CourseViewSet
+from .update_profile import UpdateProfileViewSet
+from .reset_password import ResetPasswordViewSet
+from .register import UserRegistrationViewSet
