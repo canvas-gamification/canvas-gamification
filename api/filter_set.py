@@ -1,5 +1,4 @@
 import django_property_filter
-import django_filters
 
 from course.models.models import Question
 
