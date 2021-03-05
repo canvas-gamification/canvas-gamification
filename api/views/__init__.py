@@ -3,6 +3,8 @@ from .contact_us import ContactUsViewSet
 from .faq import FAQViewSet
 from .multiple_choice_question import SampleMultipleChoiceQuestionViewSet
 from .multiple_choice_question import MultipleChoiceQuestionViewSet
+from .java_question import JavaQuestionViewSet
+from .parsons_question import ParsonsQuestionViewSet
 from .question import QuestionViewSet
 from .question_category import QuestionCategoryViewSet
 from .token_value import TokenValueViewSet
