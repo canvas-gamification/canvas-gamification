@@ -15,3 +15,4 @@ from .course import CourseViewSet
 from .update_profile import UpdateProfileViewSet
 from .reset_password import ResetPasswordViewSet
 from .register import UserRegistrationViewSet
+from .auth import ObtainAuthTokenView

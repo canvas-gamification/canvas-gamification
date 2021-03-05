@@ -5,9 +5,9 @@ from rest_framework.schemas import get_schema_view
 from rest_framework.authtoken import views
 
 from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
-    QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet,\
-    CourseViewSet, MultipleChoiceQuestionViewSet, UpdateProfileViewSet, UserRegistrationViewSet, ResetPasswordViewSet,\
-    JavaQuestionViewSet, ParsonsQuestionViewSet
+    QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, \
+    CourseViewSet, MultipleChoiceQuestionViewSet, UpdateProfileViewSet, UserRegistrationViewSet, ResetPasswordViewSet, \
+    JavaQuestionViewSet, ParsonsQuestionViewSet, ObtainAuthTokenView
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
@@ -40,5 +40,5 @@ urlpatterns = [
         template_name='api/docs.html',
         extra_context={'schema_url': 'api:openapi-schema'}
     ), name='docs'),
-    path('api-token-auth/', views.obtain_auth_token)
+    path('api-token-auth/', ObtainAuthTokenView.as_view()),
 ] + router.urls
