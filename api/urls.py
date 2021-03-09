@@ -2,7 +2,6 @@ from django.urls import path
 from django.views.generic import TemplateView
 from rest_framework.routers import DefaultRouter
 from rest_framework.schemas import get_schema_view
-from rest_framework.authtoken import views
 
 from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
     QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, \
