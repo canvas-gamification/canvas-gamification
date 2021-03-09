@@ -1,11 +1,14 @@
+from django.db.models import Sum, F, Count
 from rest_framework import serializers
 
 from canvas.models import Event
+from canvas.utils.utils import get_total_event_grade
 
 
 class EventSerializer(serializers.ModelSerializer):
     is_allowed_to_open = serializers.SerializerMethodField('get_is_allowed_to_open')
     has_edit_permission = serializers.SerializerMethodField('get_has_edit_permission')
+    total_event_grade = serializers.SerializerMethodField('get_total_event_grade')
 
     def get_user(self):
         user = None
@@ -14,6 +17,14 @@ class EventSerializer(serializers.ModelSerializer):
             user = request.user
 
         return user
+
+    def get_total_event_grade(self, event):
+        user = self.get_user()
+        # if user is not logged in or the request has no user attached
+        if user is None or not user.is_authenticated:
+            return 0
+
+        return get_total_event_grade(event, user)
 
     def get_is_allowed_to_open(self, event):
         user = self.get_user()
@@ -37,6 +48,7 @@ class EventSerializer(serializers.ModelSerializer):
                   'name',
                   'type',
                   'count_for_tokens',
+                  'total_event_grade',
                   'start_date',
                   'end_date',
                   'course',
