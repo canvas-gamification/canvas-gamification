@@ -1,5 +1,6 @@
 from rest_framework import filters, viewsets
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.permissions import IsAuthenticated
 
 from api.serializers import CourseSerializer
 from canvas.models import CanvasCourse
@@ -11,6 +12,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     ?registered: boolean => if true, filter retrieved courses by if user is currently registered in them
     """
     serializer_class = CourseSerializer
+    permission_classes = [IsAuthenticated, ]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ['mock', 'name', 'allow_registration', 'visible_to_students', 'instructor']
     ordering_fields = ['name', 'start_date', 'end_date', ]
