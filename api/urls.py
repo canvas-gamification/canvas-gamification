@@ -6,7 +6,7 @@ from rest_framework.schemas import get_schema_view
 from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
     QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, \
     CourseViewSet, MultipleChoiceQuestionViewSet, UpdateProfileViewSet, UserRegistrationViewSet, ResetPasswordViewSet, \
-    JavaQuestionViewSet, ParsonsQuestionViewSet, ObtainAuthTokenView
+    JavaQuestionViewSet, ParsonsQuestionViewSet, ObtainAuthTokenView, SubmissionViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
@@ -26,7 +26,8 @@ router.register(r'faq', FAQViewSet, basename='faq')
 router.register(r'course', CourseViewSet, basename='course')
 router.register(r'reset-password', ResetPasswordViewSet, basename='reset-password')
 router.register(r'register', UserRegistrationViewSet, basename='register')
-router.register(r'update-profile', UpdateProfileViewSet, basename='update=profile')
+router.register(r'update-profile', UpdateProfileViewSet, basename='update-profile')
+router.register(r'submission', SubmissionViewSet, basename='submission')
 
 app_name = 'api'
 urlpatterns = [
