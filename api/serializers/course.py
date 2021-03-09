@@ -24,6 +24,10 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_uqjs(self, course):
         user = self.get_user()
+
+        if user is None or not user.is_authenticated:
+            return []
+
         is_instructor = course.has_edit_permission(user)
         if is_instructor:
             uqjs = UserQuestionJunction.objects.filter(user=user, question__course=course).all()
