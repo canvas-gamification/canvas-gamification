@@ -48,11 +48,11 @@ class EventSerializer(serializers.ModelSerializer):
                   'name',
                   'type',
                   'count_for_tokens',
-                  'total_event_grade',
                   'start_date',
                   'end_date',
                   'course',
                   'is_allowed_to_open',
                   'has_edit_permission',
                   'is_open',
-                  'is_exam']
+                  'is_exam',
+                  'total_event_grade',]

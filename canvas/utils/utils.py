@@ -15,9 +15,9 @@ def get_total_event_grade(event, user):
     token_value = reduce(group_token_value, question_types, 0)
 
     if not token_value == 0:
-        return '{:.2f}%'.format(token_recv * 100 / token_value)
+        return token_recv * 100 / token_value
     else:
-        return 'N/A'
+        return 0
 
 
 def get_course_registration(user, course):
