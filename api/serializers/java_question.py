@@ -13,5 +13,5 @@ class JavaQuestionSerializer(serializers.ModelSerializer):
 class JavaSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = JavaSubmission
-        fields = ['pk', 'submission_time', 'answer', 'grade', 'is_correct', 'is_partially_correct', 'finalized', 'status',
-                  'tokens_received', 'token_value', 'answer_files']
+        fields = ['pk', 'submission_time', 'answer', 'grade', 'is_correct', 'is_partially_correct', 'finalized',
+                  'status', 'tokens_received', 'token_value', 'answer_files']

@@ -14,5 +14,5 @@ class ParsonsQuestionSerializer(serializers.ModelSerializer):
 class ParsonsSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParsonsSubmission
-        fields = ['pk', 'submission_time', 'answer', 'grade', 'is_correct', 'is_partially_correct', 'finalized', 'status',
-                  'tokens_received', 'token_value']
+        fields = ['pk', 'submission_time', 'answer', 'grade', 'is_correct', 'is_partially_correct', 'finalized',
+                  'status', 'tokens_received', 'token_value']
