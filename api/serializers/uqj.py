@@ -1,10 +1,11 @@
 from rest_framework import serializers
 
-from api.serializers import QuestionCategorySerializer
+from api.serializers import QuestionCategorySerializer, QuestionSerializer
 from course.models.models import UserQuestionJunction
 
 
 class UQJSerializer(serializers.ModelSerializer):
+    question = QuestionSerializer()
     format = serializers.SerializerMethodField('get_format')
     category = serializers.SerializerMethodField('get_category')
     subcategory = serializers.SerializerMethodField('get_subcategory')
