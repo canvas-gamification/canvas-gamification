@@ -7,7 +7,8 @@ class TokenUseOptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TokenUseOption
-        fields = ['course',
+        fields = ['id',
+                  'course',
                   'tokens_required',
                   'points_given',
                   'maximum_number_of_use',
