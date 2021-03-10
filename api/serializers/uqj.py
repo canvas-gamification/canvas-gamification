@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from api.serializers import QuestionCategorySerializer
 from course.models.models import UserQuestionJunction
 
 
@@ -9,13 +10,13 @@ class UQJSerializer(serializers.ModelSerializer):
     subcategory = serializers.SerializerMethodField('get_subcategory')
 
     def get_format(self, uqj):
-        return uqj.question.type_name
+        return uqj.question.type_name if uqj.question else None
 
     def get_category(self, uqj):
-        return uqj.question.category.parent if uqj.question.category.parent else None
+        return QuestionCategorySerializer(uqj.question.category.parent).data if uqj.question.category.parent else None
 
     def get_subcategory(self, uqj):
-        return uqj.question.category.name
+        return uqj.question.category.name if uqj.question.category else None
 
     class Meta:
         model = UserQuestionJunction
