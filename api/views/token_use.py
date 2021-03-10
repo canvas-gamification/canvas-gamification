@@ -23,7 +23,6 @@ def use_tokens(request, course_pk):
             token_use_data[token_use_option_id] = token_use_num
     try:
         update_token_use(request.user, course, token_use_data)
-        print(token_use_data)
         return Response({
             "message": {
                 "type": "SUCCESS",
