@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from accounts.models import MyAnonymousUser
 from api.serializers import QuestionSerializer, UQJSerializer
 from api.serializers.event import EventSerializer
 from api.serializers.token_use_option import TokenUseOptionSerializer
@@ -15,17 +16,16 @@ class CourseSerializer(serializers.ModelSerializer):
     uqjs = serializers.SerializerMethodField('get_uqjs')
 
     def get_user(self):
-        user = None
+        user = MyAnonymousUser()
         request = self.context.get("request")
         if request and hasattr(request, "user"):
             user = request.user
-
         return user
 
     def get_uqjs(self, course):
         user = self.get_user()
 
-        if user is None or not user.is_authenticated:
+        if not user.is_authenticated:
             return []
 
         is_instructor = course.has_edit_permission(user)
@@ -41,7 +41,7 @@ class CourseSerializer(serializers.ModelSerializer):
     def get_is_registered(self, course):
         user = self.get_user()
         # if user is not logged in or the request has no user attached
-        if user is None or not user.is_authenticated:
+        if not user.is_authenticated:
             return False
 
         return course.is_registered(user)
