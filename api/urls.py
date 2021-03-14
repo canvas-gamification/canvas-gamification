@@ -2,17 +2,21 @@ from django.urls import path
 from django.views.generic import TemplateView
 from rest_framework.routers import DefaultRouter
 from rest_framework.schemas import get_schema_view
-from rest_framework.authtoken import views
 
 from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, UserConsentViewSet, ContactUsViewSet, \
     QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, \
-    CourseViewSet, CanvasCourseRegistrationViewSet
+    CourseViewSet, CanvasCourseRegistrationViewSet, ResetPasswordViewSet, UserRegistrationViewSet, \
+    UpdateProfileViewSet, SubmissionViewSet, ObtainAuthTokenView, MultipleChoiceQuestionViewSet, JavaQuestionViewSet, \
+    ParsonsQuestionViewSet
 from api.views.token_use import use_tokens
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
 router.register(r'sample-multiple-choice-question', SampleMultipleChoiceQuestionViewSet,
                 basename='sample-multiple-choice-question')
+router.register(r'multiple-choice-question', MultipleChoiceQuestionViewSet, basename='multiple-choice-question')
+router.register(r'java-question', JavaQuestionViewSet, basename='java-question')
+router.register(r'parsons-question', ParsonsQuestionViewSet, basename='parsons-question')
 router.register(r'user-consent', UserConsentViewSet, basename='user-consent')
 router.register(r'contact-us', ContactUsViewSet, basename='contact-us')
 router.register(r'question-category', QuestionCategoryViewSet, basename='question-category')
@@ -23,6 +27,10 @@ router.register(r'uqj', UQJViewSet, basename='uqj')
 router.register(r'faq', FAQViewSet, basename='faq')
 router.register(r'course', CourseViewSet, basename='course')
 router.register(r'course-registration', CanvasCourseRegistrationViewSet, basename='course-registration')
+router.register(r'reset-password', ResetPasswordViewSet, basename='reset-password')
+router.register(r'register', UserRegistrationViewSet, basename='register')
+router.register(r'update-profile', UpdateProfileViewSet, basename='update-profile')
+router.register(r'submission', SubmissionViewSet, basename='submission')
 
 app_name = 'api'
 urlpatterns = [
@@ -35,6 +43,6 @@ urlpatterns = [
         template_name='api/docs.html',
         extra_context={'schema_url': 'api:openapi-schema'}
     ), name='docs'),
-    path('api-token-auth/', views.obtain_auth_token, name="token-auth"),
-    path(r'use-tokens/<int:course_pk>', use_tokens, name="use-tokens")
+    path('api-token-auth/', ObtainAuthTokenView.as_view(), name="token-auth"),
+    path(r'use-tokens/<int:course_pk>', use_tokens, name="use-tokens"),
 ] + router.urls

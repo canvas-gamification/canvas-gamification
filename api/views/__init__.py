@@ -2,6 +2,9 @@ from .action import ActionsViewSet
 from .contact_us import ContactUsViewSet
 from .faq import FAQViewSet
 from .multiple_choice_question import SampleMultipleChoiceQuestionViewSet
+from .multiple_choice_question import MultipleChoiceQuestionViewSet
+from .java_question import JavaQuestionViewSet
+from .parsons_question import ParsonsQuestionViewSet
 from .question import QuestionViewSet
 from .question_category import QuestionCategoryViewSet
 from .token_value import TokenValueViewSet
@@ -9,4 +12,9 @@ from .uqj import UQJViewSet
 from .user_consent import UserConsentViewSet
 from .user_stats import UserStatsViewSet
 from .course import CourseViewSet
+from .update_profile import UpdateProfileViewSet
+from .reset_password import ResetPasswordViewSet
+from .register import UserRegistrationViewSet
+from .auth import ObtainAuthTokenView
+from .submission import SubmissionViewSet
 from .canvasCourseRegistration import CanvasCourseRegistrationViewSet
