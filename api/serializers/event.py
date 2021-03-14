@@ -1,4 +1,3 @@
-from django.db.models import Sum, F, Count
 from rest_framework import serializers
 
 from canvas.models import Event
@@ -55,4 +54,4 @@ class EventSerializer(serializers.ModelSerializer):
                   'has_edit_permission',
                   'is_open',
                   'is_exam',
-                  'total_event_grade',]
+                  'total_event_grade', ]
