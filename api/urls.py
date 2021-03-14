@@ -12,17 +12,17 @@ from api.views.token_use import use_tokens
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
 router.register(r'sample-multiple-choice-question', SampleMultipleChoiceQuestionViewSet,
-                basename='sample_multiple_choice_question')
-router.register(r'user-consent', UserConsentViewSet, basename='user_consent')
-router.register(r'contact-us', ContactUsViewSet, basename='contact_us')
-router.register(r'question-category', QuestionCategoryViewSet, basename='question_category')
-router.register(r'token-values', TokenValueViewSet, basename='token_values')
-router.register(r'user-stats', UserStatsViewSet, basename='user_stats')
-router.register(r'user-actions', ActionsViewSet, basename='user_actions')
+                basename='sample-multiple-choice-question')
+router.register(r'user-consent', UserConsentViewSet, basename='user-consent')
+router.register(r'contact-us', ContactUsViewSet, basename='contact-us')
+router.register(r'question-category', QuestionCategoryViewSet, basename='question-category')
+router.register(r'token-values', TokenValueViewSet, basename='token-values')
+router.register(r'user-stats', UserStatsViewSet, basename='user-stats')
+router.register(r'user-actions', ActionsViewSet, basename='user-actions')
 router.register(r'uqj', UQJViewSet, basename='uqj')
 router.register(r'faq', FAQViewSet, basename='faq')
 router.register(r'course', CourseViewSet, basename='course')
-router.register(r'course-registration', CanvasCourseRegistrationViewSet, basename='course_registration')
+router.register(r'course-registration', CanvasCourseRegistrationViewSet, basename='course-registration')
 
 app_name = 'api'
 urlpatterns = [
@@ -35,6 +35,6 @@ urlpatterns = [
         template_name='api/docs.html',
         extra_context={'schema_url': 'api:openapi-schema'}
     ), name='docs'),
-    path('api-token-auth/', views.obtain_auth_token),
-    path(r'use-tokens/<int:course_pk>', use_tokens)
+    path('api-token-auth/', views.obtain_auth_token, name="token-auth"),
+    path(r'use-tokens/<int:course_pk>', use_tokens, name="use-tokens")
 ] + router.urls

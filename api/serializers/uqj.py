@@ -21,18 +21,7 @@ class UQJSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserQuestionJunction
-        fields = ['id',
-                  'random_seed',
-                  'last_viewed',
-                  'opened_tutorial',
-                  'tokens_received',
-                  'is_solved',
-                  'is_partially_solved',
-                  'question',
-                  'num_attempts',
-                  'format',
-                  'category',
-                  'subcategory',
-                  'status',
+        fields = ['id', 'random_seed', 'last_viewed', 'opened_tutorial', 'tokens_received', 'is_solved',
+                  'is_partially_solved', 'question', 'num_attempts', 'format', 'category', 'subcategory', 'status',
                   'formatted_current_tokens_received']
         depth = 1
