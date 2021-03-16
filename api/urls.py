@@ -7,8 +7,7 @@ from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, User
     QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, \
     CourseViewSet, CanvasCourseRegistrationViewSet, ResetPasswordViewSet, UserRegistrationViewSet, \
     UpdateProfileViewSet, SubmissionViewSet, ObtainAuthTokenView, MultipleChoiceQuestionViewSet, JavaQuestionViewSet, \
-    ParsonsQuestionViewSet
-from api.views.token_use import use_tokens
+    ParsonsQuestionViewSet, TokenUseViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
@@ -31,6 +30,7 @@ router.register(r'reset-password', ResetPasswordViewSet, basename='reset-passwor
 router.register(r'register', UserRegistrationViewSet, basename='register')
 router.register(r'update-profile', UpdateProfileViewSet, basename='update-profile')
 router.register(r'submission', SubmissionViewSet, basename='submission')
+router.register(r'token-use', TokenUseViewSet, basename='token-use')
 
 app_name = 'api'
 urlpatterns = [
@@ -44,5 +44,4 @@ urlpatterns = [
         extra_context={'schema_url': 'api:openapi-schema'}
     ), name='docs'),
     path('api-token-auth/', ObtainAuthTokenView.as_view(), name="token-auth"),
-    path(r'use-tokens/<int:course_pk>', use_tokens, name="use-tokens"),
 ] + router.urls
