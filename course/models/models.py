@@ -33,6 +33,10 @@ class QuestionCategory(models.Model):
             return "{} :: {}".format(self.parent, self.name)
 
     @property
+    def full_name(self):
+        return self.__str__()
+
+    @property
     def average_success(self):
         category_filter = Q(question__category=self) | Q(question__category__parent=self)
         solved = UserQuestionJunction.objects.filter(category_filter, is_solved=True).count()
