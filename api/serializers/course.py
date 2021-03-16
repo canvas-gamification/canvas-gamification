@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from accounts.models import MyAnonymousUser
-from api.serializers import QuestionSerializer, UQJSerializer
+from api.serializers.question import QuestionSerializer
+from api.serializers.uqj import UQJSerializer
 from api.serializers.event import EventSerializer
 from api.serializers.token_use_option import TokenUseOptionSerializer
 from canvas.models import CanvasCourse

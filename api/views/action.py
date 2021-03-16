@@ -2,7 +2,7 @@ from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticated
 
 from api.pagination import BasePagination
-from api.serializers import ActionsSerializer
+from api.serializers.action import ActionsSerializer
 
 
 class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
