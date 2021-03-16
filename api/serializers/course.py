@@ -1,10 +1,13 @@
 from rest_framework import serializers
 
 from accounts.models import MyAnonymousUser
-from api.serializers import QuestionSerializer, UQJSerializer
+from api.serializers.question import QuestionSerializer
+from api.serializers.uqj import UQJSerializer
+from api.serializers.canvas_course_registration import CanvasCourseRegistrationSerializer
 from api.serializers.event import EventSerializer
 from api.serializers.token_use_option import TokenUseOptionSerializer
 from canvas.models import CanvasCourse
+from canvas.utils.utils import get_course_registration
 from course.models.models import UserQuestionJunction
 
 
@@ -14,6 +17,7 @@ class CourseSerializer(serializers.ModelSerializer):
     token_use_options = TokenUseOptionSerializer(many=True, read_only=True)
     question_set = QuestionSerializer(many=True, read_only=True)
     uqjs = serializers.SerializerMethodField('get_uqjs')
+    course_reg = serializers.SerializerMethodField('get_course_reg')
 
     def get_user(self):
         user = MyAnonymousUser()
@@ -46,8 +50,17 @@ class CourseSerializer(serializers.ModelSerializer):
 
         return course.is_registered(user)
 
+    def get_course_reg(self, course):
+        user = self.get_user()
+        # if user is not logged in or the request has no user attached
+        if not user.is_authenticated:
+            return None
+
+        course_reg = get_course_registration(user, course)
+        return CanvasCourseRegistrationSerializer(course_reg).data
+
     class Meta:
         model = CanvasCourse
         fields = ['id', 'mock', 'name', 'url', 'course_id', 'token', 'allow_registration', 'visible_to_students',
-                  'start_date', 'end_date', 'instructor', 'status', 'is_registered', 'token_use_options',
-                  'question_set', 'events', 'uqjs']
+                  'start_date', 'end_date', 'instructor', 'status', 'is_registered', 'token_use_options', 'events',
+                  'uqjs', 'question_set', 'course_reg']
