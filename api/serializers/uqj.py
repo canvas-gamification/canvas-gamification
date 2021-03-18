@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from api.serializers.question import QuestionSerializer
-from api.serializers.question_category import QuestionCategorySerializer
+from api.serializers import QuestionSerializer, QuestionCategorySerializer
 from course.models.models import UserQuestionJunction
 
 

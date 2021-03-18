@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.serializers.token_use_option import TokenUseOptionSerializer
+from api.serializers import TokenUseOptionSerializer
 from canvas.models import TokenUse
 
 
