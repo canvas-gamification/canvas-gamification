@@ -9,6 +9,8 @@ class JavaQuestionSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'text', 'answer', 'max_submission_allowed', 'time_created', 'time_modified', 'author',
                   'category', 'difficulty', 'is_verified', 'variables', 'junit_template', 'input_file_names']
 
+    input_file_names = serializers.JSONField()
+
 
 class JavaSubmissionSerializer(serializers.ModelSerializer):
     class Meta:

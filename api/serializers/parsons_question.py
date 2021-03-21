@@ -10,6 +10,8 @@ class ParsonsQuestionSerializer(serializers.ModelSerializer):
                   'category', 'difficulty', 'is_verified', 'variables', 'lines', 'junit_template',
                   'additional_file_name']
 
+        lines = serializers.JSONField()
+
 
 class ParsonsSubmissionSerializer(serializers.ModelSerializer):
     class Meta:

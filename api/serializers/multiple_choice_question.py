@@ -9,6 +9,8 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'text', 'answer', 'max_submission_allowed', 'time_created', 'time_modified', 'author',
                   'category', 'difficulty', 'is_verified', 'variables', 'choices', 'visible_distractor_count']
 
+    choices = serializers.JSONField()
+
 
 class MultipleChoiceSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
