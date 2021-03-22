@@ -74,9 +74,9 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['post'])
     def register(self, request, pk=None):
-        name = request.POST.get("name", None)
-        student_number = request.POST.get("student_number", None)
-        confirmed_name = request.POST.get("confirmed_name", None)
+        name = request.data.get("name", None)
+        student_number = request.data.get("student_number", None)
+        confirmed_name = request.data.get("confirmed_name", None)
 
         course = get_object_or_404(CanvasCourse, pk=pk)
         course_reg = get_course_registration(request.user, course)
@@ -116,7 +116,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 })
 
             return Response({
-                "success": False,
+                "success": True,
                 "guessed_name": guessed_names[0],
             })
 
@@ -124,7 +124,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['post'])
     def verify(self, request, pk=None):
-        code = request.POST.get("code", None)
+        code = request.data.get("code", None)
 
         if code is None:
             raise ValidationError()
