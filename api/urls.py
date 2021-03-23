@@ -7,7 +7,7 @@ from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, User
     QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, \
     CourseViewSet, CanvasCourseRegistrationViewSet, ResetPasswordViewSet, UserRegistrationViewSet, \
     UpdateProfileViewSet, SubmissionViewSet, ObtainAuthTokenView, MultipleChoiceQuestionViewSet, JavaQuestionViewSet, \
-    ParsonsQuestionViewSet
+    ParsonsQuestionViewSet, EventViewSet
 from api.views.token_use import use_tokens
 
 router = DefaultRouter()
@@ -31,6 +31,7 @@ router.register(r'reset-password', ResetPasswordViewSet, basename='reset-passwor
 router.register(r'register', UserRegistrationViewSet, basename='register')
 router.register(r'update-profile', UpdateProfileViewSet, basename='update-profile')
 router.register(r'submission', SubmissionViewSet, basename='submission')
+router.register(r'event', EventViewSet, basename='event')
 
 app_name = 'api'
 urlpatterns = [
