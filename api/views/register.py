@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 from accounts.models import MyUser
 from accounts.utils.email_functions import send_activation_email
-from api.serializers.register import UserRegistrationSerializer
+from api.serializers import UserRegistrationSerializer
 
 
 class UserRegistrationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

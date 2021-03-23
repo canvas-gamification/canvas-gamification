@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import MyUser
-from api.serializers.update_profile import UpdateProfileSerializer
+from api.serializers import UpdateProfileSerializer
 
 
 class UpdateProfileViewSet(viewsets.ModelViewSet):
