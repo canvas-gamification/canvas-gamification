@@ -28,4 +28,3 @@ from .question import QuestionSerializer
 from .uqj import UQJSerializer
 from .canvas_course_registration import CanvasCourseRegistrationSerializer
 from .course import CourseSerializer
-
