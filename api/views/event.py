@@ -6,7 +6,7 @@ from api.serializers import EventSerializer
 from canvas.models import Event
 
 
-class EventViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin,\
+class EventViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin,
                    mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """
     Optional Parameters
@@ -18,5 +18,4 @@ class EventViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Destro
     filterset_fields = ['course', ]
 
     def get_queryset(self):
-        user = self.request.user
         return Event.objects.all()
