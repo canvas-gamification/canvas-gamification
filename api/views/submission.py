@@ -51,7 +51,6 @@ class SubmissionViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['post'])
     def submit(self, request):
-        print(request.data)
         question_id = request.data.get("question", None)
         solution = request.data.get("solution", None)
 
