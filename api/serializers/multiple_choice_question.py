@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from api.serializers.event import EventSerializer
 from course.models.models import MultipleChoiceQuestion, MultipleChoiceSubmission
 
 
@@ -11,6 +12,7 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
                   'token_value', 'success_rate', 'type_name', 'event', 'is_sample', 'category_name',
                   'parent_category_name', 'course_name', 'event_name', 'author_name', ]
 
+    event = EventSerializer()
     choices = serializers.JSONField()
 
 
