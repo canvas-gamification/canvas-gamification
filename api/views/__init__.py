@@ -18,3 +18,4 @@ from .register import UserRegistrationViewSet
 from .auth import ObtainAuthTokenView
 from .submission import SubmissionViewSet
 from .canvasCourseRegistration import CanvasCourseRegistrationViewSet
+from .schema import SchemaViewSet
