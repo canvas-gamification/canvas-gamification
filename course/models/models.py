@@ -288,7 +288,7 @@ class UserQuestionJunction(models.Model):
         from course.models.parsons_question import ParsonsQuestion
 
         if not isinstance(self.question, ParsonsQuestion):
-            return {}
+            return []
 
         random.seed(self.random_seed)
         lines = []
