@@ -336,6 +336,14 @@ class UserQuestionJunction(models.Model):
             return str(self.question.token_value)
         return str(self.tokens_received) + "/" + str(self.question.token_value)
 
+    @property
+    def question_title(self):
+        return self.question.title
+
+    @property
+    def question_type(self):
+        return self.question.type_name
+
     def save(self, **kwargs):
         self.is_solved = self.submissions.filter(is_correct=True).exists()
         self.is_partially_solved = not self.is_solved and self.submissions.filter(is_partially_correct=True).exists()

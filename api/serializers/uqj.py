@@ -33,4 +33,4 @@ class UQJSerializer(serializers.ModelSerializer):
         fields = ['id', 'last_viewed', 'opened_tutorial', 'tokens_received', 'is_solved', 'is_partially_solved',
                   'question', 'num_attempts', 'status', 'formatted_current_tokens_received', 'is_allowed_to_submit',
                   'variables', 'variables_errors', 'rendered_text', 'rendered_choices', 'rendered_lines',
-                  'status_class', 'input_files']
+                  'status_class', 'input_files', 'question_title', 'question_type']
