@@ -12,7 +12,6 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
                   'token_value', 'success_rate', 'type_name', 'event', 'is_sample', 'category_name',
                   'parent_category_name', 'course_name', 'event_name', 'author_name', ]
 
-    event = EventSerializer(read_only=True)
     choices = serializers.JSONField()
     variables = serializers.JSONField()
 

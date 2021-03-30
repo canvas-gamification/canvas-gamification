@@ -12,7 +12,6 @@ class ParsonsQuestionSerializer(serializers.ModelSerializer):
                   'additional_file_name', 'token_value', 'success_rate', 'type_name', 'event', 'is_sample',
                   'category_name', 'parent_category_name', 'course_name', 'event_name', 'author_name', ]
 
-        event = EventSerializer()
         lines = serializers.JSONField()
         variables = serializers.JSONField()
 
