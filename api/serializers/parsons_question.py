@@ -14,6 +14,7 @@ class ParsonsQuestionSerializer(serializers.ModelSerializer):
 
         event = EventSerializer()
         lines = serializers.JSONField()
+        variables = serializers.JSONField()
 
 
 class ParsonsSubmissionSerializer(serializers.ModelSerializer):

@@ -14,6 +14,7 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
 
     event = EventSerializer(read_only=True)
     choices = serializers.JSONField()
+    variables = serializers.JSONField()
 
 
 class MultipleChoiceSubmissionSerializer(serializers.ModelSerializer):

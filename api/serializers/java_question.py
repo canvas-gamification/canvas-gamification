@@ -14,6 +14,7 @@ class JavaQuestionSerializer(serializers.ModelSerializer):
 
     event = EventSerializer()
     input_file_names = serializers.JSONField()
+    variables = serializers.JSONField()
 
 
 class JavaSubmissionSerializer(serializers.ModelSerializer):
