@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-from api.serializers.event import EventSerializer
 from course.models.models import MultipleChoiceQuestion, MultipleChoiceSubmission
 
 
