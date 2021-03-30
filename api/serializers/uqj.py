@@ -8,6 +8,7 @@ class UQJSerializer(serializers.ModelSerializer):
     rendered_text = serializers.SerializerMethodField('get_rendered_text')
     rendered_choices = serializers.SerializerMethodField('get_rendered_choices')
     rendered_lines = serializers.SerializerMethodField('get_lines')
+    input_files = serializers.SerializerMethodField('get_input_files')
 
     def get_variables(self, uqj):
         return uqj.get_variables()
@@ -23,6 +24,9 @@ class UQJSerializer(serializers.ModelSerializer):
 
     def get_lines(self, uqj):
         return uqj.get_lines()
+
+    def get_input_files(self, uqj):
+        return uqj.get_input_files()
 
     class Meta:
         model = UserQuestionJunction

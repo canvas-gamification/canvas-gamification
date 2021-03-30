@@ -297,6 +297,11 @@ class UserQuestionJunction(models.Model):
         random.shuffle(lines)
         return lines
 
+    def get_input_files(self):
+        if not isinstance(self.question, JavaQuestion):
+            return {}
+        return self.question.get_input_files()
+
     def num_attempts(self):
         return self.submissions.count()
 
