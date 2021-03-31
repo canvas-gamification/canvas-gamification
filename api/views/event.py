@@ -6,7 +6,7 @@ from api.serializers import EventSerializer
 from canvas.models import Event
 
 
-class EventViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin,
+class EventViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.UpdateModelMixin,
                    mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """
     Optional Parameters
