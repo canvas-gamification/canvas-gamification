@@ -51,8 +51,8 @@ class SubmissionViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['post'])
     def submit(self, request):
-        question_id = request.POST.get("question", None)
-        solution = request.POST.get("solution", None)
+        question_id = request.data.get("question", None)
+        solution = request.data.get("solution", None)
 
         if question_id is None or solution is None:
             raise ValidationError("Parameters question and solution should be provided.")

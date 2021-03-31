@@ -12,6 +12,7 @@ class ParsonsQuestionSerializer(serializers.ModelSerializer):
                   'category_name', 'parent_category_name', 'course_name', 'event_name', 'author_name', ]
 
         lines = serializers.JSONField()
+        variables = serializers.JSONField()
 
 
 class ParsonsSubmissionSerializer(serializers.ModelSerializer):

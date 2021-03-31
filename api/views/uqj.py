@@ -16,7 +16,7 @@ class UQJViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = BasePagination
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, ]
     ordering_fields = ['last_viewed', ]
-    filterset_fields = ['question__event', ]
+    filterset_fields = ['question', 'question__event', ]
 
     def get_queryset(self):
         user = self.request.user

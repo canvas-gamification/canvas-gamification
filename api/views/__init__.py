@@ -19,3 +19,4 @@ from .auth import ObtainAuthTokenView
 from .submission import SubmissionViewSet
 from .canvasCourseRegistration import CanvasCourseRegistrationViewSet
 from .event import EventViewSet
+from .schema import SchemaViewSet

@@ -12,6 +12,7 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
                   'parent_category_name', 'course_name', 'event_name', 'author_name', ]
 
     choices = serializers.JSONField()
+    variables = serializers.JSONField()
 
 
 class MultipleChoiceSubmissionSerializer(serializers.ModelSerializer):
