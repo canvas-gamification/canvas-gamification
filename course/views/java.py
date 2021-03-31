@@ -1,3 +1,5 @@
+import json
+
 from django.contrib import messages
 from django.shortcuts import render
 
@@ -81,6 +83,10 @@ def _java_submission_detail_view(request, submission):
 
 
 def submit_solution(question, user, answer_dict):
+
+    if isinstance(answer_dict, str):
+        answer_dict = json.loads(answer_dict)
+
     uqj = get_user_question_junction(user, question)
 
     if not uqj.is_allowed_to_submit:
