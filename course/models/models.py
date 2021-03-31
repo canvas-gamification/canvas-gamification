@@ -33,6 +33,10 @@ class QuestionCategory(models.Model):
             return "{} :: {}".format(self.parent, self.name)
 
     @property
+    def full_name(self):
+        return self.__str__()
+
+    @property
     def average_success(self):
         category_filter = Q(question__category=self) | Q(question__category__parent=self)
         solved = UserQuestionJunction.objects.filter(category_filter, is_solved=True).count()
@@ -284,7 +288,7 @@ class UserQuestionJunction(models.Model):
         from course.models.parsons_question import ParsonsQuestion
 
         if not isinstance(self.question, ParsonsQuestion):
-            return {}
+            return []
 
         random.seed(self.random_seed)
         lines = []
@@ -292,6 +296,11 @@ class UserQuestionJunction(models.Model):
             lines.append(render_text(line, self.get_variables()))
         random.shuffle(lines)
         return lines
+
+    def get_input_files(self):
+        if not isinstance(self.question, JavaQuestion):
+            return {}
+        return self.question.get_input_files()
 
     def num_attempts(self):
         return self.submissions.count()

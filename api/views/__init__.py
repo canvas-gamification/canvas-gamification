@@ -17,4 +17,5 @@ from .reset_password import ResetPasswordViewSet
 from .register import UserRegistrationViewSet
 from .auth import ObtainAuthTokenView
 from .submission import SubmissionViewSet
-from .canvas_course_registration import CanvasCourseRegistrationViewSet
+from .canvasCourseRegistration import CanvasCourseRegistrationViewSet
+from .schema import SchemaViewSet

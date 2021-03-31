@@ -19,4 +19,4 @@ class QuestionCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuestionCategory
-        fields = ['pk', 'name', 'description', 'parent', 'numQuestions', 'avgSuccess', 'nextCategories']
+        fields = ['pk', 'name', 'description', 'parent', 'numQuestions', 'avgSuccess', 'nextCategories', 'full_name']

@@ -1,5 +1,6 @@
 from rest_framework import viewsets
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -7,8 +8,13 @@ from rest_framework.response import Response
 from api.serializers.java_question import JavaSubmissionSerializer
 from api.serializers.multiple_choice_question import MultipleChoiceSubmissionSerializer
 from api.serializers.parsons_question import ParsonsSubmissionSerializer
-from course.models.models import Submission, MultipleChoiceSubmission, JavaSubmission
-from course.models.parsons_question import ParsonsSubmission
+from course.exceptions import SubmissionException
+from course.models.models import Submission, MultipleChoiceSubmission, JavaSubmission, Question, \
+    MultipleChoiceQuestion, JavaQuestion
+from course.models.parsons_question import ParsonsSubmission, ParsonsQuestion
+from course.views.java import submit_solution as submit_java_solution
+from course.views.multiple_choice import submit_solution as submit_multiple_choice_solution
+from course.views.parsons import submit_solution as submit_parsons_solution
 
 
 class SubmissionViewSet(viewsets.ViewSet):
@@ -41,4 +47,28 @@ class SubmissionViewSet(viewsets.ViewSet):
         submission = get_object_or_404(Submission.objects.all(), pk=pk)
         if submission.uqj.user != request.user:
             raise PermissionDenied()
+        return Response(self.get_serialized_data(submission))
+
+    @action(detail=False, methods=['post'])
+    def submit(self, request):
+        question_id = request.data.get("question", None)
+        solution = request.data.get("solution", None)
+
+        if question_id is None or solution is None:
+            raise ValidationError("Parameters question and solution should be provided.")
+
+        question = get_object_or_404(Question, pk=question_id)
+
+        try:
+            if isinstance(question, MultipleChoiceQuestion):
+                submission = submit_multiple_choice_solution(question, request.user, solution)
+            elif isinstance(question, JavaQuestion):
+                submission = submit_java_solution(question, request.user, solution)
+            elif isinstance(question, ParsonsQuestion):
+                submission = submit_parsons_solution(question, request.user, solution)
+            else:
+                raise ValidationError("Incorrect question format.")
+        except SubmissionException as e:
+            raise ValidationError("{}".format(e))
+
         return Response(self.get_serialized_data(submission))

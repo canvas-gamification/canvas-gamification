@@ -1,27 +1,36 @@
 from rest_framework import serializers
-
-from api.serializers import QuestionCategorySerializer, QuestionSerializer
 from course.models.models import UserQuestionJunction
 
 
 class UQJSerializer(serializers.ModelSerializer):
-    question = QuestionSerializer()
-    format = serializers.SerializerMethodField('get_format')
-    category = serializers.SerializerMethodField('get_category')
-    subcategory = serializers.SerializerMethodField('get_subcategory')
+    variables = serializers.SerializerMethodField('get_variables')
+    variables_errors = serializers.SerializerMethodField('get_variables_errors')
+    rendered_text = serializers.SerializerMethodField('get_rendered_text')
+    rendered_choices = serializers.SerializerMethodField('get_rendered_choices')
+    rendered_lines = serializers.SerializerMethodField('get_lines')
+    input_files = serializers.SerializerMethodField('get_input_files')
 
-    def get_format(self, uqj):
-        return uqj.question.type_name if uqj.question else None
+    def get_variables(self, uqj):
+        return uqj.get_variables()
 
-    def get_category(self, uqj):
-        return QuestionCategorySerializer(uqj.question.category.parent).data if uqj.question.category.parent else None
+    def get_variables_errors(self, uqj):
+        return uqj.get_variables_errors()
 
-    def get_subcategory(self, uqj):
-        return uqj.question.category.name if uqj.question.category else None
+    def get_rendered_text(self, uqj):
+        return uqj.get_rendered_text()
+
+    def get_rendered_choices(self, uqj):
+        return uqj.get_rendered_choices()
+
+    def get_lines(self, uqj):
+        return uqj.get_lines()
+
+    def get_input_files(self, uqj):
+        return uqj.get_input_files()
 
     class Meta:
         model = UserQuestionJunction
-        fields = ['id', 'random_seed', 'last_viewed', 'opened_tutorial', 'tokens_received', 'is_solved',
-                  'is_partially_solved', 'question', 'num_attempts', 'format', 'category', 'subcategory', 'status',
-                  'formatted_current_tokens_received']
-        depth = 1
+        fields = ['id', 'last_viewed', 'opened_tutorial', 'tokens_received', 'is_solved', 'is_partially_solved',
+                  'question', 'num_attempts', 'status', 'formatted_current_tokens_received', 'is_allowed_to_submit',
+                  'variables', 'variables_errors', 'rendered_text', 'rendered_choices', 'rendered_lines',
+                  'status_class', 'input_files']
