@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticated
 
@@ -13,8 +14,9 @@ class UQJViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UQJSerializer
     permission_classes = [IsAuthenticated, ]
     pagination_class = BasePagination
-    filter_backends = [filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, ]
     ordering_fields = ['last_viewed', ]
+    filterset_fields = ['question__event', ]
 
     def get_queryset(self):
         user = self.request.user
