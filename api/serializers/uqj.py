@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from api.serializers import QuestionSerializer
 from course.models.models import UserQuestionJunction
 
 
@@ -9,6 +11,7 @@ class UQJSerializer(serializers.ModelSerializer):
     rendered_choices = serializers.SerializerMethodField('get_rendered_choices')
     rendered_lines = serializers.SerializerMethodField('get_lines')
     input_files = serializers.SerializerMethodField('get_input_files')
+    question = QuestionSerializer()
 
     def get_variables(self, uqj):
         return uqj.get_variables()
