@@ -1,7 +1,7 @@
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from api.serializers.reset_password import ResetPasswordSerializer
+from api.serializers import ResetPasswordSerializer
 
 
 class ResetPasswordViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):

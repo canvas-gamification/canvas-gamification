@@ -5,9 +5,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from api.serializers.java_question import JavaSubmissionSerializer
-from api.serializers.multiple_choice_question import MultipleChoiceSubmissionSerializer
-from api.serializers.parsons_question import ParsonsSubmissionSerializer
+from api.serializers import JavaSubmissionSerializer, MultipleChoiceSubmissionSerializer, ParsonsSubmissionSerializer
 from course.exceptions import SubmissionException
 from course.models.models import Submission, MultipleChoiceSubmission, JavaSubmission, Question, \
     MultipleChoiceQuestion, JavaQuestion
