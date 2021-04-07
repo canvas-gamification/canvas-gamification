@@ -42,10 +42,15 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['get'], url_path="get-registration-status")
     def get_registration_status(self, request, pk=None):
+        """
+        Returns the status of this logged-in user's course registration for a specific course.
+        This is encoded as a string.
+        """
         course = get_object_or_404(CanvasCourse, pk=pk)
         course_reg = get_course_registration(request.user, course)
 
         if course_reg is None:
+            # create a CanvasCourseRegistration for this (user, course) pair if one does not already exist
             course_reg = CanvasCourseRegistration(user=request.user, course=course)
             course_reg.save()
 
@@ -56,6 +61,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             })
 
         if not course_reg.canvas_user_id:
+            # if the CanvasCourseRegistration does not have a student number associated, then the user is not registered
             return Response({
                 "status": "Not Registered",
                 "message": None,
@@ -74,6 +80,12 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['post'])
     def register(self, request, pk=None):
+        """
+        This endpoint completes the 'next' stage of course registration for this (user, course) pair. It decides what
+        the 'next' step is based on the status of the CanvasCourseRegistration and the request's POST data.
+        - In each case, setting success = True lets the front-end know to advance the UI to the next stage.
+        - Raising ValidationError() returns a pre-defined Response.
+        """
         name = request.data.get("name", None)
         student_number = request.data.get("student_number", None)
         confirmed_name = request.data.get("confirmed_name", None)
@@ -82,10 +94,12 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         course_reg = get_course_registration(request.user, course)
 
         if course_reg is None:
+            # create a CanvasCourseRegistration for this (user, course) pair if one does not already exist
             course_reg = CanvasCourseRegistration(user=request.user, course=course)
             course_reg.save()
 
         if student_number is not None:
+            # if a student number was given in the request data, try to find this canvas user using it
             canvas_user = course.get_user(student_id=student_number)
 
             if canvas_user is None:
@@ -97,6 +111,8 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             })
 
         if confirmed_name is not None:
+            # if a confirmed name was given in the request data, try to find this canvas user using it. The confirmed
+            # name should be the same as the guessed name that the API responded with earlier in the process.
             canvas_user = course.get_user(name=confirmed_name)
             if not canvas_user:
                 raise ValidationError()
@@ -106,10 +122,14 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             })
 
         if name is not None:
+            # if an inputted name is in the request data, try to guess the name properly.
             guessed_names = course.guess_user(name)
             if len(guessed_names) == 0:
                 raise ValidationError()
             elif len(guessed_names) > 1:
+                # If more than 1 name is guessed, then the UI moves to the student number confirmation
+                # since the student number confirmation is not the standard process, success = False lets the front-end
+                # know what to render.
                 return Response({
                     "success": False,
                     "guessed_name": None,
@@ -124,6 +144,9 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['post'])
     def verify(self, request, pk=None):
+        """
+        This endpoint completes the verification step of course registration.
+        """
         code = request.data.get("code", None)
 
         if code is None:
