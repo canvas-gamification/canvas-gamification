@@ -18,11 +18,10 @@ account_activation_token_generator = TokenGenerator()
 
 
 def send_activation_email(request, user):
-    current_site = get_current_site(request)
     mail_subject = 'Activate your account.'
     message = render_to_string('accounts/activation_email.html', {
         'user': user,
-        'domain': current_site.domain,
+        'domain': request.META['HTTP_ORIGIN'],
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': account_activation_token_generator.make_token(user),
     })
