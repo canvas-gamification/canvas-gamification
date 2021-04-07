@@ -2,9 +2,10 @@ import six
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
+from accounts.models import MyUser
 from canvas_gamification import settings
 
 
@@ -14,6 +15,17 @@ class TokenGenerator(PasswordResetTokenGenerator):
 
 
 account_activation_token_generator = TokenGenerator()
+
+
+def activate_user(uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = MyUser.objects.get(pk=uid)
+        if account_activation_token_generator.check_token(user, token):
+            return user
+    except(TypeError, ValueError, OverflowError, AttributeError, MyUser.DoesNotExist):
+        return None
+    return None
 
 
 def send_activation_email(request, user):

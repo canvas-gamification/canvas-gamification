@@ -4,7 +4,6 @@ from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.contrib.auth.tokens import default_token_generator
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-# Create your views here.
 from django.urls import reverse_lazy
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
@@ -12,7 +11,7 @@ from django.views.generic import UpdateView
 
 from accounts.forms import SignupForm, UserProfileForm, LoginForm, PasswordChangeForm
 from accounts.models import MyUser
-from accounts.utils.email_functions import send_activation_email, account_activation_token_generator
+from accounts.utils.email_functions import send_activation_email, activate_user
 from canvas_gamification import settings
 
 
@@ -40,12 +39,9 @@ def signup_view(request):
 
 
 def activate(request, uidb64, token):
-    try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = MyUser.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, MyUser.DoesNotExist):
-        user = None
-    if user is not None and account_activation_token_generator.check_token(user, token):
+    user = activate_user(uidb64, token)
+
+    if user:
         user.is_active = True
         user.save()
         login(request, user)
