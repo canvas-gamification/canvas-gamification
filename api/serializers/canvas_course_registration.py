@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accounts.models import MyAnonymousUser
-from api.serializers.token_use import TokenUseSerializer
+from api.serializers import TokenUseSerializer
 from canvas.models import CanvasCourseRegistration
 
 

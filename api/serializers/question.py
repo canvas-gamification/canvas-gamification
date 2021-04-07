@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.serializers.event import EventSerializer
+from api.serializers import EventSerializer
 from course.models.models import Question
 
 

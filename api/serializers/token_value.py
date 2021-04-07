@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.serializers.utils import UpdateListSerializer
+from api.serializers import UpdateListSerializer
 from course.models.models import TokenValue
 
 
