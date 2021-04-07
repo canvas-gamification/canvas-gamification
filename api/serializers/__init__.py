@@ -27,5 +27,4 @@ from .token_use import TokenUseSerializer
 from .question import QuestionSerializer
 from .uqj import UQJSerializer
 from .canvas_course_registration import CanvasCourseRegistrationSerializer
-from .event import EventSerializer
 from .course import CourseSerializer
