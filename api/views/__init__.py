@@ -19,4 +19,11 @@ from .update_profile import UpdateProfileViewSet
 from .uqj import UQJViewSet
 from .user_consent import UserConsentViewSet
 from .user_stats import UserStatsViewSet
+from .course import CourseViewSet
+from .update_profile import UpdateProfileViewSet
+from .reset_password import ResetPasswordViewSet
+from .register import UserRegistrationViewSet
+from .auth import ObtainAuthTokenView
+from .submission import SubmissionViewSet
+from .canvas_course_registration import CanvasCourseRegistrationViewSet
 from .schema import SchemaViewSet
