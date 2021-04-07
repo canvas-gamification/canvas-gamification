@@ -1,7 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, bad_request
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -163,3 +163,26 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             "success": valid,
             "attempts_remaining": course_reg.verification_attempts,
         })
+
+    @action(detail=True, methods=['get'], url_path='validate-event/(?P<event_pk>[^/.]+)')
+    def validate_event(self, request, pk=None, event_pk=None):
+        """
+        Validates that an event belongs to a particular course.
+        """
+        course = get_object_or_404(CanvasCourse, pk=pk)
+        registered = self.request.query_params.get('registered', None)
+        if registered:
+            registered = registered.lower() == 'true'
+
+        if course is None:
+            raise ValidationError()
+
+        if registered and not course.is_registered(request.user):
+            raise ValidationError()
+
+        if course.events.filter(pk=event_pk).exists():
+            return Response({
+                "success": True
+            })
+
+        raise ValidationError()
