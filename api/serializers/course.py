@@ -60,4 +60,4 @@ class CourseSerializer(serializers.ModelSerializer):
         model = CanvasCourse
         fields = ['id', 'mock', 'name', 'url', 'course_id', 'token', 'allow_registration', 'visible_to_students',
                   'start_date', 'end_date', 'instructor', 'status', 'is_registered', 'token_use_options', 'events',
-                  'uqjs', 'question_set', 'course_reg']
+                  'uqjs', 'question_set', 'course_reg', 'leader_board']

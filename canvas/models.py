@@ -70,6 +70,15 @@ class CanvasCourse(models.Model):
             self._verification_assignment = self.course.get_assignment(self.verification_assignment_id)
         return self._verification_assignment
 
+    @property
+    def leader_board(self):
+        return [
+            {
+                "name": course_reg.user.get_full_name(),
+                "token": course_reg.total_tokens_received,
+            } for course_reg in self.canvascourseregistration_set.all()
+        ]
+
     def create_verification_assignment_group(self):
         if self.verification_assignment_group_id:
             return
