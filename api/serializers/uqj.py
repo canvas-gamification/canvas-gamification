@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from course.models.models import UserQuestionJunction
+
+from api.serializers import QuestionSerializer
+from course.models.models import UserQuestionJunction, Question
 
 
 class UQJSerializer(serializers.ModelSerializer):
@@ -9,6 +11,8 @@ class UQJSerializer(serializers.ModelSerializer):
     rendered_choices = serializers.SerializerMethodField('get_rendered_choices')
     rendered_lines = serializers.SerializerMethodField('get_lines')
     input_files = serializers.SerializerMethodField('get_input_files')
+    question = QuestionSerializer(read_only=True)
+    question_id = serializers.PrimaryKeyRelatedField(source='question', queryset=Question.objects.all())
 
     def get_variables(self, uqj):
         return uqj.get_variables()
@@ -31,6 +35,6 @@ class UQJSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserQuestionJunction
         fields = ['id', 'last_viewed', 'opened_tutorial', 'tokens_received', 'is_solved', 'is_partially_solved',
-                  'question', 'num_attempts', 'status', 'formatted_current_tokens_received', 'is_allowed_to_submit',
-                  'variables', 'variables_errors', 'rendered_text', 'rendered_choices', 'rendered_lines',
-                  'status_class', 'input_files']
+                  'question', 'question_id', 'num_attempts', 'status', 'formatted_current_tokens_received',
+                  'is_allowed_to_submit', 'variables', 'variables_errors', 'rendered_text', 'rendered_choices',
+                  'rendered_lines', 'status_class', 'input_files']
