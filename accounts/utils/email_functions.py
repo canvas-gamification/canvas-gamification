@@ -22,6 +22,8 @@ def activate_user(uidb64, token):
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = MyUser.objects.get(pk=uid)
         if account_activation_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
             return user
     except(TypeError, ValueError, OverflowError, AttributeError, MyUser.DoesNotExist):
         return None
