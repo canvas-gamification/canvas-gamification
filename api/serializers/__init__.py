@@ -9,9 +9,6 @@ from .utils import UpdateListSerializer
 from .action import ActionsSerializer
 from .contact_us import ContactUsSerializer
 from .faq import FAQSerializer
-from .java_question import JavaQuestionSerializer, JavaSubmissionSerializer
-from .multiple_choice_question import MultipleChoiceQuestionSerializer, MultipleChoiceSubmissionSerializer
-from .parsons_question import ParsonsQuestionSerializer, ParsonsSubmissionSerializer
 from .question_category import QuestionCategorySerializer
 from .token_value import TokenValueSerializer
 from .user_consent import UserConsentSerializer
@@ -25,6 +22,9 @@ from .update_profile import UpdateProfileSerializer
 # Serializers that depend on other serializers
 from .token_use import TokenUseSerializer
 from .question import QuestionSerializer
+from .java_question import JavaQuestionSerializer, JavaSubmissionSerializer
+from .multiple_choice_question import MultipleChoiceQuestionSerializer, MultipleChoiceSubmissionSerializer
+from .parsons_question import ParsonsQuestionSerializer, ParsonsSubmissionSerializer
 from .uqj import UQJSerializer
 from .canvas_course_registration import CanvasCourseRegistrationSerializer
 from .course import CourseSerializer

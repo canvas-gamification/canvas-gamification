@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from api.serializers import QuestionSerializer
 from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
 
 
@@ -19,4 +20,6 @@ class ParsonsSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParsonsSubmission
         fields = ['pk', 'submission_time', 'answer', 'grade', 'is_correct', 'is_partially_correct', 'finalized',
-                  'status', 'tokens_received', 'token_value']
+                  'status', 'tokens_received', 'token_value', 'question']
+
+    question = QuestionSerializer()

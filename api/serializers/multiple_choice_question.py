@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from api.serializers import QuestionSerializer
 from course.models.models import MultipleChoiceQuestion, MultipleChoiceSubmission
 
 
@@ -19,4 +20,6 @@ class MultipleChoiceSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = MultipleChoiceSubmission
         fields = ['pk', 'submission_time', 'answer', 'grade', 'is_correct', 'is_partially_correct', 'finalized',
-                  'status', 'tokens_received', 'token_value']
+                  'status', 'tokens_received', 'token_value', 'question']
+
+    question = QuestionSerializer()

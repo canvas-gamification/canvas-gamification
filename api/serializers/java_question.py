@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from api.serializers import QuestionSerializer
 from course.models.models import JavaQuestion, JavaSubmission
 
 
@@ -19,4 +20,6 @@ class JavaSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = JavaSubmission
         fields = ['pk', 'submission_time', 'answer', 'grade', 'is_correct', 'is_partially_correct', 'finalized',
-                  'status', 'tokens_received', 'token_value', 'answer_files']
+                  'status', 'tokens_received', 'token_value', 'answer_files', 'question']
+
+    question = QuestionSerializer()
