@@ -26,3 +26,7 @@ class ParsonsSubmission(CodeSubmission):
         return {
             self.question.additional_file_name: self.answer
         }
+
+    @property
+    def answer_files(self):
+        return self.get_answer_files()

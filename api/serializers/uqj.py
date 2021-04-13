@@ -12,7 +12,7 @@ class UQJSerializer(serializers.ModelSerializer):
     rendered_lines = serializers.SerializerMethodField('get_lines')
     input_files = serializers.SerializerMethodField('get_input_files')
     question = QuestionSerializer(read_only=True)
-    question_id = serializers.PrimaryKeyRelatedField(source='question', queryset=Question.objects.all(), )
+    question_id = serializers.PrimaryKeyRelatedField(source='question', queryset=Question.objects.all())
 
     def get_variables(self, uqj):
         return uqj.get_variables()

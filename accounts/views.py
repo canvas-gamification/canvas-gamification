@@ -42,8 +42,6 @@ def activate(request, uidb64, token):
     user = activate_user(uidb64, token)
 
     if user:
-        user.is_active = True
-        user.save()
         login(request, user)
         return HttpResponseRedirect(reverse_lazy('accounts:consent'))
     else:
