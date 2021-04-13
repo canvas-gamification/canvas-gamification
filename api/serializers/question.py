@@ -16,4 +16,6 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     def get_uqj_status(self, obj):
         request = self.context.get('request', None)
+        if request is None:
+            return ''
         return request.user.question_junctions.filter(question__pk=obj.id).first().status
