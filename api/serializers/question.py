@@ -18,4 +18,4 @@ class QuestionSerializer(serializers.ModelSerializer):
         request = self.context.get('request', None)
         if request is None:
             return ''
-        return request.user.question_junctions.filter(question__pk=obj.id).first().status
+        return request.user.question_junctions.get(question__pk=obj.id).status
