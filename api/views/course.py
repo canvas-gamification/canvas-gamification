@@ -163,3 +163,49 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             "success": valid,
             "attempts_remaining": course_reg.verification_attempts,
         })
+
+    @action(detail=True, methods=['get'], url_path='validate-event/(?P<event_pk>[^/.]+)')
+    def validate_event(self, request, pk=None, event_pk=None):
+        """
+        Validates that an event belongs to a particular course.
+        """
+        course = get_object_or_404(CanvasCourse, pk=pk)
+        registered = self.request.query_params.get('registered', None)
+        if registered:
+            registered = registered.lower() == 'true'
+
+        if course is None:
+            raise ValidationError()
+
+        if registered and not course.is_registered(request.user):
+            raise ValidationError()
+
+        if course.events.filter(pk=event_pk).exists():
+            return Response({
+                "success": True
+            })
+
+        raise ValidationError()
+
+    @action(detail=True, methods=['get'], url_path='user-stats/(?P<category_pk>[^/.]+)')
+    def user_stats(self, request, pk=None, category_pk=None):
+        course = get_object_or_404(CanvasCourse, pk=pk)
+        registered = self.request.query_params.get('registered', None)
+        if registered:
+            registered = registered.lower() == 'true'
+
+        if course is None:
+            raise ValidationError()
+
+        if registered and not course.is_registered(request.user):
+            raise ValidationError()
+
+        success_rate = 0
+        for pair in request.user.success_rate_by_category:
+            if pair['category'] == int(category_pk):
+                success_rate = pair['avgSuccess']
+                break
+
+        return Response({
+            'success_rate': success_rate
+        })
