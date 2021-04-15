@@ -14,25 +14,38 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import os
+
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+from django.views.static import serve
 
 from canvas_gamification import views
+from canvas_gamification.views import angular
 from general.views import faq
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('djrichtextfield/', include('djrichtextfield.urls')),
-    path('accounts/', include(('accounts.urls', 'accounts'))),
-    path('course/', include(('course.urls', 'course'))),
-    path('faq/', faq, name='faq'),
-    path('homepage/', views.homepage, name='homepage'),
-    path('actions/', views.action_view, name='actions'),
-    path('terms-and-conditions/', TemplateView.as_view(template_name='terms_and_conditions.html'),
-         name='terms_and_conditions'),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('api/', include('api.urls', namespace='api')),
-    path('canvas/', include('canvas.urls', namespace='canvas')),
-    path('', TemplateView.as_view(template_name='index.html')),
-]
+if settings.DEBUG:
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        path('djrichtextfield/', include('djrichtextfield.urls')),
+        path('accounts/', include(('accounts.urls', 'accounts'))),
+        path('course/', include(('course.urls', 'course'))),
+        path('faq/', faq, name='faq'),
+        path('homepage/', views.homepage, name='homepage'),
+        path('actions/', views.action_view, name='actions'),
+        path('terms-and-conditions/', TemplateView.as_view(template_name='terms_and_conditions.html'),
+             name='terms_and_conditions'),
+        path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+        path('api/', include('api.urls', namespace='api')),
+        path('canvas/', include('canvas.urls', namespace='canvas')),
+        path('', TemplateView.as_view(template_name='index.html')),
+    ]
+else:
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        path('api/', include('api.urls', namespace='api')),
+        path('', angular, {'document_root': os.path.join(settings.BASE_DIR, 'static', 'angular')}),
+        path('<path:path>', angular, {'document_root': os.path.join(settings.BASE_DIR, 'static', 'angular')}),
+    ]
