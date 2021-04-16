@@ -20,7 +20,6 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from django.views.static import serve
 
 from canvas_gamification import views
 from canvas_gamification.views import angular

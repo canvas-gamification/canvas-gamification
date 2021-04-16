@@ -1,7 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
 
-from api.filter_set import QuestionFilterSet
 from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, JavaQuestionSerializer, \
@@ -19,9 +18,10 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     permission_classes = [TeacherAccessPermission, ]
     filter_backends = [filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend]
-    ordering_fields = ['author', 'category', 'difficulty', 'course', 'event', 'is_verified', 'is_sample']
+    ordering_fields = ['id', 'title', 'author', 'difficulty', 'event__name', 'category__name', 'category__parent__name']
     search_fields = ['title', ]
-    filterset_class = QuestionFilterSet
+    filterset_fields = ['author', 'difficulty', 'course', 'event', 'is_verified', 'is_sample', 'category__name',
+                        'category__parent__name']
     pagination_class = BasePagination
 
     def get_question_serializer_class(self, question):
