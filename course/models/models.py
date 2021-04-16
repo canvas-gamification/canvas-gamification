@@ -399,7 +399,7 @@ class Submission(PolymorphicModel):
 
     @property
     def tokens_received(self):
-        return self.uqj.tokens_received
+        return self.grade * self.token_value
 
     @property
     def token_value(self):
