@@ -45,6 +45,7 @@ else:
     urlpatterns = [
         path('admin/', admin.site.urls),
         path('api/', include('api.urls', namespace='api')),
+        path('djrichtextfield/', include('djrichtextfield.urls')),
         path('', angular, {'document_root': os.path.join(settings.BASE_DIR, 'static', 'angular')}),
         path('<path:path>', angular, {'document_root': os.path.join(settings.BASE_DIR, 'static', 'angular')}),
     ]
