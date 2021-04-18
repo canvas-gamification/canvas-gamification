@@ -365,8 +365,10 @@ class Submission(PolymorphicModel):
         return self.uqj.user
 
     def get_description(self):
+        # TODO: Fix this when refactoring user actions
         template = "{}Solved Question <a href='{}'>{}</a>"
-        url = reverse_lazy('course:question_view', kwargs={'pk': self.question.pk})
+        # url = reverse_lazy('course:question_view', kwargs={'pk': self.question.pk})
+        url = "#"
         title = self.uqj.question.title
 
         return template.format("Partially " if self.is_partially_correct else "", url, title)
