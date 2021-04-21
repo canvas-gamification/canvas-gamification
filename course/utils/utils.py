@@ -41,7 +41,7 @@ def ensure_uqj(user, question):
             uqj.save()
 
 
-def get_token_value(category, difficulty):
+def get_token_value_object(category, difficulty):
     from course.models.models import TokenValue
 
     if not category or not difficulty:
@@ -50,8 +50,12 @@ def get_token_value(category, difficulty):
     if not TokenValue.objects.filter(category=category, difficulty=difficulty).exists():
         token_value = TokenValue(category=category, difficulty=difficulty)
         token_value.save()
-        return token_value.value
-    return TokenValue.objects.get(category=category, difficulty=difficulty).value
+        return token_value
+    return TokenValue.objects.get(category=category, difficulty=difficulty)
+
+
+def get_token_value(category, difficulty):
+    return get_token_value_object(category, difficulty).value
 
 
 def get_token_values():

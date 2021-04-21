@@ -22,7 +22,7 @@ from general.models import Action
 class QuestionCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
-    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name="sub_categories")
     next_categories = models.ManyToManyField('self', related_name="prev_categories", symmetrical=False, blank=True)
 
     def __str__(self):
