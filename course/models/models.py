@@ -5,7 +5,6 @@ from datetime import datetime
 
 from django.db import models
 from django.db.models import Count, Q
-from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
 from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
@@ -40,9 +39,9 @@ class QuestionCategory(models.Model):
     def average_success(self):
         category_filter = Q(question__category=self) | Q(question__category__parent=self)
         solved = UserQuestionJunction.objects.filter(category_filter, is_solved=True).count()
-        total = UserQuestionJunction.objects\
-            .annotate(Count('submissions'))\
-            .filter(category_filter, submissions__count__gt=0)\
+        total = UserQuestionJunction.objects \
+            .annotate(Count('submissions')) \
+            .filter(category_filter, submissions__count__gt=0) \
             .count()
         if total == 0:
             return 0
