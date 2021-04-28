@@ -51,7 +51,7 @@ class QuestionCategory(models.Model):
     def question_count(self):
         if self.parent is None:
             cnt = 0
-            for cat in self.questioncategory_set.all():
+            for cat in self.sub_categories.all():
                 cnt += cat.question_set.count()
             return cnt
         return self.question_set.count()
