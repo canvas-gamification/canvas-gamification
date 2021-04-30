@@ -19,6 +19,13 @@ from course.utils.variables import render_text, generate_variables
 from general.models import Action
 
 
+DIFFICULTY_CHOICES = [
+    ("EASY", "EASY"),
+    ("NORMAL", "MEDIUM"),
+    ("HARD", "HARD"),
+]
+
+
 class QuestionCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
@@ -34,6 +41,23 @@ class QuestionCategory(models.Model):
     @property
     def full_name(self):
         return self.__str__()
+
+    @property
+    def average_success_per_difficulty(self):
+        res = []
+        for difficulty, difficulty_name in DIFFICULTY_CHOICES:
+            category_filter = Q(question__category=self) | Q(question__category__parent=self)
+            solved = UserQuestionJunction.objects.filter(
+                category_filter, is_solved=True, question__difficulty=difficulty).count()
+            total = UserQuestionJunction.objects \
+                .annotate(Count('submissions')) \
+                .filter(category_filter, question__difficulty=difficulty, submissions__count__gt=0) \
+                .count()
+            res.append({
+                'difficulty': difficulty_name,
+                'success_rate': 100 * solved / total if total else 0
+            })
+        return res
 
     @property
     def average_success(self):
@@ -59,13 +83,6 @@ class QuestionCategory(models.Model):
     @property
     def next_category_ids(self):
         return self.next_categories.values_list('pk', flat=True)
-
-
-DIFFICULTY_CHOICES = [
-    ("EASY", "EASY"),
-    ("NORMAL", "MEDIUM"),
-    ("HARD", "HARD"),
-]
 
 
 class TokenValue(models.Model):

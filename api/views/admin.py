@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from api.permissions import TeacherAccessPermission
 from api.serializers import QuestionCategorySerializer
-from course.models.models import MultipleChoiceQuestion, JavaQuestion, QuestionCategory
+from course.models.models import MultipleChoiceQuestion, JavaQuestion, QuestionCategory, DIFFICULTY_CHOICES
 from course.models.parsons_question import ParsonsQuestion
 
 
@@ -17,10 +17,17 @@ class AdminViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'], url_path='question-count')
     def question_count(self, request):
         question_classes = [MultipleChoiceQuestion, JavaQuestion, ParsonsQuestion]
-        return Response([{
-            "name": QuestionClass._meta.verbose_name.title(),
-            "count": QuestionClass.objects.count(),
-        } for QuestionClass in question_classes])
+        res = []
+        for QuestionClass in question_classes:
+            res.append({
+                "name": QuestionClass._meta.verbose_name.title(),
+                "count": QuestionClass.objects.count(),
+                "count_per_difficulty": [{
+                    'count': QuestionClass.objects.filter(difficulty=difficulty).count(),
+                    'difficulty': difficulty_name,
+                } for difficulty, difficulty_name in DIFFICULTY_CHOICES]
+            })
+        return Response(res)
 
     def get_nested_categories(self, parent_category=None):
         if parent_category is None:
