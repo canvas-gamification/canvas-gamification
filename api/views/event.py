@@ -27,4 +27,4 @@ class EventViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.Upd
         """
         Returns a dictionary of the defined event types
         """
-        return Response(dict(EVENT_TYPE_CHOICES))
+        return Response(EVENT_TYPE_CHOICES)
