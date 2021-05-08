@@ -135,6 +135,10 @@ class Question(PolymorphicModel):
         return self.author.username if self.author else ""
 
     @property
+    def full_category_name(self):
+        return self.category.full_name
+
+    @property
     def category_name(self):
         return self.category.name if self.category else ""
 
