@@ -45,7 +45,9 @@ def get_token_value_object(category, difficulty):
     from course.models.models import TokenValue
 
     if not category or not difficulty:
-        return 0
+        token_value = TokenValue()
+        token_value.value = 0
+        return token_value
 
     if not TokenValue.objects.filter(category=category, difficulty=difficulty).exists():
         token_value = TokenValue(category=category, difficulty=difficulty)
