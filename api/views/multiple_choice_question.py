@@ -1,4 +1,6 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission
@@ -16,3 +18,6 @@ class MultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
     permission_classes = [TeacherAccessPermission]
     serializer_class = MultipleChoiceQuestionSerializer
     pagination_class = BasePagination
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
