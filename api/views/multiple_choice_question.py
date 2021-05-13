@@ -1,6 +1,4 @@
-from rest_framework import viewsets, status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from rest_framework import viewsets
 
 from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission
