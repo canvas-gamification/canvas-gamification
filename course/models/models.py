@@ -14,10 +14,9 @@ from canvas.models import Event, CanvasCourse
 from course.fields import JSONField
 from course.grader.grader import MultipleChoiceGrader, JunitGrader
 from course.utils.junit_xml import parse_junit_xml
-from course.utils.utils import get_token_value, ensure_uqj
+from course.utils.utils import get_token_value, ensure_uqj, get_average_success
 from course.utils.variables import render_text, generate_variables
 from general.models import Action
-
 
 DIFFICULTY_CHOICES = [
     ("EASY", "EASY"),
@@ -55,7 +54,7 @@ class QuestionCategory(models.Model):
                 .count()
             res.append({
                 'difficulty': difficulty_name,
-                'success_rate': 100 * solved / total if total else 0
+                'success_rate': get_average_success(solved, total)
             })
         return res
 
@@ -67,9 +66,7 @@ class QuestionCategory(models.Model):
             .annotate(Count('submissions')) \
             .filter(category_filter, submissions__count__gt=0) \
             .count()
-        if total == 0:
-            return 0
-        return 100 * solved / total
+        return get_average_success(solved, total)
 
     @property
     def question_count(self):

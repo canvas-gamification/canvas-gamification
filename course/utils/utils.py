@@ -218,3 +218,7 @@ def get_question_count(question_class, difficulty=None):
         return question_class.objects.count()
     else:
         return question_class.objects.filter(difficulty=difficulty).count()
+
+
+def get_average_success(solved, total):
+    return 0 if total == 0 else 100 * solved / total
