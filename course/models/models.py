@@ -170,9 +170,7 @@ class Question(PolymorphicModel):
     def success_rate(self):
         total_tried = self.user_junctions.annotate(Count('submissions')).filter(submissions__count__gt=0).count()
         total_solved = self.user_junctions.filter(is_solved=True).count()
-        if total_tried == 0:
-            return 0
-        return total_solved / total_tried
+        return get_average_success(total_tried, total_solved)
 
     @property
     def is_open(self):
