@@ -6,6 +6,7 @@ from api.permissions import TeacherAccessPermission
 from api.serializers import QuestionCategorySerializer
 from course.models.models import MultipleChoiceQuestion, JavaQuestion, QuestionCategory, DIFFICULTY_CHOICES
 from course.models.parsons_question import ParsonsQuestion
+from course.utils.utils import get_question_count
 
 
 class AdminViewSet(viewsets.ViewSet):
@@ -21,9 +22,9 @@ class AdminViewSet(viewsets.ViewSet):
         for QuestionClass in question_classes:
             res.append({
                 "name": QuestionClass._meta.verbose_name.title(),
-                "count": QuestionClass.objects.count(),
+                "count": get_question_count(QuestionClass),
                 "count_per_difficulty": [{
-                    'count': QuestionClass.objects.filter(difficulty=difficulty).count(),
+                    'count': get_question_count(QuestionClass, difficulty),
                     'difficulty': difficulty_name,
                 } for difficulty, difficulty_name in DIFFICULTY_CHOICES]
             })

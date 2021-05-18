@@ -209,3 +209,12 @@ def get_question_title(user, question, key):
         return "Question " + str(key) + " - " + question.title
     else:
         return "Question " + str(key)
+
+
+def get_question_count(question_class, difficulty=None):
+    if not question_class:
+        return 0
+    if not difficulty:
+        return question_class.objects.count()
+    else:
+        return question_class.objects.filter(difficulty=difficulty).count()
