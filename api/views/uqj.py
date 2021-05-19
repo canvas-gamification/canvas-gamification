@@ -3,7 +3,6 @@ from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticated
 
 from api.pagination import BasePagination
-from api.permissions import UQJViewPermission
 from api.serializers import UQJSerializer
 
 
@@ -13,7 +12,7 @@ class UQJViewSet(viewsets.ReadOnlyModelViewSet):
     + Standard ordering is applied on the field 'last_viewed'
     """
     serializer_class = UQJSerializer
-    permission_classes = [IsAuthenticated, UQJViewPermission, ]
+    permission_classes = [IsAuthenticated, ]
     pagination_class = BasePagination
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, ]
     ordering_fields = ['last_viewed', ]
@@ -22,12 +21,9 @@ class UQJViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         user = self.request.user
         uqj = user.question_junctions.all()
-        # accessible_uqj = []
-        # for temp in uqj:
-        #     if temp.question.has_view_permission(user):
-        #         accessible_uqj.append(temp)
-        #     # TODO remove uqj from queryset if user does not have view permission.
-        #     # else:
-        #     # uqj = uqj.exclude(temp)
-        # print(accessible_uqj)
+        accessible_uqj = []
+        for temp in uqj:
+            if temp.question.has_view_permission(user):
+                accessible_uqj.append(temp.question)
+        uqj = user.question_junctions.filter(question__in=accessible_uqj)
         return uqj

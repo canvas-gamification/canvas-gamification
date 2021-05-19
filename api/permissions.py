@@ -17,11 +17,3 @@ class UserConsentPermission(permissions.IsAuthenticated):
 
     def has_object_permission(self, request, view, obj):
         return request.user == obj.user
-
-
-class UQJViewPermission(permissions.IsAuthenticated):
-    def has_permission(self, request, view):
-        return super().has_permission(request, view)
-
-    def has_object_permission(self, request, view, obj):
-        return obj.has_view_permission(request.user)
