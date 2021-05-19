@@ -11,3 +11,6 @@ class JavaQuestionViewSet(viewsets.ModelViewSet):
     permission_classes = [TeacherAccessPermission]
     serializer_class = JavaQuestionSerializer
     pagination_class = BasePagination
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)

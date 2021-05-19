@@ -16,3 +16,6 @@ class MultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
     permission_classes = [TeacherAccessPermission]
     serializer_class = MultipleChoiceQuestionSerializer
     pagination_class = BasePagination
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
