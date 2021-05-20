@@ -3,7 +3,6 @@ from rest_framework import filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from api.serializers import CourseSerializer, CourseSerializerList
@@ -197,8 +196,6 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         """
         User stats.
         """
-        course = get_object_or_404(CanvasCourse, pk=pk)
-
         success_rate = 0
         for pair in request.user.success_rate_by_category:
             if pair['category'] == int(category_pk):
