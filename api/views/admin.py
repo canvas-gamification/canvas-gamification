@@ -6,7 +6,6 @@ from api.permissions import TeacherAccessPermission
 from api.serializers import QuestionCategorySerializer
 from course.models.models import MultipleChoiceQuestion, JavaQuestion, QuestionCategory, DIFFICULTY_CHOICES
 from course.models.parsons_question import ParsonsQuestion
-from course.utils.utils import get_question_count
 
 
 class AdminViewSet(viewsets.ViewSet):
