@@ -22,9 +22,9 @@ class AdminViewSet(viewsets.ViewSet):
         for QuestionClass in question_classes:
             res.append({
                 "name": QuestionClass._meta.verbose_name.title(),
-                "count": get_question_count(QuestionClass),
+                "count": QuestionClass.objects.count(),
                 "count_per_difficulty": [{
-                    'count': get_question_count(QuestionClass, difficulty),
+                    'count': QuestionClass.objects.filter(difficulty=difficulty).count(),
                     'difficulty': difficulty_name,
                 } for difficulty, difficulty_name in DIFFICULTY_CHOICES]
             })

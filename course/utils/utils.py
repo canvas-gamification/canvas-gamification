@@ -1,3 +1,6 @@
+from django.db.models import Count, Q
+
+
 def get_user_question_junction(user, question):
     from course.models.models import UserQuestionJunction
 
@@ -211,14 +214,30 @@ def get_question_title(user, question, key):
         return "Question " + str(key)
 
 
-def get_question_count(question_class, difficulty=None):
-    if not question_class:
-        return 0
-    if not difficulty:
-        return question_class.objects.count()
+def calculate_average_success(uqjs, category=None, difficulty=None):
+    """
+    Function that will calculate average success as a value between 0-1 depending on the queryset and filters given.
+    Accounts for a category filter, and a difficulty filter, both of which are optional.
+    """
+    if category:
+        category_filter = Q(question__category=category) | Q(question__category__parent=category)
+        if difficulty:
+            solved = uqjs.filter(
+                category_filter, is_solved=True, question__difficulty=difficulty).count()
+            total = uqjs.annotate(Count('submissions')) \
+                .filter(category_filter, question__difficulty=difficulty, submissions__count__gt=0) \
+                .count()
+        else:
+            solved = uqjs.filter(category_filter, is_solved=True).count()
+            total = uqjs.annotate(Count('submissions')) \
+                .filter(category_filter, submissions__count__gt=0) \
+                .count()
     else:
-        return question_class.objects.filter(difficulty=difficulty).count()
+        solved = uqjs.filter(is_solved=True).count()
+        total = uqjs.annotate(Count('submissions')).filter(submissions__count__gt=0).count()
+
+    return success_rate(solved, total)
 
 
-def get_average_success(solved, total):
-    return 0 if total == 0 else 100 * solved / total
+def success_rate(solved, total):
+    return 0 if total == 0 else (solved / total)
