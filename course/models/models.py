@@ -4,7 +4,6 @@ import random
 from datetime import datetime
 
 from django.db import models
-from django.db.models import Count, Q
 from django.utils.crypto import get_random_string
 from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
@@ -53,7 +52,7 @@ class QuestionCategory(models.Model):
 
     @property
     def average_success(self):
-        return calculate_average_success(UserQuestionJunction.objects.all(),self)
+        return calculate_average_success(UserQuestionJunction.objects.all(), self)
 
     @property
     def question_count(self):
