@@ -45,6 +45,21 @@ def send_activation_email(request, user):
     email.send()
 
 
+def send_reset_email(request, user):
+    mail_subject = 'Reset your password'
+    message = render_to_string('accounts/password_reset_email.html', {
+        'user': user,
+        'domain': request.META['HTTP_ORIGIN'],
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': account_activation_token_generator.make_token(user),
+    })
+    to_email = user.email
+    email = EmailMessage(
+        mail_subject, message, from_email=settings.EMAIL_ACTIVATION, to=[to_email]
+    )
+    email.send()
+
+
 def send_contact_us_email(fullname, email, comment):
     mail_subject = 'Contact Us Question'
     message = render_to_string('accounts/contact_us_email.html', {
