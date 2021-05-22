@@ -11,7 +11,7 @@ Main Features
 
 Canvas Gamification is a platform where course instructors
 can provide questions to their student in forms of practice,
-assignments, quizzes, or exams. This project now serves as the server to the newer Canvas Gamification UI project. This project interacts with the Angular project through APIs, and the functionality of the website has been maintained in the migration to Angular.
+assignments, quizzes, or exams. This project now serves as the backend to the newer Canvas Gamification UI project. This project interacts with the Angular project through APIs, and the functionality of the website has been maintained in the migration to Angular.
 
 Supported Question Types
 ----------------------------
@@ -56,7 +56,7 @@ Local Development
 -----------------
 
 In local development you can set the environment variables in
-env/gamification.dev.env. All the fields are pre-populated
+``env/gamification.dev.env``. All the fields are pre-populated
 so if you just want to run the website no changes are required.
 
 
@@ -120,6 +120,8 @@ To initialize sample questions you can use
 .. code-block:: bash
 
     python3 manage.py populate-db --all
+
+To access the api endpoints navigate to ``localhost:8000/api``.    
 
 Admin User
 ++++++++++
