@@ -15,6 +15,7 @@ class TokenGenerator(PasswordResetTokenGenerator):
 
 
 account_activation_token_generator = TokenGenerator()
+reset_password_token_generator = TokenGenerator()
 
 
 def activate_user(uidb64, token):
@@ -45,13 +46,24 @@ def send_activation_email(request, user):
     email.send()
 
 
+def verify_reset(uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = MyUser.objects.get(pk=uid)
+        if reset_password_token_generator.check_token(user, token):
+            return user
+    except(TypeError, ValueError, OverflowError, AttributeError, MyUser.DoesNotExist):
+        return None
+    return None
+
+
 def send_reset_email(request, user):
     mail_subject = 'Reset your password'
     message = render_to_string('accounts/password_reset_email.html', {
         'user': user,
         'domain': request.META['HTTP_ORIGIN'],
         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': account_activation_token_generator.make_token(user),
+        'token': reset_password_token_generator.make_token(user),
     })
     to_email = user.email
     email = EmailMessage(
