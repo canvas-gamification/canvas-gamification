@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser, AnonymousUser
 from django.db import models
 from django.db.models import Count, Q
 
-from course.utils.utils import ensure_uqj
+from course.utils.utils import ensure_uqj, success_rate
 
 STUDENT = 'Student'
 TEACHER = 'Teacher'
@@ -52,7 +52,7 @@ class MyUser(AbstractUser):
         )
         data = [{
             'category': category['question__category'],
-            'avgSuccess': 0 if category['total'] == 0 else 100 * category['solved'] / category['total']
+            'avgSuccess': success_rate(category['solved'], category['total'])
         } for category in data]
         return data
 
