@@ -17,3 +17,12 @@ class UserConsentPermission(permissions.IsAuthenticated):
 
     def has_object_permission(self, request, view, obj):
         return request.user == obj.user
+
+
+class StudentsMustBeRegisteredPermission(permissions.IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        course = obj
+        if user.is_student and not course.is_registered(user):
+            return False
+        return True
