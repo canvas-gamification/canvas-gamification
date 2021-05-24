@@ -3,10 +3,10 @@ from rest_framework import filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from api.serializers import CourseSerializer
+from api.serializers import CourseSerializer, CourseSerializerList
+from api.permissions import StudentsMustBeRegisteredPermission
 from canvas.models import CanvasCourse, CanvasCourseRegistration
 from canvas.utils.utils import get_course_registration
 
@@ -17,12 +17,22 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     ?registered: boolean => if true, filter retrieved courses by if user is currently registered in them
     """
     serializer_class = CourseSerializer
-    permission_classes = [IsAuthenticated, ]
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['mock', 'name', 'allow_registration', 'visible_to_students', 'instructor']
+    action_serializers = {
+        'retrieve': CourseSerializer,
+        'list': CourseSerializerList,
+    }
+    permission_classes = [StudentsMustBeRegisteredPermission, ]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, ]
+    filterset_fields = ['mock', 'name', 'allow_registration', 'visible_to_students', 'instructor', ]
     ordering_fields = ['name', 'start_date', 'end_date', ]
 
-    def get_queryset(self):
+    def get_serializer_class(self):
+        if hasattr(self, 'action_serializers'):
+            return self.action_serializers.get(self.action, self.serializer_class)
+
+        return super(CourseViewSet, self).get_serializer_class()
+
+    def get_queryset(self, *args, **kwargs):
         user = self.request.user
         registered = self.request.query_params.get('registered', None)
         if registered:
@@ -170,14 +180,8 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         Validates that an event belongs to a particular course.
         """
         course = get_object_or_404(CanvasCourse, pk=pk)
-        registered = self.request.query_params.get('registered', None)
-        if registered:
-            registered = registered.lower() == 'true'
 
         if course is None:
-            raise ValidationError()
-
-        if registered and not course.is_registered(request.user):
             raise ValidationError()
 
         if course.events.filter(pk=event_pk).exists():
@@ -189,17 +193,9 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='user-stats/(?P<category_pk>[^/.]+)')
     def user_stats(self, request, pk=None, category_pk=None):
-        course = get_object_or_404(CanvasCourse, pk=pk)
-        registered = self.request.query_params.get('registered', None)
-        if registered:
-            registered = registered.lower() == 'true'
-
-        if course is None:
-            raise ValidationError()
-
-        if registered and not course.is_registered(request.user):
-            raise ValidationError()
-
+        """
+        User stats.
+        """
         success_rate = 0
         for pair in request.user.success_rate_by_category:
             if pair['category'] == int(category_pk):

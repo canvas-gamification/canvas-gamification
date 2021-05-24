@@ -4,7 +4,6 @@ import random
 from datetime import datetime
 
 from django.db import models
-from django.db.models import Count, Q
 from django.utils.crypto import get_random_string
 from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
@@ -14,10 +13,9 @@ from canvas.models import Event, CanvasCourse
 from course.fields import JSONField
 from course.grader.grader import MultipleChoiceGrader, JunitGrader
 from course.utils.junit_xml import parse_junit_xml
-from course.utils.utils import get_token_value, ensure_uqj
+from course.utils.utils import get_token_value, ensure_uqj, calculate_average_success
 from course.utils.variables import render_text, generate_variables
 from general.models import Action
-
 
 DIFFICULTY_CHOICES = [
     ("EASY", "EASY"),
@@ -46,30 +44,15 @@ class QuestionCategory(models.Model):
     def average_success_per_difficulty(self):
         res = []
         for difficulty, difficulty_name in DIFFICULTY_CHOICES:
-            category_filter = Q(question__category=self) | Q(question__category__parent=self)
-            solved = UserQuestionJunction.objects.filter(
-                category_filter, is_solved=True, question__difficulty=difficulty).count()
-            total = UserQuestionJunction.objects \
-                .annotate(Count('submissions')) \
-                .filter(category_filter, question__difficulty=difficulty, submissions__count__gt=0) \
-                .count()
             res.append({
                 'difficulty': difficulty_name,
-                'success_rate': 100 * solved / total if total else 0
+                'success_rate': calculate_average_success(UserQuestionJunction.objects.all(), self, difficulty)
             })
         return res
 
     @property
     def average_success(self):
-        category_filter = Q(question__category=self) | Q(question__category__parent=self)
-        solved = UserQuestionJunction.objects.filter(category_filter, is_solved=True).count()
-        total = UserQuestionJunction.objects \
-            .annotate(Count('submissions')) \
-            .filter(category_filter, submissions__count__gt=0) \
-            .count()
-        if total == 0:
-            return 0
-        return 100 * solved / total
+        return calculate_average_success(UserQuestionJunction.objects.all(), self)
 
     @property
     def question_count(self):
@@ -171,11 +154,7 @@ class Question(PolymorphicModel):
 
     @property
     def success_rate(self):
-        total_tried = self.user_junctions.annotate(Count('submissions')).filter(submissions__count__gt=0).count()
-        total_solved = self.user_junctions.filter(is_solved=True).count()
-        if total_tried == 0:
-            return 0
-        return total_solved / total_tried
+        return calculate_average_success(self.user_junctions.all())
 
     @property
     def is_open(self):
