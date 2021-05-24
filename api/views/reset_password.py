@@ -25,13 +25,3 @@ class ResetPasswordViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         user = get_object_or_404(MyUser, email=email)
         send_reset_email(request, user)
         return Response("Email Sent")
-
-    @action(detail=False, methods=['post'], url_path='validate')
-    def validate(self, request):
-        uuid = request.data.get("uuid", None)
-        token = request.data.get("token", None)
-        user = verify_reset(uuid, token)
-        if not user:
-            raise ValidationError("invalid reset data")
-        else:
-            return Response("Validated Successfully")
