@@ -11,18 +11,15 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
     uid = serializers.CharField(write_only=True, required=True)
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
-    old_password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = MyUser
-        fields = ['uid', 'old_password', 'password', 'password2']
+        fields = ['uid', 'password', 'password2']
 
     def validate(self, attrs):
         uid = force_text(urlsafe_base64_decode(attrs['uid']))
-        user = MyUser.objects.get(pk=uid)
-        if not user.check_password(attrs['old_password']):
-            raise serializers.ValidationError({"old_password": "Old password is not correct"})
-        if attrs['old_password'] == attrs['password']:
+        old_password = MyUser.objects.get(pk=uid).password
+        if old_password == attrs['password']:
             raise serializers.ValidationError({"password": "New Password is the same as the old password"})
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
