@@ -1,11 +1,10 @@
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from accounts.models import MyUser
-from accounts.utils.email_functions import send_reset_email, verify_reset
+from accounts.utils.email_functions import send_reset_email
 from api.serializers import ResetPasswordSerializer
 
 
