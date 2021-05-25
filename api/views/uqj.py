@@ -20,4 +20,10 @@ class UQJViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return user.question_junctions.all()
+        uqj = user.question_junctions.all()
+        accessible_uqj = []
+        for temp in uqj:
+            if temp.question.has_view_permission(user):
+                accessible_uqj.append(temp.question)
+        uqj = user.question_junctions.filter(question__in=accessible_uqj)
+        return uqj
