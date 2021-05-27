@@ -26,3 +26,10 @@ class StudentsMustBeRegisteredPermission(permissions.IsAuthenticated):
         if user.is_student and not course.is_registered(user):
             return False
         return True
+
+
+class IsOwnerOrReadOnly(permissions.IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        if request.method == 'DELETE':
+            return obj.author == request.user
+        return True
