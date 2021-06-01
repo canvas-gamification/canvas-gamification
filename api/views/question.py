@@ -2,7 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
 
 from api.pagination import BasePagination
-from api.permissions import TeacherAccessPermission
+from api.permissions import TeacherAccessPermission, IsOwnerOrReadOnly
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, JavaQuestionSerializer, \
     ParsonsQuestionSerializer
 from course.models.models import Question, MultipleChoiceQuestion, JavaQuestion
@@ -16,7 +16,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     """
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
-    permission_classes = [TeacherAccessPermission, ]
+    permission_classes = [IsOwnerOrReadOnly, TeacherAccessPermission, ]
     filter_backends = [filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend]
     ordering_fields = ['id', 'title', 'author', 'difficulty', 'event__name', 'category__name', 'category__parent__name']
     search_fields = ['title', ]
