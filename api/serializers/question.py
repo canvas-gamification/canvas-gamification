@@ -23,8 +23,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         return request.user.question_junctions.get(question__pk=obj.id).status
 
     def get_is_author(self, obj):
-        print(obj.author)
         request = self.context.get('request', None)
         if request is None:
-            return ''
+            return False
         return request.user == obj.author
