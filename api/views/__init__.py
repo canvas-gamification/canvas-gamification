@@ -13,6 +13,7 @@ from .question import QuestionViewSet
 from .question_category import QuestionCategoryViewSet
 from .register import UserRegistrationViewSet
 from .reset_password import ResetPasswordViewSet
+from .change_password import ChangePasswordViewSet
 from .schema import SchemaViewSet
 from .submission import SubmissionViewSet
 from .token_use import TokenUseViewSet
@@ -21,3 +22,4 @@ from .update_profile import UpdateProfileViewSet
 from .uqj import UQJViewSet
 from .user_consent import UserConsentViewSet
 from .user_stats import UserStatsViewSet
+

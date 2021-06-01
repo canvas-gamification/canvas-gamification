@@ -7,7 +7,7 @@ from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, User
     QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, \
     CourseViewSet, CanvasCourseRegistrationViewSet, ResetPasswordViewSet, UserRegistrationViewSet, \
     UpdateProfileViewSet, SubmissionViewSet, ObtainAuthTokenView, MultipleChoiceQuestionViewSet, JavaQuestionViewSet, \
-    ParsonsQuestionViewSet, EventViewSet, TokenUseViewSet, SchemaViewSet, DifficultyViewSet
+    ParsonsQuestionViewSet, EventViewSet, TokenUseViewSet, SchemaViewSet, DifficultyViewSet, ChangePasswordViewSet
 from api.views.admin import AdminViewSet
 
 router = DefaultRouter()
@@ -27,6 +27,7 @@ router.register(r'uqj', UQJViewSet, basename='uqj')
 router.register(r'faq', FAQViewSet, basename='faq')
 router.register(r'course', CourseViewSet, basename='course')
 router.register(r'course-registration', CanvasCourseRegistrationViewSet, basename='course-registration')
+router.register(r'change-password', ChangePasswordViewSet, basename='change-password')
 router.register(r'reset-password', ResetPasswordViewSet, basename='reset-password')
 router.register(r'register', UserRegistrationViewSet, basename='register')
 router.register(r'update-profile', UpdateProfileViewSet, basename='update-profile')
@@ -39,14 +40,14 @@ router.register(r'admin', AdminViewSet, basename='admin')
 
 app_name = 'api'
 urlpatterns = [
-    path('openapi', get_schema_view(
-        title="Canvas Gamification API",
-        description="All the available APIs",
-        version="1.0.0",
-    ), name='openapi-schema'),
-    path('docs/', TemplateView.as_view(
-        template_name='api/docs.html',
-        extra_context={'schema_url': 'api:openapi-schema'}
-    ), name='docs'),
-    path('api-token-auth/', ObtainAuthTokenView.as_view(), name="token-auth"),
-] + router.urls
+                  path('openapi', get_schema_view(
+                      title="Canvas Gamification API",
+                      description="All the available APIs",
+                      version="1.0.0",
+                  ), name='openapi-schema'),
+                  path('docs/', TemplateView.as_view(
+                      template_name='api/docs.html',
+                      extra_context={'schema_url': 'api:openapi-schema'}
+                  ), name='docs'),
+                  path('api-token-auth/', ObtainAuthTokenView.as_view(), name="token-auth"),
+              ] + router.urls
