@@ -193,7 +193,7 @@ class VariableQuestion(Question):
 class MultipleChoiceQuestion(VariableQuestion):
     choices = JSONField()
     visible_distractor_count = models.IntegerField()
-
+    is_checkbox = models.BooleanField(default=False)
     grader = MultipleChoiceGrader()
 
 
@@ -300,6 +300,11 @@ class UserQuestionJunction(models.Model):
         if not isinstance(self.question, JavaQuestion):
             return {}
         return self.question.get_input_files()
+
+    def get_is_checkbox(self):
+        if not isinstance(self.question, MultipleChoiceQuestion):
+            return False
+        return self.question.is_checkbox
 
     def num_attempts(self):
         return self.submissions.count()
