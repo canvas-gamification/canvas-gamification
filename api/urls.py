@@ -40,14 +40,14 @@ router.register(r'admin', AdminViewSet, basename='admin')
 
 app_name = 'api'
 urlpatterns = [
-                  path('openapi', get_schema_view(
-                      title="Canvas Gamification API",
-                      description="All the available APIs",
-                      version="1.0.0",
-                  ), name='openapi-schema'),
-                  path('docs/', TemplateView.as_view(
-                      template_name='api/docs.html',
-                      extra_context={'schema_url': 'api:openapi-schema'}
-                  ), name='docs'),
-                  path('api-token-auth/', ObtainAuthTokenView.as_view(), name="token-auth"),
-              ] + router.urls
+    path('openapi', get_schema_view(
+        title="Canvas Gamification API",
+        description="All the available APIs",
+        version="1.0.0",
+    ), name='openapi-schema'),
+    path('docs/', TemplateView.as_view(
+        template_name='api/docs.html',
+        extra_context={'schema_url': 'api:openapi-schema'}
+    ), name='docs'),
+    path('api-token-auth/', ObtainAuthTokenView.as_view(), name="token-auth"),
+] + router.urls
