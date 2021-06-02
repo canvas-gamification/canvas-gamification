@@ -11,7 +11,6 @@ class UQJSerializer(serializers.ModelSerializer):
     rendered_choices = serializers.SerializerMethodField('get_rendered_choices')
     rendered_lines = serializers.SerializerMethodField('get_lines')
     input_files = serializers.SerializerMethodField('get_input_files')
-    is_checkbox = serializers.SerializerMethodField('get_is_checkbox')
     question = QuestionSerializer(read_only=True)
     question_id = serializers.PrimaryKeyRelatedField(source='question', queryset=Question.objects.all())
 
@@ -32,9 +31,6 @@ class UQJSerializer(serializers.ModelSerializer):
 
     def get_input_files(self, uqj):
         return uqj.get_input_files()
-
-    def get_is_checkbox(self, uqj):
-        return uqj.get_is_checkbox
 
     class Meta:
         model = UserQuestionJunction

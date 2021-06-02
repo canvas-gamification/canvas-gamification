@@ -301,7 +301,7 @@ class UserQuestionJunction(models.Model):
             return {}
         return self.question.get_input_files()
 
-    def get_is_checkbox(self):
+    def is_checkbox(self):
         if not isinstance(self.question, MultipleChoiceQuestion):
             return False
         return self.question.is_checkbox
