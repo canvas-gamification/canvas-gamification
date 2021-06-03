@@ -193,8 +193,13 @@ class VariableQuestion(Question):
 class MultipleChoiceQuestion(VariableQuestion):
     choices = JSONField()
     visible_distractor_count = models.IntegerField()
-    is_checkbox = models.BooleanField(default=False)
+    # is_checkbox = models.BooleanField(default=False)
     grader = MultipleChoiceGrader()
+
+    def is_checkbox(self):
+        if len(self.answer.split(',')) == 1:
+            return False
+        return True
 
 
 class CheckboxQuestion(MultipleChoiceQuestion):
