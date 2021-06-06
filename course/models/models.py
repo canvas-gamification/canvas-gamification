@@ -195,10 +195,9 @@ class MultipleChoiceQuestion(VariableQuestion):
     visible_distractor_count = models.IntegerField()
     grader = MultipleChoiceGrader()
 
+    @property
     def is_checkbox(self):
-        if len(self.answer.split(',')) == 1:
-            return False
-        return True
+        return ',' in self.answer
 
 
 class CheckboxQuestion(MultipleChoiceQuestion):
