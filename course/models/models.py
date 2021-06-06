@@ -200,10 +200,6 @@ class MultipleChoiceQuestion(VariableQuestion):
         return ',' in self.answer
 
 
-class CheckboxQuestion(MultipleChoiceQuestion):
-    pass
-
-
 class JavaQuestion(VariableQuestion):
     junit_template = models.TextField()
     input_file_names = JSONField()

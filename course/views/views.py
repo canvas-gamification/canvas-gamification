@@ -8,9 +8,9 @@ from rest_framework.reverse import reverse_lazy
 
 from course.forms.forms import ProblemFilterForm
 from course.forms.java import JavaQuestionForm
-from course.forms.multiple_choice import CheckboxQuestionForm, MultipleChoiceQuestionForm, ChoiceForm
-from course.models.models import Question, MultipleChoiceQuestion, CheckboxQuestion, JavaQuestion, JavaSubmission, \
-    QuestionCategory, DIFFICULTY_CHOICES, TokenValue, Submission, UserQuestionJunction
+from course.forms.multiple_choice import MultipleChoiceQuestionForm, ChoiceForm
+from course.models.models import Question, MultipleChoiceQuestion, JavaQuestion, JavaSubmission, QuestionCategory, \
+    DIFFICULTY_CHOICES, TokenValue, Submission, UserQuestionJunction
 from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
 from course.utils.utils import get_user_question_junction
 from course.views.java import _java_question_create_view, _java_question_view, _java_submission_detail_view, \
@@ -32,17 +32,6 @@ def multiple_choice_question_create_view(request):
         'New Multiple Choice Question',
         MultipleChoiceQuestionForm,
         formset_factory(ChoiceForm, extra=1, can_delete=True, max_num=1, min_num=1),
-        formset_factory(ChoiceForm, extra=2, can_delete=True),
-    )
-
-
-@user_passes_test(teacher_check)
-def checkbox_question_create_view(request):
-    return _multiple_choice_question_create_view(
-        request,
-        'New Checkbox Question',
-        CheckboxQuestionForm,
-        formset_factory(ChoiceForm, extra=1, can_delete=True),
         formset_factory(ChoiceForm, extra=2, can_delete=True),
     )
 
