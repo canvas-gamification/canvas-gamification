@@ -58,9 +58,6 @@ def question_view(request, pk, key=None):
     if isinstance(question, JavaQuestion):
         return _java_question_view(request, question, key)
 
-    if isinstance(question, CheckboxQuestion):
-        return _multiple_choice_question_view(request, question, 'checkbox_question.html', key)
-
     if isinstance(question, MultipleChoiceQuestion):
         return _multiple_choice_question_view(request, question, 'multiple_choice_question.html', key)
 
