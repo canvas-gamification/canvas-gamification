@@ -275,8 +275,7 @@ class UserQuestionJunction(models.Model):
         choices = json.loads(self.question.choices) if type(self.question.choices) == str else self.question.choices
 
         keys = list(choices.keys())
-        keys = keys[:self.question.visible_distractor_count + 1]
-
+        keys = keys[:self.question.visible_distractor_count + len(self.question.answer.split(','))]
         random.seed(self.random_seed)
         random.shuffle(keys)
 
