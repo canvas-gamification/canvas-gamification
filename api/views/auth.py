@@ -11,6 +11,7 @@ class ObtainAuthTokenView(ObtainAuthToken):
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
         return Response({
+            'id': user.id,
             'token': token.key,
             'first_name': user.first_name,
             'last_name': user.last_name,
