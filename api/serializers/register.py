@@ -1,3 +1,4 @@
+from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
@@ -19,6 +20,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True,
         error_messages=ERROR_MESSAGES.PASSWORD.ERROR_MESSAGES,
+        validators=[validate_password]
     )
     password2 = serializers.CharField(
         write_only=True,
