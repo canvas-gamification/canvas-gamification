@@ -19,4 +19,5 @@ class ObtainAuthTokenView(ObtainAuthToken):
             'role': user.role,
             'is_teacher': user.is_teacher,
             'is_student': user.is_student,
+            'has_consent': user.has_consent,
         })
