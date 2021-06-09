@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
+import api.error_messages as ERROR_MESSAGES
 from accounts.models import MyUser
 from accounts.utils.email_functions import send_activation_email, activate_user
 from api.serializers import UserRegistrationSerializer
@@ -26,7 +27,7 @@ class UserRegistrationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         token = request.data.get("token", None)
         user = activate_user(uuid, token)
         if not user:
-            raise ValidationError("invalid activation data")
+            raise ValidationError(ERROR_MESSAGES.ACTIVATION.INVALID)
         return Response({
             "success": True,
         })
