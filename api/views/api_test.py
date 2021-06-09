@@ -1,21 +1,10 @@
 from rest_framework import viewsets
-from rest_framework.response import Response
 
-class ApiTestViewSet(viewsets.ViewSet):
 
-    def list(self, request):
-        res = [
-            {
-                'user': 'user1',
-                'tokens': 5,
-            },
-            {
-                'user': 'user2',
-                'tokens': 7,
-            },
-            {
-                'user': 'user3',
-                'tokens': 2
-            },
-        ]
-        return Response(res)
+from course.models.models import TestModel
+from api.serializers import TestSerializer
+
+class ApiTestViewSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        return TestModel.objects.all()
+    serializer_class = TestSerializer

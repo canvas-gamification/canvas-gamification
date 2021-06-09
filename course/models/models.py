@@ -23,6 +23,11 @@ DIFFICULTY_CHOICES = [
     ("HARD", "HARD"),
 ]
 
+class TestModel(models.Model):
+    user = models.CharField(max_length=100)
+    tokens = models.IntegerField(default=0)
+
+
 
 class QuestionCategory(models.Model):
     name = models.CharField(max_length=100)
