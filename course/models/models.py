@@ -459,14 +459,11 @@ class Submission(PolymorphicModel):
 class MultipleChoiceSubmission(Submission):
     @property
     def answer_display(self):
-        if self.uqj.is_checkbox():
-            values = []
-            for key, value in self.uqj.get_rendered_choices().items():
-                for answer in self.answer.split(','):
-                    if key == answer:
-                        values.append(value)
-            return values
-        return self.uqj.get_rendered_choices().get(self.answer, 'Unknown')
+        values = []
+        rendered_choices = self.uqj.get_rendered_choices()
+        for answer in self.answer.split(','):
+            values.append(rendered_choices.get(answer, 'Unknown'))
+        return values
 
 
 class CodeSubmission(Submission):
