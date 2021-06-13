@@ -40,6 +40,7 @@ def _generate_variable(attrs, variables, random):
     precision = evaluate(render_text(attrs.get('precision'), variables))
     exp = render_text(attrs.get('expression', ''), variables)
     values = [render_text(x, variables) for x in attrs.get('values', [])]
+    choice = evaluate(render_text(attrs.get('choice'), variables))
 
     if vtype == 'int':
         variables[attrs['name']] = random.randrange(int(vmin), int(vmax) + 1)
@@ -53,6 +54,8 @@ def _generate_variable(attrs, variables, random):
         variables[attrs['name']] = values[p]
     if vtype == 'expression':
         variables[attrs['name']] = evaluate(exp)
+    if vtype == 'choice':
+        variables[attrs['name']] = values[choice]
 
 
 def generate_variables(variable_schema, seed):
