@@ -57,7 +57,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         ready to put into a JSON file to download and export.
         '''
         queryset = self.filter_queryset(self.get_queryset())
-        serializer = []
+        serialized_questions = []
         for obj in queryset:
-            serializer.append(OrderedDict(self.get_serializer(obj).data))
-        return Response(serializer)
+            serialized_questions.append(OrderedDict(self.get_serializer(obj).data))
+        return Response(serialized_questions)
