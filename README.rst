@@ -59,6 +59,19 @@ In local development you can set the environment variables in
 ``env/gamification.dev.env``. All the fields are pre-populated
 so if you just want to run the website no changes are required.
 
+Windows
++++++++
+
+If on Windows it is important to note that you must have a C++ compiler installed locally in order to be able to install some of the dependencies (i.e. ``python-Levenshtein``).
+
+#. Navigate to `https://visualstudio.microsoft.com/downloads/ <https://visualstudio.microsoft.com/downloads/>`__.
+#. Download the `Visual Studio 2019 Community Edition`
+#. After downloading `Visual Studio 2019`, scroll to the `All Downloads` section at the bottom of the page.
+#. Select `Tools for Visual Studio 2019`. Scroll to the bottom of the dropdown and download `Build Tools for Visual Studio 2019`.
+#. After downloading the build tools, launch `Visual Studio 2019`.
+#. An option to install `C++ Build Tools` should now be available within `Visual Studio 2019`. Install the build tools.
+#. After installing the build tools, launch a new terminal and continue with the setup.
+
 
 Python
 ++++++
