@@ -22,8 +22,21 @@ from general.models import Action
 
 
 
-class viewleaderBoard():
-    isVisable =  models.BooleanField(default=True)
+class Leader_Board(models.Model):
+    userId = models.ForeignKey(MyUser, on_delete = models.SET_NULL, null= True, blank= False)
+    courseId = models.ForeignKey(CanvasCourse,  related_name='%(class)s_requests_created' ,on_delete= models.SET_NULL, null=True, blank=False)
+    total_tokens_received = models.ForeignKey(CanvasCourse, on_delete = models.SET(0))
     leaderBoardId = models.AutoField(primary_key=True)
-    student = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
-    #tokens = models.ForeignKey(, on_delete = models.Set_Null, default = 0, null = False, blank= False)
+   
+    def __str__(self):
+        if self.parent is None:
+            return self.name
+        else:
+            return "{} :: {}".format(self.parent, self.name)
+
+    @property
+    def is_leader_board(self):
+        """
+        Is the user a member of staff?
+        """
+        return self.is_leader_board       
