@@ -23,20 +23,20 @@ from general.models import Action
 
 
 class Leader_Board(models.Model):
-    userId = models.ForeignKey(MyUser, on_delete = models.SET_NULL, null= True, blank= False)
-    courseId = models.ForeignKey(CanvasCourse,  related_name='%(class)s_requests_created' ,on_delete= models.SET_NULL, null=True, blank=False)
+    name = models.TextField()
+    is_visible = models.BooleanField(default = True)
+    userId = models.ForeignKey(MyUser, on_delete = models.DO_NOTHING)
+    courseId = models.ForeignKey(CanvasCourse,  related_name='%(class)s_requests_created' ,on_delete= models.DO_NOTHING)
     total_tokens_received = models.ForeignKey(CanvasCourse, on_delete = models.SET(0))
-    leaderBoardId = models.AutoField(primary_key=True)
    
     def __str__(self):
-        if self.parent is None:
-            return self.name
-        else:
-            return "{} :: {}".format(self.parent, self.name)
+      return self.name
 
     @property
     def is_leader_board(self):
-        """
-        Is the user a member of staff?
-        """
         return self.is_leader_board       
+
+
+class LeaderBoardAssignedStudents(models.Model):
+    userId = models.ForeignKey(MyUser, on_delete=models.DO_NOTHING)
+    leader_board = models.ForeignKey(Leader_Board, on_delete=models.DO_NOTHING)
