@@ -3,7 +3,7 @@ from djrichtextfield.widgets import RichTextWidget
 
 from course.fields import JSONFormField
 from course.forms.forms import ProblemCreateForm
-from course.models.models import CheckboxQuestion, MultipleChoiceQuestion
+from course.models.models import MultipleChoiceQuestion
 from course.widgets import RadioInlineSelect
 
 
@@ -28,13 +28,6 @@ class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
 
     choices = None
     answer = None
-
-
-class CheckboxQuestionForm(MultipleChoiceQuestionForm):
-    class Meta:
-        model = CheckboxQuestion
-        fields = (
-            'title', 'difficulty', 'category', 'course', 'event', 'text', 'visible_distractor_count', 'variables')
 
 
 class ChoiceForm(forms.Form):
