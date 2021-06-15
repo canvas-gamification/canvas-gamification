@@ -1,5 +1,9 @@
+from collections import OrderedDict
+
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission, HasDeletePermission
@@ -45,3 +49,15 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
         kwargs['context'] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)
+
+    @action(detail=False, methods=['get'], url_path='download-questions')
+    def download_questions(self, request, *args, **kwargs):
+        '''
+        Action that will display all questions after they have been filtered using the appropriate constructors,
+        ready to put into a JSON file to download and export.
+        '''
+        queryset = self.filter_queryset(self.get_queryset())
+        serialized_questions = []
+        for obj in queryset:
+            serialized_questions.append(OrderedDict(self.get_serializer(obj).data))
+        return Response(serialized_questions)
