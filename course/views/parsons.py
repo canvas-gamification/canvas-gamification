@@ -82,7 +82,7 @@ def _parsons_submission_detail_view(request, submission):
 def submit_solution(question, user, solution):
     uqj = get_user_question_junction(user, question)
 
-    if not user.is_teache and uqj.submissions.filter(answer=solution).exists():
+    if not user.is_teacher and uqj.submissions.filter(answer=solution).exists():
         raise SubmissionException("You have already submitted this answer!")
 
     if not uqj.is_allowed_to_submit:
