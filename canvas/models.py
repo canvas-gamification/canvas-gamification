@@ -30,6 +30,9 @@ class CanvasCourse(models.Model):
     bonus_assignment_group_name = models.CharField(max_length=100)
     bonus_assignment_group_id = models.IntegerField(null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._canvas = None

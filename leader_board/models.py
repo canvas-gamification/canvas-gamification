@@ -21,37 +21,18 @@ from course.utils.variables import render_text, generate_variables
 from general.models import Action
 
 
-
 class Leader_Board(models.Model):
     name = models.TextField()
-    is_visible = models.BooleanField(default = True)
-    userId = models.ForeignKey(MyUser, on_delete = models.DO_NOTHING)
-    courseId = models.ForeignKey(CanvasCourse,  related_name='%(class)s_requests_created' ,on_delete= models.DO_NOTHING)
-    
-   
+    is_visible = models.BooleanField(default=False)
+    assigned_course = models.ForeignKey(CanvasCourse, on_delete=models.DO_NOTHING)
+    created_by = models.ForeignKey(MyUser, on_delete=models.DO_NOTHING)
+
     def __str__(self):
-      return self.course.name
-
-    @property
-    def is_leader_board(self):
-        return self.is_leader_board
-
-    @property
-    def course_name(self):
-        return self.course_name if self.course else ""           
-
-
+        return self.name
 class LeaderBoardAssignedStudents(models.Model):
-    userId = models.ForeignKey(MyUser, on_delete=models.DO_NOTHING)
+    student = models.ForeignKey(MyUser, on_delete=models.DO_NOTHING)
     leader_board = models.ForeignKey(Leader_Board, on_delete=models.DO_NOTHING)
-    total_tokens_received = models.ForeignKey(CanvasCourse, on_delete = models.SET(0))
-    userId = models.ForeignKey(MyUser, on_delete = models.DO_NOTHING)
-    courseId = models.ForeignKey(CanvasCourse,  related_name='%(class)s_requests_created' ,on_delete= models.DO_NOTHING)
 
     def __str__(self):
-      return self.userId  
-
-    @property
-    def leader_board(self):
-        return self.leader_board  
+        return self.leader_board.assigned_course.name  
    
