@@ -13,5 +13,5 @@ class TestSerializer(serializers.ModelSerializer):
 
         ## Use with TestModel
         model = TestModel
-        fields = ['user', 'tokens']
+        fields = ['username', 'tokens']
 

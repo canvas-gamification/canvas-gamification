@@ -24,7 +24,7 @@ DIFFICULTY_CHOICES = [
 ]
 
 class TestModel(models.Model):
-    user = models.CharField(max_length=100)
+    username = models.CharField(max_length=100)
     tokens = models.IntegerField(default=0)
 
 
