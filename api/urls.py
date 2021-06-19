@@ -1,3 +1,4 @@
+
 from django.urls import path
 from django.views.generic import TemplateView
 from rest_framework.routers import DefaultRouter
@@ -7,7 +8,9 @@ from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, User
     QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, \
     CourseViewSet, CanvasCourseRegistrationViewSet, ResetPasswordViewSet, UserRegistrationViewSet, \
     UpdateProfileViewSet, SubmissionViewSet, ObtainAuthTokenView, MultipleChoiceQuestionViewSet, JavaQuestionViewSet, \
+
     ParsonsQuestionViewSet, EventViewSet, TokenUseViewSet, SchemaViewSet, DifficultyViewSet, ChangePasswordViewSet
+
 from api.views.admin import AdminViewSet
 
 router = DefaultRouter()
@@ -36,7 +39,10 @@ router.register(r'event', EventViewSet, basename='event')
 router.register(r'token-use', TokenUseViewSet, basename='token-use')
 router.register(r'schema', SchemaViewSet, basename='schema')
 router.register(r'difficulty', DifficultyViewSet, basename='difficulty')
+router.register(r'apitest', ApiTestViewSet, basename='apitest')
 router.register(r'admin', AdminViewSet, basename='admin')
+
+
 
 app_name = 'api'
 urlpatterns = [
