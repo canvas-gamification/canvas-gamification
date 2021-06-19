@@ -1,9 +1,10 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 
 from api.serializers import JavaSubmissionSerializer, MultipleChoiceSubmissionSerializer, ParsonsSubmissionSerializer
 from course.exceptions import SubmissionException
@@ -15,12 +16,15 @@ from course.views.multiple_choice import submit_solution as submit_multiple_choi
 from course.views.parsons import submit_solution as submit_parsons_solution
 
 
-class SubmissionViewSet(viewsets.ViewSet):
+class SubmissionViewSet(viewsets.GenericViewSet):
     """
     Optional Parameters
     ?question: number => filter the submissions by question
     """
     permission_classes = [IsAuthenticated]
+    filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
+    ordering_fields = ['submission_time', ]
+    queryset = Submission.objects.all()
 
     def get_serialized_data(self, submission):
         if isinstance(submission, MultipleChoiceSubmission):
@@ -33,9 +37,10 @@ class SubmissionViewSet(viewsets.ViewSet):
     def list(self, request):
         question = request.GET.get("question", None)
 
-        query_set = Submission.objects.filter(uqj__user=request.user)
+        query_set = self.filter_queryset(self.get_queryset()).filter(uqj__user=request.user)
         if question:
             query_set = query_set.filter(uqj__question_id=question)
+
         results = [
             self.get_serialized_data(submission) for submission in query_set
         ]

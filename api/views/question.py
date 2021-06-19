@@ -1,8 +1,12 @@
+from collections import OrderedDict
+
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from api.pagination import BasePagination
-from api.permissions import TeacherAccessPermission, IsOwnerOrReadOnly
+from api.permissions import TeacherAccessPermission, HasDeletePermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, JavaQuestionSerializer, \
     ParsonsQuestionSerializer
 from course.models.models import Question, MultipleChoiceQuestion, JavaQuestion
@@ -16,7 +20,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     """
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
-    permission_classes = [IsOwnerOrReadOnly, TeacherAccessPermission, ]
+    permission_classes = [HasDeletePermission, TeacherAccessPermission, ]
     filter_backends = [filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend]
     ordering_fields = ['id', 'title', 'author', 'difficulty', 'event__name', 'category__name', 'category__parent__name']
     search_fields = ['title', ]
@@ -45,3 +49,15 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
         kwargs['context'] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)
+
+    @action(detail=False, methods=['get'], url_path='download-questions')
+    def download_questions(self, request, *args, **kwargs):
+        '''
+        Action that will display all questions after they have been filtered using the appropriate constructors,
+        ready to put into a JSON file to download and export.
+        '''
+        queryset = self.filter_queryset(self.get_queryset())
+        serialized_questions = []
+        for obj in queryset:
+            serialized_questions.append(OrderedDict(self.get_serializer(obj).data))
+        return Response(serialized_questions)

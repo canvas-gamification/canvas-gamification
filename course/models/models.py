@@ -198,12 +198,11 @@ class VariableQuestion(Question):
 class MultipleChoiceQuestion(VariableQuestion):
     choices = JSONField()
     visible_distractor_count = models.IntegerField()
-
     grader = MultipleChoiceGrader()
 
-
-class CheckboxQuestion(MultipleChoiceQuestion):
-    pass
+    @property
+    def is_checkbox(self):
+        return ',' in self.answer
 
 
 class JavaQuestion(VariableQuestion):
@@ -281,8 +280,7 @@ class UserQuestionJunction(models.Model):
         choices = json.loads(self.question.choices) if type(self.question.choices) == str else self.question.choices
 
         keys = list(choices.keys())
-        keys = keys[:self.question.visible_distractor_count + 1]
-
+        keys = keys[:self.question.visible_distractor_count + len(self.question.answer.split(','))]
         random.seed(self.random_seed)
         random.shuffle(keys)
 
@@ -305,6 +303,11 @@ class UserQuestionJunction(models.Model):
         if not isinstance(self.question, JavaQuestion):
             return {}
         return self.question.get_input_files()
+
+    def is_checkbox(self):
+        if not isinstance(self.question, MultipleChoiceQuestion):
+            return False
+        return self.question.is_checkbox
 
     def num_attempts(self):
         return self.submissions.count()
@@ -461,7 +464,11 @@ class Submission(PolymorphicModel):
 class MultipleChoiceSubmission(Submission):
     @property
     def answer_display(self):
-        return self.uqj.get_rendered_choices().get(self.answer, 'Unknown')
+        values = []
+        rendered_choices = self.uqj.get_rendered_choices()
+        for answer in self.answer.split(','):
+            values.append(rendered_choices.get(answer, 'Unknown'))
+        return values
 
 
 class CodeSubmission(Submission):

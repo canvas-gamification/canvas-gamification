@@ -17,14 +17,19 @@ class Grader:
 class MultipleChoiceGrader(Grader):
 
     def grade(self, submission):
-        if submission.answer != submission.question.answer:
-            return False, 0
+        correct_count = 0
+        incorrect_count = 0
+        for answer in submission.answer.split(','):
+            if answer in submission.question.answer.split(','):
+                correct_count += 1
+            else:
+                incorrect_count += 1
+        if correct_count - incorrect_count == len(submission.question.answer.split(',')):
+            return True, 1
+        elif correct_count - incorrect_count > 0:
+            return True, (correct_count - incorrect_count) / len(submission.question.answer.split(','))
         else:
-            number_of_choices = len(submission.uqj.get_rendered_choices())
-
-            number_of_submissions = submission.uqj.submissions.exclude(pk=submission.pk).count()
-
-            return True, 1 - number_of_submissions / (number_of_choices - 1)
+            return False, 0
 
 
 class JunitGrader(Grader):
