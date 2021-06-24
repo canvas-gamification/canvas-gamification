@@ -1,15 +1,27 @@
-
 from django.contrib.auth.password_validation import validate_password
-
 from rest_framework import serializers
 
+import api.error_messages as ERROR_MESSAGES
 from accounts.models import MyUser
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
-    password2 = serializers.CharField(write_only=True, required=True)
-    old_password = serializers.CharField(write_only=True, required=True)
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        validators=[validate_password],
+        error_messages=ERROR_MESSAGES.PASSWORD.ERROR_MESSAGES,
+    )
+    password2 = serializers.CharField(
+        write_only=True,
+        required=True,
+        error_messages=ERROR_MESSAGES.PASSWORD.ERROR_MESSAGES,
+    )
+    old_password = serializers.CharField(
+        write_only=True,
+        required=True,
+        error_messages=ERROR_MESSAGES.PASSWORD.ERROR_MESSAGES,
+    )
 
     class Meta:
         model = MyUser

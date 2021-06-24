@@ -56,13 +56,17 @@ class MyUser(AbstractUser):
         } for category in data]
         return data
 
+    @property
+    def has_consent(self):
+        return self.consents.exists()
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         ensure_uqj(self, None)
 
 
 class UserConsent(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=False)
+    user = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=False, related_name='consents')
     created_at = models.DateTimeField(auto_now_add=True)
     consent = models.BooleanField(default=False)
 

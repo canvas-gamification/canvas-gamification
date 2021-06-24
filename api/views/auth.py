@@ -11,6 +11,7 @@ class ObtainAuthTokenView(ObtainAuthToken):
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
         return Response({
+            'id': user.id,
             'token': token.key,
             'first_name': user.first_name,
             'last_name': user.last_name,
@@ -19,4 +20,5 @@ class ObtainAuthTokenView(ObtainAuthToken):
             'role': user.role,
             'is_teacher': user.is_teacher,
             'is_student': user.is_student,
+            'has_consent': user.has_consent,
         })
