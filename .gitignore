@@ -5,7 +5,8 @@ db.sqlite3
 debug.log
 .idea/
 env/gamification.env
-
+node_modules/
+package-lock.json
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

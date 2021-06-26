@@ -26,8 +26,13 @@ DIFFICULTY_CHOICES = [
 class TestModel(models.Model):
     username = models.CharField(max_length=100)
     tokens = models.IntegerField(default=0)
+<<<<<<< HEAD
 
 
+=======
+    hotStreak = models.BooleanField(default=False)
+    coldStreak = models.BooleanField(default=False)
+>>>>>>> fbccc132012d5eb31b8d55af1e0be7af3268a2b8
 
 class QuestionCategory(models.Model):
     name = models.CharField(max_length=100)

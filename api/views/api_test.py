@@ -11,5 +11,9 @@ class ApiTestViewSet(viewsets.ModelViewSet):
         # return MyUser.objects.all() #Use with actual users in database
         return TestModel.objects.all()
         
+<<<<<<< HEAD
         #comment
+=======
+        
+>>>>>>> fbccc132012d5eb31b8d55af1e0be7af3268a2b8
     serializer_class = TestSerializer
