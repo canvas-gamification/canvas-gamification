@@ -10,6 +10,6 @@ class TestSerializer(serializers.ModelSerializer):
 
         ## Use with TestModel
         model = TestModel
-        fields = ['username', 'tokens', 'hotStreak', 'coldStreak']
+        fields = ['username', 'tokens', 'team', 'streak']
 
 

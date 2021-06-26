@@ -26,8 +26,9 @@ DIFFICULTY_CHOICES = [
 class TestModel(models.Model):
     username = models.CharField(max_length=100)
     tokens = models.IntegerField(default=0)
-    hotStreak = models.BooleanField(default=False)
-    coldStreak = models.BooleanField(default=False)
+    team = models.CharField(max_length=100)
+    streak = models.IntegerField(default=0)
+
 
 
 class QuestionCategory(models.Model):
