@@ -10,7 +10,7 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'text', 'answer', 'max_submission_allowed', 'time_created', 'time_modified', 'author',
                   'category', 'difficulty', 'is_verified', 'variables', 'choices', 'visible_distractor_count',
                   'token_value', 'success_rate', 'type_name', 'event', 'is_sample', 'category_name',
-                  'parent_category_name', 'course_name', 'event_name', 'author_name', ]
+                  'parent_category_name', 'course_name', 'event_name', 'author_name', 'is_checkbox']
 
     choices = serializers.JSONField()
     variables = serializers.JSONField()

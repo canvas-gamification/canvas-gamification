@@ -1,10 +1,9 @@
 from django import forms
 from django.contrib import admin
-# Register your models here.
 from djrichtextfield.widgets import RichTextWidget
 
 from course.models.models import Question, VariableQuestion, MultipleChoiceQuestion, Submission, QuestionCategory, \
-    CheckboxQuestion, JavaSubmission, JavaQuestion, TokenValue, MultipleChoiceSubmission, UserQuestionJunction
+    JavaSubmission, JavaQuestion, TokenValue, MultipleChoiceSubmission, UserQuestionJunction
 from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
 
 
@@ -44,7 +43,6 @@ class UserQuestionJunctionAdmin(admin.ModelAdmin):
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(VariableQuestion, QuestionAdmin)
 admin.site.register(MultipleChoiceQuestion, QuestionAdmin)
-admin.site.register(CheckboxQuestion, QuestionAdmin)
 admin.site.register(JavaQuestion, QuestionAdmin)
 admin.site.register(ParsonsQuestion, QuestionAdmin)
 

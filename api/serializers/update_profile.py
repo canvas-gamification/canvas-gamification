@@ -1,17 +1,33 @@
+from rest_framework.validators import UniqueValidator
+
 from accounts.models import MyUser
 from rest_framework import serializers
+import api.error_messages as ERROR_MESSAGES
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ['id', 'first_name', 'last_name', 'email', 'role', 'tokens']
+        fields = ['id', 'first_name', 'last_name', 'email']
 
-    def validate_email(self, value):
-        user = self.context['request'].user
-        if MyUser.objects.exclude(pk=user.pk).filter(email=value).exists():
-            raise serializers.ValidationError({"email": "This email is already in use."})
-        return value
+    email = serializers.EmailField(
+        required=True,
+        error_messages=ERROR_MESSAGES.EMAIL.ERROR_MESSAGES,
+        validators=[UniqueValidator(
+            queryset=MyUser.objects.all(),
+            message=ERROR_MESSAGES.EMAIL.UNIQUE,
+        )]
+    )
+
+    first_name = serializers.CharField(
+        required=True,
+        error_messages=ERROR_MESSAGES.FIRSTNAME.ERROR_MESSAGES,
+    )
+
+    last_name = serializers.CharField(
+        required=True,
+        error_messages=ERROR_MESSAGES.LASTNAME.ERROR_MESSAGES,
+    )
 
     def create(self, validated_data):
         user = self.context['request'].user
