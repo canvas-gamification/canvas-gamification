@@ -16,6 +16,7 @@ from course.utils.junit_xml import parse_junit_xml
 from course.utils.utils import get_token_value, ensure_uqj, calculate_average_success
 from course.utils.variables import render_text, generate_variables
 from general.models import Action
+import api.error_messages as ERROR_MESSAGES
 
 DIFFICULTY_CHOICES = [
     ("EASY", "EASY"),
@@ -101,7 +102,8 @@ class Question(PolymorphicModel):
     time_modified = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
     category = models.ForeignKey(QuestionCategory, on_delete=models.SET_NULL, null=True, blank=True)
-    difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES, default="EASY")
+    difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES, default="EASY",
+                                  error_messages=ERROR_MESSAGES.DIFFICULTY)
     is_sample = models.BooleanField(default=False)
 
     course = models.ForeignKey(CanvasCourse, on_delete=models.SET_NULL, related_name='question_set', null=True,
@@ -192,7 +194,7 @@ class VariableQuestion(Question):
 
 class MultipleChoiceQuestion(VariableQuestion):
     choices = JSONField()
-    visible_distractor_count = models.IntegerField()
+    visible_distractor_count = models.IntegerField(blank=False, error_messages=ERROR_MESSAGES.VISIBLE_DISTRACTOR_COUNT)
     grader = MultipleChoiceGrader()
 
     @property

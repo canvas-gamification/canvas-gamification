@@ -7,3 +7,7 @@ from .first_name import FIRSTNAME
 from .last_name import LASTNAME
 from .date import DATE
 from .student_number import STUDENT_NUMBER
+from .visible_distractor_count import VISIBLE_DISTRACTOR_COUNT
+from .difficulty import DIFFICULTY
+from .submission import SUBMISSION
+from .question import QUESTION
