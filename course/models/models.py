@@ -194,8 +194,9 @@ class VariableQuestion(Question):
 
 class MultipleChoiceQuestion(VariableQuestion):
     choices = JSONField()
-    visible_distractor_count = models.IntegerField(blank=False,
-                                                   error_messages=ERROR_MESSAGES.VISIBLE_DISTRACTOR_COUNT.ERROR_MESSAGES)
+    visible_distractor_count = models.IntegerField(
+        blank=False,
+        error_messages=ERROR_MESSAGES.VISIBLE_DISTRACTOR_COUNT.ERROR_MESSAGES)
     grader = MultipleChoiceGrader()
 
     @property
