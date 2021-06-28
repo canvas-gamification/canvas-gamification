@@ -17,6 +17,9 @@ class Grader:
 class MultipleChoiceGrader(Grader):
 
     def grade(self, submission):
+        number_of_choices = len(submission.uqj.get_rendered_choices())
+        number_of_submissions = submission.uqj.submissions.exclude(pk=submission.pk).count()
+
         correct_count = 0
         incorrect_count = 0
         for answer in submission.answer.split(','):
@@ -25,9 +28,10 @@ class MultipleChoiceGrader(Grader):
             else:
                 incorrect_count += 1
         if correct_count - incorrect_count == len(submission.question.answer.split(',')):
-            return True, 1
+            return True, 1 - number_of_submissions / (number_of_choices - 1)
         elif correct_count - incorrect_count > 0:
-            return True, (correct_count - incorrect_count) / len(submission.question.answer.split(','))
+            return True, ((correct_count - incorrect_count) / len(
+                submission.question.answer.split(','))) - number_of_submissions / (number_of_choices - 1)
         else:
             return False, 0
 
