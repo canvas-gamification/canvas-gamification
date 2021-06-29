@@ -22,3 +22,4 @@ from .junit_template import JUNIT_TEMPLATE
 from .input_file_names import INPUT_FILE_NAMES
 from .lines import LINES
 from .additional_file_name import ADDITIONAL_FILE_NAME
+from .schema import SCHEMA
