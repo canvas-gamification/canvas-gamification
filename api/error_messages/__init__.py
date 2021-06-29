@@ -11,3 +11,10 @@ from .visible_distractor_count import VISIBLE_DISTRACTOR_COUNT
 from .difficulty import DIFFICULTY
 from .submission import SUBMISSION
 from .question import QUESTION
+from .title import TITLE
+from .text import TEXT
+from .max_submission_allowed import MAX_SUBMISSION_ALLOWED
+from .category import CATEGORY
+from .course import COURSE
+from .event import EVENT
+from .answer import ANSWER
