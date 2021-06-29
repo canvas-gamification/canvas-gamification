@@ -32,7 +32,7 @@ class Leader_Board(models.Model):
 class LeaderBoardAssignedStudents(models.Model):
     student = models.ForeignKey(MyUser, on_delete=models.DO_NOTHING)
     leader_board = models.ForeignKey(Leader_Board, on_delete=models.DO_NOTHING)
-
+    MyUser.tokens =models.ForeignKey(MyUser, on_delete = models.DO_NOTHING)
+    
     def __str__(self):
-        return self.leader_board.assigned_course.name  
-   
+        return self.leader_board.assigned_course.name
