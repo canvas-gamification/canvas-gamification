@@ -61,7 +61,6 @@ INSTALLED_APPS = [
     'general',
     'api',
     'canvas',
-    'leader_board',
 ]
 
 MIDDLEWARE = [
