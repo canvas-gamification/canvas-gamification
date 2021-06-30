@@ -29,6 +29,25 @@ class TestModel(models.Model):
     team = models.CharField(max_length=100)
     streak = models.IntegerField(default=0)
 
+class LeaderBoard(models.Model):
+    name = models.TextField()
+    is_visible = models.BooleanField(default=False)
+    assigned_course = models.ForeignKey(CanvasCourse, on_delete=models.DO_NOTHING)
+    created_by = models.ForeignKey(MyUser, on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+        return self.name
+
+
+class LeaderBoardStudents(models.Model):
+    student = models.ForeignKey(MyUser, on_delete=models.DO_NOTHING)
+    leader_board = models.ForeignKey(LeaderBoard, on_delete=models.DO_NOTHING)
+    token_value = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return self.leaderboard.assigned_course.name
+
+
 
 
 class QuestionCategory(models.Model):

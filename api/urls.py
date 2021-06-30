@@ -8,9 +8,12 @@ from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, User
     QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, \
     CourseViewSet, CanvasCourseRegistrationViewSet, ResetPasswordViewSet, UserRegistrationViewSet, \
     UpdateProfileViewSet, SubmissionViewSet, ObtainAuthTokenView, MultipleChoiceQuestionViewSet, JavaQuestionViewSet, \
-    ParsonsQuestionViewSet, EventViewSet, TokenUseViewSet, SchemaViewSet, DifficultyViewSet, ChangePasswordViewSet, ApiTestViewSet
+    ParsonsQuestionViewSet, EventViewSet, TokenUseViewSet, SchemaViewSet, DifficultyViewSet, ChangePasswordViewSet, \
+    ApiTestViewSet
 
 from api.views.admin import AdminViewSet
+from api.views.leaderboard import LeaderBoardViewSet
+from api.views.leaderboard_students import LeaderBoardStudentsViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
@@ -41,6 +44,7 @@ router.register(r'difficulty', DifficultyViewSet, basename='difficulty')
 router.register(r'apitest', ApiTestViewSet, basename='apitest')
 router.register(r'admin', AdminViewSet, basename='admin')
 router.register(r'leaderboard', LeaderBoardViewSet, basename='leaderboard')
+router.register(r'leaderboard-students', LeaderBoardStudentsViewSet, basename='leaderboard-students')
 
 
 
