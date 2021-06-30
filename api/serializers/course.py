@@ -60,4 +60,29 @@ class CourseSerializer(serializers.ModelSerializer):
         model = CanvasCourse
         fields = ['id', 'mock', 'name', 'url', 'course_id', 'token', 'allow_registration', 'visible_to_students',
                   'start_date', 'end_date', 'instructor', 'status', 'is_registered', 'token_use_options', 'events',
-                  'uqjs', 'question_set', 'course_reg', 'leader_board']
+                  'uqjs', 'question_set', 'course_reg', 'leader_board', ]
+
+
+class CourseSerializerList(serializers.ModelSerializer):
+    is_registered = serializers.SerializerMethodField('get_is_registered')
+    events = EventSerializer(many=True, read_only=True)
+
+    def get_user(self):
+        user = MyAnonymousUser()
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
+        return user
+
+    def get_is_registered(self, course):
+        user = self.get_user()
+        # if user is not logged in or the request has no user attached
+        if not user.is_authenticated:
+            return False
+
+        return course.is_registered(user)
+
+    class Meta:
+        model = CanvasCourse
+        fields = ['id', 'mock', 'name', 'url', 'course_id', 'allow_registration', 'visible_to_students', 'start_date',
+                  'end_date', 'instructor', 'status', 'is_registered', 'events', ]

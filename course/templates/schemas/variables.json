@@ -148,6 +148,44 @@
         "options": {
           "keep_oneof_values": false
         }
+      },
+      {
+        "title": "Choice",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "values",
+          "name",
+          "choice"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "choice"
+            ],
+            "options": {
+              "hidden": true
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "choice": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "format": "table",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "type": "object",
+        "options": {
+          "keep_oneof_values": false
+        }
       }
     ]
   }

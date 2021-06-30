@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser, AnonymousUser
 from django.db import models
 from django.db.models import Count, Q
 
-from course.utils.utils import ensure_uqj
+from course.utils.utils import ensure_uqj, success_rate
 
 STUDENT = 'Student'
 TEACHER = 'Teacher'
@@ -52,9 +52,13 @@ class MyUser(AbstractUser):
         )
         data = [{
             'category': category['question__category'],
-            'avgSuccess': 0 if category['total'] == 0 else 100 * category['solved'] / category['total']
+            'avgSuccess': success_rate(category['solved'], category['total'])
         } for category in data]
         return data
+
+    @property
+    def has_consent(self):
+        return self.consents.exists()
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -62,7 +66,7 @@ class MyUser(AbstractUser):
 
 
 class UserConsent(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=False)
+    user = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=False, related_name='consents')
     created_at = models.DateTimeField(auto_now_add=True)
     consent = models.BooleanField(default=False)
 

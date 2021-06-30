@@ -4,7 +4,6 @@ import random
 from datetime import datetime
 
 from django.db import models
-from django.db.models import Count, Q
 from django.utils.crypto import get_random_string
 from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
@@ -14,10 +13,9 @@ from canvas.models import Event, CanvasCourse
 from course.fields import JSONField
 from course.grader.grader import MultipleChoiceGrader, JunitGrader
 from course.utils.junit_xml import parse_junit_xml
-from course.utils.utils import get_token_value, ensure_uqj
+from course.utils.utils import get_token_value, ensure_uqj, calculate_average_success
 from course.utils.variables import render_text, generate_variables
 from general.models import Action
-
 
 DIFFICULTY_CHOICES = [
     ("EASY", "EASY"),
@@ -46,30 +44,15 @@ class QuestionCategory(models.Model):
     def average_success_per_difficulty(self):
         res = []
         for difficulty, difficulty_name in DIFFICULTY_CHOICES:
-            category_filter = Q(question__category=self) | Q(question__category__parent=self)
-            solved = UserQuestionJunction.objects.filter(
-                category_filter, is_solved=True, question__difficulty=difficulty).count()
-            total = UserQuestionJunction.objects \
-                .annotate(Count('submissions')) \
-                .filter(category_filter, question__difficulty=difficulty, submissions__count__gt=0) \
-                .count()
             res.append({
                 'difficulty': difficulty_name,
-                'success_rate': 100 * solved / total if total else 0
+                'success_rate': calculate_average_success(UserQuestionJunction.objects.all(), self, difficulty)
             })
         return res
 
     @property
     def average_success(self):
-        category_filter = Q(question__category=self) | Q(question__category__parent=self)
-        solved = UserQuestionJunction.objects.filter(category_filter, is_solved=True).count()
-        total = UserQuestionJunction.objects \
-            .annotate(Count('submissions')) \
-            .filter(category_filter, submissions__count__gt=0) \
-            .count()
-        if total == 0:
-            return 0
-        return 100 * solved / total
+        return calculate_average_success(UserQuestionJunction.objects.all(), self)
 
     @property
     def question_count(self):
@@ -171,11 +154,7 @@ class Question(PolymorphicModel):
 
     @property
     def success_rate(self):
-        total_tried = self.user_junctions.annotate(Count('submissions')).filter(submissions__count__gt=0).count()
-        total_solved = self.user_junctions.filter(is_solved=True).count()
-        if total_tried == 0:
-            return 0
-        return total_solved / total_tried
+        return calculate_average_success(self.user_junctions.all())
 
     @property
     def is_open(self):
@@ -214,12 +193,11 @@ class VariableQuestion(Question):
 class MultipleChoiceQuestion(VariableQuestion):
     choices = JSONField()
     visible_distractor_count = models.IntegerField()
-
     grader = MultipleChoiceGrader()
 
-
-class CheckboxQuestion(MultipleChoiceQuestion):
-    pass
+    @property
+    def is_checkbox(self):
+        return ',' in self.answer
 
 
 class JavaQuestion(VariableQuestion):
@@ -297,8 +275,7 @@ class UserQuestionJunction(models.Model):
         choices = json.loads(self.question.choices) if type(self.question.choices) == str else self.question.choices
 
         keys = list(choices.keys())
-        keys = keys[:self.question.visible_distractor_count + 1]
-
+        keys = keys[:self.question.visible_distractor_count + len(self.question.answer.split(','))]
         random.seed(self.random_seed)
         random.shuffle(keys)
 
@@ -321,6 +298,11 @@ class UserQuestionJunction(models.Model):
         if not isinstance(self.question, JavaQuestion):
             return {}
         return self.question.get_input_files()
+
+    def is_checkbox(self):
+        if not isinstance(self.question, MultipleChoiceQuestion):
+            return False
+        return self.question.is_checkbox
 
     def num_attempts(self):
         return self.submissions.count()
@@ -477,7 +459,11 @@ class Submission(PolymorphicModel):
 class MultipleChoiceSubmission(Submission):
     @property
     def answer_display(self):
-        return self.uqj.get_rendered_choices().get(self.answer, 'Unknown')
+        values = []
+        rendered_choices = self.uqj.get_rendered_choices()
+        for answer in self.answer.split(','):
+            values.append(rendered_choices.get(answer, 'Unknown'))
+        return values
 
 
 class CodeSubmission(Submission):

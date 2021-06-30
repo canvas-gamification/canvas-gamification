@@ -15,6 +15,7 @@ from .user_consent import UserConsentSerializer
 from .user_stats import UserStatsSerializer
 from .token_use_option import TokenUseOptionSerializer
 from .event import EventSerializer
+from .change_password import ChangePasswordSerializer
 from .reset_password import ResetPasswordSerializer
 from .register import UserRegistrationSerializer
 from .update_profile import UpdateProfileSerializer
@@ -27,4 +28,4 @@ from .multiple_choice_question import MultipleChoiceQuestionSerializer, Multiple
 from .parsons_question import ParsonsQuestionSerializer, ParsonsSubmissionSerializer
 from .uqj import UQJSerializer
 from .canvas_course_registration import CanvasCourseRegistrationSerializer
-from .course import CourseSerializer
+from .course import CourseSerializer, CourseSerializerList

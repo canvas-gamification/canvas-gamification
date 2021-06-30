@@ -7,13 +7,23 @@ class TeacherAccessPermission(permissions.IsAuthenticated):
 
 
 class UserConsentPermission(permissions.IsAuthenticated):
-    def has_permission(self, request, view):
-        if 'user' not in request.data:
-            return True
-        try:
-            return int(request.data['user']) == request.user.id
-        except Exception:
-            return False
-
     def has_object_permission(self, request, view, obj):
-        return request.user == obj.user
+        if request.method in ['GET', 'POST']:
+            return request.user == obj.user
+        return False
+
+
+class StudentsMustBeRegisteredPermission(permissions.IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        course = obj
+        if user.is_student and not course.is_registered(user):
+            return False
+        return True
+
+
+class HasDeletePermission(permissions.IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        if request.method == 'DELETE':
+            return obj.author == request.user
+        return True
