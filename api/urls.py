@@ -48,6 +48,7 @@ router.register(r'leaderboard-students', LeaderBoardStudentsViewSet, basename='l
 
 
 
+
 app_name = 'api'
 urlpatterns = [
     path('openapi', get_schema_view(
