@@ -40,6 +40,7 @@ router.register(r'schema', SchemaViewSet, basename='schema')
 router.register(r'difficulty', DifficultyViewSet, basename='difficulty')
 router.register(r'apitest', ApiTestViewSet, basename='apitest')
 router.register(r'admin', AdminViewSet, basename='admin')
+router.register(r'leaderboard', LeaderBoardViewSet, basename='leaderboard')
 
 
 

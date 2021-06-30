@@ -39,6 +39,7 @@ if settings.DEBUG:
         path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
         path('api/', include('api.urls', namespace='api')),
         path('canvas/', include('canvas.urls', namespace='canvas')),
+        path('leader_board/', include(('leader_board.urls', 'leader_board'))),
         path('', TemplateView.as_view(template_name='index.html')),
     ]
 else:
