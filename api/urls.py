@@ -37,6 +37,7 @@ router.register(r'token-use', TokenUseViewSet, basename='token-use')
 router.register(r'schema', SchemaViewSet, basename='schema')
 router.register(r'difficulty', DifficultyViewSet, basename='difficulty')
 router.register(r'admin', AdminViewSet, basename='admin')
+router.register(r'leaderboard', LeaderBoardViewSet, basename='leaderboard')
 
 app_name = 'api'
 urlpatterns = [

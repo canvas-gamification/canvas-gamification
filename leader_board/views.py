@@ -10,7 +10,7 @@ def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 @csrf_exempt
-def get_all_leader_boards(request):
+def leader_board_view(request, pk):
     leaders_boards = LeaderBoard.objects.all().values    
     leaders_boards = [x for x in leaders_boards.iterator()]
     return JsonResponse(data={'data': leaders_boards}, safe=False)
