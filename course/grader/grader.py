@@ -36,10 +36,10 @@ class MultipleChoiceGrader(Grader):
             else:
                 incorrect_count += 1
         if correct_count - incorrect_count == len(submission_question_answer):
-            return True, 1 - number_of_submissions / (number_of_choices - 1)
+            return True, round(1 - number_of_submissions / (number_of_choices - 1), 2)
         elif correct_count - incorrect_count > 0:
-            return True, ((correct_count - incorrect_count) / len(
-                submission.question.answer.split(','))) - number_of_submissions / (number_of_choices - 1)
+            return True, round(((correct_count - incorrect_count) / len(
+                submission_question_answer)) - number_of_submissions / (number_of_choices - 1), 2)
         else:
             return False, 0
 

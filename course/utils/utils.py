@@ -205,6 +205,23 @@ def create_java_question(pk=None, title=None, text=None, max_submission_allowed=
         question.save()
 
 
+def create_uqj(user=None, question=None):
+    from course.models.models import UserQuestionJunction
+    uqj = UserQuestionJunction(
+        user=user,
+        question=question
+    )
+
+
+def create_mcq_submission(uqj=None, answer=None):
+    from course.models.models import MultipleChoiceSubmission
+    submission = MultipleChoiceSubmission(
+        uqj=uqj,
+        answer=answer
+    )
+    submission.save()
+
+
 def get_question_title(user, question, key):
     if key is None:
         return question.title
