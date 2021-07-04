@@ -11,7 +11,7 @@ from canvas.utils.token_use import get_token_use
 
 class CanvasCourse(models.Model):
     mock = models.BooleanField(default=False)
-    name = models.CharField(max_length=500)
+    name = models.CharField(max_length=500, unique=True)
     url = models.URLField()
     course_id = models.IntegerField()
     token = models.CharField(max_length=500)
