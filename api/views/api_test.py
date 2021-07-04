@@ -3,7 +3,6 @@ from rest_framework import viewsets
 
 from course.models.models import TestModel
 from accounts.models import MyUser
-from course.models.models import TestModel
 from api.serializers import TestSerializer
 
 class ApiTestViewSet(viewsets.ModelViewSet):

@@ -3,6 +3,7 @@ from rest_framework import viewsets
 
 
 from course.models.models import LeaderBoardStudents
+from accounts.models import MyUser
 from api.serializers.leaderboard_students import LeaderBoardStudentsSerializer
 
 class LeaderBoardStudentsViewSet(viewsets.ModelViewSet):
