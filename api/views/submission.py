@@ -14,6 +14,7 @@ from course.models.parsons_question import ParsonsSubmission, ParsonsQuestion
 from course.views.java import submit_solution as submit_java_solution
 from course.views.multiple_choice import submit_solution as submit_multiple_choice_solution
 from course.views.parsons import submit_solution as submit_parsons_solution
+import api.error_messages as ERROR_MESSAGES
 
 
 class SubmissionViewSet(viewsets.GenericViewSet):
@@ -58,7 +59,7 @@ class SubmissionViewSet(viewsets.GenericViewSet):
         solution = request.data.get("solution", None)
 
         if question_id is None or solution is None:
-            raise ValidationError("Parameters question and solution should be provided.")
+            raise ValidationError(ERROR_MESSAGES.SUBMISSION.INVALID)
 
         question = get_object_or_404(Question, pk=question_id)
 
@@ -70,7 +71,7 @@ class SubmissionViewSet(viewsets.GenericViewSet):
             elif isinstance(question, ParsonsQuestion):
                 submission = submit_parsons_solution(question, request.user, solution)
             else:
-                raise ValidationError("Incorrect question format.")
+                raise ValidationError(ERROR_MESSAGES.QUESTION.INVALID)
         except SubmissionException as e:
             raise ValidationError("{}".format(e))
 
