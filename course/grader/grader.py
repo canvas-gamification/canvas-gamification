@@ -17,17 +17,29 @@ class Grader:
 class MultipleChoiceGrader(Grader):
 
     def grade(self, submission):
+        number_of_choices = len(submission.uqj.get_rendered_choices())
+        number_of_submissions = submission.uqj.submissions.exclude(pk=submission.pk).count()
+
+        correct_answers = []
         correct_count = 0
         incorrect_count = 0
-        for answer in submission.answer.split(','):
-            if answer in submission.question.answer.split(','):
-                correct_count += 1
+        submission_answer = submission.answer.split(',')
+        submission_question_answer = submission.question.answer.split(',')
+
+        for answer in submission_answer:
+            if answer in submission_question_answer:
+                if answer in correct_answers:
+                    incorrect_count += 1
+                else:
+                    correct_answers.append(answer)
+                    correct_count += 1
             else:
                 incorrect_count += 1
-        if correct_count - incorrect_count == len(submission.question.answer.split(',')):
-            return True, 1
+        if correct_count - incorrect_count == len(submission_question_answer):
+            return True, round(1 - number_of_submissions / (number_of_choices - 1), 2)
         elif correct_count - incorrect_count > 0:
-            return True, (correct_count - incorrect_count) / len(submission.question.answer.split(','))
+            return True, round(((correct_count - incorrect_count) / len(
+                submission_question_answer)) - number_of_submissions / (number_of_choices - 1), 2)
         else:
             return False, 0
 
