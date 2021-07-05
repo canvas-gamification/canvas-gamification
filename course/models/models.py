@@ -285,14 +285,21 @@ class UserQuestionJunction(models.Model):
         from course.models.parsons_question import ParsonsQuestion
 
         if not isinstance(self.question, ParsonsQuestion):
-            return []
+            return {}
 
         random.seed(self.random_seed)
-        lines = []
-        for line in self.question.lines:
-            lines.append(render_text(line, self.get_variables()))
-        random.shuffle(lines)
-        return lines
+        rendered_lines = []
+        for input_files in self.question.input_files:
+            lines = [
+                render_text(line, self.get_variables())
+                for line in input_files['lines']
+            ]
+            random.shuffle(lines)
+            rendered_lines.append({
+                'name': input_files['name'],
+                'lines': lines
+            })
+        return rendered_lines
 
     def get_input_files(self):
         if not isinstance(self.question, JavaQuestion):
@@ -520,8 +527,8 @@ class CodeSubmission(Submission):
     def get_answer_files(self):
         raise NotImplementedError()
 
-    def no_file_answer(self):
-        return False
+    def get_embed_files(self):
+        raise NotImplementedError()
 
 
 class JavaSubmission(CodeSubmission):
@@ -529,3 +536,6 @@ class JavaSubmission(CodeSubmission):
 
     def get_answer_files(self):
         return self.answer_files
+
+    def get_embed_files(self):
+        return {}

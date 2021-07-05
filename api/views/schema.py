@@ -10,7 +10,7 @@ from api.permissions import TeacherAccessPermission
 
 class SchemaViewSet(viewsets.ViewSet):
     permission_classes = [TeacherAccessPermission]
-    schema_list = ['input_file_names', 'lines', 'test_cases', 'variables']
+    schema_list = ['input_file_names', 'parsons_input_files', 'test_cases', 'variables']
 
     def get_schema(self, name):
         if name not in self.schema_list:
