@@ -13,6 +13,7 @@ ALLOWED_NAMES = {
     **MATH_NAMES,
     **STR_NAMES,
     'len': len,
+    'round': round,
 }
 
 
