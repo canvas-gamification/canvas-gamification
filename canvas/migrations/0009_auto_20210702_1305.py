@@ -3,13 +3,21 @@
 from django.db import migrations, models
 
 
-class Migration(migrations.Migration):
+def change_practice_to_assignment(apps, schema_editor):
+    events = apps.get_model('canvas', 'Event')
+    for event in events.objects.all():
+        if event.type == 'PRACTICE':
+            event.type = 'ASSIGNMENT'
+            event.save()
 
+
+class Migration(migrations.Migration):
     dependencies = [
         ('canvas', '0008_event_type'),
     ]
 
     operations = [
+        migrations.RunPython(change_practice_to_assignment),
         migrations.AlterField(
             model_name='event',
             name='type',
