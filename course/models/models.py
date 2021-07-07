@@ -48,7 +48,7 @@ class LeaderBoardStudents(models.Model):
     leader_board = models.ForeignKey(LeaderBoard, to_field='name', on_delete=models.DO_NOTHING)
 
     def __str__(self):
-        return self.leaderboard.assigned_course.name
+        return self.leader_board.assigned_course.name
 
 
 class QuestionCategory(models.Model):
