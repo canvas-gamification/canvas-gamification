@@ -37,7 +37,7 @@ class ProblemTestCase(TestCase):
 
         self.event = Event(
             name="test_event",
-            type="PRACTICE",
+            type="ASSIGNMENT",
             course=self.course,
             count_for_tokens=False,
             start_date=timezone.now(),
@@ -141,7 +141,7 @@ class McqSubmissionTestCase(TestCase):
 
         self.event = Event(
             name="test_event",
-            type="PRACTICE",
+            type="ASSIGNMENT",
             course=self.course,
             count_for_tokens=False,
             start_date=timezone.now(),

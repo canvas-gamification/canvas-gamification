@@ -209,7 +209,6 @@ class CanvasCourseRegistration(models.Model):
 
 
 EVENT_TYPE_CHOICES = [
-    ("PRACTICE", "PRACTICE"),
     ("ASSIGNMENT", "ASSIGNMENT"),
     ("EXAM", "EXAM")
 ]
@@ -217,7 +216,7 @@ EVENT_TYPE_CHOICES = [
 
 class Event(models.Model):
     name = models.CharField(max_length=500)
-    type = models.CharField(max_length=500, choices=EVENT_TYPE_CHOICES, default="PRACTICE")
+    type = models.CharField(max_length=500, choices=EVENT_TYPE_CHOICES)
     course = models.ForeignKey(CanvasCourse, related_name='events', on_delete=models.CASCADE)
     count_for_tokens = models.BooleanField()
 
