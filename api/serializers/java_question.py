@@ -9,7 +9,6 @@ class JavaQuestionSerializer(serializers.ModelSerializer):
     title = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.TITLE.ERROR_MESSAGES)
     text = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.TEXT.ERROR_MESSAGES)
     difficulty = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.DIFFICULTY.ERROR_MESSAGES)
-    event = serializers.IntegerField(required=False, error_messages=ERROR_MESSAGES.EVENT.ERROR_MESSAGES)
     junit_template = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.JUNIT_TEMPLATE.ERROR_MESSAGES)
     input_file_names = serializers.JSONField(
         required=True, error_messages=ERROR_MESSAGES.INPUT_FILE_NAMES.ERROR_MESSAGES)
