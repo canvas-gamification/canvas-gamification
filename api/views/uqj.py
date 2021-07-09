@@ -2,7 +2,7 @@ from django_filters import NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticated
-from course.models.models import UserQuestionJunction
+from course.models.models import UserQuestionJunction, Question
 from api.pagination import BasePagination
 from api.serializers import UQJSerializer
 
@@ -30,7 +30,7 @@ class UQJViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        uqj = user.question_junctions.all()
+        uqj = user.question_junctions.filter(question__question_status=Question.CREATED)
         accessible_uqj = []
         for temp in uqj:
             if temp.question.has_view_permission(user):

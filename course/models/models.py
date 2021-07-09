@@ -111,6 +111,15 @@ class Question(PolymorphicModel):
 
     is_verified = models.BooleanField(default=False)
 
+    CREATED = 'CRE'
+    DELETED = 'DEL'
+    QUESTION_STATUS_CHOICES = [
+        (CREATED, 'CREATED'),
+        (DELETED, 'DELETED')
+    ]
+
+    question_status = models.CharField(max_length=3, choices=QUESTION_STATUS_CHOICES, default=CREATED)
+
     grader = None
 
     @property
@@ -174,6 +183,10 @@ class Question(PolymorphicModel):
 
         super().save(*args, **kwargs)
         ensure_uqj(None, self)
+
+    def delete(self):
+        self.question_status = self.DELETED
+        self.save()
 
     def has_view_permission(self, user):
         if user.is_teacher:
