@@ -18,7 +18,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     Optional Parameters
     ?status: boolean => filter by status
     """
-    queryset = Question.objects.all()
+    queryset = Question.objects.filter(question_status=Question.CREATED)
     serializer_class = QuestionSerializer
     permission_classes = [HasDeletePermission, TeacherAccessPermission, ]
     filter_backends = [filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend]
