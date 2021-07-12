@@ -14,6 +14,7 @@ from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, User
 from api.views.admin import AdminViewSet
 from api.views.leaderboard import LeaderBoardViewSet
 from api.views.leaderboard_students import LeaderBoardStudentsViewSet
+from api.views.team import TeamViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
@@ -45,6 +46,7 @@ router.register(r'apitest', ApiTestViewSet, basename='apitest')
 router.register(r'admin', AdminViewSet, basename='admin')
 router.register(r'leaderboard', LeaderBoardViewSet, basename='leaderboard')
 router.register(r'leaderboard-students', LeaderBoardStudentsViewSet, basename='leaderboard-students')
+router.register(r'team', TeamViewSet, basename='team')
 
 
 

@@ -316,3 +316,39 @@ class TokenUse(models.Model):
                 'posted_grade': 0,
             }
         })
+
+
+class Team(models.Model):
+    course = models.ForeignKey(CanvasCourse, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+
+    class Meta: 
+        unique_together = ('course', 'name')
+
+    def is_registered(self, user):
+        if user.is_anonymous:
+            return False
+        return self.teamregistration_set.filter(user=user).exists()
+
+    @property
+    def tokens(self):
+        token_count = 0
+        for registration in self.teamregistration_set.all():
+            if(registration.user.tokens):
+                token_count += int(registration.user.tokens)
+        return token_count
+        
+    
+
+class TeamRegistration(models.Model):
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, db_index=True)
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, db_index=True)
+
+    class Meta: 
+        unique_together = ('team', 'user')
+    
+    @property
+    def total_tokens_received(self):
+        event_ids = [x['id'] for x in self.team.course.events.filter(count_for_tokens=True).values('id')]
+        return self.user.question_junctions.filter(question__event_id__in=event_ids) \
+                .aggregate(Sum('tokens_received'))['tokens_received__sum'] or 0
