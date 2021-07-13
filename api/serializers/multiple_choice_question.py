@@ -9,7 +9,6 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
     title = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.TITLE.ERROR_MESSAGES)
     text = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.TEXT.ERROR_MESSAGES)
     difficulty = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.DIFFICULTY.ERROR_MESSAGES)
-    event = serializers.IntegerField(required=False, error_messages=ERROR_MESSAGES.EVENT.ERROR_MESSAGES)
     answer = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.ANSWER.ERROR_MESSAGES)
     visible_distractor_count = serializers.IntegerField(
         required=True,
