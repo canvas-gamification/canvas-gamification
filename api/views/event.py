@@ -28,3 +28,22 @@ class EventViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.Upd
         Returns a dictionary of the defined event types
         """
         return Response(EVENT_TYPE_CHOICES)
+
+    @action(detail=False, methods=['get'], url_path="get-all-events")
+    def get_all_events(self, request):
+        """
+        Returns a dictionary of all events.
+        """
+        return Response(self.get_queryset().values())
+
+    @action(detail=False, methods=['post'], url_path="duplicate-event")
+    def duplicate_event(self, request):
+        """
+        Duplicates an event as well as the questions within the event.
+        """
+        event = Event.objects.filter(id=request.data.get("id", None)).first()
+        event.id = None
+        event.save()
+        return Response({
+                "success": True,
+            })
