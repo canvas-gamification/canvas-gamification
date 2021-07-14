@@ -45,5 +45,5 @@ class EventViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, mixins.Upd
         event.id = None
         event.save()
         return Response({
-                "success": True,
-            })
+            "success": True,
+        })
