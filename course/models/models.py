@@ -173,7 +173,6 @@ class Question(PolymorphicModel):
             self.max_submission_allowed = 10 if self.event is not None and self.event.type == "EXAM" else 100
 
         super().save(*args, **kwargs)
-        ensure_uqj(None, self)
 
     def has_view_permission(self, user):
         if user.is_teacher:
