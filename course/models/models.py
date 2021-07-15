@@ -13,7 +13,7 @@ from canvas.models import Event, CanvasCourse
 from course.fields import JSONField
 from course.grader.grader import MultipleChoiceGrader, JunitGrader
 from course.utils.junit_xml import parse_junit_xml
-from course.utils.utils import get_token_value, ensure_uqj, calculate_average_success
+from course.utils.utils import get_token_value, calculate_average_success
 from course.utils.variables import render_text, generate_variables
 from general.models import Action
 
