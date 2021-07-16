@@ -40,6 +40,7 @@ class EventViewSet(viewsets.ModelViewSet):
         old_event_id = event.id
         event.id = None
         event.course = course
+        event.name += ' (Copy)'
         event.save()
         for question in Question.objects.all().filter(event=old_event_id):
             question.id = None
@@ -47,6 +48,7 @@ class EventViewSet(viewsets.ModelViewSet):
             question.question_ptr_id = None
             question.course = course
             question.event = event
+            question.title += ' (Copy)'
             question.save()
         return Response({
             "success": True,
