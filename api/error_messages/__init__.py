@@ -22,3 +22,5 @@ from .junit_template import JUNIT_TEMPLATE
 from .input_file_names import INPUT_FILE_NAMES
 from .lines import LINES
 from .schema import SCHEMA
+from .user import USER
+from .course_registration import COURSE_REGISTRATION
