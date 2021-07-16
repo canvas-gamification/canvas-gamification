@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from api.permissions import IsOwnerOrReadOnly
 from api.serializers import EventSerializer
-from canvas.models import Event, EVENT_TYPE_CHOICES
+from canvas.models import Event, EVENT_TYPE_CHOICES, CanvasCourse
 from course.models.models import Question
 
 
@@ -35,16 +35,18 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         Duplicates an event as well as the questions within the event.
         """
-        event = Event.objects.filter(id=request.data.get("id", None)).first()
-        if event:
-            for question in Question.objects.all().filter(event=event.id):
-                question.id = None
-                question.pk = None
-                question.question_ptr_id = None
-                question.event = event
-                question.save()
+        event = Event.objects.filter(id=request.data.get("event", None)).first()
+        course = CanvasCourse.objects.filter(id=request.data.get("course", None)).first()
+        old_event_id = event.id
         event.id = None
+        event.course = course
         event.save()
+        for question in Question.objects.all().filter(event=old_event_id):
+            question.id = None
+            question.pk = None
+            question.question_ptr_id = None
+            question.event = event
+            question.save()
         return Response({
             "success": True,
         })
