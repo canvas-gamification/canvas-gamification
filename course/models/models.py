@@ -13,7 +13,7 @@ from canvas.models import Event, CanvasCourse
 from course.fields import JSONField
 from course.grader.grader import MultipleChoiceGrader, JunitGrader
 from course.utils.junit_xml import parse_junit_xml
-from course.utils.utils import get_token_value, calculate_average_success
+from course.utils.utils import get_token_value, calculate_average_success, ensure_uqj
 from course.utils.variables import render_text, generate_variables
 from general.models import Action
 
@@ -173,6 +173,7 @@ class Question(PolymorphicModel):
             self.max_submission_allowed = 10 if self.event is not None and self.event.type == "EXAM" else 100
 
         super().save(*args, **kwargs)
+        ensure_uqj(None, self)
 
     def has_view_permission(self, user):
         if user.is_teacher:

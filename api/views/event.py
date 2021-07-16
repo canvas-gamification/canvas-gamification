@@ -45,6 +45,7 @@ class EventViewSet(viewsets.ModelViewSet):
             question.id = None
             question.pk = None
             question.question_ptr_id = None
+            question.course = course
             question.event = event
             question.save()
         return Response({
