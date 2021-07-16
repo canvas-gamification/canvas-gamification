@@ -118,7 +118,7 @@ class Question(PolymorphicModel):
         (DELETED, 'DELETED')
     ]
 
-    question_status = models.CharField(max_length=3, choices=QUESTION_STATUS_CHOICES, default=CREATED)
+    question_status = models.CharField(max_length=3, choices=QUESTION_STATUS_CHOICES, null=True, default=CREATED)
 
     grader = None
 
