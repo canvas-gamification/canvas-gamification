@@ -38,14 +38,13 @@ class EventViewSet(viewsets.ModelViewSet):
         event = Event.objects.filter(id=request.data.get("id", None)).first()
         if event:
             for question in Question.objects.all().filter(event=event.id):
-                print(question.id)
-                question.pk = None
                 question.id = None
+                question.pk = None
+                question.question_ptr_id = None
                 question.event = event
                 question.save()
-                print(question.id)
-        # event.id = None
-        # event.save()
+        event.id = None
+        event.save()
         return Response({
             "success": True,
         })
