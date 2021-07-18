@@ -6,11 +6,14 @@ def fix_java_input_files(apps, schema_editor):
     for question in JavaQuestion.objects.all():
         input_files = []
         for input_file in question.input_file_names:
-            input_files.append({
-                'name': input_file['name'],
-                'compile': True,
-                'template': input_file['template'],
-            })
+            try:
+                input_files.append({
+                    'name': input_file['name'],
+                    'compile': True,
+                    'template': input_file['template'],
+                })
+            except:
+                pass
         question.input_files = input_files
         question.save()
 
