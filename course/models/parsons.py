@@ -34,6 +34,9 @@ class ParsonsQuestion(VariableQuestion):
         ]
         return " ".join(input_files)
 
+    def get_input_files(self):
+        return self.input_files
+
 
 class ParsonsSubmission(CodeSubmission):
     answer_files = JSONField()
