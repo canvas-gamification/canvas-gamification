@@ -8,9 +8,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from api.serializers import JavaSubmissionSerializer, MultipleChoiceSubmissionSerializer, ParsonsSubmissionSerializer
 from course.exceptions import SubmissionException
-from course.models.models import Submission, MultipleChoiceSubmission, JavaSubmission, Question, \
-    MultipleChoiceQuestion, JavaQuestion
-from course.models.parsons_question import ParsonsSubmission, ParsonsQuestion
+from course.models.models import Submission, Question
+from course.models.java import JavaQuestion, JavaSubmission
+from course.models.multiple_choice import MultipleChoiceQuestion, MultipleChoiceSubmission
+from course.models.parsons import ParsonsSubmission, ParsonsQuestion
 from course.views.java import submit_solution as submit_java_solution
 from course.views.multiple_choice import submit_solution as submit_multiple_choice_solution
 from course.views.parsons import submit_solution as submit_parsons_solution
