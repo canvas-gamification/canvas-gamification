@@ -11,8 +11,6 @@ from polymorphic.models import PolymorphicModel
 from accounts.models import MyUser
 from canvas.models import Event, CanvasCourse
 from course.fields import JSONField
-from course.models.java import JavaQuestion
-from course.models.multiple_choice import MultipleChoiceQuestion
 from course.utils.junit_xml import parse_junit_xml
 from course.utils.utils import get_token_value, ensure_uqj, calculate_average_success
 from course.utils.variables import render_text, generate_variables
@@ -169,6 +167,13 @@ class Question(PolymorphicModel):
     def is_exam_and_open(self):
         return self.event is not None and self.event.is_exam_and_open()
 
+    @property
+    def is_checkbox(self):
+        return False
+
+    def get_input_files(self):
+        return {}
+
     def save(self, *args, **kwargs):
         if self.max_submission_allowed is None:
             self.max_submission_allowed = 10 if self.event is not None and self.event.type == "EXAM" else 100
@@ -244,6 +249,7 @@ class UserQuestionJunction(models.Model):
         return render_text(self.question.text, self.get_variables())
 
     def get_rendered_choices(self):
+        from course.models.multiple_choice import MultipleChoiceQuestion
         if not isinstance(self.question, MultipleChoiceQuestion):
             return {}
 
@@ -277,13 +283,9 @@ class UserQuestionJunction(models.Model):
         return rendered_lines
 
     def get_input_files(self):
-        if not isinstance(self.question, JavaQuestion):
-            return {}
         return self.question.get_input_files()
 
     def is_checkbox(self):
-        if not isinstance(self.question, MultipleChoiceQuestion):
-            return False
         return self.question.is_checkbox
 
     def num_attempts(self):
