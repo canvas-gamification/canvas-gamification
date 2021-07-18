@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission
 from api.serializers import MultipleChoiceQuestionSerializer
-from course.models.models import MultipleChoiceQuestion
+from course.models.multiple_choice import MultipleChoiceQuestion
 
 
 class SampleMultipleChoiceQuestionViewSet(viewsets.ReadOnlyModelViewSet):

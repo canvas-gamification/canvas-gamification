@@ -11,7 +11,6 @@ from polymorphic.models import PolymorphicModel
 from accounts.models import MyUser
 from canvas.models import Event, CanvasCourse
 from course.fields import JSONField
-from course.grader.grader import MultipleChoiceGrader, JunitGrader
 from course.utils.junit_xml import parse_junit_xml
 from course.utils.utils import get_token_value, ensure_uqj, calculate_average_success
 from course.utils.variables import render_text, generate_variables
@@ -168,6 +167,13 @@ class Question(PolymorphicModel):
     def is_exam_and_open(self):
         return self.event is not None and self.event.is_exam_and_open()
 
+    @property
+    def is_checkbox(self):
+        return False
+
+    def get_input_files(self):
+        return {}
+
     def save(self, *args, **kwargs):
         if self.max_submission_allowed is None:
             self.max_submission_allowed = 10 if self.event is not None and self.event.type == "EXAM" else 100
@@ -188,32 +194,6 @@ class Question(PolymorphicModel):
 
 class VariableQuestion(Question):
     variables = JSONField()
-
-
-class MultipleChoiceQuestion(VariableQuestion):
-    choices = JSONField()
-    visible_distractor_count = models.IntegerField()
-    grader = MultipleChoiceGrader()
-
-    @property
-    def is_checkbox(self):
-        return ',' in self.answer
-
-
-class JavaQuestion(VariableQuestion):
-    junit_template = models.TextField()
-    input_file_names = JSONField()
-
-    grader = JunitGrader()
-
-    def get_input_file_names(self):
-        return " ".join(self.get_input_file_names_array())
-
-    def get_input_file_names_array(self):
-        return [x['name'] for x in self.input_file_names]
-
-    def get_input_files(self):
-        return self.input_file_names
 
 
 def random_seed():
@@ -269,6 +249,7 @@ class UserQuestionJunction(models.Model):
         return render_text(self.question.text, self.get_variables())
 
     def get_rendered_choices(self):
+        from course.models.multiple_choice import MultipleChoiceQuestion
         if not isinstance(self.question, MultipleChoiceQuestion):
             return {}
 
@@ -282,26 +263,29 @@ class UserQuestionJunction(models.Model):
         return {key: render_text(choices[key], self.get_variables()) for key in keys}
 
     def get_lines(self):
-        from course.models.parsons_question import ParsonsQuestion
+        from course.models.parsons import ParsonsQuestion
 
         if not isinstance(self.question, ParsonsQuestion):
-            return []
+            return {}
 
         random.seed(self.random_seed)
-        lines = []
-        for line in self.question.lines:
-            lines.append(render_text(line, self.get_variables()))
-        random.shuffle(lines)
-        return lines
+        rendered_lines = []
+        for input_files in self.question.input_files:
+            lines = [
+                render_text(line, self.get_variables())
+                for line in input_files['lines']
+            ]
+            random.shuffle(lines)
+            rendered_lines.append({
+                'name': input_files['name'],
+                'lines': lines
+            })
+        return rendered_lines
 
     def get_input_files(self):
-        if not isinstance(self.question, JavaQuestion):
-            return {}
         return self.question.get_input_files()
 
     def is_checkbox(self):
-        if not isinstance(self.question, MultipleChoiceQuestion):
-            return False
         return self.question.is_checkbox
 
     def num_attempts(self):
@@ -456,16 +440,6 @@ class Submission(PolymorphicModel):
         pass
 
 
-class MultipleChoiceSubmission(Submission):
-    @property
-    def answer_display(self):
-        values = []
-        rendered_choices = self.uqj.get_rendered_choices()
-        for answer in self.answer.split(','):
-            values.append(rendered_choices.get(answer, 'Unknown'))
-        return values
-
-
 class CodeSubmission(Submission):
     tokens = JSONField()
     results = JSONField()
@@ -520,12 +494,5 @@ class CodeSubmission(Submission):
     def get_answer_files(self):
         raise NotImplementedError()
 
-    def no_file_answer(self):
-        return False
-
-
-class JavaSubmission(CodeSubmission):
-    answer_files = JSONField()
-
-    def get_answer_files(self):
-        return self.answer_files
+    def get_embed_files(self):
+        raise NotImplementedError()

@@ -3,7 +3,7 @@ from djrichtextfield.widgets import RichTextWidget
 
 from course.fields import JSONFormField
 from course.forms.forms import ProblemCreateForm
-from course.models.models import MultipleChoiceQuestion
+from course.models.multiple_choice import MultipleChoiceQuestion
 from course.widgets import RadioInlineSelect
 
 

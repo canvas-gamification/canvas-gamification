@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from course.exceptions import SubmissionException
 from course.forms.multiple_choice import MultipleChoiceQuestionForm, ChoiceForm
-from course.models.models import MultipleChoiceSubmission
+from course.models.multiple_choice import MultipleChoiceSubmission
 from course.utils.utils import create_multiple_choice_question, QuestionCreateException, get_user_question_junction, \
     get_question_title
 
