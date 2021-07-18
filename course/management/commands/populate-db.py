@@ -5,7 +5,8 @@ from django.core.management import BaseCommand
 from course.models.models import QuestionCategory, Question
 from course.models.java import JavaQuestion
 from course.models.multiple_choice import MultipleChoiceQuestion
-from course.utils.utils import create_multiple_choice_question, create_java_question
+from course.models.parsons import ParsonsQuestion
+from course.utils.utils import create_multiple_choice_question, create_java_question, create_parsons_question
 
 
 class Command(BaseCommand):
@@ -22,6 +23,7 @@ class Command(BaseCommand):
             self.populate_categories()
             self.populate_multiple_choice_questions()
             self.populate_java_questions()
+            self.populate_parsons_questions()
             return
         if options['category']:
             self.populate_categories()
@@ -29,6 +31,8 @@ class Command(BaseCommand):
             self.populate_multiple_choice_questions()
         if options['java']:
             self.populate_java_questions()
+        if options['parsons']:
+            self.populate_parsons_questions()
 
     def populate_categories(self):
         Question.objects.update(category=None)
@@ -89,5 +93,23 @@ class Command(BaseCommand):
                     difficulty="EASY",
                     is_verified=True,
                     junit_template=question['junit_template'],
-                    input_file_names=question['input_file_names']
+                    input_files=question['input_files']
+                )
+
+    def populate_parsons_questions(self):
+        ParsonsQuestion.objects.all().delete()
+        with open('import/parsons_questions.json') as f:
+            questions = json.loads(f.read())
+            for question in questions:
+                create_parsons_question(
+                    title=question['title'],
+                    text=question['text'],
+                    max_submission_allowed=5,
+                    tutorial=None,
+                    author=None,
+                    category=QuestionCategory.objects.first() if QuestionCategory.objects.all().exists() else None,
+                    difficulty="EASY",
+                    is_verified=True,
+                    junit_template=question['junit_template'],
+                    input_files=question['input_files']
                 )

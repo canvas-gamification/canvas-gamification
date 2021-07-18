@@ -20,7 +20,7 @@ class JavaQuestionForm(JunitProblemCreateForm):
     input_file_names = JSONFormField(
         initial='[]',
         label='',
-        widget=JSONEditor(schema=render_to_string('schemas/input_file_names.json')),
+        widget=JSONEditor(schema=render_to_string('schemas/java_input_files.json')),
         help_text="""
             Please provide the name of the
             files students need to submit.
