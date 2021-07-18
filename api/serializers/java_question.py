@@ -11,7 +11,7 @@ class JavaQuestionSerializer(serializers.ModelSerializer):
     difficulty = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.DIFFICULTY.ERROR_MESSAGES)
     junit_template = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.JUNIT_TEMPLATE.ERROR_MESSAGES)
     input_files = serializers.JSONField(
-        required=True, error_messages=ERROR_MESSAGES.INPUT_FILE_NAMES.ERROR_MESSAGES)
+        required=True, error_messages=ERROR_MESSAGES.INPUT_FILES.ERROR_MESSAGES)
     variables = serializers.JSONField()
 
     class Meta:

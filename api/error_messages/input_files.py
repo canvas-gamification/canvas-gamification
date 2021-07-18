@@ -1,4 +1,4 @@
-class INPUT_FILE_NAMES:
+class INPUT_FILES:
     REQUIRED = "Input files are required."
     INVALID = "Input files are invalid."
 

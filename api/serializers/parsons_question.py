@@ -10,7 +10,7 @@ class ParsonsQuestionSerializer(serializers.ModelSerializer):
     text = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.TEXT.ERROR_MESSAGES)
     difficulty = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.DIFFICULTY.ERROR_MESSAGES)
     junit_template = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.JUNIT_TEMPLATE.ERROR_MESSAGES)
-    lines = serializers.JSONField(required=True, error_messages=ERROR_MESSAGES.LINES.ERROR_MESSAGES)
+    input_files = serializers.JSONField(required=True, error_messages=ERROR_MESSAGES.INPUT_FILES.ERROR_MESSAGES)
     variables = serializers.JSONField()
 
     class Meta:
