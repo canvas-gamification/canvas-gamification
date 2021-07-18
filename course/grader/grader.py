@@ -63,7 +63,7 @@ class JunitGrader(Grader):
     def get_source_code(self, submission):
         source_code = render_text(submission.question.junit_template, submission.uqj.get_variables())
         for filename, code in submission.get_embed_files().items():
-            source_code = source_code.replace("{{"+filename+"}}", code)
+            source_code = source_code.replace("{{" + filename + "}}", code)
         return source_code
 
     def get_additional_file(self, submission):
