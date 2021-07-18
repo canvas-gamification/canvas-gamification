@@ -11,7 +11,8 @@ from polymorphic.models import PolymorphicModel
 from accounts.models import MyUser
 from canvas.models import Event, CanvasCourse
 from course.fields import JSONField
-from course.grader.grader import MultipleChoiceGrader, JunitGrader
+from course.models.java import JavaQuestion
+from course.models.multiple_choice import MultipleChoiceQuestion
 from course.utils.junit_xml import parse_junit_xml
 from course.utils.utils import get_token_value, ensure_uqj, calculate_average_success
 from course.utils.variables import render_text, generate_variables
@@ -190,32 +191,6 @@ class VariableQuestion(Question):
     variables = JSONField()
 
 
-class MultipleChoiceQuestion(VariableQuestion):
-    choices = JSONField()
-    visible_distractor_count = models.IntegerField()
-    grader = MultipleChoiceGrader()
-
-    @property
-    def is_checkbox(self):
-        return ',' in self.answer
-
-
-class JavaQuestion(VariableQuestion):
-    junit_template = models.TextField()
-    input_file_names = JSONField()
-
-    grader = JunitGrader()
-
-    def get_input_file_names(self):
-        return " ".join(self.get_input_file_names_array())
-
-    def get_input_file_names_array(self):
-        return [x['name'] for x in self.input_file_names]
-
-    def get_input_files(self):
-        return self.input_file_names
-
-
 def random_seed():
     seed = get_random_string(8, '0123456789')
     return int(seed)
@@ -282,7 +257,7 @@ class UserQuestionJunction(models.Model):
         return {key: render_text(choices[key], self.get_variables()) for key in keys}
 
     def get_lines(self):
-        from course.models.parsons_question import ParsonsQuestion
+        from course.models.parsons import ParsonsQuestion
 
         if not isinstance(self.question, ParsonsQuestion):
             return {}
@@ -463,16 +438,6 @@ class Submission(PolymorphicModel):
         pass
 
 
-class MultipleChoiceSubmission(Submission):
-    @property
-    def answer_display(self):
-        values = []
-        rendered_choices = self.uqj.get_rendered_choices()
-        for answer in self.answer.split(','):
-            values.append(rendered_choices.get(answer, 'Unknown'))
-        return values
-
-
 class CodeSubmission(Submission):
     tokens = JSONField()
     results = JSONField()
@@ -529,13 +494,3 @@ class CodeSubmission(Submission):
 
     def get_embed_files(self):
         raise NotImplementedError()
-
-
-class JavaSubmission(CodeSubmission):
-    answer_files = JSONField()
-
-    def get_answer_files(self):
-        return self.answer_files
-
-    def get_embed_files(self):
-        return {}

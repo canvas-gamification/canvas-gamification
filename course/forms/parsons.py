@@ -2,7 +2,7 @@ from django import forms
 
 from course.fields import JSONLineFormField
 from course.forms.forms import JunitProblemCreateForm
-from course.models.parsons_question import ParsonsQuestion
+from course.models.parsons import ParsonsQuestion
 
 
 class ParsonsQuestionForm(JunitProblemCreateForm):

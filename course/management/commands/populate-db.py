@@ -2,7 +2,9 @@ import json
 
 from django.core.management import BaseCommand
 
-from course.models.models import QuestionCategory, MultipleChoiceQuestion, JavaQuestion, Question
+from course.models.models import QuestionCategory, Question
+from course.models.java import JavaQuestion
+from course.models.multiple_choice import MultipleChoiceQuestion
 from course.utils.utils import create_multiple_choice_question, create_java_question
 
 

@@ -3,7 +3,7 @@ from django.shortcuts import render
 
 from course.exceptions import SubmissionException
 from course.forms.parsons import ParsonsQuestionForm
-from course.models.parsons_question import ParsonsSubmission
+from course.models.parsons import ParsonsSubmission
 from course.utils.utils import get_user_question_junction, get_question_title
 
 

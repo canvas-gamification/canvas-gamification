@@ -126,7 +126,7 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
     if not max_submission_allowed:
         max_submission_allowed = len(choices)
 
-    from course.models.models import MultipleChoiceQuestion
+    from course.models.multiple_choice import MultipleChoiceQuestion
 
     if pk:
         MultipleChoiceQuestion.objects.filter(pk=pk).update(title=title, text=text, answer=answer,
@@ -169,7 +169,7 @@ def create_java_question(pk=None, title=None, text=None, max_submission_allowed=
     if not variables:
         variables = []
 
-    from course.models.models import JavaQuestion
+    from course.models.java import JavaQuestion
     if pk:
         JavaQuestion.objects.filter(pk=pk).update(
             title=title,
@@ -206,7 +206,7 @@ def create_java_question(pk=None, title=None, text=None, max_submission_allowed=
 
 
 def create_mcq_submission(uqj=None, answer=None):
-    from course.models.models import MultipleChoiceSubmission
+    from course.models.multiple_choice import MultipleChoiceSubmission
     submission = MultipleChoiceSubmission(
         uqj=uqj,
         answer=answer

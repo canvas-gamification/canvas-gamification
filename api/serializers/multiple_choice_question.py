@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 import api.error_messages as ERROR_MESSAGES
 from api.serializers import QuestionSerializer
-from course.models.models import MultipleChoiceQuestion, MultipleChoiceSubmission
+from course.models.multiple_choice import MultipleChoiceQuestion, MultipleChoiceSubmission
 
 
 class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):

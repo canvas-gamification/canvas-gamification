@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 import api.error_messages as ERROR_MESSAGES
 from api.serializers import QuestionSerializer
-from course.models.models import JavaQuestion, JavaSubmission
+from course.models.java import JavaQuestion, JavaSubmission
 
 
 class JavaQuestionSerializer(serializers.ModelSerializer):

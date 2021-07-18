@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 import api.error_messages as ERROR_MESSAGES
 from api.serializers import QuestionSerializer
-from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
+from course.models.parsons import ParsonsQuestion, ParsonsSubmission
 
 
 class ParsonsQuestionSerializer(serializers.ModelSerializer):

@@ -2,7 +2,7 @@ from django.template.loader import render_to_string
 
 from course.fields import JSONFormField
 from course.forms.forms import JunitProblemCreateForm
-from course.models.models import JavaQuestion
+from course.models.java import JavaQuestion
 from course.widgets import JSONEditor
 
 
