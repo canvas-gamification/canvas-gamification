@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission
 from api.serializers import JavaQuestionSerializer
-from course.models.models import JavaQuestion
+from course.models.java import JavaQuestion
 
 
 class JavaQuestionViewSet(viewsets.ModelViewSet):

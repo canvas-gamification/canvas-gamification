@@ -1,6 +1,6 @@
-class INPUT_FILE_NAMES:
-    REQUIRED = "Input file names are required."
-    INVALID = "Input file names are invalid."
+class INPUT_FILES:
+    REQUIRED = "Input files are required."
+    INVALID = "Input files are invalid."
 
     ERROR_MESSAGES = {
         'required': REQUIRED,
