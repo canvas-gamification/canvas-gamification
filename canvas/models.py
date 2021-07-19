@@ -269,6 +269,14 @@ class Event(models.Model):
     def is_exam_and_open(self):
         return self.is_exam and self.is_open
 
+    def clone(self, course):
+        course_clone = self
+        course_clone.id = None
+        course_clone.course = course
+        course_clone.name += ' (Copy)'
+        course_clone.save()
+        return course_clone
+
 
 class TokenUseOption(models.Model):
     course = models.ForeignKey(CanvasCourse, related_name='token_use_options', on_delete=models.CASCADE)

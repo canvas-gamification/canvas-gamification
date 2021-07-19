@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -37,19 +37,11 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         event = Event.objects.filter(id=request.data.get("event", None)).first()
         course = CanvasCourse.objects.filter(id=request.data.get("course", None)).first()
-        old_event_id = event.id
-        event.id = None
-        event.course = course
-        event.name += ' (Copy)'
-        event.save()
-        for question in Question.objects.all().filter(event=old_event_id):
-            question.id = None
-            question.pk = None
-            question.question_ptr_id = None
-            question.course = course
-            question.event = event
-            question.title += ' (Copy)'
-            question.save()
-        return Response({
-            "success": True,
-        })
+        if event and course:
+            old_event_id = event.id
+            event.clone(course)
+            for question in Question.objects.all().filter(event=old_event_id):
+                question.clone(course, event)
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND, data='The event or course provided could not be found.')
