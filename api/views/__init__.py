@@ -4,7 +4,6 @@ from .canvas_course_registration import CanvasCourseRegistrationViewSet
 from .contact_us import ContactUsViewSet
 from .course import CourseViewSet
 from .difficulty import DifficultyViewSet
-from .api_test import ApiTestViewSet
 from .event import EventViewSet
 from .faq import FAQViewSet
 from .java_question import JavaQuestionViewSet

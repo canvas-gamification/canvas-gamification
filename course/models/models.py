@@ -23,34 +23,6 @@ DIFFICULTY_CHOICES = [
     ("HARD", "HARD"),
 ]
 
-
-class TestModel(models.Model):
-    username = models.CharField(max_length=100)
-    tokens = models.IntegerField(default=0)
-    team = models.CharField(max_length=100)
-    streak = models.IntegerField(default=0)
-
-
-class LeaderBoard(models.Model):
-    name = models.CharField(max_length=300, unique=True)
-    assigned_course = models.ForeignKey(CanvasCourse, to_field='name', on_delete=models.DO_NOTHING)
-    created_by = models.ForeignKey(MyUser, on_delete=models.DO_NOTHING)
-
-    def __str__(self):
-        return self.name
-
-
-class LeaderBoardStudents(models.Model):
-    student = models.ForeignKey(MyUser, on_delete=models.DO_NOTHING)
-    token_value = models.IntegerField(default=0)
-    team = models.CharField(max_length=100, default=1)
-    streak = models.IntegerField(default=0)
-    leader_board = models.ForeignKey(LeaderBoard, to_field='name', on_delete=models.DO_NOTHING)
-
-    def __str__(self):
-        return self.leader_board.assigned_course.name
-
-
 class QuestionCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
