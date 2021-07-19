@@ -37,11 +37,14 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         event = Event.objects.filter(id=request.data.get("event", None)).first()
         course = CanvasCourse.objects.filter(id=request.data.get("course", None)).first()
+        current_author = None
+        if request.user.is_authenticated:
+            current_author = request.user
         if event and course:
             old_event_id = event.id
             event.clone(course)
             for question in Question.objects.all().filter(event=old_event_id):
-                question.clone(course, event)
+                question.clone(course, event, current_author)
             return Response(status=status.HTTP_201_CREATED)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND, data='The event or course provided could not be found.')

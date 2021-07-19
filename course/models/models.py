@@ -185,7 +185,7 @@ class Question(PolymorphicModel):
     def has_edit_permission(self, user):
         return user.is_teacher
 
-    def clone(self, course, event):
+    def clone(self, course, event, author):
         question_clone = self
         question_clone.id = None
         question_clone.pk = None
@@ -193,6 +193,7 @@ class Question(PolymorphicModel):
         question_clone.variablequestion_ptr_id = None
         question_clone.course = course
         question_clone.event = event
+        question_clone.author = author
         question_clone.title += ' (Copy)'
         question_clone.save()
         return question_clone
