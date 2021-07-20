@@ -9,7 +9,7 @@ from api.serializers.team import TeamSerializer
 from canvas.models import Team, TeamRegistration
 from canvas.utils.utils import get_course_registration
 
-class TeamViewSet(viewsets.ReadOnlyModelViewSet):
+class TeamViewSet(viewsets.ModelViewSet):
 
     serializer_class = TeamSerializer
 

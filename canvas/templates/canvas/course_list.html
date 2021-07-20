@@ -33,7 +33,6 @@
                 </td>
                 <td>
                     {% if allowed_to_open %}
-                        <a href="{% url 'canvas:course' course.pk %}" class="btn btn-primary">Open</a>
                     {% endif %}
                     {% if not registered %}
                         <a href="{% url 'canvas:course_register' course.pk %}" class="btn btn-primary">Register</a>
