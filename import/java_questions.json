@@ -2,16 +2,18 @@
   {
     "title": "Java Question 1",
     "text": "Write a Java Calculator class that can add 2 numbers",
-    "input_file_names": [
+    "input_files": [
       {
         "name": "Calculator.java",
+        "compile": true,
         "template": "public class Calculator {\n    public int add(int x, int y) {\n        return x + y;\n    }\n}"
       },
       {
-        "name": "Calculator2.java",
-        "template": "public class Calculator2 {\n    public int sub(int x, int y) {\n        return x - y;\n    }\n}"
+        "name": "Subtraction Method",
+        "compile": false,
+        "template": "public int sub(int x, int y) {\n    return x - y;\n}"
       }
     ],
-    "junit_template": "import static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport org.junit.jupiter.api.Test;\n\nclass MainTest {\n   \n    private final Calculator calculator = new Calculator();\n\n    @Test\n    void addition() {\n        assertEquals(2, calculator.add(1, 1));\n    }\n}"
+    "junit_template": "import static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport org.junit.jupiter.api.Test;\n\nclass MainTest {\n   \n    private final Calculator calculator = new Calculator();\n\n    @Test\n    void addition() {\n        assertEquals(2, calculator.add(1, 1));\n    }\n\n    @Test\n    void subtraction() {\n        Calculator2 cal = new Calculator2();\n        assertEquals(2, cal.sub(3,1));\n    }\n}\nclass Calculator2 {\n    {{Subtraction Method}}\n}"
   }
 ]

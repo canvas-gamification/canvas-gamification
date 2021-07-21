@@ -1,0 +1,32 @@
+[
+  {
+    "title": "Parsons Question 1",
+    "text": "Write a Java Calculator class that can add 2 numbers",
+    "input_files": [
+      {
+        "name": "Calculator.java",
+        "compile": true,
+        "lines": [
+          "public class Calculator",
+          "{",
+          "public int add(int x, int y)",
+          "{",
+          "return x + y;",
+          "}",
+          "}"
+        ]
+      },
+      {
+        "name": "Subtraction Method",
+        "compile": false,
+        "lines": [
+          "public int sub(int x, int y)",
+          "{",
+          "return x - y;",
+          "}"
+        ]
+      }
+    ],
+    "junit_template": "import static org.junit.jupiter.api.Assertions.assertEquals;\n\nimport org.junit.jupiter.api.Test;\n\nclass MainTest {\n   \n    private final Calculator calculator = new Calculator();\n\n    @Test\n    void addition() {\n        assertEquals(2, calculator.add(1, 1));\n    }\n\n    @Test\n    void subtraction() {\n        Calculator2 cal = new Calculator2();\n        assertEquals(2, cal.sub(3,1));\n    }\n}\nclass Calculator2 {\n    {{Subtraction Method}}\n}"
+  }
+]
