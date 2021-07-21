@@ -94,7 +94,8 @@ def question_delete_view(request, pk):
                              'Unauthorized request to delete question. '
                              'Please ask the author to delete.')
     else:
-        question.delete()
+        question.question_status = Question.DELETED
+        question.save()
 
     return HttpResponseRedirect(reverse_lazy('course:problem_set'))
 
