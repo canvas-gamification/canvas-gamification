@@ -9,8 +9,8 @@ from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission, HasDeletePermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, JavaQuestionSerializer, \
     ParsonsQuestionSerializer
-from course.models.models import Question
 from course.models.java import JavaQuestion
+from course.models.models import Question
 from course.models.multiple_choice import MultipleChoiceQuestion
 from course.models.parsons import ParsonsQuestion
 
@@ -51,6 +51,12 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
         kwargs['context'] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        question = self.get_object()
+        question.question_status = Question.DELETED
+        question.save()
+        return Response(self.get_serializer(question).data)
 
     @action(detail=False, methods=['get'], url_path='download-questions')
     def download_questions(self, request, *args, **kwargs):
