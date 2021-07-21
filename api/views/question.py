@@ -20,7 +20,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     Optional Parameters
     ?status: boolean => filter by status
     """
-    queryset = Question.objects.all()
+    queryset = Question.objects.filter(question_status=Question.CREATED)
     serializer_class = QuestionSerializer
     permission_classes = [HasDeletePermission, TeacherAccessPermission, ]
     filter_backends = [filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend]
@@ -51,6 +51,12 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
         kwargs['context'] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        question = self.get_object()
+        question.question_status = Question.DELETED
+        question.save()
+        return Response(self.get_serializer(question).data)
 
     @action(detail=False, methods=['get'], url_path='download-questions')
     def download_questions(self, request, *args, **kwargs):
