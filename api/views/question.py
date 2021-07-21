@@ -9,8 +9,8 @@ from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission, HasDeletePermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, JavaQuestionSerializer, \
     ParsonsQuestionSerializer
-from course.models.java import JavaQuestion
 from course.models.models import Question
+from course.models.java import JavaQuestion
 from course.models.multiple_choice import MultipleChoiceQuestion
 from course.models.parsons import ParsonsQuestion
 
