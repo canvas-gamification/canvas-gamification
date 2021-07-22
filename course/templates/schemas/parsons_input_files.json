@@ -5,6 +5,11 @@
   "items": {
     "type": "object",
     "title": "Files",
+    "required": [
+      "name",
+      "compile",
+      "lines"
+    ],
     "properties": {
       "name": {
         "type": "string",
