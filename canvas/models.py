@@ -268,13 +268,17 @@ class Event(models.Model):
     def is_exam_and_open(self):
         return self.is_exam and self.is_open
 
-    def clone(self, course):
-        course_clone = self
-        course_clone.id = None
-        course_clone.course = course
-        course_clone.name += ' (Copy)'
-        course_clone.save()
-        return course_clone
+    def clone(self, course, current_author, questions):
+        event_clone = self
+        old_event_id = event_clone.id
+        event_clone.id = None
+        event_clone.course = course
+        event_clone.name += ' (Copy)'
+        event_clone.save()
+
+        for question in questions.filter(event=old_event_id):
+            question.clone(course, event_clone, current_author)
+        return event_clone
 
 
 class TokenUseOption(models.Model):
