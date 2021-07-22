@@ -1,5 +1,5 @@
 {
-  "title": "Submission Files",
+  "title": " ",
   "type": "array",
   "format": "table",
   "items": {
@@ -10,9 +10,13 @@
         "type": "string",
         "description": "Name of the file"
       },
-      "template": {
+      "compile": {
+        "type": "boolean",
+        "description": "Should this file be compiled?"
+      },
+      "lines": {
         "type": "string",
-        "description": "Initial template of the file",
+        "description": "Lines to scramble",
         "format": "textarea"
       }
     }

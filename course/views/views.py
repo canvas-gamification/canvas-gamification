@@ -9,9 +9,11 @@ from rest_framework.reverse import reverse_lazy
 from course.forms.forms import ProblemFilterForm
 from course.forms.java import JavaQuestionForm
 from course.forms.multiple_choice import MultipleChoiceQuestionForm, ChoiceForm
-from course.models.models import Question, MultipleChoiceQuestion, JavaQuestion, JavaSubmission, QuestionCategory, \
+from course.models.models import Question, QuestionCategory, \
     DIFFICULTY_CHOICES, TokenValue, Submission, UserQuestionJunction
-from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
+from course.models.java import JavaQuestion, JavaSubmission
+from course.models.multiple_choice import MultipleChoiceQuestion
+from course.models.parsons import ParsonsQuestion, ParsonsSubmission
 from course.utils.utils import get_user_question_junction
 from course.views.java import _java_question_create_view, _java_question_view, _java_submission_detail_view, \
     _java_question_edit_view

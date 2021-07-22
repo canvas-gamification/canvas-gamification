@@ -37,7 +37,7 @@ class ProblemTestCase(TestCase):
 
         self.event = Event(
             name="test_event",
-            type="PRACTICE",
+            type="ASSIGNMENT",
             course=self.course,
             count_for_tokens=False,
             start_date=timezone.now(),
@@ -71,17 +71,20 @@ class ProblemTestCase(TestCase):
                 difficulty='EASY',
                 is_verified=True,
                 junit_template='',
-                input_file_names=[
+                input_files=[
                     {
                         'name': 'A.java',
+                        'compile': False,
                         'template': '',
                     },
                     {
                         'name': 'B.java',
+                        'compile': True,
                         'template': '',
                     },
                     {
                         'name': 'C.java',
+                        'compile': False,
                         'template': '',
                     }
                 ],
@@ -141,7 +144,7 @@ class McqSubmissionTestCase(TestCase):
 
         self.event = Event(
             name="test_event",
-            type="PRACTICE",
+            type="ASSIGNMENT",
             course=self.course,
             count_for_tokens=False,
             start_date=timezone.now(),
