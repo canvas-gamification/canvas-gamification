@@ -22,3 +22,5 @@ from .update_profile import UpdateProfileViewSet
 from .uqj import UQJViewSet
 from .user_consent import UserConsentViewSet
 from .user_stats import UserStatsViewSet
+from .list_user import UsersCountViewSet
+from .list_course_user import UsersCourseCountViewSet
