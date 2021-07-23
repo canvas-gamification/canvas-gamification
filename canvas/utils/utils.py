@@ -25,3 +25,9 @@ def get_course_registration(user, course):
 
     qs = CanvasCourseRegistration.objects.filter(user=user, course=course)
     return qs.get() if qs.exists() else None
+
+def get_team_registration(user, team):
+    from canvas.models import TeamRegistration
+
+    qs = TeamRegistration.objects.filter(user=user, team=team)
+    return qs.get() if qs.exists() else None
