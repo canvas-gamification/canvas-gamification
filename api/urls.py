@@ -8,7 +8,7 @@ from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, User
     CourseViewSet, CanvasCourseRegistrationViewSet, ResetPasswordViewSet, UserRegistrationViewSet, \
     UpdateProfileViewSet, SubmissionViewSet, ObtainAuthTokenView, MultipleChoiceQuestionViewSet, JavaQuestionViewSet, \
     ParsonsQuestionViewSet, EventViewSet, TokenUseViewSet, SchemaViewSet, DifficultyViewSet, ChangePasswordViewSet, \
-    UsersCountViewSet, UsersCourseCountViewSet
+    UsersCountViewSet, UsersCourseCountViewSet, CourseNamesViewSet
 from api.views.admin import AdminViewSet
 
 router = DefaultRouter()
@@ -40,6 +40,8 @@ router.register(r'difficulty', DifficultyViewSet, basename='difficulty')
 router.register(r'admin', AdminViewSet, basename='admin')
 router.register(r'list-user', UsersCountViewSet, basename="list-user")
 router.register(r'list-course-user', UsersCourseCountViewSet, basename="list-course-user")
+router.register(r'course_names', CourseNamesViewSet, basename="course_names")
+
 
 app_name = 'api'
 urlpatterns = [

@@ -7,12 +7,12 @@ from accounts.models import MyUser
 
 
 class UsersCourseCountViewSet(viewsets.ReadOnlyModelViewSet):
+
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    filterset_fields = ['role']
-    def get_queryset(self):
-        courses = CanvasCourseRegistration.objects.values('user_id')
-        users = MyUser.objects.filter(id__in=courses).annotate(course_in=CanvasCourse.objects.filter(course_id__in=CanvasCourseRegistration.objects.filter(user_id=1).values('course_id')).values('name'))
-        return users
+    courses = CanvasCourseRegistration.objects.values('user__id')
+    course_names = CanvasCourse.objects.values('name')
+    queryset = MyUser.objects.filter(id__in=courses)
+    filterset_fields = ['role', 'canvascourseregistration__course__name']
 
     serializer_class = UsersCourseCountSerializers
 
