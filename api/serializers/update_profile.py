@@ -11,7 +11,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         fields = ['id', 'first_name', 'last_name', 'email']
 
     email = serializers.EmailField(
-        required=True,
+        read_only=True,
         error_messages=ERROR_MESSAGES.EMAIL.ERROR_MESSAGES,
         validators=[UniqueValidator(
             queryset=MyUser.objects.all(),
