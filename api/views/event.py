@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -35,14 +36,11 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         Duplicates an event as well as the questions within the event.
         """
-        event = Event.objects.filter(id=request.data.get("event", None)).first()
-        course = CanvasCourse.objects.filter(id=request.data.get("course", None)).first()
+        event = get_object_or_404(Event, id=request.data.get("event"))
+        course = get_object_or_404(CanvasCourse, id=request.data.get("course"))
         questions = Question.objects.all()
         current_author = None
         if request.user.is_authenticated:
             current_author = request.user
-        if event and course:
-            event.clone(course, current_author, questions)
-            return Response(status=status.HTTP_201_CREATED)
-        else:
-            return Response(status=status.HTTP_404_NOT_FOUND, data='The event or course provided could not be found.')
+        event.clone(course, current_author, questions)
+        return Response(status=status.HTTP_201_CREATED)
