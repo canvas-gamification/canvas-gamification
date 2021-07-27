@@ -36,13 +36,13 @@ class TeamViewSet(viewsets.ReadOnlyModelViewSet):
             team_reg = TeamRegistration.objects.get(user=user, team__course=course)
         except ObjectDoesNotExist:
             return Response({
-                'userId': userId,
-                'teamId': -1
+                'user_id': userId,
+                'team_id': -1
             })
        
         return Response({
-            'userId': team_reg.user.id,
-            'teamId': team_reg.team.id
+            'user_id': team_reg.user.id,
+            'team_id': team_reg.team.id
         })
 
 
