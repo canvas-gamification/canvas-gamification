@@ -4,6 +4,7 @@ from accounts.models import MyAnonymousUser
 
 from canvas.models import TeamRegistration
 
+
 class TeamRegistrationSerializer(serializers.ModelSerializer):
 
     def get_is_registered(self, team):

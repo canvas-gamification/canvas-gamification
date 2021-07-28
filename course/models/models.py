@@ -23,6 +23,7 @@ DIFFICULTY_CHOICES = [
     ("HARD", "HARD"),
 ]
 
+
 class QuestionCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()

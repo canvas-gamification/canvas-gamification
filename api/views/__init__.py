@@ -16,6 +16,7 @@ from .reset_password import ResetPasswordViewSet
 from .change_password import ChangePasswordViewSet
 from .schema import SchemaViewSet
 from .submission import SubmissionViewSet
+from .team import TeamViewSet
 from .token_use import TokenUseViewSet
 from .token_value import TokenValueViewSet
 from .update_profile import UpdateProfileViewSet
