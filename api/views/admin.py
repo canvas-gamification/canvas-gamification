@@ -4,8 +4,10 @@ from rest_framework.response import Response
 
 from api.permissions import TeacherAccessPermission
 from api.serializers import QuestionCategorySerializer
-from course.models.models import MultipleChoiceQuestion, JavaQuestion, QuestionCategory, DIFFICULTY_CHOICES
-from course.models.parsons_question import ParsonsQuestion
+from course.models.models import QuestionCategory, DIFFICULTY_CHOICES
+from course.models.java import JavaQuestion
+from course.models.multiple_choice import MultipleChoiceQuestion
+from course.models.parsons import ParsonsQuestion
 
 
 class AdminViewSet(viewsets.ViewSet):
