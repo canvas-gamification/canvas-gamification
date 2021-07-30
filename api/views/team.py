@@ -89,7 +89,9 @@ class TeamViewSet(viewsets.ModelViewSet):
             team_reg = TeamRegistration(user=request.user, team=team)
             team_reg.save()
 
-        return Response(team_reg)
+        return Response({
+            'status': 200
+        })
 
     @action(detail=True, methods=['post'])
     def leave_team(self, request, pk=None):
