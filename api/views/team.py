@@ -15,8 +15,8 @@ class TeamViewSet(viewsets.ModelViewSet):
     def get_queryset(self, *args):
         course_id = self.request.query_params.get('courseId', None)
         course = get_object_or_404(CanvasCourse, pk=course_id)
-        queryset = Team.objects.filter(course=course)
-        return queryset.all()
+        return Team.objects.filter(course=course)
+        
 
     @action(detail=True, methods=['get'])
     def get_team_registration(self, request, pk=None):
