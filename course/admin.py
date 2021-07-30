@@ -2,9 +2,11 @@ from django import forms
 from django.contrib import admin
 from djrichtextfield.widgets import RichTextWidget
 
-from course.models.models import Question, VariableQuestion, MultipleChoiceQuestion, Submission, QuestionCategory, \
-    JavaSubmission, JavaQuestion, TokenValue, MultipleChoiceSubmission, UserQuestionJunction
-from course.models.parsons_question import ParsonsQuestion, ParsonsSubmission
+from course.models.models import Question, VariableQuestion, Submission, QuestionCategory, \
+    TokenValue, UserQuestionJunction
+from course.models.java import JavaQuestion, JavaSubmission
+from course.models.multiple_choice import MultipleChoiceQuestion, MultipleChoiceSubmission
+from course.models.parsons import ParsonsQuestion, ParsonsSubmission
 
 
 class QuestionAdminForm(forms.ModelForm):

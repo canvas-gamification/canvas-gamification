@@ -5,7 +5,7 @@ from django.shortcuts import render
 
 from course.exceptions import SubmissionException
 from course.forms.java import JavaQuestionForm
-from course.models.models import JavaSubmission
+from course.models.java import JavaSubmission
 from course.utils.utils import get_user_question_junction, get_question_title
 
 

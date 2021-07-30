@@ -7,6 +7,7 @@ from rest_framework.response import Response
 
 from api.serializers import CourseSerializer, CourseSerializerList
 from api.permissions import StudentsMustBeRegisteredPermission
+import api.error_messages as ERROR_MESSAGES
 from canvas.models import CanvasCourse, CanvasCourseRegistration
 from canvas.utils.utils import get_course_registration
 
@@ -125,7 +126,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             # name should be the same as the guessed name that the API responded with earlier in the process.
             canvas_user = course.get_user(name=confirmed_name)
             if not canvas_user:
-                raise ValidationError()
+                raise ValidationError(ERROR_MESSAGES.USER.INVALID)
             course_reg.set_canvas_user(canvas_user)
             return Response({
                 "success": True,
@@ -135,7 +136,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             # if an inputted name is in the request data, try to guess the name properly.
             guessed_names = course.guess_user(name)
             if len(guessed_names) == 0:
-                raise ValidationError()
+                raise ValidationError(ERROR_MESSAGES.USER.INVALID)
             elif len(guessed_names) > 1:
                 # If more than 1 name is guessed, then the UI moves to the student number confirmation
                 # since the student number confirmation is not the standard process, success = False lets the front-end
@@ -150,7 +151,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 "guessed_name": guessed_names[0],
             })
 
-        raise ValidationError()
+        raise ValidationError(ERROR_MESSAGES.USER.INVALID)
 
     @action(detail=True, methods=['post'])
     def verify(self, request, pk=None):
@@ -160,13 +161,13 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         code = request.data.get("code", None)
 
         if code is None:
-            raise ValidationError()
+            raise ValidationError(ERROR_MESSAGES.COURSE_REGISTRATION.INVALID_CODE)
 
         course = get_object_or_404(CanvasCourse, pk=pk)
         course_reg = get_course_registration(request.user, course)
 
         if course_reg is None:
-            raise ValidationError()
+            raise ValidationError(ERROR_MESSAGES.COURSE_REGISTRATION.INVALID)
 
         valid = course_reg.check_verification_code(code)
         return Response({
@@ -182,14 +183,14 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         course = get_object_or_404(CanvasCourse, pk=pk)
 
         if course is None:
-            raise ValidationError()
+            raise ValidationError(ERROR_MESSAGES.COURSE.INVALID)
 
         if course.events.filter(pk=event_pk).exists():
             return Response({
                 "success": True
             })
 
-        raise ValidationError()
+        raise ValidationError(ERROR_MESSAGES.EVENT.INVALID)
 
     @action(detail=True, methods=['get'], url_path='user-stats/(?P<category_pk>[^/.]+)')
     def user_stats(self, request, pk=None, category_pk=None):

@@ -53,14 +53,18 @@ class JunitGrader(Grader):
     def get_compiler_script(self, submission):
         f = open('./course/grader/junit_compiler.sh', 'r')
         compiler_script = f.read()
-        compiler_script = compiler_script.replace("{{user_code_filename}}",
-                                                  submission.question.get_input_file_names() or "")
+        compiler_script = compiler_script.replace(
+            "{{user_code_filename}}",
+            submission.question.get_input_file_names() or ""
+        )
         f.close()
         return compiler_script
 
     def get_source_code(self, submission):
-        code = render_text(submission.question.junit_template, submission.uqj.get_variables())
-        return code.replace("{{code}}", submission.answer or "")
+        source_code = render_text(submission.question.junit_template, submission.uqj.get_variables())
+        for filename, code in submission.get_embed_files().items():
+            source_code = source_code.replace("{{" + filename + "}}", code)
+        return source_code
 
     def get_additional_file(self, submission):
         zipfile = BytesIO()
@@ -74,7 +78,6 @@ class JunitGrader(Grader):
         z.writestr("MainTest.java", self.get_source_code(submission))
 
         # User codes
-        print(submission.get_answer_files())
         for filename, code in submission.get_answer_files().items():
             z.writestr(filename, code)
 
