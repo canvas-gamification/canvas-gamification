@@ -16,7 +16,6 @@ class TeamViewSet(viewsets.ModelViewSet):
         course_id = self.request.query_params.get('courseId', None)
         course = get_object_or_404(CanvasCourse, pk=course_id)
         return Team.objects.filter(course=course)
-        
 
     @action(detail=True, methods=['get'])
     def get_team_registration(self, request, pk=None):
@@ -47,23 +46,29 @@ class TeamViewSet(viewsets.ModelViewSet):
 
         course = get_object_or_404(CanvasCourse, pk=pk)
 
-        # all teams registrations for the user in the requested course
-        all_team_reg = TeamRegistration.objects.filter(user=request.user, team__course=course)
-
-        # delete other registrations if any exist
-        if all_team_reg is not None:
-            for reg in all_team_reg:
-                reg.delete()
-
         # create a new team with the specified name
         new_team = Team(name=team_name, course=course)
         new_team.save()
 
-        # register the creator of the team to the team
-        new_team_reg = TeamRegistration(user=request.user, team=new_team)
-        new_team_reg.save()
+        # see if the user is already registered in a team
+        team_reg = TeamRegistration.objects.filter(user=request.user, team__course=course)
 
-        return Response(new_team)
+        # if user is already registered in a team
+        # update the team_registration record
+        if team_reg is not None:
+            # update team_registration record
+            team_reg.update(team=new_team)
+
+        # if the user does not have a team registration
+        # create one
+        else:
+            # register the creator of the team to the team
+            new_team_reg = TeamRegistration(user=request.user, team=new_team)
+            new_team_reg.save()
+
+        return Response({
+            200
+        })
 
     @action(detail=True, methods=['post'])
     def join_team(self, request, pk=None):
@@ -71,27 +76,30 @@ class TeamViewSet(viewsets.ModelViewSet):
         This endpoint completes team registration for this (user, team) pair
         """
         team = get_object_or_404(Team, pk=pk)
-        team_reg = get_team_registration(user=request.user, team=team)
-
         course = team.course
 
-        # all teams registrations for the user in the requested course
-        all_team_reg = TeamRegistration.objects.filter(user=request.user, team__course=course)
+        # users team registration in this course
+        team_reg = TeamRegistration.objects.filter(user=request.user, team__course=course)
 
-        # if the user is not registered for the selected team
-        if team_reg is None:
-            # delete other registrations if any exist already
-            if all_team_reg is not None:
-                for reg in all_team_reg:
-                    reg.delete()
-
-            # create a TeamRegistration for this (user, team) pair if one does not already exist
+        # if the user is not registered in any team in this course
+        # create a team_registration
+        if not team_reg.exists():
+            # create a TeamRegistration for this (user, team) pair
             team_reg = TeamRegistration(user=request.user, team=team)
             team_reg.save()
 
-        return Response({
-            'status': 200
-        })
+            return Response({
+                200
+            })
+
+        # if the user is registered in a team already
+        # update their team_registration
+        else:
+            team_reg.update(team=team)
+
+            return Response({
+                'status': 200
+            })
 
     @action(detail=True, methods=['post'])
     def leave_team(self, request, pk=None):
@@ -107,4 +115,4 @@ class TeamViewSet(viewsets.ModelViewSet):
         else:
             team_reg.delete()
 
-        return Response(team_reg)
+        return Response({200})

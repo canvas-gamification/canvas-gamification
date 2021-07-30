@@ -339,7 +339,6 @@ class Team(models.Model):
         return token_count
 
 
-
 class TeamRegistration(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE, db_index=True)
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, db_index=True)
