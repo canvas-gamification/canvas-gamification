@@ -105,6 +105,4 @@ class TeamViewSet(viewsets.ModelViewSet):
         else:
             team_reg.delete()
 
-        return Response({
-            "status": 200,
-        })
+        return Response(team_reg)
