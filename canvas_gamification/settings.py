@@ -228,6 +228,8 @@ LOGOUT_REDIRECT_URL = reverse_lazy('homepage')
 
 if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True
+else:
+    CORS_ALLOWED_ORIGINS = ["https://canvas-gamification.github.io"]
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
