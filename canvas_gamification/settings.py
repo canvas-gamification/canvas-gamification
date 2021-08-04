@@ -38,7 +38,7 @@ if HEROKU:
 elif DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = [os.environ['SERVER_NAME'], 'https://canvas-gamification.github.io/']
+    ALLOWED_HOSTS = os.environ['SERVER_NAME'].split()
 
 # Application definition
 
