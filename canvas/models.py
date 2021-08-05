@@ -339,7 +339,7 @@ class Team(models.Model):
 
 
 class TeamRegistration(models.Model):
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, db_index=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, db_index=True, null=True)
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, db_index=True)
 
     class Meta:
