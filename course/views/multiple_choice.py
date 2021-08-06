@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.forms import formset_factory
 from django.shortcuts import render
 
-from course.exceptions import SubmissionException
+from course.exceptions import SubmissionException, DuplicateSubmissionException
 from course.forms.multiple_choice import MultipleChoiceQuestionForm, ChoiceForm
 from course.models.multiple_choice import MultipleChoiceSubmission
 from course.utils.utils import create_multiple_choice_question, QuestionCreateException, get_user_question_junction, \
@@ -147,10 +147,10 @@ def submit_solution(question, user, solution):
     uqj = get_user_question_junction(user, question)
 
     if not user.is_teacher and uqj.submissions.filter(answer=solution).exists():
-        raise SubmissionException("You have already submitted this answer!")
+        raise DuplicateSubmissionException()
 
     if not uqj.is_allowed_to_submit:
-        raise SubmissionException("You are not allowed to submit")
+        raise SubmissionException()
 
     submission = MultipleChoiceSubmission()
     submission.answer = solution

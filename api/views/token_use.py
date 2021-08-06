@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
@@ -21,6 +21,6 @@ class TokenUseViewSet(viewsets.ViewSet):
         course = get_object_or_404(CanvasCourse, pk=course_pk)
         try:
             update_token_use(request.user, course, request.data)
-            return Response({"success": True})
+            return Response(status=status.HTTP_200_OK)
         except TokenUseException:
             raise ValidationError(ERROR_MESSAGES.TOKEN_USE.INVALID)

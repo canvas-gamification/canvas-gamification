@@ -90,7 +90,7 @@ def submit_solution(question, user, answer_dict):
     uqj = get_user_question_junction(user, question)
 
     if not uqj.is_allowed_to_submit:
-        raise SubmissionException("You are not allowed to submit")
+        raise SubmissionException()
 
     submission = JavaSubmission()
     submission.answer_files = answer_dict

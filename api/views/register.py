@@ -28,6 +28,4 @@ class UserRegistrationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         user = activate_user(uuid, token)
         if not user:
             raise ValidationError(ERROR_MESSAGES.ACTIVATION.INVALID)
-        return Response({
-            "success": True,
-        })
+        return Response(status=status.HTTP_200_OK)
