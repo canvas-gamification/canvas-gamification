@@ -75,8 +75,8 @@ class SubmissionViewSet(viewsets.GenericViewSet):
                 raise ValidationError(ERROR_MESSAGES.QUESTION.INVALID)
             return Response(self.get_serialized_data(submission), status=status.HTTP_201_CREATED)
 
-        except SubmissionException as e:
+        except SubmissionException:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        except DuplicateSubmissionException as e:
+        except DuplicateSubmissionException:
             return Response(status=status.HTTP_400_BAD_REQUEST)
