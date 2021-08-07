@@ -14,6 +14,12 @@ ALLOWED_NAMES = {
     **STR_NAMES,
     'len': len,
     'round': round,
+    'chr': chr,
+    'str': str,
+    'int': int,
+    'list': list,
+    'dict': dict,
+    'set': set
 }
 
 
