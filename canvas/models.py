@@ -1,3 +1,5 @@
+import copy
+
 import canvasapi
 from django.db import models
 from django.db.models import Sum, F, FloatField
@@ -269,7 +271,7 @@ class Event(models.Model):
         return self.is_exam and self.is_open
 
     def clone(self, course, current_author, questions):
-        event_clone = self
+        event_clone = copy.deepcopy(self)
         old_event_id = event_clone.id
         event_clone.id = None
         event_clone.course = course

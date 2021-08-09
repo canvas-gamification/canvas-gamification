@@ -31,8 +31,8 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         return Response(EVENT_TYPE_CHOICES)
 
-    @action(detail=False, methods=['post'], url_path="duplicate-event")
-    def duplicate_event(self, request):
+    @action(detail=False, methods=['post'], url_path="import-event")
+    def import_event(self, request):
         """
         Duplicates an event as well as the questions within the event.
         """

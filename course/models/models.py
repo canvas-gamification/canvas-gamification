@@ -1,4 +1,5 @@
 import base64
+import copy
 import json
 import random
 from datetime import datetime
@@ -201,7 +202,7 @@ class Question(PolymorphicModel):
         return user.is_teacher
 
     def clone(self, course, event, author):
-        question_clone = self
+        question_clone = copy.deepcopy(self)
         question_clone.id = None
         question_clone.pk = None
         question_clone.question_ptr_id = None
