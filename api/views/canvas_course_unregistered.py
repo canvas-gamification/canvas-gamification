@@ -1,22 +1,16 @@
+from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-
-from api.serializers import CanvasCourseUnRegisteredSerializer
-from accounts.models import MyUser
 from canvas.models import CanvasCourseRegistration
-
+from canvas.models import CanvasCourse
+from api.serializers import UsersCourseCountSerializers
+from accounts.models import MyUser
 
 class CanvasCourseUnRegisteredViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    Optional Parameters
-    - Base filtering on the 'course' parameter
-    """
-    serializer_class = CanvasCourseUnRegisteredSerializer
-    permission_classes = [IsAuthenticated, ]
-    filter_backends = [DjangoFilterBackend, ]
-    filterset_fields = ['course', ]
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    courses = CanvasCourseRegistration.objects.values('user__id')
+    course_names = CanvasCourse.objects.values('name')
+    queryset = MyUser.objects.exclude(id__in=courses)
 
-    def get_queryset(self):
-        user = self.request.user
-        return MyUser.objects
+    filterset_fields = ['canvascourseregistration__course__id']
+
+    serializer_class = UsersCourseCountSerializers
