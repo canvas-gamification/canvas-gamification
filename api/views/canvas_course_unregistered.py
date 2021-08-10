@@ -6,13 +6,12 @@ from api.serializers import UsersCourseCountSerializers
 from accounts.models import MyUser
 
 
-class UsersCourseCountViewSet(viewsets.ReadOnlyModelViewSet):
-
+class CanvasCourseUnRegisteredViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     courses = CanvasCourseRegistration.objects.values('user__id')
     course_names = CanvasCourse.objects.values('name')
-    queryset = MyUser.objects.filter(id__in=courses)
+    queryset = MyUser.objects.exclude(id__in=courses)
 
-    filterset_fields = ['role', 'canvascourseregistration__course__name', 'canvascourseregistration__course__id']
+    filterset_fields = ['canvascourseregistration__course__id']
 
     serializer_class = UsersCourseCountSerializers

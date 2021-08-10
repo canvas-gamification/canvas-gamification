@@ -8,7 +8,7 @@ from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, User
     CourseViewSet, CanvasCourseRegistrationViewSet, ResetPasswordViewSet, UserRegistrationViewSet, \
     UpdateProfileViewSet, SubmissionViewSet, ObtainAuthTokenView, MultipleChoiceQuestionViewSet, JavaQuestionViewSet, \
     ParsonsQuestionViewSet, EventViewSet, TokenUseViewSet, SchemaViewSet, DifficultyViewSet, ChangePasswordViewSet, \
-    UsersCountViewSet, UsersCourseCountViewSet, CourseNamesViewSet
+    UsersCountViewSet, UsersCourseCountViewSet, CourseNamesViewSet, CanvasCourseUnRegisteredViewSet
 from api.views.admin import AdminViewSet
 
 router = DefaultRouter()
@@ -28,6 +28,7 @@ router.register(r'uqj', UQJViewSet, basename='uqj')
 router.register(r'faq', FAQViewSet, basename='faq')
 router.register(r'course', CourseViewSet, basename='course')
 router.register(r'course-registration', CanvasCourseRegistrationViewSet, basename='course-registration')
+router.register(r'course-unregistered', CanvasCourseUnRegisteredViewSet, basename='course-unregistered')
 router.register(r'change-password', ChangePasswordViewSet, basename='change-password')
 router.register(r'reset-password', ResetPasswordViewSet, basename='reset-password')
 router.register(r'register', UserRegistrationViewSet, basename='register')
