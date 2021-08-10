@@ -17,7 +17,7 @@ class UsersCourseCountViewSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = UsersCourseCountSerializers
 
-    def destroy(self):
+    def destroy(self, request, *args, **kwargs):
         user = self.get_object()
         user = CanvasCourseRegistration.objects.get(user_id=user.id)
         user.delete()
