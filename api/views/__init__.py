@@ -1,6 +1,7 @@
 from .action import ActionsViewSet
 from .auth import ObtainAuthTokenView
 from .canvas_course_registration import CanvasCourseRegistrationViewSet
+from .canvas_course_unregistered import CanvasCourseUnRegisteredViewSet
 from .contact_us import ContactUsViewSet
 from .course import CourseViewSet
 from .difficulty import DifficultyViewSet
