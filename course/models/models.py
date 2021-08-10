@@ -180,6 +180,10 @@ class Question(PolymorphicModel):
     def is_checkbox(self):
         return False
 
+    @property
+    def is_practice(self):
+        return self.event is None
+
     def get_input_files(self):
         return {}
 
