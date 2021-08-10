@@ -29,5 +29,6 @@ from .multiple_choice_question import MultipleChoiceQuestionSerializer, Multiple
 from .parsons_question import ParsonsQuestionSerializer, ParsonsSubmissionSerializer
 from .uqj import UQJSerializer
 from .canvas_course_registration import CanvasCourseRegistrationSerializer
+from .canvas_course_unregistered import CanvasCourseUnRegisteredSerializer
 from .course import CourseSerializer, CourseSerializerList
 from .course_names import CourseNamesSerializer
