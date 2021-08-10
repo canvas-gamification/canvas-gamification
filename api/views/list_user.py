@@ -7,7 +7,7 @@ from api.serializers import UsersCountSerializers
 class UsersCountViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     filterset_fields = ['role']
-    
+
     def get_queryset(self):
         return MyUser.objects
 
