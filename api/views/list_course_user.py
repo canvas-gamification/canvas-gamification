@@ -4,10 +4,10 @@ from canvas.models import CanvasCourseRegistration
 from canvas.models import CanvasCourse
 from api.serializers import UsersCourseCountSerializers
 from accounts.models import MyUser
+from rest_framework.response import Response
 
 
 class UsersCourseCountViewSet(viewsets.ReadOnlyModelViewSet):
-
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     courses = CanvasCourseRegistration.objects.values('user__id')
     course_names = CanvasCourse.objects.values('name')
@@ -17,4 +17,8 @@ class UsersCourseCountViewSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = UsersCourseCountSerializers
 
-
+    def destroy(self):
+        user = self.get_object()
+        user = CanvasCourseRegistration.objects.get(user_id=user.id)
+        user.delete()
+        return Response(status=204)
