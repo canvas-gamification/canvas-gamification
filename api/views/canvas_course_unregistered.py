@@ -5,6 +5,7 @@ from canvas.models import CanvasCourse
 from api.serializers import UsersCourseCountSerializers
 from accounts.models import MyUser
 
+
 class CanvasCourseUnRegisteredViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     courses = CanvasCourseRegistration.objects.values('user__id')

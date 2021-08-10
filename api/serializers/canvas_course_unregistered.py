@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from accounts.models import MyUser
 
+
 class CanvasCourseUnRegisteredSerializer(serializers.ModelSerializer):
 
     class Meta:
