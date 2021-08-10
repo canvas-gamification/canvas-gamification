@@ -21,4 +21,3 @@ class CanvasCourseRegistrationViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         return CanvasCourseRegistration.objects.order_by('user__id')
-
