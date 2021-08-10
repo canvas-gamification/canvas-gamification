@@ -22,4 +22,3 @@ class UsersCourseCountViewSet(viewsets.ReadOnlyModelViewSet):
         user = CanvasCourseRegistration.objects.get(user_id=user.id)
         user.delete()
         return Response(status=204)
-
