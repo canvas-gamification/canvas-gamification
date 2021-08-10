@@ -1,6 +1,5 @@
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.response import Response
 from accounts.models import MyUser
 from api.serializers import UsersCountSerializers
 
