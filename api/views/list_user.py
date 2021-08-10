@@ -2,8 +2,8 @@ from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from accounts.models import MyUser
-from canvas.models import CanvasCourseRegistration
 from api.serializers import UsersCountSerializers
+
 
 class UsersCountViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
@@ -19,4 +19,3 @@ class UsersCountViewSet(viewsets.ReadOnlyModelViewSet):
         return MyUser.objects
 
     serializer_class = UsersCountSerializers
-

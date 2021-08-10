@@ -6,7 +6,6 @@ from api.serializers import CanvasCourseRegistrationSerializer
 from canvas.models import CanvasCourseRegistration
 
 
-
 class CanvasCourseRegistrationViewSet(viewsets.GenericViewSet,
                                       mixins.UpdateModelMixin,
                                       mixins.ListModelMixin,
@@ -21,5 +20,4 @@ class CanvasCourseRegistrationViewSet(viewsets.GenericViewSet,
     filterset_fields = ['course', ]
 
     def get_queryset(self):
-        user = self.request.user
         return CanvasCourseRegistration.objects.order_by('user')
