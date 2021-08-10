@@ -15,5 +15,3 @@ class UsersCourseCountViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['role', 'canvascourseregistration__course__name', 'canvascourseregistration__course__id']
 
     serializer_class = UsersCourseCountSerializers
-
-
