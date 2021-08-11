@@ -27,3 +27,11 @@ class HasDeletePermission(permissions.IsAuthenticated):
         if request.method == 'DELETE':
             return obj.author == request.user
         return True
+
+
+class IsOwnerOrReadOnly(permissions.IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return obj.has_edit_permission(user)
