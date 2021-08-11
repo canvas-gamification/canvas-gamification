@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from api.permissions import IsOwnerOrReadOnly
 from api.serializers import EventSerializer
 from canvas.models import Event, EVENT_TYPE_CHOICES, CanvasCourse
-from course.models.models import Question
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -38,9 +37,9 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         event = get_object_or_404(Event, id=request.data.get("event"))
         course = get_object_or_404(CanvasCourse, id=request.data.get("course"))
-        questions = Question.objects.all()
-        current_author = None
-        if request.user.is_authenticated:
-            current_author = request.user
-        event.clone(course, current_author, questions)
-        return Response(status=status.HTTP_201_CREATED)
+        cloned_event = event.copy_to_course(course)
+
+        return Response(
+            self.get_serializer(cloned_event).data,
+            status=status.HTTP_201_CREATED
+        )
