@@ -83,7 +83,7 @@ def submit_solution(question, user, solution):
     uqj = get_user_question_junction(user, question)
 
     if not uqj.is_allowed_to_submit:
-        raise SubmissionException()
+        raise SubmissionException("You are not allowed to submit")
 
     submission = ParsonsSubmission()
     submission.answer_files = solution
