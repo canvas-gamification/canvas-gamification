@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 import api.error_messages as ERROR_MESSAGES
 from api.serializers import JavaSubmissionSerializer, MultipleChoiceSubmissionSerializer, ParsonsSubmissionSerializer
-from course.exceptions import SubmissionException, DuplicateSubmissionException
+from course.exceptions import SubmissionException
 from course.models.java import JavaQuestion, JavaSubmission
 from course.models.models import Submission, Question
 from course.models.multiple_choice import MultipleChoiceQuestion, MultipleChoiceSubmission
@@ -73,10 +73,7 @@ class SubmissionViewSet(viewsets.GenericViewSet):
                 submission = submit_parsons_solution(question, request.user, solution)
             else:
                 raise ValidationError(ERROR_MESSAGES.QUESTION.INVALID)
-            return Response(self.get_serialized_data(submission), status=status.HTTP_201_CREATED)
+        except SubmissionException as e:
+            raise ValidationError("{}".format(e))
 
-        except SubmissionException:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-        except DuplicateSubmissionException:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(self.get_serialized_data(submission), status=status.HTTP_201_CREATED)
