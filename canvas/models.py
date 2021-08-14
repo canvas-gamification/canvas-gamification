@@ -334,7 +334,7 @@ class Team(models.Model):
         token_count = 0
         for registration in self.teamregistration_set.all():
             if registration.total_tokens_received:
-                token_count += int(registration.total_tokens_received)
+                token_count += float(registration.total_tokens_received)
         return token_count
 
 
