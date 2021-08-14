@@ -1,12 +1,11 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from api.serializers.team import TeamSerializer
-from api.permissions import HasDeletePermission, TeacherAccessPermission
-from canvas.models import Team, TeamRegistration, CanvasCourse, MyUser
+from canvas.models import Team, TeamRegistration, CanvasCourse
 from canvas.utils.utils import get_team_registration
 
 
@@ -14,7 +13,7 @@ class TeamViewSet(viewsets.ModelViewSet):
 
     serializer_class = TeamSerializer
     permission_classes = [IsAuthenticated, ]
-    search_fields = ['name', ]
+
     def get_queryset(self, *args):
         course_id = self.request.query_params.get('courseId', None)
         course = get_object_or_404(CanvasCourse, pk=course_id)
@@ -33,11 +32,9 @@ class TeamViewSet(viewsets.ModelViewSet):
                 'team_id': -1
             })
 
-
         # pass whole object to front-end
         return Response(self.get_serializer(team_reg).data)
 
-    
     def create(self, request):
         """
         This endpoint completes team creation and registers the user creating the team in the course
@@ -69,7 +66,6 @@ class TeamViewSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_201_CREATED)
 
-    
     def update(self, request, pk=None):
         """
         This endpoint completes team registration for this (user, team) pair
@@ -80,7 +76,8 @@ class TeamViewSet(viewsets.ModelViewSet):
         # users team registration in this course
         # or team_registration object that does not point to a team
         # a null team will exist if the user previously joined, then left a team
-        team_reg = TeamRegistration.objects.filter(user=request.user, team__course=course) | TeamRegistration.objects.filter(user=request.user, team=None)
+        team_reg = TeamRegistration.objects.filter(user=request.user, team__course=course) \
+            | TeamRegistration.objects.filter(user=request.user, team=None)
 
         # if the user is not registered in any team in this course
         # create a team_registration
@@ -91,11 +88,10 @@ class TeamViewSet(viewsets.ModelViewSet):
 
             return Response(status=status.HTTP_200_OK)
 
-        # if the user is/was registered in a team 
+        # if the user is/was registered in a team
         # update their team_registration
         else:
             team_reg.update(team=team)
-
             return Response(status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
