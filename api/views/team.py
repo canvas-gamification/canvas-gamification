@@ -33,10 +33,9 @@ class TeamViewSet(viewsets.ModelViewSet):
                 'team_id': -1
             })
 
-        return Response({
-            'user_id': team_reg.user.id,
-            'team_id': team_reg.team.id
-        })
+
+        # pass whole object to front-end
+        return Response(self.get_serializer(team_reg).data)
 
     
     def create(self, request):
@@ -68,9 +67,7 @@ class TeamViewSet(viewsets.ModelViewSet):
             new_team_reg = TeamRegistration(user=request.user, team=new_team)
             new_team_reg.save()
 
-        return Response({
-            200
-        })
+        return Response(status=status.HTTP_201_CREATED)
 
     
     def update(self, request, pk=None):
@@ -92,18 +89,14 @@ class TeamViewSet(viewsets.ModelViewSet):
             team_reg = TeamRegistration(user=request.user, team=team)
             team_reg.save()
 
-            return Response({
-                200
-            })
+            return Response(status=status.HTTP_200_OK)
 
         # if the user is/was registered in a team 
         # update their team_registration
         else:
             team_reg.update(team=team)
 
-            return Response({
-                'status': 200
-            })
+            return Response(status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         """
@@ -112,11 +105,8 @@ class TeamViewSet(viewsets.ModelViewSet):
         team = get_object_or_404(Team, pk=kwargs['pk'])
         team_reg = get_team_registration(user=request.user, team=team)
 
-        if team_reg is None:
-            pass
-
-        else:
+        if team_reg is not None:
             team_reg.team = None
             team_reg.save()
 
-        return Response({200})
+        return Response(status=status.HTTP_200_OK)
