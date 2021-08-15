@@ -21,7 +21,7 @@ class CanvasCourseRegistrationViewSet(viewsets.GenericViewSet,
     filterset_fields = ['course', ]
 
     def get_queryset(self):
-        return CanvasCourseRegistration.objects.order_by('user')
+        return CanvasCourseRegistration.objects.order_by('user__id')
 
     def destroy(self, request, *args, **kwargs):
         reg = self.get_object()
