@@ -54,6 +54,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         question = self.get_object()
+        print(question)
         question.question_status = Question.DELETED
         question.save()
         return Response(self.get_serializer(question).data)

@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from api.serializers import CanvasCourseRegistrationSerializer
 from canvas.models import CanvasCourseRegistration
+from rest_framework.response import Response
 
 
 class CanvasCourseRegistrationViewSet(viewsets.GenericViewSet,
@@ -21,3 +22,9 @@ class CanvasCourseRegistrationViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         return CanvasCourseRegistration.objects.order_by('user')
+
+    def destroy(self, request, *args, **kwargs):
+        reg = self.get_object()
+        user = CanvasCourseRegistration.objects.get(id=reg.id)
+        user.delete()
+        return Response(status=204)
