@@ -4,7 +4,6 @@ from canvas.models import CanvasCourseRegistration
 from canvas.models import CanvasCourse
 from api.serializers import UsersCourseCountSerializers
 from accounts.models import MyUser
-from rest_framework.response import Response
 
 
 class UsersCourseCountViewSet(viewsets.ReadOnlyModelViewSet):
@@ -16,9 +15,3 @@ class UsersCourseCountViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['role', 'canvascourseregistration__course__name', 'canvascourseregistration__course__id']
 
     serializer_class = UsersCourseCountSerializers
-
-    def destroy(self):
-        user = self.get_object()
-        user = CanvasCourseRegistration.objects.get(id=user.id)
-        user.delete()
-        return Response(status=204)
