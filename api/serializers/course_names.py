@@ -6,4 +6,4 @@ class CourseNamesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CanvasCourse
-        fields = ['name']
+        fields = ['id', 'name']
