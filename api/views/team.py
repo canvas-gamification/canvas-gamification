@@ -3,8 +3,10 @@ from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import JSONRenderer
 from django.core.exceptions import ObjectDoesNotExist
 from api.serializers.team import TeamSerializer
+from api.serializers.team_registration import TeamRegistrationSerializer
 from canvas.models import Team, TeamRegistration, CanvasCourse
 from canvas.utils.utils import get_team_registration
 
@@ -33,7 +35,8 @@ class TeamViewSet(viewsets.ModelViewSet):
             })
 
         # pass whole object to front-end
-        return Response(self.get_serializer(team_reg).data)
+        
+        return Response(TeamRegistrationSerializer(team_reg).data)
 
     def create(self, request):
         """
@@ -49,7 +52,8 @@ class TeamViewSet(viewsets.ModelViewSet):
         new_team.save()
 
         # see if the user is already registered in a team
-        team_reg = TeamRegistration.objects.filter(user=request.user, team__course=course)
+        team_reg_qs = TeamRegistration.objects.filter(user=request.user, team__course=course)
+        team_reg = team_reg_qs.get() if team_reg_qs.exists() else None
 
         # if user is already registered in a team
         # update the team_registration record
@@ -102,7 +106,6 @@ class TeamViewSet(viewsets.ModelViewSet):
         team_reg = get_team_registration(user=request.user, team=team)
 
         if team_reg is not None:
-            team_reg.team = None
-            team_reg.save()
+            team_reg.delete()
 
         return Response(status=status.HTTP_200_OK)

@@ -21,4 +21,4 @@ class TeamRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TeamRegistration
-        fields = ['id', 'canvas_user_id']
+        fields = ['team', 'user']
