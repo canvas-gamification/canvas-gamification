@@ -4,7 +4,6 @@ from canvas.models import CanvasCourseRegistration
 from canvas.models import CanvasCourse
 from api.serializers import UsersCourseCountSerializers
 from accounts.models import MyUser
-from rest_framework.response import Response
 
 
 class UsersCourseCountViewSet(viewsets.ReadOnlyModelViewSet):
