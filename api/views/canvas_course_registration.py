@@ -28,3 +28,5 @@ class CanvasCourseRegistrationViewSet(viewsets.GenericViewSet,
         user = CanvasCourseRegistration.objects.get(id=reg.id)
         user.delete()
         return Response(status=204)
+
+

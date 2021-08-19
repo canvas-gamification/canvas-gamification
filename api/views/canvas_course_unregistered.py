@@ -44,5 +44,3 @@ class CanvasCourseUnRegisteredViewSet(viewsets.ReadOnlyModelViewSet):
                 "status": "Registered",
                 "message": None,
             })
-
-        raise ValidationError(ERROR_MESSAGES.USER.INVALID)

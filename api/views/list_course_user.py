@@ -13,7 +13,7 @@ class UsersCourseCountViewSet(viewsets.ReadOnlyModelViewSet):
     course_names = CanvasCourse.objects.values('name')
     queryset = MyUser.objects.filter(id__in=courses)
 
-    search_fields = ['username', ]
+    search_fields = ['first_name', 'last_name', ]
     filterset_fields = ['role', 'canvascourseregistration__course__name', 'canvascourseregistration__course__id']
 
     serializer_class = UsersCourseCountSerializers
