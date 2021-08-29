@@ -1,21 +1,21 @@
-from rest_framework import viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
 
+import api.error_messages as ERROR_MESSAGES
 from api.serializers import JavaSubmissionSerializer, MultipleChoiceSubmissionSerializer, ParsonsSubmissionSerializer
 from course.exceptions import SubmissionException
-from course.models.models import Submission, Question
 from course.models.java import JavaQuestion, JavaSubmission
+from course.models.models import Submission, Question
 from course.models.multiple_choice import MultipleChoiceQuestion, MultipleChoiceSubmission
 from course.models.parsons import ParsonsSubmission, ParsonsQuestion
 from course.views.java import submit_solution as submit_java_solution
 from course.views.multiple_choice import submit_solution as submit_multiple_choice_solution
 from course.views.parsons import submit_solution as submit_parsons_solution
-import api.error_messages as ERROR_MESSAGES
 
 
 class SubmissionViewSet(viewsets.GenericViewSet):
@@ -76,4 +76,4 @@ class SubmissionViewSet(viewsets.GenericViewSet):
         except SubmissionException as e:
             raise ValidationError("{}".format(e))
 
-        return Response(self.get_serialized_data(submission))
+        return Response(self.get_serialized_data(submission), status=status.HTTP_201_CREATED)
