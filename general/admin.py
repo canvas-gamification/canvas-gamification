@@ -3,7 +3,9 @@ from django import forms
 from django.contrib import admin
 from djrichtextfield.widgets import RichTextWidget
 
-from general.models import FAQ, Action, ContactUs
+from general.models.contact_us import ContactUs
+from general.models.action import Action
+from general.models.faq import FAQ
 
 
 class FAQAdminForm(forms.ModelForm):

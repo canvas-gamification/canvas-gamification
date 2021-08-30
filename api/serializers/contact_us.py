@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from general.models import ContactUs
+from general.models.contact_us import ContactUs
 from utils.recaptcha import validate_recaptcha
 
 

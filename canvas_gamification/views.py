@@ -11,7 +11,7 @@ from django.utils.http import http_date
 from django.views.static import was_modified_since
 
 from course.models.models import UserQuestionJunction
-from general.models import Action
+from general.models.action import Action
 
 
 def homepage(request):
