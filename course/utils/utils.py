@@ -258,6 +258,7 @@ def create_mcq_submission(uqj=None, answer=None):
         answer=answer
     )
     submission.save()
+    return submission
 
 
 def get_question_title(user, question, key):
