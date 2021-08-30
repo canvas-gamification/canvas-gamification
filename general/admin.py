@@ -26,7 +26,7 @@ class FAQAdmin(admin.ModelAdmin):
 
 
 class ActionAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'description', 'user', 'token_change', 'status')
+    list_display = ('__str__', 'description', 'actor', 'token_change', 'status')
     list_filter = ('status',)
 
 

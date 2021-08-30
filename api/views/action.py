@@ -14,7 +14,7 @@ class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated, ]
     pagination_class = BasePagination
     filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['time_modified', ]
+    ordering_fields = ['time_modified', 'time_created']
 
     def get_queryset(self):
         user = self.request.user
