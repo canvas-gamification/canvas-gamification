@@ -16,6 +16,7 @@ from course.models.parsons import ParsonsSubmission, ParsonsQuestion
 from course.views.java import submit_solution as submit_java_solution
 from course.views.multiple_choice import submit_solution as submit_multiple_choice_solution
 from course.views.parsons import submit_solution as submit_parsons_solution
+from general.services.action import create_submission_action
 
 
 class SubmissionViewSet(viewsets.GenericViewSet):
@@ -76,4 +77,5 @@ class SubmissionViewSet(viewsets.GenericViewSet):
         except SubmissionException as e:
             raise ValidationError("{}".format(e))
 
+        create_submission_action(submission)
         return Response(self.get_serialized_data(submission), status=status.HTTP_201_CREATED)

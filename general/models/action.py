@@ -27,9 +27,10 @@ class ActionVerb:
     SKIPPED = 'Skipped'
     LOGGED_IN = 'Logged In'
     LOGGED_OUT = 'Logged Out'
+    EVALUATED = 'Evaluated'
 
 
-class ObjectType:
+class ActionObjectType:
     QUESTION = 'Question'
     USER = 'User'
     SUBMISSION = 'Submission'
@@ -61,15 +62,16 @@ ACTION_VERB_CHOICES = [
     (ActionVerb.SKIPPED, ActionVerb.SKIPPED),
     (ActionVerb.LOGGED_IN, ActionVerb.LOGGED_IN),
     (ActionVerb.LOGGED_OUT, ActionVerb.LOGGED_OUT),
+    (ActionVerb.EVALUATED, ActionVerb.EVALUATED),
 ]
 
 OBJECT_TYPE_CHOICES = [
-    (ObjectType.QUESTION, ObjectType.QUESTION),
-    (ObjectType.USER, ObjectType.USER),
-    (ObjectType.SUBMISSION, ObjectType.SUBMISSION),
-    (ObjectType.COURSE, ObjectType.COURSE),
-    (ObjectType.EVENT, ObjectType.EVENT),
-    (ObjectType.COURSE_REGISTRATION, ObjectType.COURSE_REGISTRATION),
+    (ActionObjectType.QUESTION, ActionObjectType.QUESTION),
+    (ActionObjectType.USER, ActionObjectType.USER),
+    (ActionObjectType.SUBMISSION, ActionObjectType.SUBMISSION),
+    (ActionObjectType.COURSE, ActionObjectType.COURSE),
+    (ActionObjectType.EVENT, ActionObjectType.EVENT),
+    (ActionObjectType.COURSE_REGISTRATION, ActionObjectType.COURSE_REGISTRATION),
 ]
 
 
