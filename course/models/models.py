@@ -306,7 +306,10 @@ class UserQuestionJunction(models.Model):
         return rendered_lines
 
     def get_input_files(self):
-        return self.question.get_input_files()
+        input_files = self.question.get_input_files()
+        for input_file in input_files:
+            input_file['name'] = render_text(input_file['name'], self.get_variables())
+        return input_files
 
     def is_checkbox(self):
         return self.question.is_checkbox
