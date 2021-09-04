@@ -300,7 +300,7 @@ class UserQuestionJunction(models.Model):
             ]
             random.shuffle(lines)
             rendered_lines.append({
-                'name': input_files['name'],
+                'name': render_text(input_files['name'], self.get_variables()),
                 'lines': lines
             })
         return rendered_lines
