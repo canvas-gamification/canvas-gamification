@@ -8,6 +8,9 @@ from rest_framework.response import Response
 
 import api.error_messages as ERROR_MESSAGES
 from api.serializers import JavaSubmissionSerializer, MultipleChoiceSubmissionSerializer, ParsonsSubmissionSerializer
+from api.serializers.java_question import JavaSubmissionHiddenDetailsSerializer
+from api.serializers.multiple_choice_question import MultipleChoiceSubmissionHiddenDetailsSerializer
+from api.serializers.parsons_question import ParsonsSubmissionHiddenDetailsSerializer
 from course.exceptions import SubmissionException
 from course.models.java import JavaQuestion, JavaSubmission
 from course.models.models import Submission, Question
@@ -30,12 +33,27 @@ class SubmissionViewSet(viewsets.GenericViewSet):
     queryset = Submission.objects.all()
 
     def get_serialized_data(self, submission):
-        if isinstance(submission, MultipleChoiceSubmission):
-            return MultipleChoiceSubmissionSerializer(submission).data
-        if isinstance(submission, JavaSubmission):
-            return JavaSubmissionSerializer(submission).data
-        if isinstance(submission, ParsonsSubmission):
-            return ParsonsSubmissionSerializer(submission).data
+        if submission.uqj.question.is_practice or not submission.uqj.question.event.is_exam:
+            if isinstance(submission, MultipleChoiceSubmission):
+                return MultipleChoiceSubmissionSerializer(submission).data
+            if isinstance(submission, JavaSubmission):
+                return JavaSubmissionSerializer(submission).data
+            if isinstance(submission, ParsonsSubmission):
+                return ParsonsSubmissionSerializer(submission).data
+        elif submission.uqj.question.event.is_open:
+            if isinstance(submission, MultipleChoiceSubmission):
+                return MultipleChoiceSubmissionHiddenDetailsSerializer(submission).data
+            if isinstance(submission, JavaSubmission):
+                return JavaSubmissionHiddenDetailsSerializer(submission).data
+            if isinstance(submission, ParsonsSubmission):
+                return ParsonsSubmissionHiddenDetailsSerializer(submission).data
+        else:
+            if isinstance(submission, MultipleChoiceSubmission):
+                return MultipleChoiceSubmissionSerializer(submission).data
+            if isinstance(submission, JavaSubmission):
+                return JavaSubmissionSerializer(submission).data
+            if isinstance(submission, ParsonsSubmission):
+                return ParsonsSubmissionSerializer(submission).data
 
     def list(self, request):
         question = request.GET.get("question", None)
