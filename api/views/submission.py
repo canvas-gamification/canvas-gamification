@@ -33,8 +33,7 @@ class SubmissionViewSet(viewsets.GenericViewSet):
     queryset = Submission.objects.all()
 
     def get_serialized_data(self, submission):
-        if submission.question.event.is_exam_and_open:
-            print('This is an exam that is open / not a practice question')
+        if submission.question.is_exam_and_open:
             if isinstance(submission, MultipleChoiceSubmission):
                 return MultipleChoiceSubmissionHiddenDetailsSerializer(submission).data
             if isinstance(submission, JavaSubmission):
@@ -42,7 +41,6 @@ class SubmissionViewSet(viewsets.GenericViewSet):
             if isinstance(submission, ParsonsSubmission):
                 return ParsonsSubmissionHiddenDetailsSerializer(submission).data
         else:
-            print('This is not an exam that is open / is a practice question')
             if isinstance(submission, MultipleChoiceSubmission):
                 return MultipleChoiceSubmissionSerializer(submission).data
             if isinstance(submission, JavaSubmission):
