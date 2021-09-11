@@ -33,19 +33,22 @@ class SubmissionViewSet(viewsets.GenericViewSet):
     queryset = Submission.objects.all()
 
     def get_serialized_data(self, submission):
-        if submission.uqj.question.event.is_exam_and_open and not submission.uqj.question.is_practice:
+        if submission.question.event.is_exam_and_open:
+            print('This is an exam that is open / not a practice question')
             if isinstance(submission, MultipleChoiceSubmission):
                 return MultipleChoiceSubmissionHiddenDetailsSerializer(submission).data
             if isinstance(submission, JavaSubmission):
                 return JavaSubmissionHiddenDetailsSerializer(submission).data
             if isinstance(submission, ParsonsSubmission):
                 return ParsonsSubmissionHiddenDetailsSerializer(submission).data
-        if isinstance(submission, MultipleChoiceSubmission):
-            return MultipleChoiceSubmissionSerializer(submission).data
-        if isinstance(submission, JavaSubmission):
-            return JavaSubmissionSerializer(submission).data
-        if isinstance(submission, ParsonsSubmission):
-            return ParsonsSubmissionSerializer(submission).data
+        else:
+            print('This is not an exam that is open / is a practice question')
+            if isinstance(submission, MultipleChoiceSubmission):
+                return MultipleChoiceSubmissionSerializer(submission).data
+            if isinstance(submission, JavaSubmission):
+                return JavaSubmissionSerializer(submission).data
+            if isinstance(submission, ParsonsSubmission):
+                return ParsonsSubmissionSerializer(submission).data
 
     def list(self, request):
         question = request.GET.get("question", None)
@@ -88,4 +91,5 @@ class SubmissionViewSet(viewsets.GenericViewSet):
             raise ValidationError("{}".format(e))
 
         create_submission_action(submission)
+        print(submission)
         return Response(self.get_serialized_data(submission), status=status.HTTP_201_CREATED)
