@@ -33,27 +33,19 @@ class SubmissionViewSet(viewsets.GenericViewSet):
     queryset = Submission.objects.all()
 
     def get_serialized_data(self, submission):
-        if submission.uqj.question.is_practice or not submission.uqj.question.event.is_exam:
-            if isinstance(submission, MultipleChoiceSubmission):
-                return MultipleChoiceSubmissionSerializer(submission).data
-            if isinstance(submission, JavaSubmission):
-                return JavaSubmissionSerializer(submission).data
-            if isinstance(submission, ParsonsSubmission):
-                return ParsonsSubmissionSerializer(submission).data
-        elif submission.uqj.question.event.is_open:
+        if submission.uqj.question.event.is_exam_and_open and not submission.uqj.question.is_practice:
             if isinstance(submission, MultipleChoiceSubmission):
                 return MultipleChoiceSubmissionHiddenDetailsSerializer(submission).data
             if isinstance(submission, JavaSubmission):
                 return JavaSubmissionHiddenDetailsSerializer(submission).data
             if isinstance(submission, ParsonsSubmission):
                 return ParsonsSubmissionHiddenDetailsSerializer(submission).data
-        else:
-            if isinstance(submission, MultipleChoiceSubmission):
-                return MultipleChoiceSubmissionSerializer(submission).data
-            if isinstance(submission, JavaSubmission):
-                return JavaSubmissionSerializer(submission).data
-            if isinstance(submission, ParsonsSubmission):
-                return ParsonsSubmissionSerializer(submission).data
+        if isinstance(submission, MultipleChoiceSubmission):
+            return MultipleChoiceSubmissionSerializer(submission).data
+        if isinstance(submission, JavaSubmission):
+            return JavaSubmissionSerializer(submission).data
+        if isinstance(submission, ParsonsSubmission):
+            return ParsonsSubmissionSerializer(submission).data
 
     def list(self, request):
         question = request.GET.get("question", None)
