@@ -1,14 +1,9 @@
-from django.test import TestCase, Client
-
 from accounts.forms import SignupForm
 from accounts.models import MyUser
+from test.base import BaseTestCase
 
 
-class AccountsTestCase(TestCase):
-
-    def setUp(self):
-        self.client = Client()
-        MyUser.objects.create_user("test_user", "test@s202.ok.ubc.ca", "aaaaaaaa")
+class AccountsTestCase(BaseTestCase):
 
     def test_login(self):
         self.client.login(username="test_user", password="aaaaaaaaa")
@@ -18,11 +13,7 @@ class AccountsTestCase(TestCase):
         self.assertFalse(user.is_teacher)
 
 
-class AccountFormsTestCase(TestCase):
-
-    def setUp(self):
-        self.client = Client()
-
+class AccountFormsTestCase(BaseTestCase):
     def test_recaptcha(self):
         form = SignupForm({
             'email': 'a@a.com',

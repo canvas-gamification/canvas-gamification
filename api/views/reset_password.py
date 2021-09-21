@@ -23,4 +23,4 @@ class ResetPasswordViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         email = request.data.get("email", None)
         user = get_object_or_404(MyUser, email=email)
         send_reset_email(request, user)
-        return Response("Email Sent")
+        return Response(status=status.HTTP_200_OK)

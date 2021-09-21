@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -56,7 +56,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         question = self.get_object()
         question.question_status = Question.DELETED
         question.save()
-        return Response(self.get_serializer(question).data)
+        return Response(self.get_serializer(question).data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], url_path='download-questions')
     def download_questions(self, request, *args, **kwargs):

@@ -3,7 +3,9 @@ from django import forms
 from django.contrib import admin
 from djrichtextfield.widgets import RichTextWidget
 
-from general.models import FAQ, Action, ContactUs
+from general.models.contact_us import ContactUs
+from general.models.action import Action
+from general.models.faq import FAQ
 
 
 class FAQAdminForm(forms.ModelForm):
@@ -24,7 +26,7 @@ class FAQAdmin(admin.ModelAdmin):
 
 
 class ActionAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'description', 'user', 'token_change', 'status')
+    list_display = ('__str__', 'description', 'actor', 'token_change', 'status')
     list_filter = ('status',)
 
 

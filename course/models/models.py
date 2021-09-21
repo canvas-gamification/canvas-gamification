@@ -1,4 +1,5 @@
 import base64
+import copy
 import json
 import random
 from datetime import datetime
@@ -14,7 +15,7 @@ from course.fields import JSONField
 from course.utils.junit_xml import parse_junit_xml
 from course.utils.utils import get_token_value, ensure_uqj, calculate_average_success
 from course.utils.variables import render_text, generate_variables
-from general.models import Action
+from general.services.action import create_submission_evaluation_action
 
 DIFFICULTY_CHOICES = [
     ("EASY", "EASY"),
@@ -204,6 +205,19 @@ class Question(PolymorphicModel):
     def has_edit_permission(self, user):
         return user.is_teacher
 
+    def copy_to_event(self, event):
+        question_clone = copy.deepcopy(self)
+        question_clone.id = None
+        question_clone.pk = None
+        question_clone.question_ptr_id = None
+        question_clone.variablequestion_ptr_id = None
+        question_clone.course = event.course
+        question_clone.event = event
+        question_clone.author = event.course.instructor
+        question_clone.title += ' (Copy)'
+        question_clone.save()
+        return question_clone
+
 
 class VariableQuestion(Question):
     variables = JSONField()
@@ -363,15 +377,6 @@ class Submission(PolymorphicModel):
     def user(self):
         return self.uqj.user
 
-    def get_description(self):
-        # TODO: Fix this when refactoring user actions
-        template = "{}Solved Question <a href='{}'>{}</a>"
-        # url = reverse_lazy('course:question_view', kwargs={'pk': self.question.pk})
-        url = "#"
-        title = self.uqj.question.title
-
-        return template.format("Partially " if self.is_partially_correct else "", url, title)
-
     @property
     def status_color(self):
         dic = {
@@ -445,9 +450,10 @@ class Submission(PolymorphicModel):
                 user_question_junction.tokens_received = received_tokens
                 user_question_junction.save()
 
-            Action.create_action(self.user, self.get_description(), received_tokens, Action.COMPLETE)
-
         super().save(*args, **kwargs)
+
+        if not self.in_progress:
+            create_submission_evaluation_action(self)
 
     def submit(self):
         pass

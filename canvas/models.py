@@ -1,3 +1,5 @@
+import copy
+
 import canvasapi
 from django.db import models
 from django.db.models import Sum, F, FloatField
@@ -267,6 +269,18 @@ class Event(models.Model):
 
     def is_exam_and_open(self):
         return self.is_exam and self.is_open
+
+    def copy_to_course(self, course):
+        cloned_event = copy.deepcopy(self)
+        cloned_event.id = None
+        cloned_event.name += ' (Copy)'
+        cloned_event.course = course
+        cloned_event.save()
+
+        for question in self.question_set.all():
+            question.copy_to_event(cloned_event)
+
+        return cloned_event
 
 
 class TokenUseOption(models.Model):
