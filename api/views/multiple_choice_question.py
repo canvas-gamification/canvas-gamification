@@ -20,4 +20,4 @@ class MultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-        create_question_action(serializer.data)
+        create_question_action(serializer.data, self.request.user)

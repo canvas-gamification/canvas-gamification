@@ -15,4 +15,4 @@ class ParsonsQuestionViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-        create_question_action(self)
+        create_question_action(serializer.data, self.request.user)

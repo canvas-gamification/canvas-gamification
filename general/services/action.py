@@ -45,9 +45,9 @@ def create_submission_action(submission):
     )
 
 
-def create_question_action(question):
+def create_question_action(question, user):
     Action.create_action(
-        actor=get_object_or_404(User, pk=question['author']),
+        actor=user,
         description='User created a new ' + question['type_name'],
         token_change=0,
         status=ActionStatus.COMPLETE,
