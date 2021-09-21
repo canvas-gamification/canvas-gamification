@@ -1,3 +1,6 @@
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+
 from general.models.action import Action, ActionStatus, ActionVerb, ActionObjectType
 
 
@@ -39,6 +42,19 @@ def create_submission_action(submission):
         data={
             'answer': submission.answer,
         }
+    )
+
+
+def create_question_action(question):
+    Action.create_action(
+        actor=get_object_or_404(User, pk=question['author']),
+        description='User created a new ' + question['type_name'],
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.CREATED,
+        object_type=ActionObjectType.QUESTION,
+        object_id=question['id'],
+        data=question
     )
 
 
