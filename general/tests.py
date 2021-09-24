@@ -1,7 +1,8 @@
 # Create your tests here.
 from course.utils.utils import create_mcq_submission
 from general.models.action import Action, ActionVerb
-from general.services.action import create_login_action, create_logout_action, create_submission_action
+from general.services.action import create_login_action, create_logout_action, create_submission_action, \
+    create_question_action
 from test.base import BaseTestCase
 
 
@@ -23,6 +24,17 @@ class LogoutActionTest(BaseTestCase):
             Action.objects.filter(
                 actor=self.user,
                 verb=ActionVerb.LOGGED_OUT
+            ).exists()
+        )
+
+
+class CreateQuestionActionTest(BaseTestCase):
+    def test(self):
+        create_question_action(self.questions.first(), self.user)
+        self.assertTrue(
+            Action.objects.filter(
+                actor=self.user,
+                verb=ActionVerb.CREATED
             ).exists()
         )
 
