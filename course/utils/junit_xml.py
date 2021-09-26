@@ -1,7 +1,6 @@
 import logging
 import re
 
-
 from bs4 import BeautifulSoup
 
 
@@ -19,10 +18,13 @@ def parse_junit_xml(xml):
                 'message': ""
             }
 
-            failure = test_case.failure
-            if failure:
+            if test_case.error:
                 doc['status'] = "FAIL"
-                doc['message'] = format_message(failure['message'])
+                doc['message'] = format_message(test_case.error['message'])
+
+            if test_case.failure:
+                doc['status'] = "FAIL"
+                doc['message'] = format_message(test_case.failure['message'])
 
             results.append(doc)
     except Exception as e:
