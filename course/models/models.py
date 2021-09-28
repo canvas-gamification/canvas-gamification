@@ -492,6 +492,9 @@ class CodeSubmission(Submission):
         stdout = base64.b64decode(self.results[0]['stdout'] or "").decode('utf-8')
         return parse_junit_xml(stdout)
 
+    def get_status_message(self):
+        return self.results[0]['status']['description']
+
     def get_formatted_test_results(self):
         return str(len(self.get_passed_test_results())) + "/" + str(self.get_num_tests())
 
