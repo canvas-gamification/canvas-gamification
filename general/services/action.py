@@ -68,6 +68,19 @@ def delete_question_action(question, user):
     )
 
 
+def update_question_action(question, user):
+    Action.create_action(
+        actor=user,
+        description='User updated a question.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.UPDATED,
+        object_type=ActionObjectType.QUESTION,
+        object_id=question['id'],
+        data=question
+    )
+
+
 def create_submission_evaluation_action(submission):
     Action.create_action(
         actor=submission.user,

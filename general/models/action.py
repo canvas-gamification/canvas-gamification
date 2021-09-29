@@ -28,6 +28,7 @@ class ActionVerb:
     LOGGED_IN = 'Logged In'
     LOGGED_OUT = 'Logged Out'
     EVALUATED = 'Evaluated'
+    UPDATED = 'Updated'
 
 
 class ActionObjectType:
