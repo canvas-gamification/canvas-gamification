@@ -1,8 +1,9 @@
 # Create your tests here.
-from course.utils.utils import create_mcq_submission, create_multiple_choice_question
+from api.serializers import MultipleChoiceQuestionSerializer
+from course.utils.utils import create_mcq_submission
 from general.models.action import Action, ActionVerb
 from general.services.action import create_login_action, create_logout_action, create_submission_action, \
-    create_question_action
+    create_question_action, update_question_action, delete_question_action
 from test.base import BaseTestCase
 
 
@@ -28,15 +29,37 @@ class LogoutActionTest(BaseTestCase):
         )
 
 
-# class CreateQuestionActionTest(BaseTestCase):
-#     def setUp(self):
-#         super().setUp()
-#         self.question = self.user.question_junctions.filter(question__answer='a').first().question
-#
-#     def test(self):
-#         create_question_action(self.question, self.user)
-#         question_action = Action.objects.get(actor=self.user, verb=ActionVerb.CREATED)
-#         self.assertIsNotNone(question_action)
+class CreateQuestionActionTest(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.question = self.user.question_junctions.filter(question__answer='a').first().question
+
+    def test(self):
+        create_question_action(MultipleChoiceQuestionSerializer(self.question).data, self.user)
+        question_action = Action.objects.get(actor=self.user, verb=ActionVerb.CREATED)
+        self.assertIsNotNone(question_action)
+
+
+class UpdateQuestionActionTest(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.question = self.user.question_junctions.filter(question__answer='a').first().question
+
+    def test(self):
+        update_question_action(MultipleChoiceQuestionSerializer(self.question).data, self.user)
+        question_action = Action.objects.get(actor=self.user, verb=ActionVerb.UPDATED)
+        self.assertIsNotNone(question_action)
+
+
+class DeleteQuestionActionTest(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.question = self.user.question_junctions.filter(question__answer='a').first().question
+
+    def test(self):
+        delete_question_action(MultipleChoiceQuestionSerializer(self.question).data, self.user)
+        question_action = Action.objects.get(actor=self.user, verb=ActionVerb.DELETED)
+        self.assertIsNotNone(question_action)
 
 
 class SubmissionActionTest(BaseTestCase):
