@@ -218,7 +218,6 @@ class CanvasCourseRegistration(models.Model):
         return self.user.get_full_name()
 
 
-
 EVENT_TYPE_CHOICES = [
     ("ASSIGNMENT", "ASSIGNMENT"),
     ("EXAM", "EXAM")
