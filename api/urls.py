@@ -8,7 +8,7 @@ from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, User
     CourseViewSet, CanvasCourseRegistrationViewSet, ResetPasswordViewSet, UserRegistrationViewSet, \
     UpdateProfileViewSet, SubmissionViewSet, ObtainAuthTokenView, MultipleChoiceQuestionViewSet, JavaQuestionViewSet, \
     ParsonsQuestionViewSet, EventViewSet, TokenUseViewSet, SchemaViewSet, DifficultyViewSet, ChangePasswordViewSet, \
-    UsersCountViewSet, UsersCourseCountViewSet, CourseNamesViewSet, CanvasCourseUnRegisteredViewSet
+    CourseNamesViewSet, CanvasCourseUnRegisteredViewSet
 from api.views.admin import AdminViewSet
 
 router = DefaultRouter()
