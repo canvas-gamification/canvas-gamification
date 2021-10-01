@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-from general.models import FAQ
+from general.models.faq import FAQ
 
 
 def faq(request):

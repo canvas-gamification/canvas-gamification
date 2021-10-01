@@ -69,8 +69,14 @@ class UserConsent(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=False, related_name='consents')
     created_at = models.DateTimeField(auto_now_add=True)
     consent = models.BooleanField(default=False)
+    access_submitted_course_work = models.BooleanField(default=False)
+    access_course_grades = models.BooleanField(default=False)
 
     legal_first_name = models.CharField(max_length=100, null=True, blank=True)
     legal_last_name = models.CharField(max_length=100, null=True, blank=True)
     student_number = models.CharField(max_length=100, null=True, blank=True)
     date = models.CharField(max_length=100, null=True, blank=True)
+
+    @property
+    def is_student(self):
+        return self.user.is_student

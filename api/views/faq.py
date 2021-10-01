@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from api.serializers import FAQSerializer
-from general.models import FAQ
+from general.models.faq import FAQ
 
 
 class FAQViewSet(viewsets.ReadOnlyModelViewSet):

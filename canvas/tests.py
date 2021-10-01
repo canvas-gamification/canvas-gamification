@@ -1,30 +1,9 @@
-from django.test import TestCase
 # Create your tests here.
-from django.utils import timezone
 
-from canvas.models import CanvasCourse
+from test.base import BaseTestCase
 
 
-class MockCourseTestCase(TestCase):
-
-    def setUp(self) -> None:
-        self.course = CanvasCourse(
-            mock=True,
-            name="Test",
-            url="http://canvas.ubc.ca",
-            course_id=1,
-            token="test token",
-
-            allow_registration=True,
-            visible_to_students=True,
-            start_date=timezone.now(),
-            end_date=timezone.now() + timezone.timedelta(days=10),
-
-            verification_assignment_group_name="test",
-            verification_assignment_name="test",
-            bonus_assignment_group_name="test",
-        )
-        self.course.save()
+class MockCourseTestCase(BaseTestCase):
 
     def test_mock_course(self):
         self.assertIsNotNone(self.course.verification_assignment_id)
