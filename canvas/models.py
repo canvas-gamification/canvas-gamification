@@ -226,7 +226,6 @@ class CanvasCourseRegistration(models.Model):
         return self.user.email
 
 
-
 EVENT_TYPE_CHOICES = [
     ("ASSIGNMENT", "ASSIGNMENT"),
     ("EXAM", "EXAM")
