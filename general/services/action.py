@@ -53,6 +53,19 @@ def remove_user_consent_action(user, data):
     )
 
 
+def update_user_profile_action(user, data):
+    Action.create_action(
+        actor=user,
+        description='User updated their profile.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.UPDATED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=data
+    )
+
+
 def create_submission_action(submission):
     Action.create_action(
         actor=submission.user,
