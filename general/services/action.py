@@ -79,6 +79,32 @@ def change_password_action(user):
     )
 
 
+def reset_password_email_action(user):
+    Action.create_action(
+        actor=user,
+        description='User requested a password reset email.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.COMPLETED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=None
+    )
+
+
+def reset_password_action(user):
+    Action.create_action(
+        actor=user,
+        description='User reset their password.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.UPDATED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=None
+    )
+
+
 def create_submission_action(submission):
     Action.create_action(
         actor=submission.user,

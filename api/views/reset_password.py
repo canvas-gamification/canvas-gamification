@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from accounts.models import MyUser
 from accounts.utils.email_functions import send_reset_email
 from api.serializers import ResetPasswordSerializer
+from general.services.action import reset_password_email_action, reset_password_action
 
 
 class ResetPasswordViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
@@ -16,6 +17,7 @@ class ResetPasswordViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         headers = self.get_success_headers(serializer.data)
+        # reset_password_action(user)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @action(detail=False, methods=['post'], url_path='send-email')
@@ -23,4 +25,5 @@ class ResetPasswordViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         email = request.data.get("email", None)
         user = get_object_or_404(MyUser, email=email)
         send_reset_email(request, user)
+        reset_password_email_action(user)
         return Response(status=status.HTTP_200_OK)
