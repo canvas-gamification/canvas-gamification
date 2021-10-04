@@ -27,6 +27,32 @@ def create_logout_action(user):
     )
 
 
+def give_user_consent_action(user, data):
+    Action.create_action(
+        actor=user,
+        description='User consented.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.COMPLETED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=data
+    )
+
+
+def remove_user_consent_action(user, data):
+    Action.create_action(
+        actor=user,
+        description='User removed their consent.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.COMPLETED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=data
+    )
+
+
 def create_submission_action(submission):
     Action.create_action(
         actor=submission.user,
