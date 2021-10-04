@@ -66,6 +66,19 @@ def update_user_profile_action(user, data):
     )
 
 
+def change_password_action(user):
+    Action.create_action(
+        actor=user,
+        description='User changed their password.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.UPDATED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=None
+    )
+
+
 def create_submission_action(submission):
     Action.create_action(
         actor=submission.user,
