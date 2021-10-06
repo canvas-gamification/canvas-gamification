@@ -209,6 +209,14 @@ class CanvasCourseRegistration(models.Model):
 
         return self.total_tokens_received - tokens_used
 
+    @property
+    def username(self):
+        return self.user.username
+
+    @property
+    def name(self):
+        return self.user.get_full_name()
+
 
 EVENT_TYPE_CHOICES = [
     ("ASSIGNMENT", "ASSIGNMENT"),
