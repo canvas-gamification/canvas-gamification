@@ -1,7 +1,6 @@
 from .action import ActionsViewSet
 from .auth import ObtainAuthTokenView
 from .canvas_course_registration import CanvasCourseRegistrationViewSet
-from .canvas_course_unregistered import CanvasCourseUnRegisteredViewSet
 from .contact_us import ContactUsViewSet
 from .course import CourseViewSet
 from .difficulty import DifficultyViewSet
@@ -23,4 +22,3 @@ from .update_profile import UpdateProfileViewSet
 from .uqj import UQJViewSet
 from .user_consent import UserConsentViewSet
 from .user_stats import UserStatsViewSet
-from .course_names import CourseNamesViewSet

@@ -12,14 +12,12 @@ from .question_category import QuestionCategorySerializer
 from .token_value import TokenValueSerializer
 from .user_consent import UserConsentSerializer
 from .user_stats import UserStatsSerializer
-from .list_user import UsersCountSerializers
 from .token_use_option import TokenUseOptionSerializer
 from .event import EventSerializer
 from .change_password import ChangePasswordSerializer
 from .reset_password import ResetPasswordSerializer
 from .register import UserRegistrationSerializer
 from .update_profile import UpdateProfileSerializer
-from .list_course_user import UsersCourseCountSerializers
 # Serializers that depend on other serializers
 from .token_use import TokenUseSerializer
 from .question import QuestionSerializer
@@ -28,6 +26,4 @@ from .multiple_choice_question import MultipleChoiceQuestionSerializer, Multiple
 from .parsons_question import ParsonsQuestionSerializer, ParsonsSubmissionSerializer
 from .uqj import UQJSerializer
 from .canvas_course_registration import CanvasCourseRegistrationSerializer
-from .canvas_course_unregistered import CanvasCourseUnRegisteredSerializer
 from .course import CourseSerializer, CourseSerializerList
-from .course_names import CourseNamesSerializer
