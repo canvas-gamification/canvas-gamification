@@ -6,7 +6,8 @@ from rest_framework.response import Response
 from accounts.models import MyUser
 from accounts.utils.email_functions import send_reset_email
 from api.serializers import ResetPasswordSerializer
-from general.services.action import reset_password_email_action, reset_password_action
+from general.services.action import reset_password_email_action
+# reset_password_action
 
 
 class ResetPasswordViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
