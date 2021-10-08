@@ -57,11 +57,11 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         status_type = request.data.get("type")
         course_registration = get_object_or_404(CanvasCourseRegistration, id=registration_id)
 
-        if status_type == 1:
+        if status_type == "block":
             course_registration.is_blocked = status
             course_registration.save()
 
-        if status_type == 2:
+        if status_type == "verify":
             course_registration.is_verified = status
             course_registration.save()
 
