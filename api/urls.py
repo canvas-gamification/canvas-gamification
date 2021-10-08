@@ -7,7 +7,9 @@ from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, User
     QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, \
     CourseViewSet, CanvasCourseRegistrationViewSet, ResetPasswordViewSet, UserRegistrationViewSet, \
     UpdateProfileViewSet, SubmissionViewSet, ObtainAuthTokenView, MultipleChoiceQuestionViewSet, JavaQuestionViewSet, \
-    ParsonsQuestionViewSet, EventViewSet, TokenUseViewSet, SchemaViewSet, DifficultyViewSet, ChangePasswordViewSet
+    ParsonsQuestionViewSet, EventViewSet, TokenUseViewSet, SchemaViewSet, DifficultyViewSet, ChangePasswordViewSet, \
+    ReportQuestionViewSet
+
 from api.views.admin import AdminViewSet
 
 router = DefaultRouter()
@@ -37,6 +39,7 @@ router.register(r'token-use', TokenUseViewSet, basename='token-use')
 router.register(r'schema', SchemaViewSet, basename='schema')
 router.register(r'difficulty', DifficultyViewSet, basename='difficulty')
 router.register(r'admin', AdminViewSet, basename='admin')
+router.register(r'report-question', ReportQuestionViewSet, basename='report-question')
 
 app_name = 'api'
 urlpatterns = [
