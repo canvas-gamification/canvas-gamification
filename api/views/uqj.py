@@ -6,6 +6,10 @@ from course.models.models import UserQuestionJunction, Question
 from api.pagination import BasePagination
 from api.serializers import UQJSerializer
 
+from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
+
 
 class UQJFilterSet(FilterSet):
     question_event = NumberFilter(field_name='question__event')
@@ -37,3 +41,15 @@ class UQJViewSet(viewsets.ReadOnlyModelViewSet):
                 accessible_uqj.append(temp.question)
         uqj = user.question_junctions.filter(question__in=accessible_uqj)
         return uqj
+
+    @action(detail=True, methods=['post'], url_path='switch-favorite')
+    def switch_favorite(self, request, pk=None):
+        """
+        Toggles "is_favorite" for UserQuestionJunction
+        """
+        status = request.data.get('status')
+        junction_id = request.data.get('id')
+        uqj = get_object_or_404(UserQuestionJunction, id=junction_id)
+        uqj.is_favourite = status
+        uqj.save()
+        return Response(request.data)
