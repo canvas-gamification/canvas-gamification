@@ -5,13 +5,11 @@ from api.serializers import ReportQuestionSerializer
 
 
 class ReportQuestionViewSet(viewsets.ModelViewSet):
+    queryset = ReportQuestion.objects.all()
+    serializer_class = ReportQuestionSerializer
+    permission_classes = [IsAuthenticated, ]
 
-    class ReportQuestionViewSet(viewsets.ModelViewSet):
-        queryset = ReportQuestion.objects.all()
-        serializer_class = ReportQuestionSerializer
-        permission_classes = [IsAuthenticated, ]
-
-        def perform_create(self, serializer):
-            serializer.save(author=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
