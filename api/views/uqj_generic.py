@@ -35,7 +35,7 @@ class UQJGenericViewSet(viewsets.GenericViewSet):
     @action(detail=True, methods=['post'], url_path='switch-favorite')
     def switch_favorite(self, request, pk=None):
         """
-        Toggles "is_favorite" for UserQuestionJunction
+        Updates "is_favorite" for UserQuestionJunction
         """
         status = request.data.get('status')
         junction_id = request.data.get('id')
