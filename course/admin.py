@@ -4,7 +4,6 @@ from djrichtextfield.widgets import RichTextWidget
 
 from course.models.models import Question, VariableQuestion, Submission, QuestionCategory, \
     TokenValue, UserQuestionJunction
-from general.models.question_report import QuestionReport
 from course.models.java import JavaQuestion, JavaSubmission
 from course.models.multiple_choice import MultipleChoiceQuestion, MultipleChoiceSubmission
 from course.models.parsons import ParsonsQuestion, ParsonsSubmission
@@ -43,13 +42,6 @@ class UserQuestionJunctionAdmin(admin.ModelAdmin):
     list_display = ('user', 'question', 'is_solved', 'is_partially_solved',)
 
 
-class QuestionReportAdmin(admin.ModelAdmin):
-    list_filter = ('user__username', 'question')
-    list_display = ('user', 'question', 'report_timestamp', 'unclear_description', 'test_case_incorrect_answer',
-                    'test_case_violate_constraints', 'poor_test_coverage', 'language_specific_issue',
-                    'other', 'report_text')
-
-
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(VariableQuestion, QuestionAdmin)
 admin.site.register(MultipleChoiceQuestion, QuestionAdmin)
@@ -63,5 +55,4 @@ admin.site.register(ParsonsSubmission, SubmissionAdmin)
 
 admin.site.register(TokenValue, TokenValueAdmin)
 admin.site.register(UserQuestionJunction, UserQuestionJunctionAdmin)
-admin.site.register(QuestionReport, QuestionReportAdmin)
 admin.site.register(QuestionCategory)

@@ -7,6 +7,8 @@ class QuestionReport(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, db_index=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, db_index=True)
     report_timestamp = models.DateTimeField(default=None, null=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
     unclear_description = models.BooleanField(default=False, db_index=True)
     test_case_incorrect_answer = models.BooleanField(default=False, db_index=True)
     test_case_violate_constraints = models.BooleanField(default=False, db_index=True)
