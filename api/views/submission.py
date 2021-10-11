@@ -89,5 +89,4 @@ class SubmissionViewSet(viewsets.GenericViewSet):
             raise ValidationError("{}".format(e))
 
         create_submission_action(submission)
-        print(submission)
         return Response(self.get_serialized_data(submission), status=status.HTTP_201_CREATED)
