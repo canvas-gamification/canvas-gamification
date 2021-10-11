@@ -213,6 +213,7 @@ class CanvasCourseRegistration(models.Model):
     def username(self):
         return self.user.username
 
+    @property
     def name(self):
         return self.user.get_full_name()
 
