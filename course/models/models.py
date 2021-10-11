@@ -239,7 +239,6 @@ class UserQuestionJunction(models.Model):
 
     is_solved = models.BooleanField(default=False, db_index=True)
     is_partially_solved = models.BooleanField(default=False, db_index=True)
-    is_favourite = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         unique_together = ('user', 'question')
