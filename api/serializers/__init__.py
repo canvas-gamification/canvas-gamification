@@ -29,3 +29,4 @@ from .parsons_question import ParsonsQuestionSerializer, ParsonsSubmissionSerial
 from .uqj import UQJSerializer
 from .canvas_course_registration import CanvasCourseRegistrationSerializer
 from .course import CourseSerializer, CourseSerializerList
+from .report_question import ReportQuestionSerializer
