@@ -1,20 +1,25 @@
 from rest_framework import serializers
 
-from api.serializers import EventSerializer
-from course.models.models import Question
+from api.serializers import EventSerializer, QuestionCategorySerializer
+from canvas.models import Event
+from course.models.models import Question, QuestionCategory
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    event = EventSerializer()
     status = serializers.SerializerMethodField('get_uqj_status')
     is_author = serializers.SerializerMethodField('get_is_author')
+    event = EventSerializer()
+    event_id = serializers.PrimaryKeyRelatedField(source='event', queryset=Event.objects.all())
+    category = QuestionCategorySerializer()
+    category_id = serializers.PrimaryKeyRelatedField(source='category', queryset=QuestionCategory.objects.all())
 
     class Meta:
         model = Question
         fields = ['id', 'title', 'text', 'max_submission_allowed', 'time_created', 'time_modified', 'author',
                   'category', 'difficulty', 'is_verified', 'token_value', 'success_rate', 'type_name', 'event',
-                  'is_sample', 'category_name', 'parent_category_name', 'course_name', 'event_name', 'author_name',
-                  'is_open', 'is_exam', 'is_exam_and_open', 'status', 'full_category_name', 'is_author', 'is_practice']
+                  'event_id', 'is_sample', 'category', 'category_id', 'parent_category_name', 'course_name',
+                  'event_name', 'author_name', 'is_open', 'is_exam', 'is_exam_and_open', 'status', 'full_category_name',
+                  'is_author', 'is_practice']
 
     def get_uqj_status(self, obj):
         request = self.context.get('request', None)
