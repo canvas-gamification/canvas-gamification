@@ -48,22 +48,18 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         return Response(request.data)
 
     @action(detail=True, methods=['post'], url_path='change-status')
-    def change_status(self, request, pk=None):
+    def update_registration(self, request, pk=None):
         '''
         Action that will update the block/verify status of a canvascourseregistration object.
         '''
         registration_id = request.data.get("id")
-        status = request.data.get("status")
-        status_type = request.data.get("type")
+        verify_status = request.data.get("verifyStatus")
+        block_status = request.data.get("blockStatus")
+        # Get the object and update its is_block and is_verified
         course_registration = get_object_or_404(CanvasCourseRegistration, id=registration_id)
-
-        if status_type == "block":
-            course_registration.is_blocked = status
-            course_registration.save()
-
-        if status_type == "verify":
-            course_registration.is_verified = status
-            course_registration.save()
+        course_registration.is_blocked = block_status
+        course_registration.is_verified = verify_status
+        course_registration.save()
 
         return Response(request.data)
 
