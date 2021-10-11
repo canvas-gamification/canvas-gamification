@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from course.models.models import QuestionReport
+from general.models.question_report import QuestionReport
 
 
 class QuestionReportSerializer(serializers.ModelSerializer):

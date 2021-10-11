@@ -3,7 +3,8 @@ from django.contrib import admin
 from djrichtextfield.widgets import RichTextWidget
 
 from course.models.models import Question, VariableQuestion, Submission, QuestionCategory, \
-    TokenValue, UserQuestionJunction, QuestionReport
+    TokenValue, UserQuestionJunction
+from general.models.question_report import QuestionReport
 from course.models.java import JavaQuestion, JavaSubmission
 from course.models.multiple_choice import MultipleChoiceQuestion, MultipleChoiceSubmission
 from course.models.parsons import ParsonsQuestion, ParsonsSubmission
@@ -62,5 +63,5 @@ admin.site.register(ParsonsSubmission, SubmissionAdmin)
 
 admin.site.register(TokenValue, TokenValueAdmin)
 admin.site.register(UserQuestionJunction, UserQuestionJunctionAdmin)
-admin.site.register(ReportQuestion, ReportQuestionAdmin)
+admin.site.register(QuestionReport, QuestionReportAdmin)
 admin.site.register(QuestionCategory)

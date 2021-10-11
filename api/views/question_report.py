@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from course.models.models import QuestionReport
+from general.models.question_report import QuestionReport
 from rest_framework.permissions import IsAuthenticated
 from api.serializers import QuestionReportSerializer
 
