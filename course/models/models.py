@@ -228,7 +228,7 @@ def random_seed():
     return int(seed)
 
 
-class ReportQuestion(models.Model):
+class QuestionReport(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, db_index=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, db_index=True)
     report_timestamp = models.DateTimeField(default=None, null=True, db_index=True)
