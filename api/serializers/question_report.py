@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from general.models.question_report import QuestionReport
 
 
