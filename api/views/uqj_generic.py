@@ -43,3 +43,12 @@ class UQJGenericViewSet(viewsets.GenericViewSet):
         uqj.is_favourite = status
         uqj.save()
         return Response(request.data)
+
+    @action(detail=False, methods=['get'], url_path='count-favorite')
+    def count_favorite(self, request):
+        question_id = request.data.get('questionId')
+        count = UserQuestionJunction.objects.filter(question_id=question_id, is_favourite=True).count()
+        print(count)
+        return Response(count)
+
+
