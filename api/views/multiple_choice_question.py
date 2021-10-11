@@ -4,6 +4,7 @@ from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission
 from api.serializers import MultipleChoiceQuestionSerializer
 from course.models.multiple_choice import MultipleChoiceQuestion
+from general.services.action import create_question_action, update_question_action
 
 
 class SampleMultipleChoiceQuestionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -19,3 +20,8 @@ class MultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+        create_question_action(serializer.data, self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save()
+        update_question_action(serializer.data, self.request.user)
