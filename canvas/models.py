@@ -213,17 +213,8 @@ class CanvasCourseRegistration(models.Model):
     def username(self):
         return self.user.username
 
-    @property
-    def first_name(self):
-        return self.user.first_name
-
-    @property
-    def last_name(self):
-        return self.user.last_name
-
-    @property
-    def email(self):
-        return self.user.email
+    def name(self):
+        return self.user.get_full_name()
 
 
 EVENT_TYPE_CHOICES = [
