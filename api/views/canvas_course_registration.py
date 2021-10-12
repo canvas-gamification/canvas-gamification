@@ -19,4 +19,3 @@ class CanvasCourseRegistrationViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return CanvasCourseRegistration.objects.filter(user=user).all()
-

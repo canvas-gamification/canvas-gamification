@@ -17,13 +17,15 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
     permission_classes = [TeacherAccessPermission, ]
     queryset = CanvasCourse.objects.all()
     serializer_class = CourseSerializer
-    search_fields = ['user__first_name', 'user__last_name', 'user__email']
-    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
 
     @action(detail=True, methods=['get'], url_path='registered-users')
     def registered_users(self, request, pk=None):
         course = get_object_or_404(self.get_queryset(), pk=pk)
-        course_registration_list = self.filter_queryset(course.canvascourseregistration_set.all())
+        name = request.query_params.get('name', ' ')
+        course_registration_list = course.canvascourseregistration_set.all()
+        # Filter courseregistration based on first name or last name
+        course_registration_list = course_registration_list.filter(user__first_name__contains=name) | \
+                                   course_registration_list.filter(user__last_name__contains=name)
 
         return Response(
             CanvasCourseRegistrationSerializer(course_registration).data
