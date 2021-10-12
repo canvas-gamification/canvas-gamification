@@ -21,7 +21,7 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
     @action(detail=True, methods=['get'], url_path='registered-users')
     def registered_users(self, request, pk=None):
         course = get_object_or_404(self.get_queryset(), pk=pk)
-        name = request.query_params.get('name', ' ')
+        name = request.query_params.get('search', '')
         course_registration_list = course.canvascourseregistration_set.all()
         # Filter courseregistration based on first name or last name
         course_registration_list = course_registration_list.filter(user__first_name__contains=name) | \
