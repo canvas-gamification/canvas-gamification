@@ -1,9 +1,8 @@
-from rest_framework import viewsets, filters
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
 
 from accounts.models import MyUser
 from api.permissions import TeacherAccessPermission
@@ -24,8 +23,9 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         name = request.query_params.get('search', '')
         course_registration_list = course.canvascourseregistration_set.all()
         # Filter courseregistration based on first name or last name
-        course_registration_list = course_registration_list.filter(user__first_name__contains=name) | \
-                                   course_registration_list.filter(user__last_name__contains=name)
+        first_name_filter = course_registration_list.filter(user__first_name__contains=name)
+        last_name_filter = course_registration_list.filter(user__last_name__contains=name)
+        course_registration_list = first_name_filter | last_name_filter
 
         return Response(
             CanvasCourseRegistrationSerializer(course_registration).data
