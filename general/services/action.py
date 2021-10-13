@@ -27,6 +27,45 @@ def create_logout_action(user):
     )
 
 
+def create_event_action(user, data):
+    Action.create_action(
+        actor=user,
+        description='User created an event.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.CREATED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=data
+    )
+
+
+def update_event_action(user, data):
+    Action.create_action(
+        actor=user,
+        description='User updated an event.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.UPDATED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=data
+    )
+
+
+def import_event_action(user, data):
+    Action.create_action(
+        actor=user,
+        description='User imported an event.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.DUPLICATED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=data
+    )
+
+
 def create_submission_action(submission):
     Action.create_action(
         actor=submission.user,

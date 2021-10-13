@@ -3,7 +3,8 @@ from api.serializers import MultipleChoiceQuestionSerializer
 from course.utils.utils import create_mcq_submission
 from general.models.action import Action, ActionVerb
 from general.services.action import create_login_action, create_logout_action, create_submission_action, \
-    create_question_action, update_question_action, delete_question_action
+    create_question_action, update_question_action, delete_question_action, create_event_action, update_event_action, \
+    import_event_action
 from test.base import BaseTestCase
 
 
@@ -25,6 +26,39 @@ class LogoutActionTest(BaseTestCase):
             Action.objects.filter(
                 actor=self.user,
                 verb=ActionVerb.LOGGED_OUT
+            ).exists()
+        )
+
+
+class CreateEventActionTest(BaseTestCase):
+    def test(self):
+        create_event_action(self.user, {})
+        self.assertTrue(
+            Action.objects.filter(
+                actor=self.user,
+                verb=ActionVerb.CREATED
+            ).exists()
+        )
+
+
+class UpdateEventActionTest(BaseTestCase):
+    def test(self):
+        update_event_action(self.user, {})
+        self.assertTrue(
+            Action.objects.filter(
+                actor=self.user,
+                verb=ActionVerb.UPDATED
+            ).exists()
+        )
+
+
+class ImportEventActionTest(BaseTestCase):
+    def test(self):
+        import_event_action(self.user, {})
+        self.assertTrue(
+            Action.objects.filter(
+                actor=self.user,
+                verb=ActionVerb.DUPLICATED
             ).exists()
         )
 
