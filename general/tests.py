@@ -4,7 +4,8 @@ from course.utils.utils import create_mcq_submission
 from general.models.action import Action, ActionVerb
 from general.services.action import create_login_action, create_logout_action, create_submission_action, \
     create_question_action, update_question_action, delete_question_action, create_event_action, update_event_action, \
-    import_event_action
+    import_event_action, course_registration_verify_action, course_registration_confirm_name_action, \
+    course_registration_student_number_action
 from test.base import BaseTestCase
 
 
@@ -59,6 +60,39 @@ class ImportEventActionTest(BaseTestCase):
             Action.objects.filter(
                 actor=self.user,
                 verb=ActionVerb.DUPLICATED
+            ).exists()
+        )
+
+
+class CourseRegistrationVerifyActionTest(BaseTestCase):
+    def test(self):
+        course_registration_verify_action(self.user)
+        self.assertTrue(
+            Action.objects.filter(
+                actor=self.user,
+                verb=ActionVerb.COMPLETED
+            ).exists()
+        )
+
+
+class CourseRegistrationStudentNumberActionTest(BaseTestCase):
+    def test(self):
+        course_registration_student_number_action(self.user)
+        self.assertTrue(
+            Action.objects.filter(
+                actor=self.user,
+                verb=ActionVerb.COMPLETED
+            ).exists()
+        )
+
+
+class CourseRegistrationConfirmNameActionTest(BaseTestCase):
+    def test(self):
+        course_registration_confirm_name_action(self.user)
+        self.assertTrue(
+            Action.objects.filter(
+                actor=self.user,
+                verb=ActionVerb.COMPLETED
             ).exists()
         )
 

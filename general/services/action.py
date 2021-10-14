@@ -66,6 +66,45 @@ def import_event_action(user, data):
     )
 
 
+def course_registration_verify_action(user):
+    Action.create_action(
+        actor=user,
+        description='User entered verification code.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.COMPLETED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=None
+    )
+
+
+def course_registration_student_number_action(user):
+    Action.create_action(
+        actor=user,
+        description='User entered correct student number.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.COMPLETED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=None
+    )
+
+
+def course_registration_confirm_name_action(user):
+    Action.create_action(
+        actor=user,
+        description='User successfully confirmed name.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.COMPLETED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=None
+    )
+
+
 def create_submission_action(submission):
     Action.create_action(
         actor=submission.user,
