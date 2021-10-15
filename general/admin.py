@@ -33,7 +33,7 @@ class ActionAdmin(admin.ModelAdmin):
 
 class QuestionReportAdmin(admin.ModelAdmin):
     list_filter = ('user__username', 'question')
-    list_display = ('user', 'question', 'report_timestamp', 'unclear_description', 'test_case_incorrect_answer',
+    list_display = ('user', 'question', 'created_at', 'updated_at', 'unclear_description', 'test_case_incorrect_answer',
                     'test_case_violate_constraints', 'poor_test_coverage', 'language_specific_issue',
                     'other', 'report_text')
 
