@@ -181,6 +181,10 @@ class Question(PolymorphicModel):
     def is_checkbox(self):
         return False
 
+    @property
+    def is_practice(self):
+        return self.event is None
+
     def get_input_files(self):
         return {}
 
@@ -235,6 +239,7 @@ class UserQuestionJunction(models.Model):
 
     is_solved = models.BooleanField(default=False, db_index=True)
     is_partially_solved = models.BooleanField(default=False, db_index=True)
+    is_favourite = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('user', 'question')
@@ -491,6 +496,9 @@ class CodeSubmission(Submission):
     def get_decoded_results(self):
         stdout = base64.b64decode(self.results[0]['stdout'] or "").decode('utf-8')
         return parse_junit_xml(stdout)
+
+    def get_status_message(self):
+        return self.results[0]['status']['description']
 
     def get_formatted_test_results(self):
         return str(len(self.get_passed_test_results())) + "/" + str(self.get_num_tests())
