@@ -17,7 +17,7 @@ class ParsonsQuestionSerializer(serializers.ModelSerializer):
         model = ParsonsQuestion
         fields = ['id', 'title', 'text', 'answer', 'max_submission_allowed', 'time_created', 'time_modified', 'author',
                   'category', 'difficulty', 'is_verified', 'variables', 'junit_template', 'token_value', 'success_rate',
-                  'type_name', 'event', 'is_sample', 'category_name', 'parent_category_name', 'course_name',
+                  'type_name', 'event', 'is_sample', 'category_name', 'parent_category_name', 'course',
                   'event_name', 'author_name', 'input_files']
 
 
