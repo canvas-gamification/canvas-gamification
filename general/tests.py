@@ -4,7 +4,8 @@ from course.utils.utils import create_mcq_submission
 from general.models.action import Action, ActionVerb
 from general.services.action import create_login_action, create_logout_action, create_submission_action, \
     give_user_consent_action, remove_user_consent_action, update_user_profile_action, change_password_action, \
-    reset_password_email_action, reset_password_action, create_question_action, update_question_action, delete_question_action
+    reset_password_email_action, reset_password_action, create_question_action, update_question_action, \
+    delete_question_action
 from test.base import BaseTestCase
 
 
