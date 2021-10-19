@@ -32,3 +32,12 @@ class JavaSubmissionSerializer(serializers.ModelSerializer):
                   'status_color']
 
     question = QuestionSerializer()
+
+
+class JavaSubmissionHiddenDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JavaSubmission
+        fields = ['pk', 'submission_time', 'answer', 'token_value', 'answer_files', 'question', 'show_answer',
+                  'show_detail']
+
+    question = QuestionSerializer()
