@@ -105,6 +105,84 @@ def reset_password_action(user):
     )
 
 
+def create_event_action(user, data):
+    Action.create_action(
+        actor=user,
+        description='User created an event.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.CREATED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=data
+    )
+
+
+def update_event_action(user, data):
+    Action.create_action(
+        actor=user,
+        description='User updated an event.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.UPDATED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=data
+    )
+
+
+def import_event_action(user, data):
+    Action.create_action(
+        actor=user,
+        description='User imported an event.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.DUPLICATED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=data
+    )
+
+
+def course_registration_verify_action(user):
+    Action.create_action(
+        actor=user,
+        description='User entered verification code.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.COMPLETED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=None
+    )
+
+
+def course_registration_student_number_action(user):
+    Action.create_action(
+        actor=user,
+        description='User entered correct student number.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.COMPLETED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=None
+    )
+
+
+def course_registration_confirm_name_action(user):
+    Action.create_action(
+        actor=user,
+        description='User successfully confirmed name.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.COMPLETED,
+        object_type=ActionObjectType.USER,
+        object_id=user.id,
+        data=None
+    )
+
+
 def create_submission_action(submission):
     Action.create_action(
         actor=submission.user,
