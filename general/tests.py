@@ -3,6 +3,9 @@ from api.serializers import MultipleChoiceQuestionSerializer
 from course.utils.utils import create_mcq_submission
 from general.models.action import Action, ActionVerb
 from general.services.action import create_login_action, create_logout_action, create_submission_action, \
+    give_user_consent_action, remove_user_consent_action, update_user_profile_action, change_password_action, \
+    reset_password_email_action, reset_password_action, create_question_action, update_question_action, \
+    delete_question_action
     create_question_action, update_question_action, delete_question_action, create_event_action, update_event_action, \
     import_event_action, course_registration_verify_action, course_registration_confirm_name_action, \
     course_registration_student_number_action
@@ -27,6 +30,72 @@ class LogoutActionTest(BaseTestCase):
             Action.objects.filter(
                 actor=self.user,
                 verb=ActionVerb.LOGGED_OUT
+            ).exists()
+        )
+
+
+class GiveUserConsentActionTest(BaseTestCase):
+    def test(self):
+        give_user_consent_action(self.user, {})
+        self.assertTrue(
+            Action.objects.filter(
+                actor=self.user,
+                verb=ActionVerb.COMPLETED
+            ).exists()
+        )
+
+
+class RemoveUserConsentActionTest(BaseTestCase):
+    def test(self):
+        remove_user_consent_action(self.user, {})
+        self.assertTrue(
+            Action.objects.filter(
+                actor=self.user,
+                verb=ActionVerb.COMPLETED
+            ).exists()
+        )
+
+
+class UpdateUserProfileActionTest(BaseTestCase):
+    def test(self):
+        update_user_profile_action(self.user, {})
+        self.assertTrue(
+            Action.objects.filter(
+                actor=self.user,
+                verb=ActionVerb.UPDATED
+            ).exists()
+        )
+
+
+class ChangePasswordActionTest(BaseTestCase):
+    def test(self):
+        change_password_action(self.user)
+        self.assertTrue(
+            Action.objects.filter(
+                actor=self.user,
+                verb=ActionVerb.UPDATED
+            ).exists()
+        )
+
+
+class ResetPasswordEmailActionTest(BaseTestCase):
+    def test(self):
+        reset_password_email_action(self.user)
+        self.assertTrue(
+            Action.objects.filter(
+                actor=self.user,
+                verb=ActionVerb.COMPLETED
+            ).exists()
+        )
+
+
+class ResetPasswordActionTest(BaseTestCase):
+    def test(self):
+        reset_password_action(self.user)
+        self.assertTrue(
+            Action.objects.filter(
+                actor=self.user,
+                verb=ActionVerb.UPDATED
             ).exists()
         )
 
