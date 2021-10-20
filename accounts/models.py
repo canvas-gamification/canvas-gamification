@@ -57,19 +57,6 @@ class MyUser(AbstractUser):
         return data
 
     @property
-    def success_rate_by_difficulty(self):
-        data = list(
-            self.question_junctions.values('question__difficulty', 'question__category')
-                .annotate(total=Count('*'), solved=Count('pk', filter=Q(is_solved=True)))
-        )
-        data = [{
-            'category': difficulty['question__category'],
-            'difficulty': difficulty['question__difficulty'],
-            'avgSuccess': success_rate(difficulty['solved'], difficulty['total'])
-        } for difficulty in data]
-        return data
-
-    @property
     def has_consent(self):
         return self.consents.exists()
 
