@@ -13,7 +13,6 @@ from course.models.models import Question
 from course.models.java import JavaQuestion
 from course.models.multiple_choice import MultipleChoiceQuestion
 from course.models.parsons import ParsonsQuestion
-from general.services.action import delete_question_action
 
 
 class QuestionViewSet(viewsets.ModelViewSet):
@@ -57,7 +56,6 @@ class QuestionViewSet(viewsets.ModelViewSet):
         question = self.get_object()
         question.question_status = Question.DELETED
         question.save()
-        delete_question_action(self.get_serializer(question).data, request.user)
         return Response(self.get_serializer(question).data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], url_path='download-questions')
