@@ -7,7 +7,6 @@ from rest_framework.permissions import IsAuthenticated
 from api.serializers import QuestionReportSerializer
 
 
-
 class QuestionReportViewSet(viewsets.ModelViewSet):
     queryset = QuestionReport.objects.all()
     serializer_class = QuestionReportSerializer
