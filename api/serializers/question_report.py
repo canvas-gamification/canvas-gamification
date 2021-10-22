@@ -6,6 +6,6 @@ class QuestionReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuestionReport
-        fields = ['id', 'created_at', 'updated_at', 'unclear_description', 'test_case_incorrect_answer',
-                  'test_case_violate_constraints', 'poor_test_coverage', 'language_specific_issue',
-                  'other', 'report_text']
+        fields = ['id', 'created_at', 'updated_at', 'typo_in_question', 'typo_in_answer',
+                  'correct_solution_marked_wrong', 'incorrect_solution_marked_right', 'other',
+                  'report_details']

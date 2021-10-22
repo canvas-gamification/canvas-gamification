@@ -17,19 +17,19 @@ class QuestionReportViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='add-report')
     def add_report(self, request, pk=None):
-        unclear_description = request.data.get('unclearDescription')
-        test_case_incorrect_answer = request.data.get('test_case_incorrect_answer')
-        poor_test_coverage = request.data.get('poor_test_coverage')
-        language_specific = request.data.get('language_specific')
+        typo_in_question = request.data.get('typo_in_question')
+        typo_in_answer = request.data.get('typo_in_answer')
+        correct_solution_marked_wrong = request.data.get('correct_solution_marked_wrong')
+        incorrect_solution_marked_right = request.data.get(' incorrect_solution_marked_right')
         other = request.data.get('other')
-        report_text = request.data.get('report_text')
+        report_details = request.data.get('report_details')
 
-        QuestionReport.unclear_description = unclear_description
-        QuestionReport.test_case_incorrect_answer = test_case_incorrect_answer
-        QuestionReport.poor_test_coverage = poor_test_coverage
-        QuestionReport.language_specific = language_specific
+        QuestionReport.typo_in_question = typo_in_question
+        QuestionReport. typo_in_answer = typo_in_answer
+        QuestionReport.correct_solution_marked_wrong = correct_solution_marked_wrong
+        QuestionReport.incorrect_solution_marked_right = incorrect_solution_marked_right
         QuestionReport.other = other
-        QuestionReport.report_text = report_text
+        QuestionReport. report_details = report_details
         QuestionReport.save()
         return Response(request.data)
 
