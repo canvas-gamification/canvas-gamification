@@ -1,7 +1,6 @@
 from collections import OrderedDict
 
-import django_filters
-from django_filters.rest_framework import DjangoFilterBackend, FilterSet
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -17,16 +16,6 @@ from course.models.parsons import ParsonsQuestion
 from general.services.action import delete_question_action
 
 
-class QuestionFilterset(FilterSet):
-    category_name = django_filters.CharFilter(field_name='category__name')
-    parent_category_name = django_filters.CharFilter(field_name='category__parent__name')
-
-    class Meta:
-        model = Question
-        fields = ['author', 'difficulty', 'course', 'event', 'is_verified', 'is_sample', 'category_name',
-                  'parent_category_name']
-
-
 class QuestionViewSet(viewsets.ModelViewSet):
     """
     Optional Parameters
@@ -38,7 +27,8 @@ class QuestionViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend]
     ordering_fields = ['id', 'title', 'author', 'difficulty', 'event__name', 'category__name', 'category__parent__name']
     search_fields = ['title', ]
-    filter_class = QuestionFilterset
+    filterset_fields = ['author', 'difficulty', 'course', 'event', 'is_verified', 'is_sample', 'category__name',
+                        'category__parent__name']
     pagination_class = BasePagination
 
     def get_question_serializer_class(self, question):
