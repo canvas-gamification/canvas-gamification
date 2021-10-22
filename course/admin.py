@@ -39,7 +39,7 @@ class TokenValueAdmin(admin.ModelAdmin):
 
 class UserQuestionJunctionAdmin(admin.ModelAdmin):
     list_filter = ('user__username', 'question')
-    list_display = ('user', 'question', 'is_solved', 'is_partially_solved')
+    list_display = ('user', 'question', 'is_solved', 'is_partially_solved', 'report_id')
 
 
 admin.site.register(Question, QuestionAdmin)

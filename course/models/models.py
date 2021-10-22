@@ -233,7 +233,7 @@ class UserQuestionJunction(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='question_junctions', db_index=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='user_junctions', db_index=True)
     random_seed = models.IntegerField(default=random_seed)
-    # report = models.ForeignKey(QuestionReport, on_delete=models.CASCADE, db_index=True, blank=True, null=True)
+    report_id = models.ForeignKey(QuestionReport, on_delete=models.CASCADE, db_index=True, blank=True, null=True)
 
     last_viewed = models.DateTimeField(default=None, null=True, db_index=True)
     opened_tutorial = models.BooleanField(default=False)
