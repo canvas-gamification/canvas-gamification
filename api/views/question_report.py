@@ -20,7 +20,7 @@ class QuestionReportViewSet(viewsets.ModelViewSet):
         typo_in_question = request.data.get('typo_in_question')
         typo_in_answer = request.data.get('typo_in_answer')
         correct_solution_marked_wrong = request.data.get('correct_solution_marked_wrong')
-        incorrect_solution_marked_right = request.data.get(' incorrect_solution_marked_right')
+        incorrect_solution_marked_right = request.data.get('incorrect_solution_marked_right')
         other = request.data.get('other')
         report_details = request.data.get('report_details')
 
