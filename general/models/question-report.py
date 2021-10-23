@@ -16,8 +16,8 @@ class QuestionReport(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    report = models.CharField(max_length=1000, choices=REPORT_CHOICES)
-    report_details = models.TextField(db_index=True, default=False)
+    report = models.CharField(max_length=100, choices=REPORT_CHOICES)
+    report_details = models.TextField(db_index=True, null=True)
 
     class Meta:
         unique_together = ('user', 'question')
