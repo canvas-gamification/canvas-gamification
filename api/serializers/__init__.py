@@ -5,6 +5,7 @@ NOTE: if serializer A imports serializer B, then A **must** be imported in this 
 
 # Serializers that don't import any other serializers
 from .utils import UpdateListSerializer
+
 from .action import ActionsSerializer
 from .contact_us import ContactUsSerializer
 from .faq import FAQSerializer
@@ -18,7 +19,7 @@ from .change_password import ChangePasswordSerializer
 from .reset_password import ResetPasswordSerializer
 from .register import UserRegistrationSerializer
 from .update_profile import UpdateProfileSerializer
-# Serializers that depend on other serializers
+
 from .token_use import TokenUseSerializer
 from .question import QuestionSerializer
 from .java_question import JavaQuestionSerializer, JavaSubmissionSerializer

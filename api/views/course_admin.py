@@ -60,7 +60,6 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         status = request.data.get("status")
         # Get the object and update its is_block and is_verified
         course_registration = get_object_or_404(CanvasCourseRegistration, id=registration_id)
-
         if status == 'Verified':
             course_registration.status = "VERIFIED"
         if status == 'Blocked':
