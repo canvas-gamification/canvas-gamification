@@ -10,6 +10,8 @@ from api.permissions import StudentsMustBeRegisteredPermission
 import api.error_messages as ERROR_MESSAGES
 from canvas.models import CanvasCourse, CanvasCourseRegistration
 from canvas.utils.utils import get_course_registration
+from general.services.action import course_registration_verify_action, course_registration_student_number_action, \
+    course_registration_confirm_name_action
 
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
@@ -117,6 +119,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 raise ValidationError()
 
             course_reg.set_canvas_user(canvas_user)
+            course_registration_student_number_action(request.user)
             return Response({
                 "success": True,
             })
@@ -128,6 +131,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             if not canvas_user:
                 raise ValidationError(ERROR_MESSAGES.USER.INVALID)
             course_reg.set_canvas_user(canvas_user)
+            course_registration_confirm_name_action(request.user)
             return Response({
                 "success": True,
             })
@@ -170,6 +174,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             raise ValidationError(ERROR_MESSAGES.COURSE_REGISTRATION.INVALID)
 
         valid = course_reg.check_verification_code(code)
+        course_registration_verify_action(request.user)
         return Response({
             "success": valid,
             "attempts_remaining": course_reg.verification_attempts,
