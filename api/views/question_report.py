@@ -16,8 +16,8 @@ class QuestionReportViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='add-report')
     def create_report(self, request, pk=None):
-        typo_in_question = request.data.get('report')
-        QuestionReport.report_details = typo_in_question
+        report = request.data.get('report')
+        QuestionReport.report_details = report
         QuestionReport.save()
         return Response(request.data)
 
