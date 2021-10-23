@@ -20,4 +20,3 @@ class JavaQuestionViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         serializer.save()
         update_question_action(serializer.data, self.request.user)
-
