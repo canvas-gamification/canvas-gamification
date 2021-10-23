@@ -45,7 +45,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(visible_to_students=True).all()
 
         if registered:
-            registered_ids = user.canvascourseregistration_set.filter(is_verified=True, is_blocked=False) \
+            registered_ids = user.canvascourseregistration_set.filter(status='VERIFIED') \
                 .values_list('course_id', flat=True)
             queryset = queryset.filter(pk__in=registered_ids)
 
@@ -65,7 +65,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             course_reg = CanvasCourseRegistration(user=request.user, course=course)
             course_reg.save()
 
-        if course_reg.is_blocked:
+        if course_reg.status == 'BLOCKED':
             return Response({
                 "status": "Blocked",
                 "message": "Registration has been blocked for you. Please contact your instructor.",
@@ -78,7 +78,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 "message": None,
             })
 
-        if not course_reg.is_verified:
+        if not (course_reg.status == 'VERIFIED'):
             return Response({
                 "status": "Awaiting Verification",
                 "message": None,

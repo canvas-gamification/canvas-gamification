@@ -119,7 +119,7 @@ class CanvasCourse(models.Model):
     def is_registered(self, user):
         if user.is_anonymous:
             return False
-        return self.canvascourseregistration_set.filter(user=user, is_verified=True, is_blocked=False).exists()
+        return self.canvascourseregistration_set.filter(user=user, status='VERIFIED').exists()
 
     def is_instructor(self, user):
         return self.instructor == user
@@ -142,14 +142,19 @@ def random_verification_code():
     return random.randint(1, 100)
 
 
+STATUS = [
+    ("UNREGISTERED", "UNREGISTERED"),
+    ("PENDING_VERIFICATION", "PENDING_VERIFICATION"),
+    ("VERIFIED", "VERIFIED"),
+    ("BLOCKED", "BLOCKED"),
+]
+
+
 class CanvasCourseRegistration(models.Model):
     course = models.ForeignKey(CanvasCourse, on_delete=models.CASCADE, db_index=True)
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, db_index=True)
-
     canvas_user_id = models.IntegerField(null=True, blank=True)
-    is_verified = models.BooleanField(default=False, db_index=True)
-    is_blocked = models.BooleanField(default=False, db_index=True)
-
+    status = models.CharField(max_length=100, choices=STATUS, default="UNREGISTERED")
     verification_code = models.IntegerField(default=random_verification_code)
     verification_attempts = models.IntegerField(default=3)
 
@@ -179,15 +184,15 @@ class CanvasCourseRegistration(models.Model):
         self.save()
 
     def check_verification_code(self, code):
-        if self.is_blocked:
+        if self.status == 'BLOCKED':
             return False
         if str(self.verification_code) == str(code):
-            self.is_verified = True
+            self.status = 'VERIFIED'
             self.save()
             return True
         self.verification_attempts -= 1
         if self.verification_attempts <= 0:
-            self.is_blocked = True
+            self.status = 'BLOCKED'
         self.save()
 
         return False
