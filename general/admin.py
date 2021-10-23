@@ -32,7 +32,7 @@ class ActionAdmin(admin.ModelAdmin):
 
 
 class QuestionReportAdmin(admin.ModelAdmin):
-    list_display = ('id', 'created_at', 'updated_at', 'report_details')
+    list_display = ('id', 'created_at', 'updated_at', 'report', 'report_details')
     list_filter = ('user', 'question',)
 
 
