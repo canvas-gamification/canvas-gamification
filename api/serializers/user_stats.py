@@ -4,7 +4,7 @@ from accounts.models import MyUser
 
 
 class UserStatsSerializer(serializers.ModelSerializer):
-    successRateByDifficulty = serializers.SerializerMethodField('success_rate_by_difficulty')
+    successRateByCategory = serializers.SerializerMethodField('success_rate_by_category')
 
     def success_rate_by_category(self, user):
         return user.success_rate_by_category
