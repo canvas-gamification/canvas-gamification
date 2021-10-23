@@ -15,7 +15,6 @@ from course.fields import JSONField
 from course.utils.junit_xml import parse_junit_xml
 from course.utils.utils import get_token_value, ensure_uqj, calculate_average_success
 from course.utils.variables import render_text, generate_variables
-from general.models.question_report import QuestionReport
 from general.services.action import create_submission_evaluation_action
 
 DIFFICULTY_CHOICES = [
@@ -233,7 +232,6 @@ class UserQuestionJunction(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='question_junctions', db_index=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='user_junctions', db_index=True)
     random_seed = models.IntegerField(default=random_seed)
-    report_id = models.ForeignKey(QuestionReport, on_delete=models.CASCADE, db_index=True, blank=True, null=True)
 
     last_viewed = models.DateTimeField(default=None, null=True, db_index=True)
     opened_tutorial = models.BooleanField(default=False)
