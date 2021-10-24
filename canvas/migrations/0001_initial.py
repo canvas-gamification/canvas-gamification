@@ -38,8 +38,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('canvas_user_id', models.IntegerField(blank=True, null=True)),
-                ('is_verified', models.BooleanField(db_index=True, default=False)),
-                ('is_blocked', models.BooleanField(db_index=True, default=False)),
+                ('status', models.CharField(choices=[('UNREGISTERED', 'UNREGISTERED'), ('PENDING_VERIFICATION', 'PENDING_VERIFICATION'), ('VERIFIED', 'VERIFIED'), ('BLOCKED', 'BLOCKED')], default='UNREGISTERED', max_length=100)),
                 ('verification_code', models.IntegerField(default=canvas.models.random_verification_code)),
                 ('verification_attempts', models.IntegerField(default=3)),
                 ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='canvas.CanvasCourse')),
