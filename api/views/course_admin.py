@@ -40,7 +40,7 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         if not username:
             raise ValidationError(ERROR_MESSAGES.COURSE_REGISTRATION.USERNAME_REQUIRED)
 
-        user = MyUser.objects.all().filter(username=username).get()
+        user = MyUser.objects.all().filter(username=username)
 
         if course.is_registered(user):
             raise ValidationError(ERROR_MESSAGES.COURSE_REGISTRATION.ALREADY_REGISTERED)
