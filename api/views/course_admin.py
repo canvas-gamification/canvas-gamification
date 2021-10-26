@@ -40,7 +40,7 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         if not username:
             raise ValidationError(ERROR_MESSAGES.COURSE_REGISTRATION.USERNAME_REQUIRED)
 
-        user = MyUser.objects.all().filter(username=username)
+        user = get_object_or_404(MyUser, username=username)
 
         if course.is_registered(user):
             raise ValidationError(ERROR_MESSAGES.COURSE_REGISTRATION.ALREADY_REGISTERED)
@@ -64,26 +64,11 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
             course_registration.verify()
         if status == 'BLOCKED':
             course_registration.block()
-
-        course_registration.save()
-
-        return Response(request.data)
-
-    # TODO: Implement unregister_user function that will change is_blocked and is_verified into an enum. Fix other apis
-    @action(detail=False, methods=['post'], url_path='change-registration')
-    def update_registration(self, request):
-        '''
-        Action that will change the status of  a canvascourseregistration object to unregistered.
-        '''
-        registration_id = request.data.get("id")
-        status = request.data.get("status")
-        # Get the object and update its is_block and is_verified
-        course_registration = get_object_or_404(CanvasCourseRegistration, id=registration_id)
-        if status == 'REGISTERED' or 'PENDING_VERIFICATION' or 'VERIFIED':
-            course_registration.unregister()
+        if status == 'PENDING_VERIFICATION':
+            course_registration.unverify()
         if status == 'UNREGISTERED':
-            course_registration.verify()
-        # TODO: Implement the registration that uses of canvas_user_id which can be done from canvas api
+            course_registration.unregister()
+
         course_registration.save()
 
         return Response(request.data)

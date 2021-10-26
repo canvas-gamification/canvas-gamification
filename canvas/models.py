@@ -174,15 +174,19 @@ class CanvasCourseRegistration(models.Model):
 
     def verify(self):
         self.status = 'VERIFIED'
+        self.save()
 
     def block(self):
         self.status = 'BLOCKED'
+        self.save()
 
     def unregister(self):
         self.status = 'UNREGISTERED'
+        self.save()
 
-    def pending(self):
+    def unverify(self):
         self.status = 'PENDING_VERIFICATION'
+        self.save()
 
     @property
     def canvas_user(self):
@@ -207,12 +211,12 @@ class CanvasCourseRegistration(models.Model):
         if self.is_blocked:
             return False
         if str(self.verification_code) == str(code):
-            self.status = 'VERIFIED'
+            self.verify()
             self.save()
             return True
         self.verification_attempts -= 1
         if self.verification_attempts <= 0:
-            self.status = 'BLOCKED'
+            self.block()
         self.save()
 
         return False
