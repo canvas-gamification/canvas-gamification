@@ -119,7 +119,7 @@ class CanvasCourse(models.Model):
     def is_registered(self, user):
         if user.is_anonymous:
             return False
-        return self.canvascourseregistration_set.filter(user=user, status='VERIFIED').exists()
+        return self.canvascourseregistration_set.filter(user=user, is_verified=True, is_blocked=False).exists()
 
     def is_instructor(self, user):
         return self.instructor == user
@@ -204,7 +204,7 @@ class CanvasCourseRegistration(models.Model):
         self.save()
 
     def check_verification_code(self, code):
-        if self.status == 'BLOCKED':
+        if self.is_blocked:
             return False
         if str(self.verification_code) == str(code):
             self.status = 'VERIFIED'
