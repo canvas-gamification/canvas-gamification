@@ -17,8 +17,8 @@ class QuestionSerializer(serializers.ModelSerializer):
         model = Question
         fields = ['id', 'title', 'text', 'max_submission_allowed', 'time_created', 'time_modified', 'author',
                   'author_name', 'difficulty', 'is_verified', 'token_value', 'success_rate', 'type_name', 'event',
-                  'event_id', 'category', 'category_id', 'parent_category_name', 'is_sample',
-                  'is_open', 'is_exam', 'is_exam_and_open', 'status', 'is_author', 'is_practice']
+                  'event_id', 'category', 'category_id', 'parent_category_name', 'course', 'status', 'is_sample',
+                  'is_open', 'is_exam', 'is_exam_and_open', 'is_author', 'is_practice']
 
     def get_uqj_status(self, obj):
         request = self.context.get('request', None)
