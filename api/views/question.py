@@ -75,5 +75,5 @@ class QuestionViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], url_path='count-favorite')
     def get_favorite_count(self, request, pk=None):
 
-        uqj = UserQuestionJunction.objects.all().filter(question_id=pk).count()
-        return Response(uqj)
+        uqj_count = UserQuestionJunction.objects.all().filter(question_id=pk).count()
+        return Response(uqj_count)
