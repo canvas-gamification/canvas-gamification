@@ -52,7 +52,7 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         return Response(request.data)
 
     @action(detail=False, methods=['post'], url_path='change-status')
-    def update_registration(self, request):
+    def update_status(self, request):
         '''
         Action that will update the status of a canvascourseregistration object.
         '''
@@ -60,9 +60,9 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         status = request.data.get("status")
         # Get the object and update its is_block and is_verified
         course_registration = get_object_or_404(CanvasCourseRegistration, id=registration_id)
-        if status == 'Verified':
+        if status == 'VERIFIED':
             course_registration.verify()
-        if status == 'Blocked':
+        if status == 'BLOCKED':
             course_registration.block()
 
         course_registration.save()
@@ -70,20 +70,19 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         return Response(request.data)
 
     # TODO: Implement unregister_user function that will change is_blocked and is_verified into an enum. Fix other apis
-    @action(detail=False, methods=['post'], url_path='unregister-user')
-    def unregister_user(self, request):
+    @action(detail=False, methods=['post'], url_path='change-registration')
+    def update_registration(self, request):
         '''
         Action that will change the status of  a canvascourseregistration object to unregistered.
         '''
         registration_id = request.data.get("id")
-        status = request.data.get("register_status")
+        status = request.data.get("status")
         # Get the object and update its is_block and is_verified
         course_registration = get_object_or_404(CanvasCourseRegistration, id=registration_id)
-        if status == 'Registered':
+        if status == 'REGISTERED' or 'PENDING_VERIFICATION' or 'VERIFIED':
             course_registration.unregister()
-        if status == 'Unregistered':
-            course_registration.pending()
-
+        if status == 'UNREGISTERED':
+            course_registration.verify()
         # TODO: Implement the registration that uses of canvas_user_id which can be done from canvas api
         course_registration.save()
 
