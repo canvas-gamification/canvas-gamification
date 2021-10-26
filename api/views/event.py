@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from api.permissions import IsOwnerOrReadOnly
 from api.serializers import EventSerializer
 from canvas.models import Event, EVENT_TYPE_CHOICES, CanvasCourse
+from general.services.action import create_event_action, update_event_action, import_event_action
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -22,6 +23,16 @@ class EventViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Event.objects.all()
+
+    def perform_create(self, serializer):
+        request = serializer.context['request']
+        serializer.save()
+        create_event_action(request.user, serializer.data)
+
+    def perform_update(self, serializer):
+        request = serializer.context['request']
+        serializer.save()
+        update_event_action(request.user, serializer.data)
 
     @action(detail=False, methods=['get'], url_path="get-event-types")
     def get_event_types(self, request, pk=None):
@@ -39,6 +50,7 @@ class EventViewSet(viewsets.ModelViewSet):
         course = get_object_or_404(CanvasCourse, id=request.data.get("course"))
         cloned_event = event.copy_to_course(course)
 
+        import_event_action(request.user, self.get_serializer(cloned_event).data)
         return Response(
             self.get_serializer(cloned_event).data,
             status=status.HTTP_201_CREATED
