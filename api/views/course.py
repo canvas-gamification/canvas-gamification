@@ -67,7 +67,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             course_reg = CanvasCourseRegistration(user=request.user, course=course)
             course_reg.save()
 
-        if course_reg.status == 'BLOCKED':
+        if course_reg.is_blocked:
             return Response({
                 "status": "Blocked",
                 "message": "Registration has been blocked for you. Please contact your instructor.",
@@ -80,7 +80,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 "message": None,
             })
 
-        if not (course_reg.status == 'VERIFIED'):
+        if not course_reg.is_verified:
             return Response({
                 "status": "Awaiting Verification",
                 "message": None,

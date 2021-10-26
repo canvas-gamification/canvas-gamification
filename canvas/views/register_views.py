@@ -101,7 +101,7 @@ def register_course_view(request, pk):
         course_reg = CanvasCourseRegistration(user=request.user, course=course)
         course_reg.save()
 
-    if course_reg.status == 'BLOCKED':
+    if course_reg.is_blocked:
         messages.add_message(
             request,
             messages.ERROR,
@@ -112,7 +112,7 @@ def register_course_view(request, pk):
     if not course_reg.canvas_user_id:
         return _name_registration_view(request, course, course_reg)
 
-    if not (course_reg.status == 'VERIFIED'):
+    if not course_reg.is_verified:
         return _verify_registration_view(request, course, course_reg)
 
     messages.add_message(request, messages.SUCCESS, 'You are already registered.')

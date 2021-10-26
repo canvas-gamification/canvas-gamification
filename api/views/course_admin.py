@@ -61,9 +61,9 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         # Get the object and update its is_block and is_verified
         course_registration = get_object_or_404(CanvasCourseRegistration, id=registration_id)
         if status == 'Verified':
-            course_registration.status = "VERIFIED"
+            course_registration.verify()
         if status == 'Blocked':
-            course_registration.status = "BLOCKED"
+            course_registration.block()
 
         course_registration.save()
 
@@ -80,9 +80,9 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         # Get the object and update its is_block and is_verified
         course_registration = get_object_or_404(CanvasCourseRegistration, id=registration_id)
         if status == 'Registered':
-            course_registration.status = "UNREGISTERED"
+            course_registration.unregister()
         if status == 'Unregistered':
-            course_registration.status = "PENDING_VERIFICATION"
+            course_registration.pending()
 
         # TODO: Implement the registration that uses of canvas_user_id which can be done from canvas api
         course_registration.save()

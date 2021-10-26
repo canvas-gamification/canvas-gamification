@@ -165,6 +165,26 @@ class CanvasCourseRegistration(models.Model):
         return [get_token_use(self.user, tup['id']) for tup in self.course.token_use_options.values('id')]
 
     @property
+    def is_verified(self):
+        return self.status == 'VERIFIED'
+
+    @property
+    def is_blocked(self):
+        return self.status == 'BLOCKED'
+
+    def verify(self):
+        self.status = 'VERIFIED'
+
+    def block(self):
+        self.status = 'BLOCKED'
+
+    def unregister(self):
+        self.status = 'UNREGISTERED'
+
+    def pending(self):
+        self.status = 'PENDING_VERIFICATION'
+
+    @property
     def canvas_user(self):
         if self.canvas_user_id is None:
             return None
