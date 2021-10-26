@@ -1,8 +1,10 @@
 from rest_framework import serializers
 
 import api.error_messages as ERROR_MESSAGES
-from api.serializers import QuestionSerializer
+from api.serializers import QuestionSerializer, EventSerializer, QuestionCategorySerializer
+from canvas.models import Event
 from course.models.java import JavaQuestion, JavaSubmission
+from course.models.models import QuestionCategory
 
 
 class JavaQuestionSerializer(serializers.ModelSerializer):
@@ -13,13 +15,17 @@ class JavaQuestionSerializer(serializers.ModelSerializer):
     input_files = serializers.JSONField(
         required=True, error_messages=ERROR_MESSAGES.INPUT_FILES.ERROR_MESSAGES)
     variables = serializers.JSONField()
+    event = EventSerializer()
+    event_id = serializers.PrimaryKeyRelatedField(source='event', queryset=Event.objects.all())
+    category = QuestionCategorySerializer()
+    category_id = serializers.PrimaryKeyRelatedField(source='category', queryset=QuestionCategory.objects.all())
 
     class Meta:
         model = JavaQuestion
         fields = ['id', 'title', 'text', 'answer', 'max_submission_allowed', 'time_created', 'time_modified', 'author',
-                  'category', 'difficulty', 'is_verified', 'variables', 'junit_template', 'input_files', 'token_value',
-                  'success_rate', 'type_name', 'event', 'is_sample', 'category_name', 'parent_category_name',
-                  'course', 'event_name', 'author_name']
+                  'category', 'category_id', 'difficulty', 'is_verified', 'variables', 'junit_template', 'input_files',
+                  'token_value', 'success_rate', 'type_name', 'event', 'event_id', 'is_sample', 'parent_category_name',
+                  'course', 'author_name']
 
 
 class JavaSubmissionSerializer(serializers.ModelSerializer):
