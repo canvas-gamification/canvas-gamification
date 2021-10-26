@@ -47,7 +47,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(visible_to_students=True).all()
 
         if registered:
-            registered_ids = user.canvascourseregistration_set.filter(is_verified=True, is_blocked=False) \
+            registered_ids = user.canvascourseregistration_set.filter(status='VERIFIED') \
                 .values_list('course_id', flat=True)
             queryset = queryset.filter(pk__in=registered_ids)
 
