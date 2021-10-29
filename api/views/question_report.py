@@ -1,4 +1,5 @@
-from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -13,12 +14,15 @@ class QuestionReportViewSet(viewsets.ModelViewSet):
     queryset = QuestionReport.objects.all()
     serializer_class = QuestionReportSerializer
     permission_classes = [IsAuthenticated, ]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['question', 'user']
 
     def perform_create(self, serializer):
         serializer.save()
 
     @action(detail=False, methods=['post'], url_path='add-report')
     def create_report(self, request, pk=None):
+
         report = request.data.get('report')
         report_details = request.data.get('report_details')
         user_instance = request.data.get('user')
@@ -34,7 +38,7 @@ class QuestionReportViewSet(viewsets.ModelViewSet):
         return Response({"success": True})
 
     @action(detail=False, methods=['get'], url_path='get-report')
-    def get_report(self, request, pk=None):
+    def get_report(self, pk=None):
         queryset = self.filter_queryset(self.get_queryset())
         serialized_reports = {}
         for query in queryset:
@@ -43,7 +47,7 @@ class QuestionReportViewSet(viewsets.ModelViewSet):
         return Response(serialized_reports)
 
     @action(detail=False, methods=['delete'], url_path='delete-report')
-    def delete_report(self, request, pk=None):
+    def delete_report(self, pk=None):
         queryset = self.filter_queryset(self.get_queryset())
         queryset[0].delete()
 
