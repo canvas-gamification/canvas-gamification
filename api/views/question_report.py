@@ -19,7 +19,6 @@ class QuestionReportViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'], url_path='add-report')
     def create_report(self, request, pk=None):
-
         report = request.data.get('report')
         report_details = request.data.get('report_details')
         user_instance = request.data.get('user')
@@ -35,18 +34,13 @@ class QuestionReportViewSet(viewsets.ModelViewSet):
         return Response({"success": True})
 
     @action(detail=False, methods=['get'], url_path='get-report')
-    def get_report(self, pk=None):
+    def get_report(self, response, pk=None):
         queryset = self.filter_queryset(self.get_queryset())
-        serialized_reports = {}
-        for q in queryset:
-            serialized_reports = QuestionReportSerializer(q).data
-
+        serialized_reports = QuestionReportSerializer(queryset[0]).data
         return Response(serialized_reports)
 
     @action(detail=False, methods=['delete'], url_path='delete-report')
-    def delete_report(self, pk=None):
+    def delete_report(self, response, pk=None):
         queryset = self.filter_queryset(self.get_queryset())
-        for q in queryset:
-            q.delete()
-
+        queryset[0].delete()
         return Response({"success": True})
