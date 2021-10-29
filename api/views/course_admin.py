@@ -9,6 +9,7 @@ from accounts.models import MyUser
 from api.permissions import TeacherAccessPermission
 from api.serializers import CourseSerializer, CanvasCourseRegistrationSerializer
 from canvas.models import CanvasCourse, CanvasCourseRegistration
+from general.services.action import course_registration_update_status_action, course_registration_create_action
 
 import api.error_messages as ERROR_MESSAGES
 
@@ -52,6 +53,7 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         # TODO: Implement the registration that uses of canvas_user_id which can be done from canvas api
         canvascourseregistration = CanvasCourseRegistration(course=course, user=user)
         canvascourseregistration.save()
+        course_registration_create_action(CanvasCourseRegistrationSerializer(canvascourseregistration).data, self.request.user)
 
         return Response(request.data)
 
@@ -74,5 +76,5 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
             course_registration.unregister()
 
         course_registration.save()
-
+        course_registration_update_status_action(CanvasCourseRegistrationSerializer(course_registration).data, self.request.user)
         return Response(request.data)
