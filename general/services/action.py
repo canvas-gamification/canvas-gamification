@@ -256,7 +256,7 @@ def create_submission_evaluation_action(submission):
     )
 
 
-def course_registration_update_status_action(registration, user):
+def course_registration_update_action(registration, user, data):
     Action.create_action(
         actor=user,
         description='User update a course registration status.',
@@ -264,8 +264,8 @@ def course_registration_update_status_action(registration, user):
         status=ActionStatus.COMPLETE,
         verb=ActionVerb.CREATED,
         object_type=ActionObjectType.COURSE_REGISTRATION,
-        object_id=registration['id'],
-        data=registration
+        object_id=registration.id,
+        data=data
     )
 
 
