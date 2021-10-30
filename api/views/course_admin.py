@@ -81,6 +81,6 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         course_registration.save()
 
         # Call and save actions
-        data = {status : status}
+        data = {status: status}
         course_registration_update_action(course_registration, self.request.user, data)
         return Response(request.data)
