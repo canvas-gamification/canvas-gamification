@@ -2,8 +2,7 @@ from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
 from api.serializers import EventSerializer, QuestionCategorySerializer
-from canvas.models import Event
-from course.models.models import Question, QuestionCategory
+from course.models.models import Question
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -23,7 +22,6 @@ class QuestionSerializer(serializers.ModelSerializer):
         request = self.context.get('request', None)
         if request is None:
             return ''
-        uqj = request.user.question_junctions.get(question__pk=obj.id)
         return request.user.question_junctions.get(question__pk=obj.id).status
 
     def get_is_author(self, obj):

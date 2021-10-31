@@ -3,9 +3,7 @@ from rest_framework.fields import SerializerMethodField
 
 import api.error_messages as ERROR_MESSAGES
 from api.serializers import QuestionSerializer, EventSerializer, QuestionCategorySerializer
-from canvas.models import Event
 from course.models.java import JavaQuestion, JavaSubmission
-from course.models.models import QuestionCategory
 
 
 class JavaQuestionSerializer(serializers.ModelSerializer):
