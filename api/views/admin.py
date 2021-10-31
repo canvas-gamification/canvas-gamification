@@ -4,6 +4,7 @@ from rest_framework.response import Response
 
 from api.permissions import TeacherAccessPermission
 from api.serializers import QuestionCategorySerializer
+from canvas.models import CanvasCourse
 from course.models.models import QuestionCategory, DIFFICULTY_CHOICES
 from course.models.java import JavaQuestion
 from course.models.multiple_choice import MultipleChoiceQuestion
@@ -44,3 +45,17 @@ class AdminViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'], url_path='category-stats')
     def category_stats(self, request):
         return Response(self.get_nested_categories())
+
+    @action(detail=False, methods=['get'], url_path='view-courses')
+    def view_courses(self, request):
+        course_details = []
+        for course in CanvasCourse.objects.all():
+            course_details.append({
+                'course_id': course.course_id,
+                'name': course.name,
+                'url': course.url,
+                'course_name': course.canvas_course_name,
+                'start_date': course.start_date,
+                'end_date': course.end_date
+            })
+        return Response(course_details)
