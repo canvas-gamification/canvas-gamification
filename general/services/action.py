@@ -43,7 +43,7 @@ def create_submission_action(submission):
 
 
 def create_question_action(question, user):
-    action = Action.create_action(
+    Action.create_action(
         actor=user,
         description='User created a new ' + question['type_name'],
         token_change=0,
