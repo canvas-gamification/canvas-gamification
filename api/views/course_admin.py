@@ -18,12 +18,11 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
     permission_classes = [TeacherAccessPermission, ]
     queryset = CanvasCourse.objects.all()
     serializer_class = CourseSerializer
-    ordering_fields = []
+    ordering_fields = ['id', 'user__username', 'user__first_name', 'status']
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
 
     @action(detail=True, methods=['get'], url_path='registered-users')
     def registered_users(self, request, pk=None):
-        self.ordering_fields = ['id', 'user__username', 'user__first_name', 'status']
         course = get_object_or_404(self.get_queryset(), pk=pk)
         name = request.query_params.get('search', '')
         course_registration_list = self.filter_queryset(course.canvascourseregistration_set.all())
