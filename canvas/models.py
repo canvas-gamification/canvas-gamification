@@ -337,3 +337,9 @@ class TokenUse(models.Model):
                 'posted_grade': 0,
             }
         })
+
+
+class Team(models.Model):
+    name = models.CharField(max_length=100)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='teams')
+    users = models.ManyToManyField(MyUser)
