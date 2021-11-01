@@ -55,13 +55,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djrichtextfield',
+    "graphene_django",
     'accounts',
     'course',
     'jsoneditor',
     'general',
     'api',
     'canvas',
-    'graphql',
 ]
 
 MIDDLEWARE = [
