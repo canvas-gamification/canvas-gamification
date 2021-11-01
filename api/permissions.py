@@ -22,6 +22,21 @@ class StudentsMustBeRegisteredPermission(permissions.IsAuthenticated):
         return True
 
 
+class CourseEditPermission(permissions.IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        if request.method == "PUT":
+            return obj.has_edit_permission(obj, request.user)
+        return True
+
+
+class EventCreatePermission(permissions.IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        if request.method == "POST":
+            return obj.has_create_permission(user)
+        return True
+
+
 class HasDeletePermission(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
         if request.method == 'DELETE':
