@@ -1,3 +1,4 @@
+from django.core import serializers
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -46,16 +47,7 @@ class AdminViewSet(viewsets.ViewSet):
     def category_stats(self, request):
         return Response(self.get_nested_categories())
 
-    @action(detail=False, methods=['get'], url_path='view-courses')
-    def view_courses(self, request):
-        course_details = []
-        for course in CanvasCourse.objects.all():
-            course_details.append({
-                'course_id': course.course_id,
-                'name': course.name,
-                'url': course.url,
-                'course_name': course.canvas_course_name,
-                'start_date': course.start_date,
-                'end_date': course.end_date
-            })
+    @action(detail=False, methods=['get'], url_path='courses')
+    def courses(self, request):
+        course_details = CanvasCourse.objects.values('course_id', 'name', 'url', 'start_date', 'end_date')
         return Response(course_details)
