@@ -1,15 +1,13 @@
 import graphene
 
-from api.types import Team
-from canvas.models import Team as TeamModel
+import api.queries.team
 
 
-class Query(graphene.ObjectType):
+class Query(
+    api.queries.team.Query,
+    graphene.ObjectType,
+):
     hello = graphene.String(default_value="Hi!")
-    teams = graphene.List(Team)
-
-    def resolve_teams(root, info):
-        return TeamModel.objects.all()
 
 
 schema = graphene.Schema(query=Query)
