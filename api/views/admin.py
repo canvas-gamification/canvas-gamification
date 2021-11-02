@@ -1,13 +1,12 @@
-from django.core import serializers
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.permissions import TeacherAccessPermission
-from api.serializers import QuestionCategorySerializer
+from api.serializers import QuestionCategorySerializer, CourseSerializer
 from canvas.models import CanvasCourse
-from course.models.models import QuestionCategory, DIFFICULTY_CHOICES
 from course.models.java import JavaQuestion
+from course.models.models import QuestionCategory, DIFFICULTY_CHOICES
 from course.models.multiple_choice import MultipleChoiceQuestion
 from course.models.parsons import ParsonsQuestion
 
@@ -49,5 +48,5 @@ class AdminViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['get'], url_path='courses')
     def courses(self, request):
-        course_details = CanvasCourse.objects.values('course_id', 'name', 'url', 'start_date', 'end_date')
+        course_details = [CourseSerializer(course).data for course in CanvasCourse.objects.all()]
         return Response(course_details)
