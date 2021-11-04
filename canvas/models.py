@@ -212,12 +212,10 @@ class CanvasCourseRegistration(models.Model):
             return False
         if str(self.verification_code) == str(code):
             self.verify()
-            self.save()
             return True
         self.verification_attempts -= 1
         if self.verification_attempts <= 0:
             self.block()
-        self.save()
 
         return False
 
