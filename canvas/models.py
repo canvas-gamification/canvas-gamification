@@ -3,6 +3,7 @@ import copy
 import canvasapi
 from django.db import models
 from django.db.models import Sum, F, FloatField
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from fuzzywuzzy import process
 
@@ -131,6 +132,14 @@ class CanvasCourse(models.Model):
     def has_edit_permission(self, user):
         course_reg = get_course_registration(user, self)
         return course_reg == INSTRUCTOR
+
+    def has_create_permission(self, user):
+        course_reg = get_course_registration(user, self)
+        return course_reg == INSTRUCTOR
+
+    def has_create_event_permission(self, user):
+        course_reg = get_course_registration(user, self)
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
     def save(self, *args, **kwargs):
         self.create_verification_assignment_group()
@@ -279,10 +288,11 @@ class Event(models.Model):
         return self.is_open and self.course.is_registered(user)
 
     def has_edit_permission(self, user):
-        return self.course.is_instructor(user) or user.is_teacher
+        course_reg = get_object_or_404(CanvasCourseRegistration, user=user, course=self.course)
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
     def has_create_permission(self, user):
-        course_reg = self.course.canvascourseregistration_set.filter(user=user, is_verified=True, is_blocked=False)
+        course_reg = get_object_or_404(CanvasCourseRegistration, user=user, course=self.course)
         return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
     def is_allowed_to_open(self, user):
