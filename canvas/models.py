@@ -133,10 +133,6 @@ class CanvasCourse(models.Model):
         course_reg = get_course_registration(user, self)
         return course_reg == INSTRUCTOR
 
-    def has_create_permission(self, user):
-        course_reg = get_course_registration(user, self)
-        return course_reg == INSTRUCTOR
-
     def has_create_event_permission(self, user):
         course_reg = get_course_registration(user, self)
         return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR

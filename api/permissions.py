@@ -32,7 +32,7 @@ class CourseEditPermission(permissions.IsAuthenticated):
 class CourseCreatePermission(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
         if request.method == "POST":
-            return obj.has_create_permission(obj, request.user)
+            return request.user.is_teacher
         return True
 
 
