@@ -17,3 +17,11 @@ class QuestionReportViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
         create_question_report_action(serializer.data, self.request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_teacher:
+            reports = QuestionReport.objects.all()
+        else:
+            reports = QuestionReport.objects.filter(user=user).all()
+        return reports
