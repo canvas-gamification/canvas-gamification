@@ -5,17 +5,19 @@ from api.serializers import UQJSerializer
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 
-class UQJGenericViewSet(viewsets.GenericViewSet):
+class UpdateUQJViewSet(viewsets.GenericViewSet):
     """
     Query Parameters
     + Standard ordering is applied on the field 'last_viewed'
     """
     serializer_class = UQJSerializer
+    permission_classes = [IsAuthenticated, ]
 
-    @action(detail=False, methods=['post'], url_path='switch-favorite')
-    def switch_favorite(self, request, pk=None):
+    @action(detail=False, methods=['post'], url_path='update-favorite')
+    def update_is_favorite(self, request, pk=None):
         """
         Updates "is_favorite" for UserQuestionJunction
         """
