@@ -31,7 +31,12 @@ class ActionAdmin(admin.ModelAdmin):
     list_filter = ('status',)
 
 
+class QuestionReportAdmin(admin.ModelAdmin):
+    list_display = ('user', 'question', 'report')
+    list_filter = ('user', 'question',)
+
+
 admin.site.register(FAQ, FAQAdmin)
 admin.site.register(Action, ActionAdmin)
 admin.site.register(ContactUs)
-admin.site.register(QuestionReport)
+admin.site.register(QuestionReport, QuestionReportAdmin)
