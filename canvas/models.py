@@ -368,3 +368,7 @@ class Team(models.Model):
     name = models.CharField(max_length=100)
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='teams')
     users = models.ManyToManyField(MyUser)
+
+    @classmethod
+    def create(cls, event_id, name):
+        return cls.objects.create(event_id=event_id, name=name)
