@@ -15,6 +15,7 @@ class CourseSerializer(serializers.ModelSerializer):
     question_set = QuestionSerializer(many=True, read_only=True)
     uqjs = serializers.SerializerMethodField('get_uqjs')
     course_reg = serializers.SerializerMethodField('get_course_reg')
+    has_create_event_permission = serializers.SerializerMethodField('get_create_event_permission')
 
     def get_user(self):
         user = MyAnonymousUser()
@@ -56,11 +57,20 @@ class CourseSerializer(serializers.ModelSerializer):
         course_reg = get_course_registration(user, course)
         return CanvasCourseRegistrationSerializer(course_reg).data
 
+    def get_create_event_permission(self, course):
+        user = self.get_user()
+
+        # if user is not logged in or the request has no user attached
+        if not user.is_authenticated:
+            return False
+
+        return course.has_create_event_permission(user)
+
     class Meta:
         model = CanvasCourse
         fields = ['id', 'mock', 'name', 'url', 'course_id', 'token', 'allow_registration', 'visible_to_students',
                   'start_date', 'end_date', 'instructor', 'status', 'is_registered', 'token_use_options', 'events',
-                  'uqjs', 'question_set', 'course_reg', 'leader_board', ]
+                  'uqjs', 'question_set', 'course_reg', 'leader_board', 'has_create_event_permission']
 
 
 class CourseSerializerList(serializers.ModelSerializer):

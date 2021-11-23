@@ -6,7 +6,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from api.serializers import CourseSerializer, CourseSerializerList
-from api.permissions import StudentsMustBeRegisteredPermission
+from api.permissions import StudentsMustBeRegisteredPermission, CourseEditPermission, CourseCreatePermission
 import api.error_messages as ERROR_MESSAGES
 from canvas.models import CanvasCourse, CanvasCourseRegistration
 from canvas.utils.utils import get_course_registration
@@ -24,7 +24,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         'retrieve': CourseSerializer,
         'list': CourseSerializerList,
     }
-    permission_classes = [StudentsMustBeRegisteredPermission, ]
+    permission_classes = [StudentsMustBeRegisteredPermission, CourseEditPermission, CourseCreatePermission, ]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, ]
     filterset_fields = ['mock', 'name', 'allow_registration', 'visible_to_students', 'instructor', ]
     ordering_fields = ['name', 'start_date', 'end_date', ]
