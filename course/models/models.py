@@ -18,9 +18,9 @@ from course.utils.variables import render_text, generate_variables
 from general.services.action import create_submission_evaluation_action
 
 DIFFICULTY_CHOICES = [
-    ("EASY", "EASY"),
-    ("MEDIUM", "MEDIUM"),
-    ("HARD", "HARD"),
+    ("EASY", "Easy"),
+    ("MEDIUM", "Medium"),
+    ("HARD", "Hard"),
 ]
 
 
