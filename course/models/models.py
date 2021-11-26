@@ -19,7 +19,7 @@ from general.services.action import create_submission_evaluation_action
 
 DIFFICULTY_CHOICES = [
     ("EASY", "EASY"),
-    ("NORMAL", "MEDIUM"),
+    ("MEDIUM", "MEDIUM"),
     ("HARD", "HARD"),
 ]
 
@@ -77,7 +77,7 @@ class TokenValue(models.Model):
         if self.value is None:
             if self.difficulty == 'EASY':
                 self.value = 1
-            if self.difficulty == "NORMAL":
+            if self.difficulty == "MEDIUM":
                 self.value = 2
             if self.difficulty == 'HARD':
                 self.value = 3
