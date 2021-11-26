@@ -77,7 +77,7 @@ class TokenValue(models.Model):
         if self.value is None:
             if self.difficulty == 'EASY':
                 self.value = 1
-            if self.difficulty == "MEDIUM":
+            if self.difficulty == 'MEDIUM':
                 self.value = 2
             if self.difficulty == 'HARD':
                 self.value = 3
