@@ -1,5 +1,4 @@
 from django.db import models
-
 from canvas.models import Event
 from course.models.models import Submission, Question, UserQuestionJunction
 from course.fields import JSONField
@@ -12,11 +11,14 @@ class SubmissionAnalytics(models.Model):
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True)
+
     user_id = models.IntegerField(default=0)
     first_name = models.CharField(max_length=255, default="n/a")
     last_name = models.CharField(max_length=255, default="n/a")
     ans_file = JSONField()
+
     ans = models.CharField(max_length=5, default="n/a")
+
     lines = models.IntegerField(default=0)
     blank_lines = models.IntegerField(default=0)
     comment_lines = models.IntegerField(default=0)
@@ -85,3 +87,4 @@ class QuestionAnalytics(models.Model):
 #             num_submission = number
 #         }...]
 #     """
+

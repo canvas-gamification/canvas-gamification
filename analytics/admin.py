@@ -5,3 +5,4 @@ from analytics.models import SubmissionAnalytics, QuestionAnalytics
 admin.site.register(SubmissionAnalytics)
 admin.site.register(QuestionAnalytics)
 # admin.site.register(EventAnalytics)
+
