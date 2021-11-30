@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .utils import get_submission
+from .utils import init_analytics, init_question_metrics, init_event_metrics
 
 
 def analysis(request):
-    get_submission.submission_analytics()
+    init_analytics.analytics()
+    init_question_metrics.init()
+    # init_event_metrics.init()
     return HttpResponse("ok", content_type='application/json')
 
