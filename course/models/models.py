@@ -459,6 +459,11 @@ class Submission(PolymorphicModel):
     def submit(self):
         pass
 
+    def has_view_permission(self, user):
+        if user.is_teacher or self.user is user:
+            return True
+        return False
+
 
 class CodeSubmission(Submission):
     tokens = JSONField()

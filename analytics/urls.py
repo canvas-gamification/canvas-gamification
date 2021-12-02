@@ -3,4 +3,4 @@ from . import views
 
 urlpatterns = [
     path('analytics', views.analysis),
-] 
+]
