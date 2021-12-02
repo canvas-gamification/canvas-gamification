@@ -65,7 +65,7 @@ class QuestionCategory(models.Model):
 
     @property
     def next_category_ids(self):
-        return self.next_categories.values_list('pk', flat=True)
+        return list(self.next_categories.values_list('pk', flat=True))
 
 
 class TokenValue(models.Model):

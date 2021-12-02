@@ -1,7 +1,8 @@
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 
 import api.error_messages as ERROR_MESSAGES
-from api.serializers import QuestionSerializer
+from api.serializers import QuestionSerializer, EventSerializer, QuestionCategorySerializer
 from course.models.java import JavaQuestion, JavaSubmission
 
 
@@ -13,13 +14,21 @@ class JavaQuestionSerializer(serializers.ModelSerializer):
     input_files = serializers.JSONField(
         required=True, error_messages=ERROR_MESSAGES.INPUT_FILES.ERROR_MESSAGES)
     variables = serializers.JSONField()
+    event_obj = SerializerMethodField('get_event_obj')
+    category_obj = SerializerMethodField('get_category_obj')
 
     class Meta:
         model = JavaQuestion
         fields = ['id', 'title', 'text', 'answer', 'max_submission_allowed', 'time_created', 'time_modified', 'author',
-                  'category', 'difficulty', 'is_verified', 'variables', 'junit_template', 'input_files', 'token_value',
-                  'success_rate', 'type_name', 'event', 'is_sample', 'category_name', 'parent_category_name',
-                  'course_name', 'event_name', 'author_name']
+                  'category', 'category_obj', 'difficulty', 'is_verified', 'variables', 'junit_template', 'input_files',
+                  'token_value', 'success_rate', 'type_name', 'event', 'event_obj', 'is_sample', 'parent_category_name',
+                  'course', 'author_name']
+
+    def get_event_obj(self, question):
+        return EventSerializer(question.event).data
+
+    def get_category_obj(self, question):
+        return QuestionCategorySerializer(question.category).data
 
 
 class JavaSubmissionSerializer(serializers.ModelSerializer):
