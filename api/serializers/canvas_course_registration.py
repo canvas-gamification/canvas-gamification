@@ -28,5 +28,5 @@ class CanvasCourseRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CanvasCourseRegistration
-        fields = ['id', 'canvas_user_id', 'is_verified', 'is_blocked', 'token_uses', 'total_tokens_received',
+        fields = ['id', 'canvas_user_id', 'status', 'is_verified', 'is_blocked', 'token_uses', 'total_tokens_received',
                   'available_tokens', 'username', 'name']
