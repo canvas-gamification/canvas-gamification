@@ -239,6 +239,7 @@ class UserQuestionJunction(models.Model):
 
     is_solved = models.BooleanField(default=False, db_index=True)
     is_partially_solved = models.BooleanField(default=False, db_index=True)
+    is_favorite = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('user', 'question')
@@ -457,6 +458,11 @@ class Submission(PolymorphicModel):
 
     def submit(self):
         pass
+
+    def has_view_permission(self, user):
+        if user.is_teacher or self.user is user:
+            return True
+        return False
 
 
 class CodeSubmission(Submission):

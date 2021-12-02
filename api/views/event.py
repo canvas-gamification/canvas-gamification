@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from api.permissions import IsOwnerOrReadOnly
+from api.permissions import IsOwnerOrReadOnly, EventCreatePermission, EventEditPermission
 from api.serializers import EventSerializer
 from canvas.models import Event, EVENT_TYPE_CHOICES, CanvasCourse
 from general.services.action import create_event_action, update_event_action, import_event_action
@@ -17,7 +17,7 @@ class EventViewSet(viewsets.ModelViewSet):
     - Base filtering on the 'course' parameter
     """
     serializer_class = EventSerializer
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly, ]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly, EventCreatePermission, EventEditPermission]
     filter_backends = [DjangoFilterBackend, ]
     filterset_fields = ['course', ]
 
