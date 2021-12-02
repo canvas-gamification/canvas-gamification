@@ -267,3 +267,15 @@ def course_registration_update_action(registration, user, data):
         object_id=registration.id,
         data=data
     )
+
+def create_question_report_action(report, user):
+    Action.create_action(
+        actor=user,
+        description='User created a new report.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.CREATED,
+        object_type=ActionObjectType.QUESTION,
+        object_id=report['id'],
+        data=report
+    )
