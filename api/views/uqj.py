@@ -6,6 +6,7 @@ from course.models.models import UserQuestionJunction, Question
 from api.pagination import BasePagination
 from api.serializers import UQJSerializer
 
+
 class UQJFilterSet(FilterSet):
     question_event = NumberFilter(field_name='question__event')
     question = NumberFilter(field_name='question')
