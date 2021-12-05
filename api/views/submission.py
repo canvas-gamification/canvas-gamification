@@ -1,12 +1,13 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 import api.error_messages as ERROR_MESSAGES
+from api.permissions import HasViewSubmissionPermission
 from api.serializers import JavaSubmissionSerializer, MultipleChoiceSubmissionSerializer, ParsonsSubmissionSerializer
 from api.serializers.java_question import JavaSubmissionHiddenDetailsSerializer
 from api.serializers.multiple_choice_question import MultipleChoiceSubmissionHiddenDetailsSerializer
@@ -27,7 +28,7 @@ class SubmissionViewSet(viewsets.GenericViewSet):
     Optional Parameters
     ?question: number => filter the submissions by question
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasViewSubmissionPermission, ]
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
     ordering_fields = ['submission_time', ]
     queryset = Submission.objects.all()
@@ -51,7 +52,10 @@ class SubmissionViewSet(viewsets.GenericViewSet):
     def list(self, request):
         question = request.GET.get("question", None)
 
-        query_set = self.filter_queryset(self.get_queryset()).filter(uqj__user=request.user)
+        if request.user.is_teacher:
+            query_set = self.get_queryset()
+        else:
+            query_set = self.filter_queryset(self.get_queryset()).filter(uqj__user=request.user)
         if question:
             query_set = query_set.filter(uqj__question_id=question)
 
@@ -62,8 +66,6 @@ class SubmissionViewSet(viewsets.GenericViewSet):
 
     def retrieve(self, request, pk=None):
         submission = get_object_or_404(Submission.objects.all(), pk=pk)
-        if submission.uqj.user != request.user:
-            raise PermissionDenied()
         return Response(self.get_serialized_data(submission))
 
     @action(detail=False, methods=['post'])

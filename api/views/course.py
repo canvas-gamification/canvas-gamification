@@ -6,9 +6,9 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from api.serializers import CourseSerializer, CourseSerializerList
-from api.permissions import StudentsMustBeRegisteredPermission
+from api.permissions import StudentsMustBeRegisteredPermission, CourseEditPermission, CourseCreatePermission
 import api.error_messages as ERROR_MESSAGES
-from canvas.models import CanvasCourse, CanvasCourseRegistration
+from canvas.models import CanvasCourse, CanvasCourseRegistration, MyUser
 from canvas.utils.utils import get_course_registration
 from general.services.action import course_registration_verify_action, course_registration_student_number_action, \
     course_registration_confirm_name_action
@@ -24,7 +24,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         'retrieve': CourseSerializer,
         'list': CourseSerializerList,
     }
-    permission_classes = [StudentsMustBeRegisteredPermission, ]
+    permission_classes = [StudentsMustBeRegisteredPermission, CourseEditPermission, CourseCreatePermission, ]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, ]
     filterset_fields = ['mock', 'name', 'allow_registration', 'visible_to_students', 'instructor', ]
     ordering_fields = ['name', 'start_date', 'end_date', ]
@@ -47,7 +47,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(visible_to_students=True).all()
 
         if registered:
-            registered_ids = user.canvascourseregistration_set.filter(is_verified=True, is_blocked=False) \
+            registered_ids = user.canvascourseregistration_set.filter(status='VERIFIED') \
                 .values_list('course_id', flat=True)
             queryset = queryset.filter(pk__in=registered_ids)
 
@@ -119,6 +119,8 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 raise ValidationError()
 
             course_reg.set_canvas_user(canvas_user)
+            # Change status to PENDING-VERIFICATION after successfully find the user
+            course_reg.unverify()
             course_registration_student_number_action(request.user)
             return Response({
                 "success": True,
@@ -131,6 +133,8 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             if not canvas_user:
                 raise ValidationError(ERROR_MESSAGES.USER.INVALID)
             course_reg.set_canvas_user(canvas_user)
+            # Change status to PENDING-VERIFICATION after successfully find the user
+            course_reg.unverify()
             course_registration_confirm_name_action(request.user)
             return Response({
                 "success": True,
@@ -155,6 +159,69 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 "guessed_name": guessed_names[0],
             })
 
+        raise ValidationError(ERROR_MESSAGES.USER.INVALID)
+
+    @action(detail=True, methods=['post'], url_path="register-dashboard")
+    def register_dashboard(self, request, pk=None):
+
+        name = request.data.get("name", None)
+        student_number = request.data.get("student_number", None)
+        confirmed_name = request.data.get("confirmed_name", None)
+        student_username = request.data.get("student_username", None)
+
+        course = get_object_or_404(CanvasCourse, pk=pk)
+        user = get_object_or_404(MyUser, username=student_username)
+        course_reg = get_course_registration(user, course)
+
+        if course_reg is None:
+            # create a CanvasCourseRegistration for this (user, course) pair if one does not already exist
+            course_reg = CanvasCourseRegistration(user=user, course=course)
+            course_reg.save()
+
+        if student_number is not None:
+            # if a student number was given in the request data, try to find this canvas user using it
+            canvas_user = course.get_user(student_id=student_number)
+
+            if canvas_user is None:
+                raise ValidationError()
+
+            course_reg.set_canvas_user(canvas_user)
+            course_reg.unverify()
+            course_registration_student_number_action(user)
+            return Response({
+                "success": True,
+            })
+        if confirmed_name is not None:
+            # if a confirmed name was given in the request data, try to find this canvas user using it. The confirmed
+            # name should be the same as the guessed name that the API responded with earlier in the process.
+            canvas_user = course.get_user(name=confirmed_name)
+            if not canvas_user:
+                raise ValidationError(ERROR_MESSAGES.USER.INVALID)
+            course_reg.set_canvas_user(canvas_user)
+            # Change status to PENDING-VERIFICATION after successfully find the user
+            course_reg.unverify()
+            course_registration_confirm_name_action(user)
+            return Response({
+                "success": True,
+            })
+        if name is not None:
+            # if an inputted name is in the request data, try to guess the name properly.
+            guessed_names = course.guess_user(name)
+            if len(guessed_names) == 0:
+                raise ValidationError(ERROR_MESSAGES.USER.INVALID)
+            elif len(guessed_names) > 1:
+                # If more than 1 name is guessed, then the UI moves to the student number confirmation
+                # since the student number confirmation is not the standard process, success = False lets the front-end
+                # know what to render.
+                return Response({
+                    "success": False,
+                    "guessed_name": None,
+                })
+
+            return Response({
+                "success": True,
+                "guessed_name": guessed_names[0],
+            })
         raise ValidationError(ERROR_MESSAGES.USER.INVALID)
 
     @action(detail=True, methods=['post'])

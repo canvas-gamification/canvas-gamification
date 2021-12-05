@@ -3,12 +3,14 @@ import copy
 import canvasapi
 from django.db import models
 from django.db.models import Sum, F, FloatField
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from fuzzywuzzy import process
 
 from accounts.models import MyUser
 from canvas import canvasapi_mock
 from canvas.utils.token_use import get_token_use
+from canvas.utils.utils import get_course_registration
 
 
 class CanvasCourse(models.Model):
@@ -119,7 +121,7 @@ class CanvasCourse(models.Model):
     def is_registered(self, user):
         if user.is_anonymous:
             return False
-        return self.canvascourseregistration_set.filter(user=user, is_verified=True, is_blocked=False).exists()
+        return self.canvascourseregistration_set.filter(user=user, status='VERIFIED').exists()
 
     def is_instructor(self, user):
         return self.instructor == user
@@ -128,7 +130,12 @@ class CanvasCourse(models.Model):
         return user.is_teacher or self.is_instructor(user) or self.is_registered(user)
 
     def has_edit_permission(self, user):
-        return user.is_teacher or self.is_instructor(user)
+        course_reg = get_course_registration(user, self)
+        return course_reg.registration_type == INSTRUCTOR
+
+    def has_create_event_permission(self, user):
+        course_reg = get_course_registration(user, self)
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
     def save(self, *args, **kwargs):
         self.create_verification_assignment_group()
@@ -142,22 +149,63 @@ def random_verification_code():
     return random.randint(1, 100)
 
 
+STATUS = [
+    ("UNREGISTERED", "UNREGISTERED"),
+    ("PENDING_VERIFICATION", "PENDING_VERIFICATION"),
+    ("VERIFIED", "VERIFIED"),
+    ("BLOCKED", "BLOCKED")
+]
+
+STUDENT = "STUDENT"
+TA = "TA"
+INSTRUCTOR = "INSTRUCTOR"
+
+REGISTRATION_TYPE = [
+    (STUDENT, STUDENT),
+    (TA, TA),
+    (INSTRUCTOR, INSTRUCTOR)
+]
+
+
 class CanvasCourseRegistration(models.Model):
     course = models.ForeignKey(CanvasCourse, on_delete=models.CASCADE, db_index=True)
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE, db_index=True)
-
     canvas_user_id = models.IntegerField(null=True, blank=True)
-    is_verified = models.BooleanField(default=False, db_index=True)
-    is_blocked = models.BooleanField(default=False, db_index=True)
-
+    status = models.CharField(max_length=100, choices=STATUS, default="UNREGISTERED")
     verification_code = models.IntegerField(default=random_verification_code)
     verification_attempts = models.IntegerField(default=3)
+
+    registration_type = models.CharField(max_length=10, choices=REGISTRATION_TYPE, null=True, default=STUDENT)
 
     class Meta:
         unique_together = ('course', 'user')
 
     def get_token_uses(self):
         return [get_token_use(self.user, tup['id']) for tup in self.course.token_use_options.values('id')]
+
+    @property
+    def is_verified(self):
+        return self.status == 'VERIFIED'
+
+    @property
+    def is_blocked(self):
+        return self.status == 'BLOCKED'
+
+    def verify(self):
+        self.status = 'VERIFIED'
+        self.save()
+
+    def block(self):
+        self.status = 'BLOCKED'
+        self.save()
+
+    def unregister(self):
+        self.status = 'UNREGISTERED'
+        self.save()
+
+    def unverify(self):
+        self.status = 'PENDING_VERIFICATION'
+        self.save()
 
     @property
     def canvas_user(self):
@@ -182,13 +230,11 @@ class CanvasCourseRegistration(models.Model):
         if self.is_blocked:
             return False
         if str(self.verification_code) == str(code):
-            self.is_verified = True
-            self.save()
+            self.verify()
             return True
         self.verification_attempts -= 1
         if self.verification_attempts <= 0:
-            self.is_blocked = True
-        self.save()
+            self.block()
 
         return False
 
@@ -264,7 +310,12 @@ class Event(models.Model):
         return self.is_open and self.course.is_registered(user)
 
     def has_edit_permission(self, user):
-        return self.course.is_instructor(user) or user.is_teacher
+        course_reg = get_object_or_404(CanvasCourseRegistration, user=user, course=self.course)
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
+
+    def has_create_permission(self, user):
+        course_reg = get_object_or_404(CanvasCourseRegistration, user=user, course=self.course)
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
     def is_allowed_to_open(self, user):
         return self.course.is_registered(user) and self.is_open
