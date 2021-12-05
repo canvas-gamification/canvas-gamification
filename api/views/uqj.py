@@ -6,11 +6,6 @@ from course.models.models import UserQuestionJunction, Question
 from api.pagination import BasePagination
 from api.serializers import UQJSerializer
 
-from rest_framework.decorators import action
-from rest_framework.generics import get_object_or_404
-from rest_framework.response import Response
-
-
 class UQJFilterSet(FilterSet):
     question_event = NumberFilter(field_name='question__event')
     question = NumberFilter(field_name='question')
