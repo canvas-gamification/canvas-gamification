@@ -65,7 +65,7 @@ class QuestionCategory(models.Model):
 
     @property
     def next_category_ids(self):
-        return self.next_categories.values_list('pk', flat=True)
+        return list(self.next_categories.values_list('pk', flat=True))
 
 
 class TokenValue(models.Model):
@@ -458,6 +458,11 @@ class Submission(PolymorphicModel):
 
     def submit(self):
         pass
+
+    def has_view_permission(self, user):
+        if user.is_teacher or self.user is user:
+            return True
+        return False
 
 
 class CodeSubmission(Submission):
