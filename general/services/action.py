@@ -268,6 +268,7 @@ def course_registration_update_action(registration, user, data):
         data=data
     )
 
+
 def create_question_report_action(report, user):
     Action.create_action(
         actor=user,
