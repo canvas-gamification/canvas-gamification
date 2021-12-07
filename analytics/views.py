@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .utils import init_analytics, init_question_metrics
+from .utils import init_analytics, init_question_metrics, init_event_metrics
 
 
 def analysis(request):
