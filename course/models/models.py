@@ -18,9 +18,9 @@ from course.utils.variables import render_text, generate_variables
 from general.services.action import create_submission_evaluation_action
 
 DIFFICULTY_CHOICES = [
-    ("EASY", "EASY"),
-    ("NORMAL", "MEDIUM"),
-    ("HARD", "HARD"),
+    ("EASY", "Easy"),
+    ("MEDIUM", "Medium"),
+    ("HARD", "Hard"),
 ]
 
 
@@ -77,7 +77,7 @@ class TokenValue(models.Model):
         if self.value is None:
             if self.difficulty == 'EASY':
                 self.value = 1
-            if self.difficulty == "NORMAL":
+            if self.difficulty == 'MEDIUM':
                 self.value = 2
             if self.difficulty == 'HARD':
                 self.value = 3
