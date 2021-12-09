@@ -1,12 +1,11 @@
 from accounts.models import MyUser
-from analytics.models import SubmissionAnalytics
+from analytics.models.models import SubmissionAnalytics
 from course.models.models import Submission, Question
 from course.utils.utils import create_mcq_submission, create_multiple_choice_question
 from test.base import BaseTestCase
 from .utils import init_analytics
 
 
-# Create your tests here.
 class SubmissionAnalyticsTestCase(BaseTestCase):
     TEST_CODE1 = """public class Test
         {
