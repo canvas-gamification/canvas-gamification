@@ -4,7 +4,6 @@ from analytics.models import JavaSubmissionAnalytics, ParsonsSubmissionAnalytics
 from analytics.models.models import SubmissionAnalytics
 
 admin.site.register(SubmissionAnalytics)
-admin.site.register(QuestionAnalytics)
 admin.site.register(JavaSubmissionAnalytics)
 admin.site.register(ParsonsSubmissionAnalytics)
 admin.site.register(MCQSubmissionAnalytics)

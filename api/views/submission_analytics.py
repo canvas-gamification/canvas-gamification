@@ -1,9 +1,9 @@
 from django_filters import NumberFilter
 from rest_framework import viewsets
-from analytics.models.models import SubmissionAnalytics, QuestionAnalytics
+from analytics.models.models import SubmissionAnalytics
 from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission
-from api.serializers.submission_analytics import SubmissionAnalyticsSerializer, QuestionAnalyticsSerializer
+from api.serializers.submission_analytics import SubmissionAnalyticsSerializer
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from analytics.models.models import SubmissionAnalytics, QuestionAnalytics
+from analytics.models.models import SubmissionAnalytics
 
 
 class SubmissionAnalyticsSerializer(serializers.ModelSerializer):
