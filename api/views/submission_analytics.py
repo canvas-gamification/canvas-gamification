@@ -22,4 +22,4 @@ class SubmissionAnalyticsViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [TeacherAccessPermission]
     pagination_class = BasePagination
     filter_class = SubmissionAnalyticsFilterSet
-    filter_backends = [DjangoFilterBackend,]
+    filter_backends = [DjangoFilterBackend, ]

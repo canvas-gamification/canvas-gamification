@@ -16,6 +16,7 @@ class SubmissionAnalyticsObj:
         operand = 0
         operator_list = []
         operand_list = []
+        halstead = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
         for string in submission_code.values():
             lines += init_analytics.num_lines(string)
@@ -31,8 +32,6 @@ class SubmissionAnalyticsObj:
             operand_list.append(op_list[3])
             if string is not None:
                 halstead = init_analytics.halstead(operator_list, operand_list, operator, operand)
-            else:
-                halstead = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
         unique_operator = halstead[0]
         unique_operand = halstead[1]

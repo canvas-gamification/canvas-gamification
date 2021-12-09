@@ -1,5 +1,5 @@
 from accounts.models import MyUser
-from course.models.models import Submission, Question
+from course.models.models import Submission
 from course.utils.utils import create_mcq_submission, create_multiple_choice_question
 from test.base import BaseTestCase
 from .models import MCQSubmissionAnalytics
@@ -138,7 +138,6 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
         )
 
     def test_ensure_db(self):
-        user = MyUser.objects.get(username='test_user2')
         self.uqj = self.user.question_junctions.filter(question__answer='a').first()
         mcq_submission = create_mcq_submission(self.uqj, '')
         submission = Submission.objects.first()
@@ -150,7 +149,7 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
         self.assertEquals(MCQSubmissionAnalytics.objects.count(), 1)
 
     def test_num_lines(self, test_code=TEST_CODE1):
-        self.assertEquals(init_analytics.num_lines(""), 0);
+        self.assertEquals(init_analytics.num_lines(""), 0)
         self.assertEquals(init_analytics.num_lines("int x = 1;\nint y = 2;\n"), 3)
         self.assertEquals(init_analytics.num_lines("\n\n\n\n\n"), 6)
         self.assertEquals(init_analytics.num_lines(test_code), 16)
