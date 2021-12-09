@@ -35,3 +35,11 @@ class IsOwnerOrReadOnly(permissions.IsAuthenticated):
         if request.method in permissions.SAFE_METHODS:
             return True
         return obj.has_edit_permission(user)
+
+
+class HasViewSubmissionPermission(permissions.IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        if request.method in permissions.SAFE_METHODS:
+            return obj.has_view_permission(user)
+        return True
