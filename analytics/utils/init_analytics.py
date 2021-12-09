@@ -1,15 +1,5 @@
-import requests
 import re
-from requests.auth import HTTPBasicAuth
 import math
-
-from accounts.models import MyUser
-from analytics.models import SubmissionAnalytics
-from course.models.java import JavaSubmission
-from course.models.models import Submission, Question
-
-from course.models.multiple_choice import MultipleChoiceSubmission
-from course.models.parsons import ParsonsSubmission
 
 unary_op_list = ["-", "++", "--", "!", "~"]
 binary_op_list = ["+", "-", "*", "/", "%", "!=", "<", "<=", ">", ">=", "==", "^", "||", "|",
@@ -88,7 +78,6 @@ def num_op(string):
         for i in range(len(words)):
             for bi in binary_op_list:
                 if bi in words[i] and len(re.findall("^-[\w]+", words[i])) == 0:
-                    # if bi not in operator_list:
                     operator_list.append(bi)
                     if bi == words[i] and 0 < i < len(words) - 1:
                         prev = words[i - 1]
@@ -132,149 +121,16 @@ def num_op(string):
     return [operator, operand, operator_list, operand_list]
 
 
-def code_metrics(sub_dict):
-    lines = 0
-    blank_lines = 0
-    comment_lines = 0
-    import_lines = 0
-    cc = 0
-    method = 0
-    operator = 0
-    operand = 0
-    operator_list = []
-    operand_list = []
-    for string in sub_dict.values():
-        lines += num_lines(string)
-        blank_lines += num_blank_lines(string)
-        comment_lines += num_comments(string)
-        import_lines += num_import(string)
-        cc += calc_cc(string)
-        method += num_method(string)
-        op_list = num_op(string)
-        operator += op_list[0]
-        operand += op_list[1]
-        operator_list.append(op_list[2])
-        operand_list.append(op_list[3])
-    return [lines, blank_lines, comment_lines, import_lines, cc, method, operator, operand, operator_list, operand_list]
+def halstead(operator_list, operand_list, operator, operand):
+    unique_operator = sum(len(y) for y in operator_list)
+    unique_operand = sum(len(x) for x in operand_list)
+    vocab = unique_operator + unique_operand
+    size = operator + operand
+    print(vocab)
+    vol = size * math.log2(vocab)
+    difficulty = unique_operator / 2 + operand / unique_operand
+    effort = vol * difficulty
+    error = vol / 3000
+    test_time = effort / 18
 
-
-def analytics():
-    submissions = Submission.objects.all()
-    java_list = []
-    parsons_list = []
-    mcq_list = []
-    for submission in submissions:
-        if isinstance(submission, JavaSubmission):
-            java_list.append(submission)
-        if isinstance(submission, ParsonsSubmission):
-            parsons_list.append(submission)
-        if isinstance(submission, MultipleChoiceSubmission):
-            mcq_list.append(submission)
-
-    for java_sub_obj in java_list:
-
-        ans_file = java_sub_obj.answer_files
-        res = code_metrics(ans_file)
-        uqj = java_sub_obj.uqj
-        submission = java_sub_obj
-        question = java_sub_obj.uqj.question
-        question_obj = Question.objects.get(pk=question.pk)
-        user = java_sub_obj.uqj.user
-        user_obj = MyUser.objects.get(pk=user.pk)
-        user_id = user_obj.pk
-        first_name = user_obj.first_name
-        last_name = user_obj.last_name
-
-        operator_list = res[8]
-        operand_list = res[9]
-        operator = res[6]
-        operand = res[7]
-
-        unique_operator = sum(len(y) for y in operator_list)
-        unique_operand = sum(len(x) for x in operand_list)
-        vocab = unique_operator + unique_operand
-        size = operator + operand
-        vol = size * math.log2(vocab)
-        difficulty = unique_operator / 2 + operand / unique_operand
-        effort = vol * difficulty
-        error = vol / 3000
-        test_time = effort / 18
-
-        try:
-            sub_analytics = SubmissionAnalytics.objects.get(submission=submission)
-        except SubmissionAnalytics.DoesNotExist:
-            sub_analytics = SubmissionAnalytics.objects.create(submission_type="java", uqj=uqj, submission=submission,
-                                                               question=question_obj, event=java_sub_obj.question.event,
-                                                               user_id=user_id,
-                                                               first_name=first_name, last_name=last_name,
-                                                               ans_file=ans_file, lines=res[0],
-                                                               blank_lines=res[1],
-                                                               comment_lines=res[2], import_lines=res[3],
-                                                               cc=res[4],
-                                                               method=res[5], operator=res[6],
-                                                               operand=res[7], unique_operator=unique_operator,
-                                                               unique_operand=unique_operand, vocab=vocab,
-                                                               size=size, vol=vol, difficulty=difficulty,
-                                                               effort=effort,
-                                                               error=error, test_time=test_time)
-    for parsons_sub_obj in parsons_list:
-        ans_file = parsons_sub_obj.answer_files
-        res = code_metrics(ans_file)
-        uqj = parsons_sub_obj.uqj
-        submission = parsons_sub_obj
-        question = parsons_sub_obj.uqj.question
-        question_obj = Question.objects.get(pk=question.pk)
-        user = parsons_sub_obj.uqj.user
-        user_obj = MyUser.objects.get(pk=user.pk)
-
-        operator_list = res[8]
-        operand_list = res[9]
-        operator = res[6]
-        operand = res[7]
-
-        unique_operator = sum(len(y) for y in operator_list)
-        unique_operand = sum(len(x) for x in operand_list)
-        vocab = unique_operator + unique_operand
-        size = operator + operand
-        vol = size * math.log2(vocab)
-        difficulty = unique_operator / 2 + operand / unique_operand
-        effort = vol * difficulty
-        error = vol / 3000
-        test_time = effort / 18
-
-        try:
-            sub_analytics = SubmissionAnalytics.objects.get(submission=submission)
-        except SubmissionAnalytics.DoesNotExist:
-            sub_analytics = SubmissionAnalytics.objects.create(submission_type="parsons", uqj=uqj,
-                                                               submission=submission,
-                                                               question=question_obj, event=java_sub_obj.question.event,
-                                                               user_id=user_id,
-                                                               first_name=first_name, last_name=last_name,
-                                                               ans_file=ans_file, lines=res[0],
-                                                               blank_lines=res[1],
-                                                               comment_lines=res[2], import_lines=res[3],
-                                                               cc=res[4],
-                                                               method=res[5], operator=res[6],
-                                                               operand=res[7], unique_operator=unique_operator,
-                                                               unique_operand=unique_operand, vocab=vocab,
-                                                               size=size, vol=vol, difficulty=difficulty,
-                                                               effort=effort,
-                                                               error=error, test_time=test_time)
-
-    for mcq_sub_obj in mcq_list:
-        ans = mcq_sub_obj.answer
-        uqj = mcq_sub_obj.uqj
-        submission = mcq_sub_obj
-        question = mcq_sub_obj.uqj.question
-        question_obj = Question.objects.get(pk=question.pk)
-        user = mcq_sub_obj.uqj.user
-        user_obj = MyUser.objects.get(pk=user.pk)
-
-        try:
-            sub_analytics = SubmissionAnalytics.objects.get(submission=submission)
-        except SubmissionAnalytics.DoesNotExist:
-            sub_analytics = SubmissionAnalytics.objects.create(submission_type="mcq", uqj=uqj, submission=submission,
-                                                               question=question_obj, event=java_sub_obj.question.event,
-                                                               user_id=user_id,
-                                                               first_name=first_name, last_name=last_name,
-                                                               ans=ans)
+    return [unique_operator, unique_operand, vocab, size, vol, difficulty, effort, error, test_time]
