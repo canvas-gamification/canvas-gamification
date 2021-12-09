@@ -1,8 +1,8 @@
 from accounts.models import MyUser
-from analytics.models.models import SubmissionAnalytics
 from course.models.models import Submission, Question
 from course.utils.utils import create_mcq_submission, create_multiple_choice_question
 from test.base import BaseTestCase
+from .models import MCQSubmissionAnalytics
 from .utils import init_analytics
 
 
@@ -140,22 +140,14 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
     def test_ensure_db(self):
         user = MyUser.objects.get(username='test_user2')
         self.uqj = self.user.question_junctions.filter(question__answer='a').first()
-        create_mcq_submission(self.uqj, '')
+        mcq_submission = create_mcq_submission(self.uqj, '')
         submission = Submission.objects.first()
-        sub_analytics = SubmissionAnalytics.objects.create(submission_type='mcq', uqj=self.uqj, submission=submission,
-                                                            question=Question.objects.filter(title='title').first(),
-                                                            user_id=user.id, first_name=
-                                                            user.first_name, last_name=user.last_name, ans='a')
         try:
-            sub_analytics1 = SubmissionAnalytics.objects.get(submission=submission)
-        except SubmissionAnalytics.DoesNotExist:
-            SubmissionAnalytics.objects.create(submission_type='mcq', uqj=self.uqj,
-                                                submission=submission,
-                                                question=Question.objects.get(title='title'),
-                                                user_id=user.id, first_name=
-                                                user.first_name, last_name=user.last_name, ans='a')
-        self.assertEquals(sub_analytics, sub_analytics1)
-        self.assertEquals(SubmissionAnalytics.objects.count(), 1)
+            sub_analytics1 = MCQSubmissionAnalytics.objects.filter(submission=submission.pk).first()
+        except MCQSubmissionAnalytics.DoesNotExist:
+            sub_analytics1 = None
+        self.assertEquals(mcq_submission.pk, sub_analytics1.submission)
+        self.assertEquals(MCQSubmissionAnalytics.objects.count(), 1)
 
     def test_num_lines(self, test_code=TEST_CODE1):
         self.assertEquals(init_analytics.num_lines(""), 0);
