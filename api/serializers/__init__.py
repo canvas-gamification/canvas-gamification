@@ -19,6 +19,7 @@ from .change_password import ChangePasswordSerializer
 from .reset_password import ResetPasswordSerializer
 from .register import UserRegistrationSerializer
 from .update_profile import UpdateProfileSerializer
+from .question_report import QuestionReportSerializer
 
 # Serializers that depend on other serializers
 from .token_use import TokenUseSerializer

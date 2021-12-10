@@ -1,4 +1,3 @@
-
 from accounts.models import MyUser
 from course.models.models import Submission
 from course.utils.utils import create_mcq_submission, create_multiple_choice_question
