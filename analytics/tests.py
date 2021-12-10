@@ -190,3 +190,4 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
         self.assertEquals(init_analytics.calc_cc(""), 1)
         self.assertEquals(init_analytics.calc_cc(" "), 1)
         self.assertEquals(init_analytics.calc_cc(test_code), 3)
+

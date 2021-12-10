@@ -9,7 +9,7 @@ from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission, HasDeletePermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, JavaQuestionSerializer, \
     ParsonsQuestionSerializer
-from course.models.models import Question
+from course.models.models import Question, UserQuestionJunction
 from course.models.java import JavaQuestion
 from course.models.multiple_choice import MultipleChoiceQuestion
 from course.models.parsons import ParsonsQuestion
@@ -71,3 +71,9 @@ class QuestionViewSet(viewsets.ModelViewSet):
         for obj in queryset:
             serialized_questions.append(OrderedDict(self.get_serializer(obj).data))
         return Response(serialized_questions)
+
+    @action(detail=True, methods=['get'], url_path='count-favorite')
+    def get_favorite_count(self, request, pk=None):
+
+        uqj_count = UserQuestionJunction.objects.all().filter(question_id=pk, is_favorite=True).count()
+        return Response(uqj_count)

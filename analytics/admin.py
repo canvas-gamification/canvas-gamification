@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from analytics.models import JavaSubmissionAnalytics, ParsonsSubmissionAnalytics, MCQSubmissionAnalytics
 from analytics.models.models import SubmissionAnalytics
 

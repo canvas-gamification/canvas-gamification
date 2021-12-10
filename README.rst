@@ -59,6 +59,15 @@ In local development you can set the environment variables in
 ``env/gamification.dev.env``. All the fields are pre-populated
 so if you just want to run the website no changes are required.
 
+PyCharm Settings
+++++++++++++++++
+
+If you are developing in PyCharm (our recommendation), it is important to ensure that `Django Support` is enabled.
+
+#. Ensure that you have installed `PyCharm Professional Edition`, you can get a free license as a student. `https://www.jetbrains.com/community/education/#students <https://www.jetbrains.com/community/education/#students/>`__.
+#. `PyCharm -> Preferences -> Language & Frameworks -> Django`.
+#. Ensure that `Enable Django Support` is checked.
+
 Windows
 +++++++
 

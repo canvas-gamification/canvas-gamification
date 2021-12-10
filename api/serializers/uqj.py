@@ -11,6 +11,7 @@ class UQJSerializer(serializers.ModelSerializer):
     rendered_choices = serializers.SerializerMethodField('get_rendered_choices')
     rendered_lines = serializers.SerializerMethodField('get_lines')
     input_files = serializers.SerializerMethodField('get_input_files')
+    report = serializers.SerializerMethodField('get_report')
     question = QuestionSerializer(read_only=True)
     question_id = serializers.PrimaryKeyRelatedField(source='question', queryset=Question.objects.all())
 
@@ -32,9 +33,18 @@ class UQJSerializer(serializers.ModelSerializer):
     def get_input_files(self, uqj):
         return uqj.get_input_files()
 
+    def get_report(self, uqj):
+        from general.models.question_report import QuestionReport
+        from api.serializers import QuestionReportSerializer
+        queryset = QuestionReport.objects.all().filter(user=uqj.user_id, question=uqj.question_id)
+        if queryset:
+            return QuestionReportSerializer(queryset[0]).data
+        else:
+            return {}
+
     class Meta:
         model = UserQuestionJunction
         fields = ['id', 'last_viewed', 'opened_tutorial', 'tokens_received', 'is_solved', 'is_partially_solved',
                   'question', 'question_id', 'num_attempts', 'status', 'formatted_current_tokens_received',
                   'is_allowed_to_submit', 'variables', 'variables_errors', 'rendered_text', 'rendered_choices',
-                  'rendered_lines', 'status_class', 'input_files', 'is_checkbox']
+                  'rendered_lines', 'status_class', 'input_files', 'is_checkbox', 'report', 'is_favorite']
