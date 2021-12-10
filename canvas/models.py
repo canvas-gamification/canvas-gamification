@@ -142,6 +142,23 @@ def random_verification_code():
     return random.randint(1, 100)
 
 
+STATUS = [
+    ("UNREGISTERED", "UNREGISTERED"),
+    ("PENDING_VERIFICATION", "PENDING_VERIFICATION"),
+    ("VERIFIED", "VERIFIED"),
+    ("BLOCKED", "BLOCKED")
+]
+
+STUDENT = "STUDENT"
+TA = "TA"
+INSTRUCTOR = "INSTRUCTOR"
+
+REGISTRATION_TYPE = [
+    (STUDENT, STUDENT),
+    (TA, TA),
+    (INSTRUCTOR, INSTRUCTOR)
+]
+
 
 class CanvasCourseRegistration(models.Model):
     course = models.ForeignKey(CanvasCourse, on_delete=models.CASCADE, db_index=True)
