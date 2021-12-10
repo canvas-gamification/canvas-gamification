@@ -1,5 +1,8 @@
 from django.contrib import admin
-from analytics.models import submission_analytics
+from analytics.models import JavaSubmissionAnalytics, ParsonsSubmissionAnalytics, MCQSubmissionAnalytics
+from analytics.models.models import SubmissionAnalytics
 
-# Register your models here.
-admin.site.register(submission_analytics)
+admin.site.register(SubmissionAnalytics)
+admin.site.register(JavaSubmissionAnalytics)
+admin.site.register(ParsonsSubmissionAnalytics)
+admin.site.register(MCQSubmissionAnalytics)

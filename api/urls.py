@@ -12,6 +12,7 @@ from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, User
 
 from api.views.admin import AdminViewSet
 from api.views.course_admin import CourseAdminViewSet
+from api.views.submission_analytics import SubmissionAnalyticsViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
@@ -39,6 +40,7 @@ router.register(r'event', EventViewSet, basename='event')
 router.register(r'token-use', TokenUseViewSet, basename='token-use')
 router.register(r'schema', SchemaViewSet, basename='schema')
 router.register(r'difficulty', DifficultyViewSet, basename='difficulty')
+router.register(r'submission-analytics', SubmissionAnalyticsViewSet, basename='submission-analytics')
 router.register(r'admin', AdminViewSet, basename='admin')
 router.register(r'course-admin', CourseAdminViewSet, basename='admin-course')
 router.register(r'uqj-update', UpdateUQJViewSet, basename='uqj-update')
