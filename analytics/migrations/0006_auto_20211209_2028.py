@@ -4,14 +4,6 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
-def forwards_func(apps, schema_editor):
-    MyModel = apps.get_model('myapp', 'MyModel')
-    ContentType = apps.get_model('contenttypes', 'ContentType')
-
-    new_ct = ContentType.objects.get_for_model(MyModel)
-    MyModel.objects.filter(polymorphic_ctype__isnull=True).update(polymorphic_ctype=new_ct)
-
-
 class Migration(migrations.Migration):
     dependencies = [
         ('contenttypes', '0002_remove_content_type_name'),
@@ -65,5 +57,5 @@ class Migration(migrations.Migration):
                                     related_name='polymorphic_analytics.submissionanalytics_set+',
                                     to='contenttypes.ContentType'),
         ),
-        migrations.RunPython(forwards_func, migrations.RunPython.noop),
+        
     ]
