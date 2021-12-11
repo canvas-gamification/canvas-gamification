@@ -1,4 +1,5 @@
 from django.db import models
+from polymorphic.models import PolymorphicModel
 
 from accounts.models import MyUser
 from analytics.utils import init_analytics
@@ -62,7 +63,7 @@ class SubmissionAnalyticsObj:
         self.test_time = test_time
 
 
-class SubmissionAnalytics(models.Model):
+class SubmissionAnalytics(PolymorphicModel):
     id = models.AutoField(primary_key=True)
     uqj = models.IntegerField(default=0)
     submission = models.IntegerField(default=0)
@@ -71,3 +72,15 @@ class SubmissionAnalytics(models.Model):
     user_id = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255, default="n/a")
     last_name = models.CharField(max_length=255, default="n/a")
+
+
+class QuestionAnalytics(PolymorphicModel):
+    id = models.AutoField(primary_key=True)
+    question = models.IntegerField(default=0)
+    event = models.IntegerField(default=0)
+    number_submission = models.IntegerField(default=0)
+    avg_grade = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    correct_rate = models.DecimalField(max_digits=8, decimal_places=4, default=0)
+
+    frequent_wrong_ans = models.CharField(max_length=5, default="n/a")
+    frequent_wrong_reason = models.CharField(max_length=255, default="n/a")

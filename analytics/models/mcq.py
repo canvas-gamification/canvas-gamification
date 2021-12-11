@@ -1,7 +1,8 @@
 from django.db import models
+from polymorphic.utils import reset_polymorphic_ctype
 
 from accounts.models import MyUser
-from analytics.models.models import SubmissionAnalytics
+from analytics.models.models import SubmissionAnalytics, QuestionAnalytics
 
 
 class MCQSubmissionAnalytics(SubmissionAnalytics):
@@ -18,3 +19,8 @@ class MCQSubmissionAnalytics(SubmissionAnalytics):
                                                   event=submission.question.event.pk, user_id=submission.user,
                                                   first_name=user_obj.first_name, last_name=user_obj.last_name,
                                                   answer=submission.answer)
+            reset_polymorphic_ctype(SubmissionAnalytics, MCQSubmissionAnalytics, ignore_existing=True)
+
+
+class MCQQuestionAnalytics(QuestionAnalytics):
+    pass

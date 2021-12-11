@@ -1,4 +1,6 @@
-from analytics.models.models import SubmissionAnalytics, SubmissionAnalyticsObj
+from polymorphic.utils import reset_polymorphic_ctype
+
+from analytics.models.models import SubmissionAnalytics, SubmissionAnalyticsObj, QuestionAnalytics
 from django.db import models
 from accounts.models import MyUser
 from course.fields import JSONField
@@ -52,3 +54,24 @@ class JavaSubmissionAnalytics(SubmissionAnalytics):
                                                    effort=sub_analytics_dict.effort,
                                                    error=sub_analytics_dict.error,
                                                    test_time=sub_analytics_dict.test_time)
+            reset_polymorphic_ctype(SubmissionAnalytics, JavaSubmissionAnalytics, ignore_existing=True)
+
+
+class JavaQuestionAnalytics(QuestionAnalytics):
+    lines = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    blank_lines = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    comment_lines = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    import_lines = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    cc = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    method = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    operator = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    operand = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    unique_operator = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    unique_operand = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    vocab = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    size = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    vol = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    difficulty = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    effort = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    error = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    test_time = models.DecimalField(max_digits=8, decimal_places=2, default=0)
