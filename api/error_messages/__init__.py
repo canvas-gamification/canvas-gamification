@@ -21,7 +21,6 @@ from .answer import ANSWER
 from .junit_template import JUNIT_TEMPLATE
 from .input_files import INPUT_FILES
 from .lines import LINES
-from .schema import SCHEMA
 from .user import USER
 from .course_registration import COURSE_REGISTRATION
 from .token_use import TOKEN_USE

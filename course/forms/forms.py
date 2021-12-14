@@ -80,7 +80,6 @@ class ProblemCreateForm(forms.ModelForm):
         initial='[]',
         label='',
         widget=JSONEditor(
-            schema=render_to_string('schemas/variables.json'),
             doc_url='/docs/usage/variables.html',
         ),
         help_text="""

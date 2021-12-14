@@ -7,7 +7,7 @@ from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, User
     QuestionCategoryViewSet, UserStatsViewSet, UQJViewSet, ActionsViewSet, FAQViewSet, TokenValueViewSet, \
     CourseViewSet, CanvasCourseRegistrationViewSet, ResetPasswordViewSet, UserRegistrationViewSet, \
     UpdateProfileViewSet, SubmissionViewSet, ObtainAuthTokenView, MultipleChoiceQuestionViewSet, JavaQuestionViewSet, \
-    ParsonsQuestionViewSet, EventViewSet, TokenUseViewSet, SchemaViewSet, DifficultyViewSet, ChangePasswordViewSet, \
+    ParsonsQuestionViewSet, EventViewSet, TokenUseViewSet, DifficultyViewSet, ChangePasswordViewSet, \
     UpdateUQJViewSet, QuestionReportViewSet
 
 from api.views.admin import AdminViewSet
@@ -37,7 +37,6 @@ router.register(r'update-profile', UpdateProfileViewSet, basename='update-profil
 router.register(r'submission', SubmissionViewSet, basename='submission')
 router.register(r'event', EventViewSet, basename='event')
 router.register(r'token-use', TokenUseViewSet, basename='token-use')
-router.register(r'schema', SchemaViewSet, basename='schema')
 router.register(r'difficulty', DifficultyViewSet, basename='difficulty')
 router.register(r'admin', AdminViewSet, basename='admin')
 router.register(r'course-admin', CourseAdminViewSet, basename='admin-course')
