@@ -1,6 +1,5 @@
 from django import forms
 from django.forms import TextInput, widgets, Textarea
-from django.template.loader import render_to_string
 from djrichtextfield.widgets import RichTextWidget
 from rest_framework.reverse import reverse_lazy
 
