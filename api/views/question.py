@@ -9,10 +9,11 @@ from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission, HasDeletePermission
 from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, JavaQuestionSerializer, \
     ParsonsQuestionSerializer
-from course.models.models import Question
+from course.models.models import Question, UserQuestionJunction
 from course.models.java import JavaQuestion
 from course.models.multiple_choice import MultipleChoiceQuestion
 from course.models.parsons import ParsonsQuestion
+from general.services.action import delete_question_action
 
 
 class QuestionViewSet(viewsets.ModelViewSet):
@@ -56,6 +57,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         question = self.get_object()
         question.question_status = Question.DELETED
         question.save()
+        delete_question_action(self.get_serializer(question).data, request.user)
         return Response(self.get_serializer(question).data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], url_path='download-questions')
@@ -69,3 +71,9 @@ class QuestionViewSet(viewsets.ModelViewSet):
         for obj in queryset:
             serialized_questions.append(OrderedDict(self.get_serializer(obj).data))
         return Response(serialized_questions)
+
+    @action(detail=True, methods=['get'], url_path='count-favorite')
+    def get_favorite_count(self, request, pk=None):
+
+        uqj_count = UserQuestionJunction.objects.all().filter(question_id=pk, is_favorite=True).count()
+        return Response(uqj_count)

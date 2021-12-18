@@ -1,4 +1,6 @@
 import six
+from datetime import datetime
+
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
@@ -11,7 +13,8 @@ from canvas_gamification import settings
 
 class TokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
-        return six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.is_active)
+        return six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.is_active) + six.text_type(
+            user.last_login)
 
 
 account_activation_token_generator = TokenGenerator()
@@ -51,6 +54,8 @@ def verify_reset(uidb64, token):
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = MyUser.objects.get(pk=uid)
         if reset_password_token_generator.check_token(user, token):
+            user.last_login = datetime.now()
+            user.save()
             return user
     except(TypeError, ValueError, OverflowError, AttributeError, MyUser.DoesNotExist):
         return None

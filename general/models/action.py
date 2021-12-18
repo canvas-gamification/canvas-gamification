@@ -28,6 +28,8 @@ class ActionVerb:
     LOGGED_IN = 'Logged In'
     LOGGED_OUT = 'Logged Out'
     EVALUATED = 'Evaluated'
+    UPDATED = 'Updated'
+    DUPLICATED = 'Duplicated'
 
 
 class ActionObjectType:
@@ -63,6 +65,8 @@ ACTION_VERB_CHOICES = [
     (ActionVerb.LOGGED_IN, ActionVerb.LOGGED_IN),
     (ActionVerb.LOGGED_OUT, ActionVerb.LOGGED_OUT),
     (ActionVerb.EVALUATED, ActionVerb.EVALUATED),
+    (ActionVerb.UPDATED, ActionVerb.UPDATED),
+    (ActionVerb.DUPLICATED, ActionVerb.DUPLICATED)
 ]
 
 OBJECT_TYPE_CHOICES = [

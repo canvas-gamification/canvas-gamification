@@ -18,9 +18,9 @@ from course.utils.variables import render_text, generate_variables
 from general.services.action import create_submission_evaluation_action
 
 DIFFICULTY_CHOICES = [
-    ("EASY", "EASY"),
-    ("NORMAL", "MEDIUM"),
-    ("HARD", "HARD"),
+    ("EASY", "Easy"),
+    ("MEDIUM", "Medium"),
+    ("HARD", "Hard"),
 ]
 
 
@@ -65,7 +65,7 @@ class QuestionCategory(models.Model):
 
     @property
     def next_category_ids(self):
-        return self.next_categories.values_list('pk', flat=True)
+        return list(self.next_categories.values_list('pk', flat=True))
 
 
 class TokenValue(models.Model):
@@ -77,7 +77,7 @@ class TokenValue(models.Model):
         if self.value is None:
             if self.difficulty == 'EASY':
                 self.value = 1
-            if self.difficulty == "NORMAL":
+            if self.difficulty == 'MEDIUM':
                 self.value = 2
             if self.difficulty == 'HARD':
                 self.value = 3
@@ -181,6 +181,10 @@ class Question(PolymorphicModel):
     def is_checkbox(self):
         return False
 
+    @property
+    def is_practice(self):
+        return self.event is None
+
     def get_input_files(self):
         return {}
 
@@ -235,6 +239,7 @@ class UserQuestionJunction(models.Model):
 
     is_solved = models.BooleanField(default=False, db_index=True)
     is_partially_solved = models.BooleanField(default=False, db_index=True)
+    is_favorite = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('user', 'question')
@@ -457,6 +462,11 @@ class Submission(PolymorphicModel):
     def submit(self):
         pass
 
+    def has_view_permission(self, user):
+        if user.is_teacher or self.user is user:
+            return True
+        return False
+
 
 class CodeSubmission(Submission):
     tokens = JSONField()
@@ -494,6 +504,9 @@ class CodeSubmission(Submission):
     def get_decoded_results(self):
         stdout = base64.b64decode(self.results[0]['stdout'] or "").decode('utf-8')
         return parse_junit_xml(stdout)
+
+    def get_status_message(self):
+        return self.results[0]['status']['description']
 
     def get_formatted_test_results(self):
         return str(len(self.get_passed_test_results())) + "/" + str(self.get_num_tests())
