@@ -381,8 +381,8 @@ class Submission(PolymorphicModel):
     @property
     def status_color(self):
         dic = {
-            "Evaluating": 'info',
-            "Wrong": 'danger',
+            "Evaluating": 'default',
+            "Wrong": 'error',
             "Partially Correct": 'warning',
             "Correct": 'success',
         }
