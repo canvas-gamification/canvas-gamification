@@ -1,8 +1,11 @@
+import math
+
 from accounts.models import MyUser
 from course.models.models import Submission
 from course.utils.utils import create_mcq_submission, create_multiple_choice_question
 from test.base import BaseTestCase
-from .models import MCQSubmissionAnalytics
+from .models import MCQSubmissionAnalytics, JavaSubmissionAnalytics, ParsonsSubmissionAnalytics
+from .models.models import SubmissionAnalytics
 from .utils import init_analytics
 
 
@@ -15,7 +18,7 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
             for(int i = 0; i < x; i++)
                 System.out.println( i ); //prints out
             }
-        
+
             public static double some_calc(int n)
             {	double res = 1;
                 for(int i = 2; i <= n; i++)
@@ -29,12 +32,12 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
         {	String s1 = "ss";
             int x = 31;
             String s2 = s1 + " " + x;
-            
+
             System.out.println("s1: " + s1);
             System.out.println("s2: " + s2);
-            
+
             //test comment
-            
+
             x = 16;
             int y = 44;
             String s3 = x + y;
@@ -48,11 +51,11 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
             printOnce();
             printTwice();
         }
-    
+
         public static void printOnce() {
             System.out.println("1");
         }
-    
+
         public static void printTwice() {
             printOnce();
             printOnce();
@@ -60,12 +63,12 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
     }"""
 
     TEST_CODE4 = """public class Deadlock {
-    
+
         public static void main(String[] args) {
             Object a = new Object();
             Object b = new Object();
             Object c = new Object();
-            
+
             System.out.println("hellp!");
             Thread t1 = new Thread() {
                 public void run() {
@@ -74,16 +77,16 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
                             Thread.sleep(1000);
                         }
                         catch(Exception e) {
-    
+
                         }
-                        
+
                         synchronized(b) {
                             System.out.println("Occupying b!");
                         }
                     }}
             };
             t1.start();
-    
+
             Thread t2 = new Thread() {
                 public void run() {
                     synchronized(b) {
@@ -91,7 +94,7 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
                         Thread.sleep(1000);
                     }
                     catch(Exception e) {
-    
+
                     }
                     synchronized(c) {
                         System.out.println("Occupying c!");
@@ -106,7 +109,7 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
                         Thread.sleep(1000);
                     }
                     catch(Exception e) {
-    
+
                     }
                     synchronized(a) {
                         System.out.println("Occupying a!");
@@ -115,7 +118,7 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
             };
             t3.start();
         }
-    
+
     }"""
 
     def setUp(self):
@@ -147,6 +150,27 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
             sub_analytics1 = None
         self.assertEquals(mcq_submission.pk, sub_analytics1.submission)
         self.assertEquals(MCQSubmissionAnalytics.objects.count(), 1)
+
+    def test_create_submission_analytics(self):
+        JavaSubmissionAnalytics.objects.create(uqj=0, submission=0, question=0, event=0, first_name='John',
+                                               user_id=MyUser.objects.get(pk=1),
+                                               last_name='Doe', ans_file='', lines=0, blank_lines=0, comment_lines=0,
+                                               import_lines=0, cc=0, method=0, operator=0, operand=0, unique_operator=0,
+                                               unique_operand=0, vocab=0, size=0, vol=0, difficulty=0, effort=0,
+                                               error=0, test_time=0)
+        MCQSubmissionAnalytics.objects.create(uqj=0, submission=0,
+                                              question=0,
+                                              event=0, user_id=MyUser.objects.get(pk=1),
+                                              first_name='John', last_name='Doe',
+                                              answer='A')
+        ParsonsSubmissionAnalytics.objects.create(uqj=0, submission=0, question=0, event=0, first_name='John',
+                                                  last_name='Doe', ans_file='', user_id=MyUser.objects.get(pk=1),
+                                                  lines=0, blank_lines=0, comment_lines=0,
+                                                  import_lines=0, cc=0, method=0, operator=0, operand=0,
+                                                  unique_operator=0,
+                                                  unique_operand=0, vocab=0, size=0, vol=0, difficulty=0, effort=0,
+                                                  error=0, test_time=0)
+        self.assertEquals(SubmissionAnalytics.objects.all().count(), 3)
 
     def test_num_lines(self, test_code=TEST_CODE1):
         self.assertEquals(init_analytics.num_lines(""), 0)
@@ -190,4 +214,17 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
         self.assertEquals(init_analytics.calc_cc(""), 1)
         self.assertEquals(init_analytics.calc_cc(" "), 1)
         self.assertEquals(init_analytics.calc_cc(test_code), 3)
+
+    def test_halstead(self):
+        res = init_analytics.halstead(['+'], ['x', 'y'], 1, 2)
+        self.assertEquals(res[0], 1)
+        self.assertEquals(res[1], 2)
+        self.assertEquals(res[2], 3)
+        self.assertEquals(res[3], 3)
+        self.assertEquals(res[4], 3 * math.log2(3))
+        self.assertEquals(res[5], 1.5)
+        self.assertEquals(res[6], 1.5 * 3 * math.log2(3))
+        self.assertEquals(res[7], 3 * math.log2(3) / 3000)
+        self.assertEquals(res[8], 1.5 * 3 * math.log2(3) / 18)
+
 

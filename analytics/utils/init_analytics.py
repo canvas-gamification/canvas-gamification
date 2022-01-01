@@ -126,7 +126,6 @@ def halstead(operator_list, operand_list, operator, operand):
     unique_operand = sum(len(x) for x in operand_list)
     vocab = unique_operator + unique_operand
     size = operator + operand
-    print(vocab)
     vol = size * math.log2(vocab)
     difficulty = unique_operator / 2 + operand / unique_operand
     effort = vol * difficulty
