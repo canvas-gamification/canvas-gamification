@@ -153,18 +153,18 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
 
     def test_create_submission_analytics(self):
         JavaSubmissionAnalytics.objects.create(uqj=0, submission=0, question=0, event=0, first_name='John',
-                                               user_id=MyUser.objects.get(pk=1),
+                                               user_id=self.user,
                                                last_name='Doe', ans_file='', lines=0, blank_lines=0, comment_lines=0,
                                                import_lines=0, cc=0, method=0, operator=0, operand=0, unique_operator=0,
                                                unique_operand=0, vocab=0, size=0, vol=0, difficulty=0, effort=0,
                                                error=0, test_time=0)
         MCQSubmissionAnalytics.objects.create(uqj=0, submission=0,
                                               question=0,
-                                              event=0, user_id=MyUser.objects.get(pk=1),
+                                              event=0, user_id=self.user,
                                               first_name='John', last_name='Doe',
                                               answer='A')
         ParsonsSubmissionAnalytics.objects.create(uqj=0, submission=0, question=0, event=0, first_name='John',
-                                                  last_name='Doe', ans_file='', user_id=MyUser.objects.get(pk=1),
+                                                  last_name='Doe', ans_file='', user_id=self.user,
                                                   lines=0, blank_lines=0, comment_lines=0,
                                                   import_lines=0, cc=0, method=0, operator=0, operand=0,
                                                   unique_operator=0,
