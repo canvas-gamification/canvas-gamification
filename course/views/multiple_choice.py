@@ -143,7 +143,7 @@ def _multiple_choice_question_edit_view(request, question):
     })
 
 
-def submit_solution(question, user, solution):
+def submit_solution(question, user, solution, time_spent):
     uqj = get_user_question_junction(user, question)
 
     if not user.is_teacher and uqj.submissions.filter(answer=solution).exists():
@@ -155,6 +155,7 @@ def submit_solution(question, user, solution):
     submission = MultipleChoiceSubmission()
     submission.answer = solution
     submission.uqj = uqj
+    submission.time_spent = time_spent
 
     submission.submit()
     submission.save()
