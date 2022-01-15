@@ -37,7 +37,7 @@ class MultipleChoiceSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = MultipleChoiceSubmission
         fields = ['pk', 'submission_time', 'answer', 'grade', 'is_correct', 'is_partially_correct', 'finalized',
-                  'status', 'tokens_received', 'token_value', 'question', 'answer_display', 'show_answer',
+                  'time_spent', 'status', 'tokens_received', 'token_value', 'question', 'answer_display', 'show_answer',
                   'show_detail', 'status_color']
 
     question = QuestionSerializer()

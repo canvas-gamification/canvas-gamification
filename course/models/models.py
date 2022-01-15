@@ -370,6 +370,8 @@ class Submission(PolymorphicModel):
     is_partially_correct = models.BooleanField(default=False)
     finalized = models.BooleanField(default=False)
 
+    time_spent = models.IntegerField(default=0)
+
     show_answer = True
     show_detail = False
 
