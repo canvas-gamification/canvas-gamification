@@ -10,9 +10,6 @@ from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
 
 from accounts.models import MyUser
-from analytics.models import JavaSubmissionAnalytics, ParsonsSubmissionAnalytics
-from analytics.models.mcq import MCQSubmissionAnalytics
-
 from canvas.models import Event, CanvasCourse
 from course.fields import JSONField
 from course.utils.junit_xml import parse_junit_xml
@@ -460,15 +457,6 @@ class Submission(PolymorphicModel):
 
         if not self.in_progress:
             create_submission_evaluation_action(self)
-
-        if self.question.type_name == 'multiple choice question':
-            MCQSubmissionAnalytics.create_submission_analytics(self)
-
-        if self.question.type_name == 'java question':
-            JavaSubmissionAnalytics.create_submission_analytics(self)
-
-        if self.question.type_name == 'parsons question':
-            ParsonsSubmissionAnalytics.create_submission_analytics(self)
 
     def submit(self):
         pass
