@@ -1,5 +1,3 @@
-from django.template.loader import render_to_string
-
 from course.fields import JSONFormField
 from course.forms.forms import JunitProblemCreateForm
 from course.models.java import JavaQuestion
@@ -20,7 +18,7 @@ class JavaQuestionForm(JunitProblemCreateForm):
     input_file_names = JSONFormField(
         initial='[]',
         label='',
-        widget=JSONEditor(schema=render_to_string('schemas/java_input_files.json')),
+        widget=JSONEditor(),
         help_text="""
             Please provide the name of the
             files students need to submit.
