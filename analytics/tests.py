@@ -216,7 +216,7 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
         self.assertEquals(init_analytics.calc_cc(test_code), 3)
 
     def test_halstead(self):
-        res = init_analytics.halstead(['+'], ['x', 'y'], 1, 2)
+        res = init_analytics.calc_halstead(['+'], ['x', 'y'], 1, 2)
         self.assertEquals(res[0], 1)
         self.assertEquals(res[1], 2)
         self.assertEquals(res[2], 3)
