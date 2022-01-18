@@ -1,7 +1,9 @@
 import math
 
 from accounts.models import MyUser
-from course.models.models import Submission
+from course.models.java import JavaSubmission
+from course.models.models import Submission, Question, UserQuestionJunction
+from course.models.parsons import ParsonsSubmission
 from course.utils.utils import create_mcq_submission, create_multiple_choice_question
 from test.base import BaseTestCase
 from .models import MCQSubmissionAnalytics, JavaSubmissionAnalytics, ParsonsSubmissionAnalytics
@@ -143,33 +145,26 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
     def test_ensure_db(self):
         self.uqj = self.user.question_junctions.filter(question__answer='a').first()
         mcq_submission = create_mcq_submission(self.uqj, '')
-        submission = Submission.objects.first()
-        try:
-            sub_analytics1 = MCQSubmissionAnalytics.objects.filter(submission=submission.pk).first()
-        except MCQSubmissionAnalytics.DoesNotExist:
-            sub_analytics1 = None
-        self.assertEquals(mcq_submission.pk, sub_analytics1.submission)
+        init_analytics.init()
         self.assertEquals(MCQSubmissionAnalytics.objects.count(), 1)
 
     def test_create_submission_analytics(self):
-        JavaSubmissionAnalytics.objects.create(uqj=0, submission=0, question=0, event=0, first_name='John',
-                                               user_id=self.user,
-                                               last_name='Doe', ans_file='', lines=0, blank_lines=0, comment_lines=0,
-                                               import_lines=0, cc=0, method=0, operator=0, operand=0, unique_operator=0,
-                                               unique_operand=0, vocab=0, size=0, vol=0, difficulty=0, effort=0,
-                                               error=0, test_time=0)
-        MCQSubmissionAnalytics.objects.create(uqj=0, submission=0,
-                                              question=0,
-                                              event=0, user_id=self.user,
-                                              first_name='John', last_name='Doe',
-                                              answer='A')
-        ParsonsSubmissionAnalytics.objects.create(uqj=0, submission=0, question=0, event=0, first_name='John',
-                                                  last_name='Doe', ans_file='', user_id=self.user,
-                                                  lines=0, blank_lines=0, comment_lines=0,
-                                                  import_lines=0, cc=0, method=0, operator=0, operand=0,
-                                                  unique_operator=0,
-                                                  unique_operand=0, vocab=0, size=0, vol=0, difficulty=0, effort=0,
-                                                  error=0, test_time=0)
+        uqj = UserQuestionJunction.objects.first()
+        create_mcq_submission(
+            uqj=uqj,
+            answer=''
+        )
+        java_submission = JavaSubmission(
+            uqj=uqj,
+            answer=''
+        )
+        java_submission.save()
+        parsons_submission = ParsonsSubmission(
+            uqj=uqj,
+            answer=''
+        )
+        parsons_submission.save()
+        init_analytics.init()
         self.assertEquals(SubmissionAnalytics.objects.all().count(), 3)
 
     def test_num_lines(self, test_code=TEST_CODE1):
@@ -226,5 +221,3 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
         self.assertEquals(res[6], 1.5 * 3 * math.log2(3))
         self.assertEquals(res[7], 3 * math.log2(3) / 3000)
         self.assertEquals(res[8], 1.5 * 3 * math.log2(3) / 18)
-
-

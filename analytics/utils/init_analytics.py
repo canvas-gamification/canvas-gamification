@@ -154,11 +154,9 @@ def init():
         return
     else:
         submission_without_analytics = submission_num - submission_analytics_num
-        count = 0
         for submission in submissions:
             if submission_without_analytics == 0:
                 break
-            count += 1
             curr_uqj_submissions = Submission.objects.filter(uqj=submission.uqj.id)
             num_attempts = curr_uqj_submissions.count()
             is_correct = False
@@ -241,7 +239,6 @@ def init():
                                                           answer=submission.answer, time_spent=submission.time_spent,
                                                           num_attempts=num_attempts, is_correct=is_correct, )
             submission_without_analytics -= 1
-    print("num analytics created: " + str(count))
 
 
 class SubmissionAnalyticsObj:
