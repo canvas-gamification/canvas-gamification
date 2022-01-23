@@ -24,4 +24,8 @@ def get_course_registration(user, course):
     from canvas.models import CanvasCourseRegistration
 
     qs = CanvasCourseRegistration.objects.filter(user=user, course=course)
-    return qs.get() if qs.exists() else None
+    if qs.exists():
+        return qs.get()
+    course_reg = CanvasCourseRegistration(user=user, course=course)
+    course_reg.save()
+    return course_reg
