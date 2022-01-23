@@ -1,5 +1,5 @@
 from django.contrib import admin
-from analytics.models import submission_analytics
+from analytics.models import SubmissionAnalytics
 
 # Register your models here.
-admin.site.register(submission_analytics)
+admin.site.register(SubmissionAnalytics)

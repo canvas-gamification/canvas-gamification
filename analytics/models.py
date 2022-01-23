@@ -3,7 +3,7 @@ from course.models.models import Submission, Question, UserQuestionJunction
 from course.fields import JSONField
 
 
-class submission_analytics(models.Model):
+class SubmissionAnalytics(models.Model):
     id = models.AutoField(primary_key=True)
     submission_type = models.CharField(max_length=255, default="n/a")
     uqj = models.ForeignKey(UserQuestionJunction, on_delete=models.CASCADE)
