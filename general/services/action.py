@@ -280,3 +280,16 @@ def create_question_report_action(report, user):
         object_id=report['id'],
         data=report
     )
+
+
+def create_view_question_action(question_id, user):
+    Action.create_action(
+        actor=user,
+        description='User opened a question.',
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.OPENED,
+        object_type=ActionObjectType.QUESTION,
+        object_id=question_id,
+        data=None
+    )
