@@ -11,10 +11,8 @@ from api.views import QuestionViewSet, SampleMultipleChoiceQuestionViewSet, User
     UpdateUQJViewSet, QuestionReportViewSet
 
 from api.views.admin import AdminViewSet
-from api.views.analytics import AnalyticsViewSet
 from api.views.course_admin import CourseAdminViewSet
-from api.views.submission_analytics import SubmissionAnalyticsViewSet, JavaSubmissionAnalyticsViewSet, \
-    MCQSubmissionAnalyticsViewSet, ParsonsSubmissionAnalyticsViewSet
+from api.views.submission_analytics import SubmissionAnalyticsViewSet
 
 router = DefaultRouter()
 router.register(r'questions', QuestionViewSet, basename='question')
@@ -41,15 +39,11 @@ router.register(r'submission', SubmissionViewSet, basename='submission')
 router.register(r'event', EventViewSet, basename='event')
 router.register(r'token-use', TokenUseViewSet, basename='token-use')
 router.register(r'difficulty', DifficultyViewSet, basename='difficulty')
-router.register(r'submission-analytics', SubmissionAnalyticsViewSet, basename='submission-analytics')
-router.register(r'java-submission-analytics', JavaSubmissionAnalyticsViewSet, basename='submission-analytics')
-router.register(r'mcq-submission-analytics', MCQSubmissionAnalyticsViewSet, basename='submission-analytics')
-router.register(r'parsons-submission-analytics', ParsonsSubmissionAnalyticsViewSet, basename='submission-analytics')
 router.register(r'admin', AdminViewSet, basename='admin')
 router.register(r'course-admin', CourseAdminViewSet, basename='admin-course')
 router.register(r'uqj-update', UpdateUQJViewSet, basename='uqj-update')
 router.register(r'question-report', QuestionReportViewSet, basename='question-report')
-router.register(r'analytics', AnalyticsViewSet, basename='analytics')
+router.register(r'submission-analytics', SubmissionAnalyticsViewSet, basename='submission-analytics')
 
 app_name = 'api'
 urlpatterns = [

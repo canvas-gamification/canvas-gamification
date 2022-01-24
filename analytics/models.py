@@ -1,4 +1,4 @@
-from django.db import models
+rom django.db import models
 from course.models.models import Submission, Question, UserQuestionJunction
 from course.fields import JSONField
 

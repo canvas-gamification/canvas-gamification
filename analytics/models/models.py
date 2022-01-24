@@ -7,6 +7,7 @@ from course.models.models import Submission, Question, UserQuestionJunction
 
 class SubmissionAnalytics(models.Model):
     id = models.AutoField(primary_key=True)
+    time_created = models.DateTimeField(auto_now_add=True)
     uqj = models.ForeignKey(UserQuestionJunction, on_delete=models.CASCADE)
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
