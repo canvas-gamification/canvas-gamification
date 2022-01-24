@@ -79,7 +79,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         return Response(uqj_count)
 
     # TODO: Fix permissions for this
-    @action(detail=True, methods=['post'], url_path='opened-question')
+    @action(detail=True, methods=['get'], url_path='opened-question')
     def opened_question(self, request, pk=None):
         create_view_question_action(pk, request.user)
         return Response("success")
