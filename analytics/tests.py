@@ -8,6 +8,7 @@ from course.utils.utils import create_mcq_submission, create_multiple_choice_que
 from test.base import BaseTestCase
 from .models import MCQSubmissionAnalytics, JavaSubmissionAnalytics, ParsonsSubmissionAnalytics
 from .models.models import SubmissionAnalytics
+from .services.submission_analytics import get_all_submission_analytics
 from .utils import init_analytics
 
 
@@ -145,7 +146,7 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
     def test_ensure_db(self):
         self.uqj = self.user.question_junctions.filter(question__answer='a').first()
         mcq_submission = create_mcq_submission(self.uqj, '')
-        init_analytics.init()
+        get_all_submission_analytics()
         self.assertEquals(MCQSubmissionAnalytics.objects.count(), 1)
 
     def test_create_submission_analytics(self):
@@ -164,7 +165,7 @@ class SubmissionAnalyticsTestCase(BaseTestCase):
             answer=''
         )
         parsons_submission.save()
-        init_analytics.init()
+        get_all_submission_analytics()
         self.assertEquals(SubmissionAnalytics.objects.all().count(), 3)
 
     def test_num_lines(self, test_code=TEST_CODE1):
