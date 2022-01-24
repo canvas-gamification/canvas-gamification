@@ -1,8 +1,8 @@
-from django_filters import NumberFilter
+from django_filters import NumberFilter, ChoiceFilter
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticated
-from course.models.models import UserQuestionJunction, Question
+from course.models.models import UserQuestionJunction, Question, DIFFICULTY_CHOICES
 from api.pagination import BasePagination
 from api.serializers import UQJSerializer
 
@@ -10,10 +10,12 @@ from api.serializers import UQJSerializer
 class UQJFilterSet(FilterSet):
     question_event = NumberFilter(field_name='question__event')
     question = NumberFilter(field_name='question')
+    difficulty = ChoiceFilter(field_name='question__difficulty', choices=DIFFICULTY_CHOICES)
+    category = NumberFilter(field_name='question__category')
 
     class Meta:
         model = UserQuestionJunction
-        fields = ['question', 'question_event']
+        fields = ['question', 'question_event', 'difficulty', 'category', 'is_solved']
 
 
 class UQJViewSet(viewsets.ReadOnlyModelViewSet):

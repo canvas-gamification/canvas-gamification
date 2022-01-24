@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from api.serializers import CourseSerializer, CourseSerializerList
 from api.permissions import StudentsMustBeRegisteredPermission, CourseEditPermission, CourseCreatePermission
 import api.error_messages as ERROR_MESSAGES
-from canvas.models import CanvasCourse, CanvasCourseRegistration, MyUser
+from canvas.models import CanvasCourse, MyUser
 from canvas.utils.utils import get_course_registration
 from general.services.action import course_registration_verify_action, course_registration_student_number_action, \
     course_registration_confirm_name_action
@@ -62,11 +62,6 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         course = get_object_or_404(CanvasCourse, pk=pk)
         course_reg = get_course_registration(request.user, course)
 
-        if course_reg is None:
-            # create a CanvasCourseRegistration for this (user, course) pair if one does not already exist
-            course_reg = CanvasCourseRegistration(user=request.user, course=course)
-            course_reg.save()
-
         if course_reg.is_blocked:
             return Response({
                 "status": "Blocked",
@@ -105,11 +100,6 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
         course = get_object_or_404(CanvasCourse, pk=pk)
         course_reg = get_course_registration(request.user, course)
-
-        if course_reg is None:
-            # create a CanvasCourseRegistration for this (user, course) pair if one does not already exist
-            course_reg = CanvasCourseRegistration(user=request.user, course=course)
-            course_reg.save()
 
         if student_number is not None:
             # if a student number was given in the request data, try to find this canvas user using it
@@ -173,11 +163,6 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         user = get_object_or_404(MyUser, username=student_username)
         course_reg = get_course_registration(user, course)
 
-        if course_reg is None:
-            # create a CanvasCourseRegistration for this (user, course) pair if one does not already exist
-            course_reg = CanvasCourseRegistration(user=user, course=course)
-            course_reg.save()
-
         if student_number is not None:
             # if a student number was given in the request data, try to find this canvas user using it
             canvas_user = course.get_user(student_id=student_number)
@@ -236,9 +221,6 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
         course = get_object_or_404(CanvasCourse, pk=pk)
         course_reg = get_course_registration(request.user, course)
-
-        if course_reg is None:
-            raise ValidationError(ERROR_MESSAGES.COURSE_REGISTRATION.INVALID)
 
         valid = course_reg.check_verification_code(code)
         course_registration_verify_action(request.user)
