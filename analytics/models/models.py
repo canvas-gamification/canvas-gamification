@@ -1,11 +1,12 @@
 from django.db import models
+from polymorphic.models import PolymorphicModel
 
 from accounts.models import MyUser
 from canvas.models import Event
 from course.models.models import Submission, Question, UserQuestionJunction
 
 
-class SubmissionAnalytics(models.Model):
+class SubmissionAnalytics(PolymorphicModel):
     id = models.AutoField(primary_key=True)
     time_created = models.DateTimeField(auto_now_add=True)
     uqj = models.ForeignKey(UserQuestionJunction, on_delete=models.CASCADE)

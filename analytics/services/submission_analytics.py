@@ -28,6 +28,22 @@ def get_all_submission_analytics():
         return SubmissionAnalyticsSerializer(SubmissionAnalytics.objects.all(), many=True).data
     else:
         for submission in submissions:
+            user_obj = MyUser.objects.get(pk=submission.user.pk)
+            time_spent = 0
+            try:
+                question_last_access_time = Action.objects \
+                    .filter(actor=user_obj, object_id=submission.id, description='User opened a question.') \
+                    .order_by('-time_created').first()
+            except Action.DoesNotExist:
+                pass
+            else:
+                if question_last_access_time:
+                    question_last_access_time = question_last_access_time.time_created
+                    submission_time = Action.objects \
+                        .filter(actor=user_obj, object_id=submission.id, description='User submitted a solution') \
+                        .order_by('-time_created').first().time_created
+                    time_diff = submission_time - question_last_access_time
+                    time_spent = time_diff.total_seconds()
             curr_uqj_submissions = Submission.objects.filter(uqj=submission.uqj.id)
             num_attempts = curr_uqj_submissions.count()
             is_correct = False
@@ -48,7 +64,7 @@ def get_all_submission_analytics():
                                                            question=submission.question,
                                                            event=submission.question.event, user_id=submission.user,
                                                            first_name=user_obj.first_name, last_name=user_obj.last_name,
-                                                           ans_file=ans, time_spent=submission.time_spent,
+                                                           ans_file=ans, time_spent=time_spent,
                                                            num_attempts=num_attempts, is_correct=is_correct,
                                                            lines=sub_analytics_dict.lines,
                                                            blank_lines=sub_analytics_dict.blank_lines,
@@ -79,7 +95,7 @@ def get_all_submission_analytics():
                                                               event=submission.question.event, user_id=submission.user,
                                                               first_name=user_obj.first_name,
                                                               last_name=user_obj.last_name,
-                                                              ans_file=ans, time_spent=submission.time_spent,
+                                                              ans_file=ans, time_spent=time_spent,
                                                               num_attempts=num_attempts, is_correct=is_correct,
                                                               lines=sub_analytics_dict.lines,
                                                               blank_lines=sub_analytics_dict.blank_lines,
@@ -107,7 +123,7 @@ def get_all_submission_analytics():
                                                           question=submission.question,
                                                           event=submission.question.event, user_id=submission.user,
                                                           first_name=user_obj.first_name, last_name=user_obj.last_name,
-                                                          answer=submission.answer, time_spent=submission.time_spent,
+                                                          answer=submission.answer, time_spent=time_spent,
                                                           num_attempts=num_attempts, is_correct=is_correct, )
         return SubmissionAnalyticsSerializer(SubmissionAnalytics.objects.all(), many=True).data
 
