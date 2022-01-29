@@ -84,23 +84,25 @@ def create_question_analytics(question):
     num_respondents = analytics_by_question.values_list('user_id', flat=True).distinct().count()
     if num_respondents == 0:
         return 'No Submission Analytics are found.'
-    total_attempts = 0
+    total_attempts = []
     attempts = []
     total_grade = 0
     grade = []
     time_spent = []
 
     for item in analytics_by_question:
-        total_attempts += item.num_attempts
+        total_attempts.append(item.num_attempts)
         attempts.append(item.num_attempts)
         total_grade += item.submission.grade
         grade.append(item.submission.grade)
         time_spent.append(item.time_spent)
 
-    avg_attempt = total_attempts / num_respondents
+    avg_attempt = max(total_attempts) / num_respondents
     attempt_std_dev = statistics.stdev(attempts) if len(attempts) > 1 else 0
     avg_grade = total_grade / num_respondents
     grade_std_dev = statistics.stdev(grade) if len(grade) > 1 else 0
+
+    time_spent = [i for i in time_spent if i > 0]
     median_time_spent = statistics.median(time_spent)
 
     if isinstance(analytics_by_question.first(), JavaSubmissionAnalytics):
