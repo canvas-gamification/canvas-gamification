@@ -72,7 +72,6 @@ class SubmissionViewSet(viewsets.GenericViewSet):
     def submit(self, request):
         question_id = request.data.get("question", None)
         solution = request.data.get("solution", None)
-        time_spent = request.data.get("time_spent", None)
 
         if question_id is None or solution is None:
             raise ValidationError(ERROR_MESSAGES.SUBMISSION.INVALID)
@@ -81,11 +80,11 @@ class SubmissionViewSet(viewsets.GenericViewSet):
 
         try:
             if isinstance(question, MultipleChoiceQuestion):
-                submission = submit_multiple_choice_solution(question, request.user, solution, time_spent)
+                submission = submit_multiple_choice_solution(question, request.user, solution)
             elif isinstance(question, JavaQuestion):
-                submission = submit_java_solution(question, request.user, solution, time_spent)
+                submission = submit_java_solution(question, request.user, solution)
             elif isinstance(question, ParsonsQuestion):
-                submission = submit_parsons_solution(question, request.user, solution, time_spent)
+                submission = submit_parsons_solution(question, request.user, solution)
             else:
                 raise ValidationError(ERROR_MESSAGES.QUESTION.INVALID)
         except SubmissionException as e:

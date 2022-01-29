@@ -79,7 +79,7 @@ def _parsons_submission_detail_view(request, submission):
     })
 
 
-def submit_solution(question, user, solution, time_spent):
+def submit_solution(question, user, solution):
     uqj = get_user_question_junction(user, question)
 
     if not uqj.is_allowed_to_submit:
@@ -88,7 +88,6 @@ def submit_solution(question, user, solution, time_spent):
     submission = ParsonsSubmission()
     submission.answer_files = solution
     submission.uqj = uqj
-    submission.time_spent = time_spent
 
     submission.submit()
     submission.save()

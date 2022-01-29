@@ -82,7 +82,7 @@ def _java_submission_detail_view(request, submission):
     })
 
 
-def submit_solution(question, user, answer_dict, time_spent):
+def submit_solution(question, user, answer_dict):
 
     if isinstance(answer_dict, str):
         answer_dict = json.loads(answer_dict)
@@ -95,7 +95,6 @@ def submit_solution(question, user, answer_dict, time_spent):
     submission = JavaSubmission()
     submission.answer_files = answer_dict
     submission.uqj = uqj
-    submission.time_spent = time_spent
 
     submission.submit()
     submission.save()
