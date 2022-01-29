@@ -8,7 +8,7 @@ from course.models.java import JavaSubmission
 from course.models.models import Submission
 from course.models.multiple_choice import MultipleChoiceSubmission
 from course.models.parsons import ParsonsSubmission
-from general.models.action import Action
+from general.models.action import Action, ActionVerb
 
 
 def get_submission_analytics(submission):
@@ -32,7 +32,7 @@ def get_all_submission_analytics():
             time_spent = 0
             try:
                 question_last_access_time = Action.objects \
-                    .filter(actor=user_obj, object_id=submission.id, description='User opened a question.') \
+                    .filter(actor=user_obj, object_id=submission.question.id, verb=ActionVerb.OPENED) \
                     .order_by('-time_created').first()
             except Action.DoesNotExist:
                 pass
@@ -40,7 +40,7 @@ def get_all_submission_analytics():
                 if question_last_access_time:
                     question_last_access_time = question_last_access_time.time_created
                     submission_time = Action.objects \
-                        .filter(actor=user_obj, object_id=submission.id, description='User submitted a solution') \
+                        .filter(actor=user_obj, object_id=submission.id, verb=ActionVerb.SUBMITTED) \
                         .order_by('-time_created').first().time_created
                     time_diff = submission_time - question_last_access_time
                     time_spent = time_diff.total_seconds()
@@ -135,7 +135,7 @@ def create_submission_analytics(submission):
     time_spent = 0
     try:
         question_last_access_time = Action.objects \
-            .filter(actor=user_obj, object_id=submission.id, description='User opened a question.') \
+            .filter(actor=user_obj, object_id=submission.question.id, verb=ActionVerb.OPENED) \
             .order_by('-time_created').first()
     except Action.DoesNotExist:
         pass
@@ -143,7 +143,7 @@ def create_submission_analytics(submission):
         if question_last_access_time:
             question_last_access_time = question_last_access_time.time_created
             submission_time = Action.objects \
-                .filter(actor=user_obj, object_id=submission.id, description='User submitted a solution') \
+                .filter(actor=user_obj, object_id=submission.id, verb=ActionVerb.SUBMITTED) \
                 .order_by('-time_created').first().time_created
             time_diff = submission_time - question_last_access_time
             time_spent = time_diff.total_seconds()
