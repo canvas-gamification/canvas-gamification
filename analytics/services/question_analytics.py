@@ -9,6 +9,7 @@ from analytics.models.models import QuestionAnalytics, SubmissionAnalytics
 import statistics
 
 from analytics.models.parsons import ParsonsQuestionAnalytics
+from analytics.services.submission_analytics import get_all_submission_analytics
 from api.serializers.question_analytics import QuestionAnalyticsSerializer, JavaQuestionAnalyticsSerializer, \
     MCQQuestionAnalyticsSerializer, ParsonsQuestionAnalyticsSerializer
 from canvas.models import Event
@@ -78,6 +79,7 @@ def get_all_question_analytics():
 
 
 def create_question_analytics(question):
+    get_all_submission_analytics()
     event = question.event
     course = question.course
     analytics_by_question = SubmissionAnalytics.objects.filter(question=question)
@@ -103,7 +105,10 @@ def create_question_analytics(question):
     grade_std_dev = statistics.stdev(grade) if len(grade) > 1 else 0
 
     time_spent = [i for i in time_spent if i > 0]
-    median_time_spent = statistics.median(time_spent)
+    if len(time_spent) != 0:
+        median_time_spent = statistics.median(time_spent)
+    else:
+        median_time_spent = 0
 
     if isinstance(analytics_by_question.first(), JavaSubmissionAnalytics):
         lines = analytics_by_question.aggregate(Avg('javasubmissionanalytics__lines'))
@@ -158,31 +163,31 @@ def create_question_analytics(question):
 
             )
         else:
-            question_analytics.time_created=datetime.utcnow().replace(tzinfo=utc)
-            question_analytics.most_frequent_wrong_ans=''
-            question_analytics.avg_grade=avg_grade
-            question_analytics.grade_std_dev=grade_std_dev
-            question_analytics.num_respondents=num_respondents
-            question_analytics.avg_attempt=avg_attempt
-            question_analytics.attempt_std_dev=attempt_std_dev
-            question_analytics.median_time_spent=median_time_spent
-            question_analytics.lines=[elem for elem in lines.values()][0]
-            question_analytics.blank_lines=[elem for elem in blank_lines.values()][0]
-            question_analytics.comment_lines=[elem for elem in comment_lines.values()][0]
-            question_analytics.import_lines=[elem for elem in import_lines.values()][0]
-            question_analytics.cc=[elem for elem in cc.values()][0]
-            question_analytics.method=[elem for elem in method.values()][0]
-            question_analytics.operator=[elem for elem in operator.values()][0]
-            question_analytics.operand=[elem for elem in operand.values()][0]
-            question_analytics.unique_operator=[elem for elem in unique_operator.values()][0]
-            question_analytics.unique_operand=[elem for elem in unique_operand.values()][0]
-            question_analytics.vocab=[elem for elem in vocab.values()][0]
-            question_analytics.size=[elem for elem in size.values()][0]
-            question_analytics.vol=[elem for elem in vol.values()][0]
-            question_analytics.difficulty=[elem for elem in difficulty.values()][0]
-            question_analytics.effort=[elem for elem in effort.values()][0]
-            question_analytics.error=[elem for elem in error.values()][0]
-            question_analytics.test_time=[elem for elem in test_time.values()][0]
+            question_analytics.time_created = datetime.utcnow().replace(tzinfo=utc)
+            question_analytics.most_frequent_wrong_ans = ''
+            question_analytics.avg_grade = avg_grade
+            question_analytics.grade_std_dev = grade_std_dev
+            question_analytics.num_respondents = num_respondents
+            question_analytics.avg_attempt = avg_attempt
+            question_analytics.attempt_std_dev = attempt_std_dev
+            question_analytics.median_time_spent = median_time_spent
+            question_analytics.lines = [elem for elem in lines.values()][0]
+            question_analytics.blank_lines = [elem for elem in blank_lines.values()][0]
+            question_analytics.comment_lines = [elem for elem in comment_lines.values()][0]
+            question_analytics.import_lines = [elem for elem in import_lines.values()][0]
+            question_analytics.cc = [elem for elem in cc.values()][0]
+            question_analytics.method = [elem for elem in method.values()][0]
+            question_analytics.operator = [elem for elem in operator.values()][0]
+            question_analytics.operand = [elem for elem in operand.values()][0]
+            question_analytics.unique_operator = [elem for elem in unique_operator.values()][0]
+            question_analytics.unique_operand = [elem for elem in unique_operand.values()][0]
+            question_analytics.vocab = [elem for elem in vocab.values()][0]
+            question_analytics.size = [elem for elem in size.values()][0]
+            question_analytics.vol = [elem for elem in vol.values()][0]
+            question_analytics.difficulty = [elem for elem in difficulty.values()][0]
+            question_analytics.effort = [elem for elem in effort.values()][0]
+            question_analytics.error = [elem for elem in error.values()][0]
+            question_analytics.test_time = [elem for elem in test_time.values()][0]
             question_analytics.save()
         return JavaQuestionAnalyticsSerializer(question_analytics).data
     if isinstance(analytics_by_question.first(), ParsonsSubmissionAnalytics):
@@ -238,30 +243,30 @@ def create_question_analytics(question):
             )
         else:
             question_analytics.time_created = datetime.utcnow().replace(tzinfo=utc)
-            question_analytics.most_frequent_wrong_ans=''
-            question_analytics.avg_grade=avg_grade
-            question_analytics.grade_std_dev=grade_std_dev
-            question_analytics.num_respondents=num_respondents
-            question_analytics.avg_attempt=avg_attempt
-            question_analytics.attempt_std_dev=attempt_std_dev
-            question_analytics.median_time_spent=median_time_spent
-            question_analytics.lines=[elem for elem in lines.values()][0]
-            question_analytics.blank_lines=[elem for elem in blank_lines.values()][0]
-            question_analytics.comment_lines=[elem for elem in comment_lines.values()][0]
-            question_analytics.import_lines=[elem for elem in import_lines.values()][0]
-            question_analytics.cc=[elem for elem in cc.values()][0]
-            question_analytics.method=[elem for elem in method.values()][0]
-            question_analytics.operator=[elem for elem in operator.values()][0]
-            question_analytics.operand=[elem for elem in operand.values()][0]
-            question_analytics.unique_operator=[elem for elem in unique_operator.values()][0]
-            question_analytics.unique_operand=[elem for elem in unique_operand.values()][0]
-            question_analytics.vocab=[elem for elem in vocab.values()][0]
-            question_analytics.size=[elem for elem in size.values()][0]
-            question_analytics.vol=[elem for elem in vol.values()][0]
-            question_analytics.difficulty=[elem for elem in difficulty.values()][0]
-            question_analytics.effort=[elem for elem in effort.values()][0]
-            question_analytics.error=[elem for elem in error.values()][0]
-            question_analytics.test_time=[elem for elem in test_time.values()][0]
+            question_analytics.most_frequent_wrong_ans = ''
+            question_analytics.avg_grade = avg_grade
+            question_analytics.grade_std_dev = grade_std_dev
+            question_analytics.num_respondents = num_respondents
+            question_analytics.avg_attempt = avg_attempt
+            question_analytics.attempt_std_dev = attempt_std_dev
+            question_analytics.median_time_spent = median_time_spent
+            question_analytics.lines = [elem for elem in lines.values()][0]
+            question_analytics.blank_lines = [elem for elem in blank_lines.values()][0]
+            question_analytics.comment_lines = [elem for elem in comment_lines.values()][0]
+            question_analytics.import_lines = [elem for elem in import_lines.values()][0]
+            question_analytics.cc = [elem for elem in cc.values()][0]
+            question_analytics.method = [elem for elem in method.values()][0]
+            question_analytics.operator = [elem for elem in operator.values()][0]
+            question_analytics.operand = [elem for elem in operand.values()][0]
+            question_analytics.unique_operator = [elem for elem in unique_operator.values()][0]
+            question_analytics.unique_operand = [elem for elem in unique_operand.values()][0]
+            question_analytics.vocab = [elem for elem in vocab.values()][0]
+            question_analytics.size = [elem for elem in size.values()][0]
+            question_analytics.vol = [elem for elem in vol.values()][0]
+            question_analytics.difficulty = [elem for elem in difficulty.values()][0]
+            question_analytics.effort = [elem for elem in effort.values()][0]
+            question_analytics.error = [elem for elem in error.values()][0]
+            question_analytics.test_time = [elem for elem in test_time.values()][0]
             question_analytics.save()
         return ParsonsQuestionAnalyticsSerializer(question_analytics).data
     if isinstance(analytics_by_question.first(), MCQSubmissionAnalytics):
@@ -274,7 +279,7 @@ def create_question_analytics(question):
         for ans in distinct_ans:
             if ans != correct_ans:
                 most_frequent_wrong_ans.append({ans: answers.count(ans)})
-
+        question_analytics = None
         try:
             question_analytics = MCQQuestionAnalytics.objects.get(question=question)
         except MCQQuestionAnalytics.DoesNotExist:
@@ -292,12 +297,12 @@ def create_question_analytics(question):
             )
         else:
             question_analytics.time_created = datetime.utcnow().replace(tzinfo=utc)
-            question_analytics.most_frequent_wrong_ans=most_frequent_wrong_ans
-            question_analytics.avg_grade=avg_grade
-            question_analytics.grade_std_dev=grade_std_dev
-            question_analytics.num_respondents=num_respondents
-            question_analytics.avg_attempt=avg_attempt
-            question_analytics.attempt_std_dev=attempt_std_dev
-            question_analytics.median_time_spent=median_time_spent
+            question_analytics.most_frequent_wrong_ans = most_frequent_wrong_ans
+            question_analytics.avg_grade = avg_grade
+            question_analytics.grade_std_dev = grade_std_dev
+            question_analytics.num_respondents = num_respondents
+            question_analytics.avg_attempt = avg_attempt
+            question_analytics.attempt_std_dev = attempt_std_dev
+            question_analytics.median_time_spent = median_time_spent
             question_analytics.save()
         return MCQQuestionAnalyticsSerializer(question_analytics).data
