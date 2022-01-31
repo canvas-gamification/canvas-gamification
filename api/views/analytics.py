@@ -7,11 +7,13 @@ from analytics.models.java import JavaQuestionAnalytics
 from analytics.models.mcq import MCQQuestionAnalytics
 from analytics.models.models import SubmissionAnalytics, QuestionAnalytics
 from analytics.models.parsons import ParsonsQuestionAnalytics
-from analytics.services.question_analytics import get_all_question_analytics, get_question_analytics
+from analytics.services.question_analytics import get_all_question_analytics, get_question_analytics, \
+    get_question_analytics_by_event
 from analytics.services.submission_analytics import get_submission_analytics, get_all_submission_analytics
 from api.permissions import TeacherAccessPermission
 from api.serializers.question_analytics import MCQQuestionAnalyticsSerializer, JavaQuestionAnalyticsSerializer, \
     ParsonsQuestionAnalyticsSerializer
+from canvas.models import Event
 from course.models.models import Submission, Question
 
 
@@ -54,3 +56,14 @@ class QuestionAnalyticsViewSet(viewsets.GenericViewSet):
         question_id = request.GET.get('id', None)
         question = get_object_or_404(Question, pk=question_id)
         return Response(get_question_analytics(question))
+
+    @action(detail=False, methods=['get'], url_path='event')
+    def event(self, request):
+        event_id = request.GET.get('id', None)
+        event = get_object_or_404(Event, pk=event_id)
+        analytics = get_question_analytics_by_event(event)
+        results = [
+            self.get_serialized_data(item) for item in analytics
+        ]
+        return Response(results)
+

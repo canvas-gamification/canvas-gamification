@@ -21,14 +21,6 @@ from django.db.models import Avg, Max
 
 
 def get_question_analytics(question):
-    # 1 if cache and question analytics exists return that
-    # 2 calculate question analytics and save it in the database
-    # 3 make sure to replace the old one
-
-    # if the question analytics exists and cache is true but the cache is old
-    # still calculate it
-
-    # move this to a separate file
     try:
         if isinstance(question, JavaQuestion):
             analytics = JavaQuestionAnalytics.objects.get(question=question)
@@ -76,6 +68,11 @@ def get_all_question_analytics():
                 if time_diff > 86400:
                     create_question_analytics(question)
     return QuestionAnalyticsSerializer(QuestionAnalytics.objects.all(), many=True).data
+
+
+def get_question_analytics_by_event(event):
+    get_all_submission_analytics()
+    return QuestionAnalytics.objects.filter(event=event)
 
 
 def create_question_analytics(question):
