@@ -17,7 +17,7 @@ from course.models.models import Question
 from course.models.java import JavaQuestion
 from course.models.parsons import ParsonsQuestion
 from course.models.multiple_choice import MultipleChoiceQuestion
-from django.db.models import Avg
+from django.db.models import Avg, Max
 
 
 def get_question_analytics(question):
@@ -86,29 +86,30 @@ def create_question_analytics(question):
     num_respondents = analytics_by_question.values_list('user_id', flat=True).distinct().count()
     if num_respondents == 0:
         return 'No Submission Analytics are found.'
-    total_attempts = []
+    total_attempts = 0
     attempts = []
     total_grade = 0
     grade = []
     time_spent = []
-
+    distinct_user = []
     for item in analytics_by_question:
-        total_attempts.append(item.num_attempts)
-        attempts.append(item.num_attempts)
+
         total_grade += item.submission.grade
         grade.append(item.submission.grade)
         time_spent.append(item.time_spent)
 
-    avg_attempt = max(total_attempts) / num_respondents
+    distinct_user = analytics_by_question.values('user_id').distinct()
+    for user in distinct_user:
+        total_attempts += analytics_by_question.filter(user_id=user['user_id']).aggregate(Max('num_attempts'))['num_attempts__max']
+        attempts.append(analytics_by_question.filter(user_id=user['user_id']).aggregate(Max('num_attempts'))['num_attempts__max'])
+
+    avg_attempt = total_attempts / num_respondents
     attempt_std_dev = statistics.stdev(attempts) if len(attempts) > 1 else 0
     avg_grade = total_grade / num_respondents
     grade_std_dev = statistics.stdev(grade) if len(grade) > 1 else 0
 
     time_spent = [i for i in time_spent if i > 0]
-    if len(time_spent) != 0:
-        median_time_spent = statistics.median(time_spent)
-    else:
-        median_time_spent = 0
+    median_time_spent = statistics.median(time_spent) if len(time_spent) != 0 else 0
 
     if isinstance(analytics_by_question.first(), JavaSubmissionAnalytics):
         lines = analytics_by_question.aggregate(Avg('javasubmissionanalytics__lines'))
