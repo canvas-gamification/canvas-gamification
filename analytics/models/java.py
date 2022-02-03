@@ -8,7 +8,7 @@ class JavaSubmissionAnalytics(SubmissionAnalytics):
     blank_lines = models.IntegerField(default=0)
     comment_lines = models.IntegerField(default=0)
     import_lines = models.IntegerField(default=0)
-    cc = models.IntegerField(default=0)
+    cyclomatic_complexity = models.IntegerField(default=0)
     method = models.IntegerField(default=0)
     operator = models.IntegerField(default=0)
     operand = models.IntegerField(default=0)
