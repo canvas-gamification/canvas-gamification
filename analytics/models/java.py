@@ -10,6 +10,7 @@ class JavaSubmissionAnalytics(SubmissionAnalytics):
     import_lines = models.IntegerField(default=0)
     cyclomatic_complexity = models.IntegerField(default=0)
     method = models.IntegerField(default=0)
+    # all fields below are part of Halstead metrics for analyzing code complexity
     operator = models.IntegerField(default=0)
     operand = models.IntegerField(default=0)
     unique_operator = models.IntegerField(default=0)
