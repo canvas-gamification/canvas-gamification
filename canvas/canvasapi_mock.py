@@ -24,7 +24,8 @@ class Course(object):
         return [
             User(1, 'Firstname Lastname', '00000000'),
             User(2, 'multiple student', '12345678'),
-            User(3, 'multiple student', '13579135')
+            User(3, 'multiple student', '13579135'),
+            User(4, 'Opey Adeyemi', '69696969'),
         ]
 
     def submissions_bulk_update(self, **kwargs):
