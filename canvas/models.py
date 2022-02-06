@@ -3,7 +3,6 @@ import copy
 import canvasapi
 from django.db import models
 from django.db.models import Sum, F, FloatField
-from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from fuzzywuzzy import process
 
