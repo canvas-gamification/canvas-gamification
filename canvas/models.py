@@ -310,11 +310,11 @@ class Event(models.Model):
         return self.is_open and self.course.is_registered(user)
 
     def has_edit_permission(self, user):
-        course_reg = get_object_or_404(CanvasCourseRegistration, user=user, course=self.course)
+        course_reg = get_course_registration(user, self.course)
         return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
     def has_create_permission(self, user):
-        course_reg = get_object_or_404(CanvasCourseRegistration, user=user, course=self.course)
+        course_reg = get_course_registration(user, self.course)
         return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
     def is_allowed_to_open(self, user):
