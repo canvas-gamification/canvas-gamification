@@ -45,7 +45,6 @@ router.register(r'course-admin', CourseAdminViewSet, basename='admin-course')
 router.register(r'uqj-update', UpdateUQJViewSet, basename='uqj-update')
 router.register(r'question-report', QuestionReportViewSet, basename='question-report')
 router.register(r'analytics/submission', AnalyticsViewSet, basename='submission-analytics')
-router.register(r'analytics/question', QuestionAnalyticsViewSet, basename='question-analytics')
 
 app_name = 'api'
 urlpatterns = [

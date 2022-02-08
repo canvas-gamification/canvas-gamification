@@ -28,103 +28,7 @@ def get_all_submission_analytics():
         return SubmissionAnalyticsSerializer(SubmissionAnalytics.objects.all(), many=True).data
     else:
         for submission in submissions:
-            user_obj = MyUser.objects.get(pk=submission.user.pk)
-            time_spent = 0
-            try:
-                question_last_access_time = Action.objects \
-                    .filter(actor=user_obj, object_id=submission.question.id, verb=ActionVerb.OPENED) \
-                    .order_by('-time_created').first()
-            except Action.DoesNotExist:
-                pass
-            else:
-                if question_last_access_time:
-                    question_last_access_time = question_last_access_time.time_created
-                    submission_time = Action.objects \
-                        .filter(actor=user_obj, object_id=submission.id, verb=ActionVerb.SUBMITTED) \
-                        .order_by('-time_created').first().time_created
-                    time_diff = submission_time - question_last_access_time
-                    time_spent = time_diff.total_seconds()
-            curr_uqj_submissions = Submission.objects.filter(uqj=submission.uqj.id)
-            num_attempts = curr_uqj_submissions.count()
-            is_correct = False
-            for item in curr_uqj_submissions:
-                if item.is_correct is True:
-                    is_correct = True
-                    break
-
-            if isinstance(submission, JavaSubmission):
-                try:
-                    sub_analytics = JavaSubmissionAnalytics.objects.get(submission=submission)
-                except JavaSubmissionAnalytics.DoesNotExist:
-                    ans = submission.answer_files
-                    sub_analytics_dict = SubmissionAnalyticsObj(ans)
-                    user_obj = MyUser.objects.get(pk=submission.user.pk)
-
-                    JavaSubmissionAnalytics.objects.create(uqj=submission.uqj, submission=submission,
-                                                           question=submission.question,
-                                                           event=submission.question.event, user_id=submission.user,
-                                                           first_name=user_obj.first_name, last_name=user_obj.last_name,
-                                                           ans_file=ans, time_spent=time_spent,
-                                                           num_attempts=num_attempts, is_correct=is_correct,
-                                                           lines=sub_analytics_dict.lines,
-                                                           blank_lines=sub_analytics_dict.blank_lines,
-                                                           comment_lines=sub_analytics_dict.comment_lines,
-                                                           import_lines=sub_analytics_dict.imported_lines,
-                                                           cc=sub_analytics_dict.cc,
-                                                           method=sub_analytics_dict.method,
-                                                           operator=sub_analytics_dict.operator,
-                                                           operand=sub_analytics_dict.operand,
-                                                           unique_operator=sub_analytics_dict.unique_operator,
-                                                           unique_operand=sub_analytics_dict.unique_operand,
-                                                           vocab=sub_analytics_dict.vocab,
-                                                           size=sub_analytics_dict.size, vol=sub_analytics_dict.vol,
-                                                           difficulty=sub_analytics_dict.difficulty,
-                                                           effort=sub_analytics_dict.effort,
-                                                           error=sub_analytics_dict.error,
-                                                           test_time=sub_analytics_dict.test_time)
-            if isinstance(submission, ParsonsSubmission):
-                ans = submission.answer_files
-                sub_analytics_dict = SubmissionAnalyticsObj(ans)
-                user_obj = MyUser.objects.get(pk=submission.user.pk)
-
-                try:
-                    sub_analytics = ParsonsSubmissionAnalytics.objects.get(submission=submission)
-                except ParsonsSubmissionAnalytics.DoesNotExist:
-                    ParsonsSubmissionAnalytics.objects.create(uqj=submission.uqj, submission=submission,
-                                                              question=submission.question,
-                                                              event=submission.question.event, user_id=submission.user,
-                                                              first_name=user_obj.first_name,
-                                                              last_name=user_obj.last_name,
-                                                              ans_file=ans, time_spent=time_spent,
-                                                              num_attempts=num_attempts, is_correct=is_correct,
-                                                              lines=sub_analytics_dict.lines,
-                                                              blank_lines=sub_analytics_dict.blank_lines,
-                                                              comment_lines=sub_analytics_dict.comment_lines,
-                                                              import_lines=sub_analytics_dict.imported_lines,
-                                                              cc=sub_analytics_dict.cc,
-                                                              method=sub_analytics_dict.method,
-                                                              operator=sub_analytics_dict.operator,
-                                                              operand=sub_analytics_dict.operand,
-                                                              unique_operator=sub_analytics_dict.unique_operator,
-                                                              unique_operand=sub_analytics_dict.unique_operand,
-                                                              vocab=sub_analytics_dict.vocab,
-                                                              size=sub_analytics_dict.size, vol=sub_analytics_dict.vol,
-                                                              difficulty=sub_analytics_dict.difficulty,
-                                                              effort=sub_analytics_dict.effort,
-                                                              error=sub_analytics_dict.error,
-                                                              test_time=sub_analytics_dict.test_time)
-
-            if isinstance(submission, MultipleChoiceSubmission):
-                user_obj = MyUser.objects.get(pk=submission.user.pk)
-                try:
-                    sub_analytics = MCQSubmissionAnalytics.objects.get(submission=submission)
-                except MCQSubmissionAnalytics.DoesNotExist:
-                    MCQSubmissionAnalytics.objects.create(uqj=submission.uqj, submission=submission,
-                                                          question=submission.question,
-                                                          event=submission.question.event, user_id=submission.user,
-                                                          first_name=user_obj.first_name, last_name=user_obj.last_name,
-                                                          answer=submission.answer, time_spent=time_spent,
-                                                          num_attempts=num_attempts, is_correct=is_correct, )
+            create_submission_analytics(submission)
         return SubmissionAnalyticsSerializer(SubmissionAnalytics.objects.all(), many=True).data
 
 
@@ -171,7 +75,7 @@ def create_submission_analytics(submission):
                                                                           blank_lines=sub_analytics_dict.blank_lines,
                                                                           comment_lines=sub_analytics_dict.comment_lines,
                                                                           import_lines=sub_analytics_dict.imported_lines,
-                                                                          cc=sub_analytics_dict.cc,
+                                                                          cyclomatic_complexity=sub_analytics_dict.cc,
                                                                           method=sub_analytics_dict.method,
                                                                           operator=sub_analytics_dict.operator,
                                                                           operand=sub_analytics_dict.operand,
@@ -201,7 +105,7 @@ def create_submission_analytics(submission):
                                                                              blank_lines=sub_analytics_dict.blank_lines,
                                                                              comment_lines=sub_analytics_dict.comment_lines,
                                                                              import_lines=sub_analytics_dict.imported_lines,
-                                                                             cc=sub_analytics_dict.cc,
+                                                                             cyclomatic_complexity=sub_analytics_dict.cc,
                                                                              method=sub_analytics_dict.method,
                                                                              operator=sub_analytics_dict.operator,
                                                                              operand=sub_analytics_dict.operand,
@@ -227,4 +131,3 @@ def create_submission_analytics(submission):
                                                                          num_attempts=num_attempts,
                                                                          is_correct=is_correct, )
         return MCQSubmissionAnalyticsSerializer(submission_analytics_obj).data
-    
