@@ -16,6 +16,10 @@ class UserConsentViewSet(viewsets.ModelViewSet):
         request = serializer.context['request']
         serializer.save(user=request.user)
         if request.data['consent']:
+            user = request.user
+            user.first_name = request.data['legal_first_name']
+            user.last_name = request.data['legal_last_name']
+            user.save()
             give_user_consent_action(request.user, request.data)
         else:
             remove_user_consent_action(request.user, request.data)
