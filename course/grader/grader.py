@@ -74,6 +74,9 @@ class JunitGrader(Grader):
         with open('./course/grader/junit-platform-console-standalone-1.6.2.jar', 'rb') as f:
             z.writestr('junit-platform-console-standalone-1.6.2.jar', f.read())
 
+        with open('./course/grader/canvas-gamification-junit-tests.jar', 'rb') as f:
+            z.writestr('canvas-gamification-junit-tests.jar', f.read())
+
         # Junit template file
         z.writestr("MainTest.java", self.get_source_code(submission))
 
