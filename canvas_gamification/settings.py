@@ -12,12 +12,14 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+import sentry_sdk
 from django.contrib.messages import constants as message_constants
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from django.urls import reverse_lazy
+from sentry_sdk.integrations.django import DjangoIntegration
 
 from canvas_gamification.env import read_env
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -261,3 +263,11 @@ if HEROKU:
 
     prod_db = dj_database_url.config(conn_max_age=500)
     DATABASES['default'].update(prod_db)
+
+if DEBUG is False:
+    sentry_sdk.init(
+        dsn=os.environ['SENTRY_DSN'],
+        integrations=[DjangoIntegration()],
+        traces_sample_rate=1.0,
+        send_default_pii=True
+    )
