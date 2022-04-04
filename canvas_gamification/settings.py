@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djrichtextfield',
+    'django_kafka',
     'accounts',
     'course',
     'jsoneditor',

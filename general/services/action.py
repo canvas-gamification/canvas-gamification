@@ -1,3 +1,4 @@
+from django_kafka.producer import produce_question_created
 from general.models.action import Action, ActionStatus, ActionVerb, ActionObjectType
 
 
@@ -209,6 +210,7 @@ def create_question_action(question, user):
         object_id=question['id'],
         data=question
     )
+    produce_question_created(question['id'])
 
 
 def delete_question_action(question, user):
