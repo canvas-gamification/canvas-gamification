@@ -1,4 +1,4 @@
-from django_filters import NumberFilter, ChoiceFilter
+from django_filters import NumberFilter, ChoiceFilter, BooleanFilter
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticated
@@ -12,10 +12,11 @@ class UQJFilterSet(FilterSet):
     question = NumberFilter(field_name='question')
     difficulty = ChoiceFilter(field_name='question__difficulty', choices=DIFFICULTY_CHOICES)
     category = NumberFilter(field_name='question__category')
+    verified = BooleanFilter(field_name='question__is_verified')
 
     class Meta:
         model = UserQuestionJunction
-        fields = ['question', 'question_event', 'difficulty', 'category', 'is_solved']
+        fields = ['question', 'question_event', 'difficulty', 'category', 'is_solved', 'verified']
 
 
 class UQJViewSet(viewsets.ReadOnlyModelViewSet):
@@ -32,10 +33,16 @@ class UQJViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        is_practice = self.request.query_params.get('is_practice', False)
         uqj = user.question_junctions.filter(question__question_status=Question.CREATED)
         accessible_uqj = []
-        for temp in uqj:
-            if temp.question.has_view_permission(user):
-                accessible_uqj.append(temp.question)
+        if is_practice:
+            for temp in uqj:
+                if temp.question.has_view_permission(user) and temp.question.is_practice:
+                    accessible_uqj.append(temp.question)
+        else:
+            for temp in uqj:
+                if temp.question.has_view_permission(user):
+                    accessible_uqj.append(temp.question)
         uqj = user.question_junctions.filter(question__in=accessible_uqj)
         return uqj
