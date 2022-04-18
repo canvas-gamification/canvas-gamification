@@ -1,7 +1,10 @@
 from django_filters import NumberFilter, ChoiceFilter
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import viewsets, filters
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
 from course.models.models import UserQuestionJunction, Question, DIFFICULTY_CHOICES
 from api.pagination import BasePagination
 from api.serializers import UQJSerializer
@@ -39,3 +42,7 @@ class UQJViewSet(viewsets.ReadOnlyModelViewSet):
                 accessible_uqj.append(temp.question)
         uqj = user.question_junctions.filter(question__in=accessible_uqj)
         return uqj
+
+    @action(detail=False, url_path='get-question-ids')
+    def get_question_ids(self, request):
+        return Response(self.filter_queryset(self.get_queryset()).values_list('question__id', flat=True))
