@@ -328,8 +328,10 @@ class UserQuestionJunction(models.Model):
             return "Solved"
         if self.is_partially_solved:
             return "Partially Solved"
-        if self.submissions.exists():
+        if self.submissions.exists() and self.submissions.get_real_instances()[-1].status == 'Wrong':
             return "Wrong"
+        if self.submissions.exists() and self.submissions.get_real_instances()[-1].status == 'Evaluating':
+            return "Pending"
         if self.last_viewed:
             return "Unsolved"
         return "New"
