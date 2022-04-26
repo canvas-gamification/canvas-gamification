@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 import sentry_sdk
+from corsheaders.defaults import default_headers
 from django.contrib.messages import constants as message_constants
 from django.urls import reverse_lazy
 from sentry_sdk.integrations.django import DjangoIntegration
@@ -231,6 +232,9 @@ LOGOUT_REDIRECT_URL = reverse_lazy('homepage')
 
 if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True
+    CORS_ALLOW_HEADERS = list(default_headers) + [
+        "sentry-trace",
+    ]
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
