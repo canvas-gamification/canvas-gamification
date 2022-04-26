@@ -323,16 +323,6 @@ class UserQuestionJunction(models.Model):
         return "Used " + str(self.num_attempts()) + " out of " + str(self.question.max_submission_allowed)
 
     @property
-    def status_class(self):
-        if self.is_solved:
-            return "table-success"
-        if self.is_partially_solved:
-            return "table-warning"
-        if self.submissions.exists():
-            return "table-danger"
-        return ""
-
-    @property
     def status(self):
         if self.is_solved:
             return "Solved"
