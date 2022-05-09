@@ -1,4 +1,5 @@
-from django_filters import NumberFilter, ChoiceFilter, BooleanFilter
+from django.db.models import Q
+from django_filters import NumberFilter, ChoiceFilter, Filter, BooleanFilter
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticated
@@ -7,11 +8,22 @@ from api.pagination import BasePagination
 from api.serializers import UQJSerializer
 
 
+class UQJCategoryParentFilter(Filter):
+    def filter(self, qs, value):
+        if not value:
+            return qs
+
+        return qs.filter(
+            Q(question__category__parent=value) | Q(question__category__parent__isnull=True, question__category=value)
+        )
+
+
 class UQJFilterSet(FilterSet):
     question_event = NumberFilter(field_name='question__event')
     question = NumberFilter(field_name='question')
     difficulty = ChoiceFilter(field_name='question__difficulty', choices=DIFFICULTY_CHOICES)
     category = NumberFilter(field_name='question__category')
+    parent_category = UQJCategoryParentFilter()
     is_verified = BooleanFilter(field_name='question__is_verified')
     is_practice = BooleanFilter(field_name='question__event', lookup_expr='isnull')
 
