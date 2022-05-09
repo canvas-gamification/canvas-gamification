@@ -303,15 +303,33 @@ class UserQuestionJunction(models.Model):
                 render_text(line, self.get_variables())
                 for line in input_files['lines']
             ]
+            name = render_text(input_files['name'], self.get_variables())
             random.shuffle(lines)
             rendered_lines.append({
-                'name': input_files['name'],
+                'name': name,
                 'lines': lines
             })
         return rendered_lines
 
     def get_input_files(self):
-        return self.question.get_input_files()
+        return [{
+            **input_file,
+            'name': render_text(input_file['name'], self.get_variables()),
+        } for input_file in self.question.get_input_files()]
+
+    def get_input_file_names(self):
+        input_files = [
+            x['name']
+            for x in self.get_input_files()
+            if x['compile']
+        ]
+        return " ".join(input_files)
+
+    def should_compile(self, file_name):
+        for input_file in self.get_input_files():
+            if input_file['name'] == file_name:
+                return input_file['compile']
+        return False
 
     def is_checkbox(self):
         return self.question.is_checkbox

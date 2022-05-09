@@ -55,7 +55,7 @@ class JunitGrader(Grader):
         compiler_script = f.read()
         compiler_script = compiler_script.replace(
             "{{user_code_filename}}",
-            submission.question.get_input_file_names() or ""
+            submission.uqj.get_input_file_names() or ""
         )
         f.close()
         return compiler_script
