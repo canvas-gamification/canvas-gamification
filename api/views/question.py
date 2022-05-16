@@ -13,7 +13,7 @@ from course.models.models import Question, UserQuestionJunction
 from course.models.java import JavaQuestion
 from course.models.multiple_choice import MultipleChoiceQuestion
 from course.models.parsons import ParsonsQuestion
-from general.services.action import delete_question_action, create_view_question_action
+from general.services.action import delete_question_action
 
 
 class QuestionViewSet(viewsets.ModelViewSet):
@@ -77,9 +77,3 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
         uqj_count = UserQuestionJunction.objects.all().filter(question_id=pk, is_favorite=True).count()
         return Response(uqj_count)
-
-    # TODO: Fix permissions for this
-    @action(detail=True, methods=['post'], url_path='opened-question')
-    def opened_question(self, request, pk=None):
-        create_view_question_action(pk, request.user)
-        return Response("success")
