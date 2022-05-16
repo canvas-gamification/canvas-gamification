@@ -66,6 +66,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             return Response({
                 "status": "Blocked",
                 "message": "Registration has been blocked for you. Please contact your instructor.",
+                "attempts_remaining": course_reg.verification_attempts,
             })
 
         if not course_reg.canvas_user_id:
@@ -73,17 +74,20 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             return Response({
                 "status": "Not Registered",
                 "message": None,
+                "attempts_remaining": course_reg.verification_attempts,
             })
 
         if not course_reg.is_verified:
             return Response({
                 "status": "Awaiting Verification",
                 "message": None,
+                "attempts_remaining": course_reg.verification_attempts,
             })
         else:
             return Response({
                 "status": "Registered",
-                "message": None,
+                "message": "You have already successfully registered in this course!",
+                "attempts_remaining": course_reg.verification_attempts,
             })
 
     @action(detail=True, methods=['post'])
