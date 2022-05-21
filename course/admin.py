@@ -26,6 +26,10 @@ class QuestionAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'title', 'author', 'category', 'difficulty', 'is_verified',)
     list_filter = ('author', 'category', 'difficulty', 'is_verified',)
     form = QuestionAdminForm
+    actions = ['verify']
+
+    def verify(self, request, queryset):
+        queryset.update(is_verified=True)
 
 
 class SubmissionAdmin(admin.ModelAdmin):
