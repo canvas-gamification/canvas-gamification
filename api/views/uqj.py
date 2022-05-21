@@ -3,6 +3,8 @@ from django_filters import NumberFilter, ChoiceFilter, Filter, BooleanFilter
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework import viewsets, filters
 from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -50,13 +52,22 @@ class UQJViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         user = self.request.user
         uqj = user.question_junctions.filter(question__question_status=Question.CREATED)
-        accessible_uqj = []
-        for temp in uqj:
-            if temp.question.has_view_permission(user):
-                accessible_uqj.append(temp.question)
-        uqj = user.question_junctions.filter(question__in=accessible_uqj)
+        # TODO: temporary remove permission due to performance issues
+        # accessible_uqj = []
+        # for temp in uqj:
+        #     if temp.question.has_view_permission(user):
+        #         accessible_uqj.append(temp.question)
+        # uqj = user.question_junctions.filter(question__in=accessible_uqj)
         return uqj
 
     @action(detail=False, url_path='get-question-ids')
     def get_question_ids(self, request):
         return Response(self.filter_queryset(self.get_queryset()).values_list('question__id', flat=True))
+
+    @action(detail=True, url_path='by-question')
+    def get_by_question(self, request, pk):
+        user = self.request.user
+        uqj = get_object_or_404(user.question_junctions, question__id=pk)
+        if not uqj.question.has_view_permission(user):
+            raise NotFound()
+        return Response(UQJSerializer(uqj).data)
