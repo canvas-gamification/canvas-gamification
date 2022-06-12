@@ -108,7 +108,11 @@ class CanvasCourse(models.Model):
 
     def get_user(self, name=None, id=None, student_id=None):
         for user in self.course.get_users():
-            if user.id == id or user.name == name or user.sis_user_id == student_id:
+            if name is not None and user.name == name:
+                return user
+            if id is not None and user.id == id:
+                return user
+            if student_id is not None and user.sis_user_id == student_id:
                 return user
         return None
 
@@ -145,7 +149,7 @@ class CanvasCourse(models.Model):
 
 def random_verification_code():
     import random
-    return random.randint(1, 100)
+    return random.randint(1, 99)
 
 
 STATUS = [
@@ -224,6 +228,7 @@ class CanvasCourseRegistration(models.Model):
     def set_canvas_user(self, canvas_user):
         self.canvas_user_id = canvas_user.id
         self.save()
+        self.send_verification_code()
 
     def check_verification_code(self, code):
         if self.is_blocked:
