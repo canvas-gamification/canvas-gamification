@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from api.permissions import TeacherAccessPermission
 from api.serializers import QuestionCategorySerializer, CourseSerializer
-from canvas.models import CanvasCourse
+from canvas.models.models import CanvasCourse
 from course.models.java import JavaQuestion
 from course.models.models import QuestionCategory, DIFFICULTY_CHOICES
 from course.models.multiple_choice import MultipleChoiceQuestion

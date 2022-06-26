@@ -10,7 +10,7 @@ from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
 
 from accounts.models import MyUser
-from canvas.models import Event, CanvasCourse
+from canvas.models.models import Event, CanvasCourse
 from course.fields import JSONField
 from course.utils.junit_xml import parse_junit_xml
 from course.utils.utils import get_token_value, ensure_uqj, calculate_average_success

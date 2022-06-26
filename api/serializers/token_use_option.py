@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from canvas.models import TokenUseOption
+from canvas.models.models import TokenUseOption
 
 
 class TokenUseOptionSerializer(serializers.ModelSerializer):

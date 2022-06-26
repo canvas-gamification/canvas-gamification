@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from api.permissions import IsOwnerOrReadOnly, EventCreatePermission, EventEditPermission
 from api.serializers import EventSerializer
-from canvas.models import Event, EVENT_TYPE_CHOICES, CanvasCourse
+from canvas.models.models import Event, EVENT_TYPE_CHOICES, CanvasCourse
 from general.services.action import create_event_action, update_event_action, import_event_action
 
 

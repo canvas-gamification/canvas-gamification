@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from api.permissions import TeacherAccessPermission
 from api.serializers import CourseSerializer, CanvasCourseRegistrationSerializer
-from canvas.models import CanvasCourse, CanvasCourseRegistration
+from canvas.models.models import CanvasCourse, CanvasCourseRegistration
 from general.services.action import course_registration_update_action
 
 

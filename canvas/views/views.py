@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
-from canvas.models import CanvasCourse, Event
+from canvas.models.models import CanvasCourse, Event
 from canvas.utils.token_use import update_token_use, TokenUseException
 from canvas.utils.utils import get_course_registration
 from course.models.models import UserQuestionJunction

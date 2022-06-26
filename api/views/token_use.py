@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from api.permissions import StudentsMustBeRegisteredPermission
 import api.error_messages as ERROR_MESSAGES
-from canvas.models import CanvasCourse
+from canvas.models.models import CanvasCourse
 from canvas.utils.token_use import update_token_use, TokenUseException
 
 

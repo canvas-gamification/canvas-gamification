@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from accounts.models import MyAnonymousUser
 from api.serializers import TokenUseSerializer
-from canvas.models import CanvasCourseRegistration
+from canvas.models.models import CanvasCourseRegistration
 
 
 class CanvasCourseRegistrationSerializer(serializers.ModelSerializer):

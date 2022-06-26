@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from api.serializers import CanvasCourseRegistrationSerializer
-from canvas.models import CanvasCourseRegistration
+from canvas.models.models import CanvasCourseRegistration
 
 
 class CanvasCourseRegistrationViewSet(viewsets.ReadOnlyModelViewSet):

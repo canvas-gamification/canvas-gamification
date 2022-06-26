@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accounts.models import MyAnonymousUser
-from canvas.models import Event
+from canvas.models.models import Event
 from canvas.utils.utils import get_total_event_grade
 
 

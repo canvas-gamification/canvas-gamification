@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import widgets
-from canvas.models import Event, EVENT_TYPE_CHOICES
+from canvas.models.models import Event, EVENT_TYPE_CHOICES
 from datetime import datetime
 
 

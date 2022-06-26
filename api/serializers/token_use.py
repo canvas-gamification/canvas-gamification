@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from api.serializers import TokenUseOptionSerializer
-from canvas.models import TokenUse
+from canvas.models.models import TokenUse
 
 
 class TokenUseSerializer(serializers.ModelSerializer):

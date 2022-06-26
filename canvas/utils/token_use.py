@@ -6,7 +6,7 @@ class TokenUseException(Exception):
 
 
 def get_token_use(user, token_use_option_id):
-    from canvas.models import TokenUse
+    from canvas.models.models import TokenUse
 
     token_use = user.token_uses.filter(option__id=token_use_option_id)
     if token_use.exists():
@@ -20,7 +20,7 @@ def get_token_use(user, token_use_option_id):
 
 
 def update_token_use(user, course, data):
-    from canvas.models import TokenUseOption
+    from canvas.models.models import TokenUseOption
 
     course_reg = get_course_registration(user, course)
 

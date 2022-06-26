@@ -21,7 +21,7 @@ def get_total_event_grade(event, user):
 
 
 def get_course_registration(user, course):
-    from canvas.models import CanvasCourseRegistration
+    from canvas.models.models import CanvasCourseRegistration
 
     qs = CanvasCourseRegistration.objects.filter(user=user, course=course)
     if qs.exists():

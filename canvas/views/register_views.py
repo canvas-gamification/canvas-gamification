@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render
 
-from canvas.models import CanvasCourse, CanvasCourseRegistration
+from canvas.models.models import CanvasCourse, CanvasCourseRegistration
 from canvas.utils.utils import get_course_registration
 
 
