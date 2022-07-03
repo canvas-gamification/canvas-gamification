@@ -50,14 +50,22 @@ class SubmissionViewSet(viewsets.GenericViewSet):
                 return ParsonsSubmissionSerializer(submission).data
 
     def list(self, request):
-        question = request.GET.get("question", None)
+        question_id = request.GET.get("question", None)
+        question = get_object_or_404(Question, id=question_id)
+        query_set = self.filter_queryset(self.get_queryset())
 
-        if request.user.is_teacher:
-            query_set = self.get_queryset()
-        else:
-            query_set = self.filter_queryset(self.get_queryset()).filter(uqj__user=request.user)
-        if question:
-            query_set = query_set.filter(uqj__question_id=question)
+        if not request.user.is_teacher:
+            teams = question.event.team_set.filter(course_registrations__user=request.user).all()
+            team = None if len(teams) == 0 else teams[0]
+
+            if question.is_practice or team is None:
+                query_set = query_set.filter(uqj__user=request.user)
+            else:
+                users = [course_reg.user for course_reg in team.course_registrations.all()]
+                query_set = query_set.filter(uqj__user__in=users)
+
+        if question_id:
+            query_set = query_set.filter(uqj__question_id=question_id)
 
         results = [
             self.get_serialized_data(submission) for submission in query_set
