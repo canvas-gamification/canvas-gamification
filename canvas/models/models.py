@@ -1,6 +1,7 @@
 import copy
 
 import canvasapi
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Sum, F, FloatField
 from django.utils import timezone
@@ -282,6 +283,7 @@ class Event(models.Model):
     type = models.CharField(max_length=500, choices=EVENT_TYPE_CHOICES)
     course = models.ForeignKey(CanvasCourse, related_name='events', on_delete=models.CASCADE)
     count_for_tokens = models.BooleanField()
+    max_team_size = models.IntegerField(default=3, validators=[MinValueValidator(1)])
 
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
