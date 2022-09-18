@@ -59,9 +59,9 @@ class QuestionCategory(models.Model):
         if self.parent is None:
             cnt = 0
             for cat in self.sub_categories.all():
-                cnt += cat.question_set.count()
+                cnt += cat.question_set.filter(is_verified=True, event=None).count()
             return cnt
-        return self.question_set.count()
+        return self.question_set.filter(is_verified=True, event=None).count()
 
     @property
     def next_category_ids(self):
