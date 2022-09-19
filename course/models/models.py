@@ -45,8 +45,8 @@ class QuestionCategory(models.Model):
         res = []
         for difficulty, difficulty_name in DIFFICULTY_CHOICES:
             res.append({
-                'difficulty': difficulty_name,
-                'success_rate': calculate_average_success(UserQuestionJunction.objects.all(), self, difficulty)
+                'difficulty': difficulty,
+                'avgSuccess': calculate_average_success(UserQuestionJunction.objects.all(), self, difficulty)
             })
         return res
 
