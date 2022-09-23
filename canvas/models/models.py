@@ -273,7 +273,8 @@ class CanvasCourseRegistration(models.Model):
 
 EVENT_TYPE_CHOICES = [
     ("ASSIGNMENT", "ASSIGNMENT"),
-    ("EXAM", "EXAM")
+    ("EXAM", "EXAM"),
+    ("CHALLENGE", "CHALLENGE"),
 ]
 
 
@@ -293,9 +294,11 @@ class Event(models.Model):
     def is_open(self):
         return self.start_date <= timezone.now() <= self.end_date
 
+    @property
     def is_closed(self):
         return self.end_date < timezone.now()
 
+    @property
     def is_not_available_yet(self):
         return self.start_date > timezone.now()
 
@@ -305,9 +308,9 @@ class Event(models.Model):
 
     @property
     def status(self):
-        if self.is_not_available_yet():
+        if self.is_not_available_yet:
             return "Not available yet"
-        if self.is_closed():
+        if self.is_closed:
             return "Closed"
         return "Open"
 
@@ -328,10 +331,10 @@ class Event(models.Model):
         return self.course.is_registered(user) and self.is_open
 
     def can_view_results(self, user):
-        return self.is_closed() and self.course.is_registered(user)
+        return self.is_closed and self.course.is_registered(user)
 
     def cannot_access_event_yet(self, user):
-        return self.is_not_available_yet() and self.course.is_registered(user)
+        return self.is_not_available_yet and self.course.is_registered(user)
 
     def is_exam_and_open(self):
         return self.is_exam and self.is_open
