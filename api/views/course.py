@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
@@ -8,7 +9,7 @@ from rest_framework.response import Response
 from api.serializers import CourseSerializer, CourseSerializerList
 from api.permissions import CourseEditPermission, CourseCreatePermission
 import api.error_messages as ERROR_MESSAGES
-from canvas.models.models import CanvasCourse, MyUser
+from canvas.models.models import CanvasCourse, MyUser, Event
 from canvas.utils.utils import get_course_registration
 from general.services.action import course_registration_verify_action, course_registration_student_number_action, \
     course_registration_confirm_name_action
@@ -50,6 +51,11 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             registered_ids = user.canvascourseregistration_set.filter(status='VERIFIED') \
                 .values_list('course_id', flat=True)
             queryset = queryset.filter(pk__in=registered_ids)
+
+        # Sort the events based on time
+        events_sort = Event.objects.all().order_by('start_date')
+        prefetch = Prefetch('events', queryset=events_sort)
+        queryset.prefetch_related(prefetch)
 
         return queryset.all()
 
