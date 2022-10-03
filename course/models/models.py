@@ -392,10 +392,9 @@ class Submission(PolymorphicModel):
 
     @property
     def submitted_by(self):
-        if self.uqj.user.has_name:
-            return self.uqj.user.first_name + " " + self.uqj.user.last_name
-        else:
+        if not self.uqj.user.has_name:
             return self.uqj.user.email
+        return self.uqj.user.first_name + " " + self.uqj.user.last_name
 
     @property
     def status_color(self):
