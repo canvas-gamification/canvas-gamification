@@ -38,7 +38,7 @@ class JavaSubmissionSerializer(serializers.ModelSerializer):
                   'status', 'tokens_received', 'token_value', 'answer_files', 'question', 'get_decoded_stderr',
                   'get_decoded_results', 'get_status_message', 'get_formatted_test_results', 'get_passed_test_results',
                   'get_failed_test_results', 'get_num_tests', 'formatted_tokens_received', 'show_answer', 'show_detail',
-                  'status_color']
+                  'status_color', 'submitted_by']
 
     question = QuestionSerializer()
 

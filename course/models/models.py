@@ -391,6 +391,13 @@ class Submission(PolymorphicModel):
         return self.uqj.user
 
     @property
+    def submitted_by(self):
+        if self.uqj.user.has_name:
+            return self.uqj.user.first_name + " " + self.uqj.user.last_name
+        else:
+            return self.uqj.user.email
+
+    @property
     def status_color(self):
         dic = {
             "Evaluating": 'default',
