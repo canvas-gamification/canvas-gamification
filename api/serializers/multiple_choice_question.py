@@ -38,7 +38,7 @@ class MultipleChoiceSubmissionSerializer(serializers.ModelSerializer):
         model = MultipleChoiceSubmission
         fields = ['pk', 'submission_time', 'answer', 'grade', 'is_correct', 'is_partially_correct', 'finalized',
                   'status', 'tokens_received', 'token_value', 'question', 'answer_display', 'show_answer',
-                  'show_detail', 'status_color', 'submitted_by']
+                  'show_detail', 'status_color', 'author']
 
     question = QuestionSerializer()
 
@@ -47,6 +47,6 @@ class MultipleChoiceSubmissionHiddenDetailsSerializer(serializers.ModelSerialize
     class Meta:
         model = MultipleChoiceSubmission
         fields = ['pk', 'submission_time', 'answer', 'answer_display', 'token_value', 'question', 'show_answer',
-                  'show_detail']
+                  'show_detail', 'author']
 
     question = QuestionSerializer()
