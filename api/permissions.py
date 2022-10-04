@@ -73,3 +73,9 @@ class HasViewSubmissionPermission(permissions.IsAuthenticated):
         if request.method in permissions.SAFE_METHODS:
             return obj.has_view_permission(user)
         return True
+
+
+class TeamPermission(permissions.IsAuthenticated):
+    # TODO: fix permissions for teams
+    def has_permission(self, request, view):
+        return True

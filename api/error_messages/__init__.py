@@ -24,3 +24,4 @@ from .lines import LINES
 from .user import USER
 from .course_registration import COURSE_REGISTRATION
 from .token_use import TOKEN_USE
+from .team import TEAM
