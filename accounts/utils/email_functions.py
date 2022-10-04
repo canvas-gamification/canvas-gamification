@@ -84,7 +84,7 @@ def send_contact_us_email(fullname, email, comment):
         'email': email,
         'comment': comment,
     })
-    to_email = 'carsonricca28@gmail.com'
+    to_email = 'ubco.gamification@gmail.com'
     email = EmailMessage(
         mail_subject, message, from_email=settings.EMAIL_ACTIVATION, to=[to_email]
     )

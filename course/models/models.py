@@ -45,8 +45,8 @@ class QuestionCategory(models.Model):
         res = []
         for difficulty, difficulty_name in DIFFICULTY_CHOICES:
             res.append({
-                'difficulty': difficulty_name,
-                'success_rate': calculate_average_success(UserQuestionJunction.objects.all(), self, difficulty)
+                'difficulty': difficulty,
+                'avgSuccess': calculate_average_success(UserQuestionJunction.objects.all(), self, difficulty)
             })
         return res
 
@@ -59,9 +59,9 @@ class QuestionCategory(models.Model):
         if self.parent is None:
             cnt = 0
             for cat in self.sub_categories.all():
-                cnt += cat.question_set.count()
+                cnt += cat.question_set.filter(is_verified=True, event=None).count()
             return cnt
-        return self.question_set.count()
+        return self.question_set.filter(is_verified=True, event=None).count()
 
     @property
     def next_category_ids(self):
@@ -389,6 +389,12 @@ class Submission(PolymorphicModel):
     @property
     def user(self):
         return self.uqj.user
+
+    @property
+    def author(self):
+        if self.uqj.user.has_complete_profile:
+            return self.uqj.user.get_full_name()
+        return self.uqj.user.username
 
     @property
     def status_color(self):

@@ -275,6 +275,9 @@ def calculate_average_success(uqjs, category=None, difficulty=None):
     Function that will calculate average success as a value between 0-1 depending on the queryset and filters given.
     Accounts for a category filter, and a difficulty filter, both of which are optional.
     """
+
+    uqjs = uqjs.filter(question__event=None, question__is_verified=True)
+
     if category:
         category_filter = Q(question__category=category) | Q(question__category__parent=category)
         if difficulty:

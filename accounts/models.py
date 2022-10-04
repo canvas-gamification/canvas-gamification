@@ -78,6 +78,15 @@ class MyUser(AbstractUser):
         ensure_uqj(self, None)
 
 
+GENDER_CHOICES = [
+    ('MALE', 'Male'),
+    ('FEMALE', 'Female'),
+    ('NB', 'Non-binary'),
+    ('OTHER', 'Other'),
+    ('N/A', 'Prefer not to answer')
+]
+
+
 class UserConsent(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=False, related_name='consents')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -87,6 +96,9 @@ class UserConsent(models.Model):
 
     legal_first_name = models.CharField(max_length=100, null=True, blank=True)
     legal_last_name = models.CharField(max_length=100, null=True, blank=True)
+    gender = models.CharField(max_length=100, choices=GENDER_CHOICES, null=True, blank=True)
+    race = models.CharField(max_length=500, null=True, blank=True)
+
     student_number = models.CharField(max_length=100, null=True, blank=True)
     date = models.CharField(max_length=100, null=True, blank=True)
 
