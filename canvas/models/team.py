@@ -12,3 +12,7 @@ class Team(models.Model):
     who_can_join = models.ManyToManyField(CanvasCourseRegistration, related_name='teams_can_join', blank=True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     course_registrations = models.ManyToManyField(CanvasCourseRegistration)
+
+    @property
+    def score(self):
+        return self.event.calculate_score(self)

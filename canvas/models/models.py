@@ -3,7 +3,7 @@ import copy
 import canvasapi
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum, F, FloatField
+from django.db.models import Sum, F, FloatField, Max
 from django.utils import timezone
 from fuzzywuzzy import process
 
@@ -294,6 +294,19 @@ class Event(models.Model):
 
     def __str__(self):
         return self.name
+
+    def calculate_score(self, team):
+        from course.models.models import UserQuestionJunction
+
+        user_ids = [course_reg.user.id for course_reg in team.course_registrations.all()]
+        question_ids = [question.id for question in self.question_set.all()]
+        uqjs = UserQuestionJunction.objects.filter(user_id__in=user_ids)
+
+        score = 0
+        for question_id in question_ids:
+            score += uqjs.filter(question_id=question_id).aggregate(Max('tokens_received'))['tokens_received__max']
+
+        return score
 
     @property
     def is_open(self):
