@@ -1,6 +1,5 @@
 from django import forms
 from django.contrib import admin
-from djrichtextfield.widgets import RichTextWidget
 
 from course.models.models import (
     Question,
@@ -18,18 +17,6 @@ from course.models.multiple_choice import (
 from course.models.parsons import ParsonsQuestion, ParsonsSubmission
 
 
-class QuestionAdminForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(QuestionAdminForm, self).__init__(*args, **kwargs)
-
-        self.fields["text"].widget = RichTextWidget(field_settings="advanced")
-        self.fields["tutorial"].widget = RichTextWidget(field_settings="advanced")
-
-    class Meta:
-        model = Question
-        exclude = []
-
-
 class QuestionAdmin(admin.ModelAdmin):
     list_display = (
         "__str__",
@@ -45,7 +32,6 @@ class QuestionAdmin(admin.ModelAdmin):
         "difficulty",
         "is_verified",
     )
-    form = QuestionAdminForm
     actions = ["verify"]
 
     def verify(self, request, queryset):

@@ -30,11 +30,11 @@ from course.models.multiple_choice import (
     MultipleChoiceSubmission,
 )
 from course.models.parsons import ParsonsSubmission, ParsonsQuestion
-from course.views.java import submit_solution as submit_java_solution
-from course.views.multiple_choice import (
-    submit_solution as submit_multiple_choice_solution,
+from course.services.submission import (
+    submit_java_solution,
+    submit_mcq_solution,
+    submit_parsons_solution,
 )
-from course.views.parsons import submit_solution as submit_parsons_solution
 from general.services.action import create_submission_action
 
 
@@ -107,7 +107,7 @@ class SubmissionViewSet(viewsets.GenericViewSet):
 
         try:
             if isinstance(question, MultipleChoiceQuestion):
-                submission = submit_multiple_choice_solution(question, request.user, solution)
+                submission = submit_mcq_solution(question, request.user, solution)
             elif isinstance(question, JavaQuestion):
                 submission = submit_java_solution(question, request.user, solution)
             elif isinstance(question, ParsonsQuestion):

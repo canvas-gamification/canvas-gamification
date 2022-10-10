@@ -57,7 +57,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
-    "djrichtextfield",
     "accounts",
     "course",
     "jsoneditor",
@@ -77,7 +76,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "accounts.middlewares.login_overlay_middleware",
 ]
 
 ROOT_URLCONF = "canvas_gamification.urls"
@@ -157,48 +155,6 @@ REST_FRAMEWORK = {
     ]
 }
 
-DJRICHTEXTFIELD_CONFIG = {
-    "js": ["/static/ckeditor/ckeditor.js"],
-    "init_template": "djrichtextfield/init/ckeditor.js",
-    "profiles": {
-        "basic": {
-            "toolbar": [
-                {
-                    "items": [
-                        "Bold",
-                        "Italic",
-                        "Underline",
-                        "Strike",
-                        "Subscript",
-                        "Superscript",
-                        "-",
-                        "CopyFormatting",
-                        "RemoveFormat",
-                    ]
-                },
-                {
-                    "items": [
-                        "Link",
-                        "CodeSnippet",
-                        "Code",
-                        "base64image",
-                        "Mathjax",
-                        "SpecialChar",
-                    ]
-                },
-                {"items": ["Styles", "Format", "Font", "FontSize"]},
-                {"items": ["Source"]},
-            ],
-            "format_tags": "p;h1;h2;h3",
-            "extraPlugins": ["codesnippet", "codeTag", "base64image"],
-            "mathJaxLib": "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML",
-        },
-        "advanced": {
-            "extraPlugins": ["codesnippet", "codeTag", "base64image"],
-            "mathJaxLib": "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML",
-        },
-    },
-}
 
 MESSAGE_TAGS = {message_constants.ERROR: "danger"}
 

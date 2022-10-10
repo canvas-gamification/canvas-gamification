@@ -1,14 +1,11 @@
 import copy
 
-import canvasapi
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Sum, F, FloatField, Max
 from django.utils import timezone
-from fuzzywuzzy import process
 
 from accounts.models import MyUser
-from canvas import canvasapi_mock
 from canvas.utils.token_use import get_token_use
 from canvas.utils.utils import get_course_registration
 
@@ -34,30 +31,6 @@ class CanvasCourse(models.Model):
     bonus_assignment_group_name = models.CharField(max_length=100)
     bonus_assignment_group_id = models.IntegerField(null=True, blank=True)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._canvas = None
-        self._course = None
-        self._verification_assignment = None
-
-    @property
-    def canvas(self):
-        if self.mock:
-            return canvasapi_mock.Canvas(self.url, self.token)
-        if not self._canvas:
-            self._canvas = canvasapi.Canvas(self.url, self.token)
-        return self._canvas
-
-    @property
-    def course(self):
-        if not self._course:
-            self._course = self.canvas.get_course(self.course_id)
-        return self._course
-
-    @property
-    def canvas_course_name(self):
-        return self.course.attributes.get("name", "Unknown")
-
     @property
     def status(self):
         if not self.allow_registration:
@@ -69,12 +42,6 @@ class CanvasCourse(models.Model):
         return "In Session"
 
     @property
-    def verification_assignment(self):
-        if not self._verification_assignment:
-            self._verification_assignment = self.course.get_assignment(self.verification_assignment_id)
-        return self._verification_assignment
-
-    @property
     def leader_board(self):
         return [
             {
@@ -83,47 +50,6 @@ class CanvasCourse(models.Model):
             }
             for course_reg in self.canvascourseregistration_set.all()
         ]
-
-    def create_verification_assignment_group(self):
-        if self.verification_assignment_group_id:
-            return
-        ag = self.course.create_assignment_group(name=self.verification_assignment_group_name)
-        self.verification_assignment_group_id = ag.id
-
-    def create_bonus_assignment_group(self):
-        if self.bonus_assignment_group_id:
-            return
-        ag = self.course.create_assignment_group(name=self.bonus_assignment_group_name)
-        self.bonus_assignment_group_id = ag.id
-
-    def create_verification_assignment(self):
-        if self.verification_assignment_id:
-            return
-
-        a = self.course.create_assignment(
-            {
-                "points_possible": 100,
-                "name": self.verification_assignment_name,
-                "assignment_group_id": self.verification_assignment_group_id,
-                "published": True,
-            }
-        )
-        self.verification_assignment_id = a.id
-
-    def get_user(self, name=None, id=None, student_id=None):
-        for user in self.course.get_users():
-            if name is not None and user.name == name:
-                return user
-            if id is not None and user.id == id:
-                return user
-            if student_id is not None and user.sis_user_id == student_id:
-                return user
-        return None
-
-    def guess_user(self, name):
-        choices = [x.name for x in self.course.get_users()]
-        student_names = process.extractBests(name, choices, score_cutoff=95)
-        return [x[0] for x in student_names]
 
     def is_registered(self, user):
         if user.is_anonymous:
@@ -143,12 +69,6 @@ class CanvasCourse(models.Model):
     def has_create_event_permission(self, user):
         course_reg = get_course_registration(user, self)
         return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
-
-    def save(self, *args, **kwargs):
-        self.create_verification_assignment_group()
-        self.create_verification_assignment()
-        self.create_bonus_assignment_group()
-        super().save(*args, **kwargs)
 
 
 def random_verification_code():
@@ -213,43 +133,6 @@ class CanvasCourseRegistration(models.Model):
     def unverify(self):
         self.status = "PENDING_VERIFICATION"
         self.save()
-
-    @property
-    def canvas_user(self):
-        if self.canvas_user_id is None:
-            return None
-        if not self._canvas_user:
-            self._canvas_user = self.course.course.get_user(self.canvas_user_id)
-        return self._canvas_user
-
-    def send_verification_code(self):
-        self.course.verification_assignment.submissions_bulk_update(
-            grade_data={
-                self.canvas_user_id: {
-                    "posted_grade": self.verification_code,
-                }
-            }
-        )
-
-    def set_canvas_user(self, canvas_user):
-        self.canvas_user_id = canvas_user.id
-        self.save()
-        self.send_verification_code()
-
-    def check_verification_code(self, code):
-        if self.is_blocked:
-            return False
-        if str(self.verification_code) == str(code):
-            self.verify()
-            return True
-
-        self.verification_attempts -= 1
-        if self.verification_attempts <= 0:
-            self.block()
-        else:
-            self.save()
-
-        return False
 
     @property
     def total_tokens_received(self):
@@ -392,24 +275,6 @@ class TokenUseOption(models.Model):
     assignment_name = models.CharField(max_length=100)
     assignment_id = models.IntegerField(null=True, blank=True)
 
-    def create_assignment(self):
-        if self.assignment_id:
-            return
-
-        a = self.course.course.create_assignment(
-            {
-                "points_possible": 100,
-                "name": self.assignment_name,
-                "assignment_group_id": self.course.bonus_assignment_group_id,
-                "published": True,
-            }
-        )
-        self.assignment_id = a.id
-
-    def save(self, *args, **kwargs):
-        self.create_assignment()
-        super().save(*args, **kwargs)
-
 
 class TokenUse(models.Model):
     option = models.ForeignKey(TokenUseOption, on_delete=models.CASCADE, related_name="token_uses")
@@ -417,21 +282,7 @@ class TokenUse(models.Model):
     num_used = models.IntegerField(default=0)
 
     def apply(self):
-        course_reg = CanvasCourseRegistration.objects.get(user=self.user, course=self.option.course)
-        self.option.course.course.submissions_bulk_update(
-            grade_data={
-                course_reg.canvas_user_id: {
-                    "posted_grade": self.option.points_given * self.num_used,
-                }
-            }
-        )
+        pass
 
     def revert(self):
-        course_reg = CanvasCourseRegistration.objects.get(user=self.user, course=self.option.course)
-        self.option.course.course.submissions_bulk_update(
-            grade_data={
-                course_reg.canvas_user_id: {
-                    "posted_grade": 0,
-                }
-            }
-        )
+        pass

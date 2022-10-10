@@ -1,12 +1,12 @@
+import jsonfield
 from django.db import models
 
-from course.fields import JSONField
 from course.grader.grader import MultipleChoiceGrader
 from course.models.models import VariableQuestion, Submission
 
 
 class MultipleChoiceQuestion(VariableQuestion):
-    choices = JSONField()
+    choices = jsonfield.JSONField()
     visible_distractor_count = models.IntegerField()
     grader = MultipleChoiceGrader()
 

@@ -4,14 +4,13 @@ import json
 import random
 from datetime import datetime
 
+import jsonfield
 from django.db import models
 from django.utils.crypto import get_random_string
-from djrichtextfield.models import RichTextField
 from polymorphic.models import PolymorphicModel
 
 from accounts.models import MyUser
 from canvas.models.models import Event, CanvasCourse
-from course.fields import JSONField
 from course.utils.junit_xml import parse_junit_xml
 from course.utils.utils import (
     get_token_value,
@@ -113,10 +112,10 @@ QUESTION_TYPES = {
 
 class Question(PolymorphicModel):
     title = models.CharField(max_length=300, null=True, blank=True)
-    text = RichTextField(null=True, blank=True)
+    text = models.TextField(null=True, blank=True)
     answer = models.TextField(null=True, blank=True)
     max_submission_allowed = models.IntegerField(default=None, blank=True)
-    tutorial = RichTextField(null=True, blank=True)
+    tutorial = models.TextField(null=True, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
     time_modified = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
@@ -254,7 +253,7 @@ class Question(PolymorphicModel):
 
 
 class VariableQuestion(Question):
-    variables = JSONField()
+    variables = jsonfield.JSONField()
 
 
 def random_seed():
@@ -526,8 +525,8 @@ class Submission(PolymorphicModel):
 
 
 class CodeSubmission(Submission):
-    tokens = JSONField()
-    results = JSONField()
+    tokens = jsonfield.JSONField()
+    results = jsonfield.JSONField()
 
     show_answer = False
     show_detail = True

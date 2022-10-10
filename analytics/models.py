@@ -1,6 +1,7 @@
+import jsonfield
 from django.db import models
+
 from course.models.models import Submission, Question, UserQuestionJunction
-from course.fields import JSONField
 
 
 class SubmissionAnalytics(models.Model):
@@ -12,7 +13,7 @@ class SubmissionAnalytics(models.Model):
     user_id = models.IntegerField(default=0)
     first_name = models.CharField(max_length=255, default="n/a")
     last_name = models.CharField(max_length=255, default="n/a")
-    ans_file = JSONField()
+    ans_file = jsonfield.JSONField()
     ans = models.CharField(max_length=255, default="n/a")
     lines = models.IntegerField(default=0)
     blank_lines = models.IntegerField(default=0)

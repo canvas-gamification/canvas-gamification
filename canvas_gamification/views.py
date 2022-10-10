@@ -6,45 +6,9 @@ from django.http import (
     FileResponse,
     HttpResponseNotModified,
 )
-from django.shortcuts import render
 from django.utils._os import safe_join
 from django.utils.http import http_date
 from django.views.static import was_modified_since
-
-from course.models.models import UserQuestionJunction
-from general.models.action import Action
-
-
-def homepage(request):
-    if request.user.is_authenticated:
-        recently_viewed = request.user.question_junctions.order_by("-last_viewed")[:5]
-        actions = request.user.actions.all()[:5]
-    else:
-        recently_viewed = UserQuestionJunction.objects.none()
-        actions = Action.objects.none()
-
-    return render(
-        request,
-        "homepage.html",
-        {
-            "header": "homepage",
-            "recently_viewed": recently_viewed,
-            "actions": actions,
-        },
-    )
-
-
-def action_view(request):
-    actions = request.user.actions.order_by("-time_modified").all()
-
-    return render(
-        request,
-        "actions.html",
-        {
-            "header": "Actions",
-            "actions": actions,
-        },
-    )
 
 
 def angular(request, path="index.html", document_root=None):
