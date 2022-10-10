@@ -1,5 +1,6 @@
 from django.urls import path
 from django.views.generic import TemplateView
+from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
 from rest_framework.schemas import get_schema_view
 
@@ -81,7 +82,7 @@ router.register(r"admin", AdminViewSet, basename="admin")
 router.register(r"course-admin", CourseAdminViewSet, basename="admin-course")
 router.register(r"uqj-update", UpdateUQJViewSet, basename="uqj-update")
 router.register(r"question-report", QuestionReportViewSet, basename="question-report")
-router.register(r"analytics", AnalyticsViewSet, basename="analytics")
+# router.register(r"analytics", AnalyticsViewSet, basename="analytics")
 router.register(r"team", TeamViewSet, basename="team")
 
 app_name = "api"
@@ -92,6 +93,8 @@ urlpatterns = [
             title="Canvas Gamification API",
             description="All the available APIs",
             version="1.0.0",
+            public=True,
+            permission_classes=(permissions.AllowAny,),
         ),
         name="openapi-schema",
     ),

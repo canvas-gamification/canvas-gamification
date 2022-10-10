@@ -53,6 +53,7 @@ class SubmissionViewSet(viewsets.GenericViewSet):
         "submission_time",
     ]
     queryset = Submission.objects.all()
+    serializer_class = MultipleChoiceSubmissionSerializer
 
     def get_serialized_data(self, submission):
         if submission.question.is_exam_and_open:

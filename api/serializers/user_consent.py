@@ -5,7 +5,7 @@ from accounts.models import UserConsent
 
 
 class UserConsentSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(default=serializers.CurrentUserDefault(), read_only=True)
+    user = serializers.StringRelatedField(read_only=True)
 
     consent = serializers.BooleanField(
         required=True,

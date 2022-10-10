@@ -198,10 +198,10 @@ LOGGING = {
     },
 }
 
-LOGIN_URL = reverse_lazy("accounts:login")
-LOGOUT_URL = reverse_lazy("accounts:logout")
-LOGIN_REDIRECT_URL = reverse_lazy("homepage")
-LOGOUT_REDIRECT_URL = reverse_lazy("homepage")
+LOGIN_URL = reverse_lazy("rest_framework:login")
+LOGOUT_URL = reverse_lazy("rest_framework:logout")
+LOGIN_REDIRECT_URL = reverse_lazy("api:api-root")
+LOGOUT_REDIRECT_URL = reverse_lazy("api:api-root")
 
 if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True
