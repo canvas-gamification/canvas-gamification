@@ -7,22 +7,42 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course', '0024_auto_20211203_1955'),
-        ('canvas', '0013_auto_20221004_1613'),
+        ("course", "0024_auto_20211203_1955"),
+        ("canvas", "0013_auto_20221004_1613"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Goal',
+            name="Goal",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('difficulty', models.CharField(blank=True, choices=[('EASY', 'Easy'), ('MEDIUM', 'Medium'), ('HARD', 'Hard')], max_length=50, null=True)),
-                ('initial_solved', models.IntegerField(blank=True)),
-                ('number_of_questions', models.IntegerField()),
-                ('start_date', models.DateTimeField()),
-                ('end_date', models.DateTimeField()),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='goals', to='course.QuestionCategory')),
-                ('course_reg', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='goals', to='canvas.CanvasCourseRegistration')),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "difficulty",
+                    models.CharField(
+                        blank=True,
+                        choices=[("EASY", "Easy"), ("MEDIUM", "Medium"), ("HARD", "Hard")],
+                        max_length=50,
+                        null=True,
+                    ),
+                ),
+                ("initial_solved", models.IntegerField(blank=True)),
+                ("number_of_questions", models.IntegerField()),
+                ("start_date", models.DateTimeField()),
+                ("end_date", models.DateTimeField()),
+                (
+                    "category",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="goals", to="course.QuestionCategory"
+                    ),
+                ),
+                (
+                    "course_reg",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="goals",
+                        to="canvas.CanvasCourseRegistration",
+                    ),
+                ),
             ],
         ),
     ]
