@@ -81,7 +81,7 @@ def question_view(request, pk, key=None):
         return _java_question_view(request, question, key)
 
     if isinstance(question, MultipleChoiceQuestion):
-        return _multiple_choice_question_view(request, question, 'multiple_choice_question.html', key)
+        return _multiple_choice_question_view(request, question, "multiple_choice_question.html", key)
 
     if isinstance(question, ParsonsQuestion):
         return _parsons_question_view(request, question, key)
