@@ -1,11 +1,10 @@
-name: Flake8
+name: Black
 
 on:
   push:
 
 jobs:
-  build:
-
+  lint:
     runs-on: ubuntu-latest
     strategy:
       matrix:

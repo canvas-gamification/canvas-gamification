@@ -6,8 +6,8 @@ class PASSWORD:
     DUPLICATED = "Password is the same as old password."
 
     ERROR_MESSAGES = {
-        'required': REQUIRED,
-        'null': REQUIRED,
-        'blank': REQUIRED,
-        'invalid': INVALID,
+        "required": REQUIRED,
+        "null": REQUIRED,
+        "blank": REQUIRED,
+        "invalid": INVALID,
     }

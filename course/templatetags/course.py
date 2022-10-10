@@ -1,5 +1,6 @@
 from django import template
 from canvas.models.models import Event
+
 register = template.Library()
 
 

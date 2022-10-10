@@ -8,19 +8,39 @@ from rest_framework.reverse import reverse_lazy
 
 from course.forms.forms import ProblemFilterForm
 from course.forms.java import JavaQuestionForm
-from course.forms.multiple_choice import MultipleChoiceQuestionForm, ChoiceForm
-from course.models.models import Question, QuestionCategory, \
-    DIFFICULTY_CHOICES, TokenValue, Submission, UserQuestionJunction
+from course.forms.multiple_choice import (
+    MultipleChoiceQuestionForm,
+    ChoiceForm,
+)
+from course.models.models import (
+    Question,
+    QuestionCategory,
+    DIFFICULTY_CHOICES,
+    TokenValue,
+    Submission,
+    UserQuestionJunction,
+)
 from course.models.java import JavaQuestion, JavaSubmission
 from course.models.multiple_choice import MultipleChoiceQuestion
 from course.models.parsons import ParsonsQuestion, ParsonsSubmission
 from course.utils.utils import get_user_question_junction
-from course.views.java import _java_question_create_view, _java_question_view, _java_submission_detail_view, \
-    _java_question_edit_view
-from course.views.multiple_choice import _multiple_choice_question_create_view, _multiple_choice_question_view, \
-    _multiple_choice_question_edit_view
-from course.views.parsons import _parsons_question_create_view, _parsons_question_view, \
-    _parsons_submission_detail_view, _parsons_question_edit_view
+from course.views.java import (
+    _java_question_create_view,
+    _java_question_view,
+    _java_submission_detail_view,
+    _java_question_edit_view,
+)
+from course.views.multiple_choice import (
+    _multiple_choice_question_create_view,
+    _multiple_choice_question_view,
+    _multiple_choice_question_edit_view,
+)
+from course.views.parsons import (
+    _parsons_question_create_view,
+    _parsons_question_view,
+    _parsons_submission_detail_view,
+    _parsons_question_edit_view,
+)
 
 
 def teacher_check(user):
@@ -31,7 +51,7 @@ def teacher_check(user):
 def multiple_choice_question_create_view(request):
     return _multiple_choice_question_create_view(
         request,
-        'New Multiple Choice Question',
+        "New Multiple Choice Question",
         MultipleChoiceQuestionForm,
         formset_factory(ChoiceForm, extra=1, can_delete=True, max_num=1, min_num=1),
         formset_factory(ChoiceForm, extra=2, can_delete=True),
@@ -40,19 +60,19 @@ def multiple_choice_question_create_view(request):
 
 @user_passes_test(teacher_check)
 def java_question_create_view(request):
-    return _java_question_create_view(request, 'New Java Question', JavaQuestionForm)
+    return _java_question_create_view(request, "New Java Question", JavaQuestionForm)
 
 
 @user_passes_test(teacher_check)
 def parsons_question_create_view(request):
-    return _parsons_question_create_view(request, 'New Parsons Question')
+    return _parsons_question_create_view(request, "New Parsons Question")
 
 
 def question_view(request, pk, key=None):
     question = get_object_or_404(Question, pk=pk)
 
     if not question.has_view_permission(request.user):
-        return render(request, '403.html', status=403)
+        return render(request, "403.html", status=403)
 
     uqj = get_user_question_junction(request.user, question)
     uqj.viewed()
@@ -90,22 +110,24 @@ def question_delete_view(request, pk):
     question = get_object_or_404(Question, pk=pk)
 
     if question.author != request.user:
-        messages.add_message(request, messages.ERROR,
-                             'Unauthorized request to delete question. '
-                             'Please ask the author to delete.')
+        messages.add_message(
+            request,
+            messages.ERROR,
+            "Unauthorized request to delete question. " "Please ask the author to delete.",
+        )
     else:
         question.delete()
 
-    return HttpResponseRedirect(reverse_lazy('course:problem_set'))
+    return HttpResponseRedirect(reverse_lazy("course:problem_set"))
 
 
 @user_passes_test(teacher_check)
 def problem_set_view(request):
-    query = request.GET.get('query', None)
-    difficulty = request.GET.get('difficulty', None)
-    solved = request.GET.get('solved', None)
-    category = request.GET.get('category', None)
-    is_sample = request.GET.get('is_sample', None)
+    query = request.GET.get("query", None)
+    difficulty = request.GET.get("difficulty", None)
+    solved = request.GET.get("solved", None)
+    category = request.GET.get("category", None)
+    is_sample = request.GET.get("is_sample", None)
 
     q = Q(question__is_verified=True)
 
@@ -117,32 +139,39 @@ def problem_set_view(request):
         q = q & (Q(question__category=category) | Q(question__category__parent=category))
 
     if is_sample:
-        q = q & Q(question__is_sample=True if is_sample == 'Yes' else False)
+        q = q & Q(question__is_sample=True if is_sample == "Yes" else False)
 
-    if solved == 'Solved':
+    if solved == "Solved":
         q = q & Q(is_solved=True)
-    if solved == 'Unsolved':
+    if solved == "Unsolved":
         q = q & Q(is_solved=False, is_partially_solved=False)
     if solved == "Partially Correct":
         q = q & Q(is_partially_solved=True)
-    if solved == 'Wrong':
-        q = q & Q(submissions__count__gt=0, is_solved=False,
-                  is_partially_solved=False)
-    if solved == 'New':
+    if solved == "Wrong":
+        q = q & Q(
+            submissions__count__gt=0,
+            is_solved=False,
+            is_partially_solved=False,
+        )
+    if solved == "New":
         q = q & Q(submissions__count=0, last_viewed__isnull=True)
 
     if request.user.is_authenticated:
-        uqjs = request.user.question_junctions.annotate(Count('submissions')).filter(q).all()
+        uqjs = request.user.question_junctions.annotate(Count("submissions")).filter(q).all()
     else:
         uqjs = UserQuestionJunction.objects.none()
 
     form = ProblemFilterForm(request.GET)
 
-    return render(request, 'problem_set.html', {
-        'uqjs': uqjs,
-        'form': form,
-        'header': 'problem_set',
-    })
+    return render(
+        request,
+        "problem_set.html",
+        {
+            "uqjs": uqjs,
+            "form": form,
+            "header": "problem_set",
+        },
+    )
 
 
 def submission_detail_view(request, pk):
@@ -162,12 +191,12 @@ def submission_detail_view(request, pk):
 def token_values_table_view(request):
     query_set = QuestionCategory.objects.filter(parent__isnull=False).all()
 
-    if request.method == 'POST':
-        sent_values = request.POST.getlist('values[]', None)
+    if request.method == "POST":
+        sent_values = request.POST.getlist("values[]", None)
         values = []
 
         for i, category in enumerate(query_set):
-            values.append(sent_values[i * len(DIFFICULTY_CHOICES):(i + 1) * len(DIFFICULTY_CHOICES)])
+            values.append(sent_values[i * len(DIFFICULTY_CHOICES) : (i + 1) * len(DIFFICULTY_CHOICES)])
 
             for j, difficulty in enumerate([x for x, y in DIFFICULTY_CHOICES]):
                 token_value = TokenValue.objects.get(category=category, difficulty=difficulty)
@@ -189,9 +218,13 @@ def token_values_table_view(request):
 
                 values[-1].append(token_value.value)
 
-    return render(request, 'token_values_table.html', {
-        'values': values,
-        'difficulties': [x for d, x in DIFFICULTY_CHOICES],
-        'categories': query_set,
-        'header': 'token_values',
-    })
+    return render(
+        request,
+        "token_values_table.html",
+        {
+            "values": values,
+            "difficulties": [x for d, x in DIFFICULTY_CHOICES],
+            "categories": query_set,
+            "header": "token_values",
+        },
+    )

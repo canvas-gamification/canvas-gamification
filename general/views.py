@@ -7,7 +7,11 @@ from general.models.faq import FAQ
 def faq(request):
     faqs = FAQ.objects.all()
 
-    return render(request, 'faq.html', {
-        'faqs': faqs,
-        'header': 'faq',
-    })
+    return render(
+        request,
+        "faq.html",
+        {
+            "faqs": faqs,
+            "header": "faq",
+        },
+    )

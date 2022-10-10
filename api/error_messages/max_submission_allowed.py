@@ -3,8 +3,8 @@ class MAX_SUBMISSION_ALLOWED:
     INVALID = "Max submissions allowed is invalid."
 
     ERROR_MESSAGES = {
-        'required': REQUIRED,
-        'null': REQUIRED,
-        'blank': REQUIRED,
-        'invalid': INVALID,
+        "required": REQUIRED,
+        "null": REQUIRED,
+        "blank": REQUIRED,
+        "invalid": INVALID,
     }

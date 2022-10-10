@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course', '0019_remove_javaquestion_input_file_names'),
+        ("course", "0019_remove_javaquestion_input_file_names"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='question',
-            name='question_status',
-            field=models.CharField(choices=[('CREATED', 'CREATED'), ('DELETED', 'DELETED')], default='CREATED', max_length=10, null=True),
+            model_name="question",
+            name="question_status",
+            field=models.CharField(
+                choices=[("CREATED", "CREATED"), ("DELETED", "DELETED")],
+                default="CREATED",
+                max_length=10,
+                null=True,
+            ),
         ),
     ]

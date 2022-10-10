@@ -3,8 +3,8 @@ class JUNIT_TEMPLATE:
     INVALID = "JUnit template is invalid."
 
     ERROR_MESSAGES = {
-        'required': REQUIRED,
-        'null': REQUIRED,
-        'blank': REQUIRED,
-        'invalid': INVALID,
+        "required": REQUIRED,
+        "null": REQUIRED,
+        "blank": REQUIRED,
+        "invalid": INVALID,
     }

@@ -8,26 +8,53 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('canvas', '0012_auto_20220921_1059'),
+        ("canvas", "0012_auto_20220921_1059"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='event',
-            name='max_team_size',
-            field=models.IntegerField(default=3, validators=[django.core.validators.MinValueValidator(1)]),
+            model_name="event",
+            name="max_team_size",
+            field=models.IntegerField(
+                default=3,
+                validators=[django.core.validators.MinValueValidator(1)],
+            ),
         ),
         migrations.CreateModel(
-            name='Team',
+            name="Team",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('time_created', models.DateTimeField(auto_now_add=True)),
-                ('time_modified', models.DateTimeField(auto_now=True)),
-                ('name', models.CharField(max_length=100)),
-                ('is_private', models.BooleanField(default=False)),
-                ('course_registrations', models.ManyToManyField(to='canvas.CanvasCourseRegistration')),
-                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='canvas.Event')),
-                ('who_can_join', models.ManyToManyField(blank=True, related_name='teams_can_join', to='canvas.CanvasCourseRegistration')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("time_created", models.DateTimeField(auto_now_add=True)),
+                ("time_modified", models.DateTimeField(auto_now=True)),
+                ("name", models.CharField(max_length=100)),
+                ("is_private", models.BooleanField(default=False)),
+                (
+                    "course_registrations",
+                    models.ManyToManyField(to="canvas.CanvasCourseRegistration"),
+                ),
+                (
+                    "event",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="canvas.Event",
+                    ),
+                ),
+                (
+                    "who_can_join",
+                    models.ManyToManyField(
+                        blank=True,
+                        related_name="teams_can_join",
+                        to="canvas.CanvasCourseRegistration",
+                    ),
+                ),
             ],
         ),
     ]

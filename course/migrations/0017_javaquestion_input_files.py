@@ -7,13 +7,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course', '0016_auto_20210704_1631'),
+        ("course", "0016_auto_20210704_1631"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='javaquestion',
-            name='input_files',
+            model_name="javaquestion",
+            name="input_files",
             field=course.fields.JSONField(default=dict),
         ),
     ]

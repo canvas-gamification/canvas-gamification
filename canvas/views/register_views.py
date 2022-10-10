@@ -15,80 +15,92 @@ def _student_number_registration_view(request, course, course_reg):
             messages.add_message(
                 request,
                 messages.ERROR,
-                'No matching record found. Please make sure your id is correct.'
+                "No matching record found. Please make sure your id is correct.",
             )
-            return render(request, 'canvas/course_registration/student_number_input.html', {
-                'student_number': student_number
-            })
+            return render(
+                request,
+                "canvas/course_registration/student_number_input.html",
+                {"student_number": student_number},
+            )
         else:
             course_reg.set_canvas_user(canvas_user)
             return _verify_registration_view(request, course, course_reg)
     else:
-        return render(request, 'canvas/course_registration/student_number_input.html')
+        return render(request, "canvas/course_registration/student_number_input.html")
 
 
 def _name_registration_view(request, course, course_reg):
     if request.method == "POST":
-        if 'student_number' in request.POST:
+        if "student_number" in request.POST:
             return _student_number_registration_view(request, course, course_reg)
-        elif 'name' in request.POST:
+        elif "name" in request.POST:
             name = request.POST.get("name", "")
             guessed_names = course.guess_user(name)
             if len(guessed_names) == 0:
                 messages.add_message(
                     request,
                     messages.ERROR,
-                    'No matching record found. Please make sure your name is spelled correctly.'
+                    "No matching record found. Please make sure your name is spelled correctly.",
                 )
-                return render(request, 'canvas/course_registration/name_input.html', {
-                    'name': name
-                })
+                return render(
+                    request,
+                    "canvas/course_registration/name_input.html",
+                    {"name": name},
+                )
             elif len(guessed_names) > 1:
                 messages.add_message(
                     request,
                     messages.WARNING,
-                    'Multiple students with this name exist. Please enter your student number to '
-                    'confirm your identity.'
+                    "Multiple students with this name exist. Please enter your student number to "
+                    "confirm your identity.",
                 )
                 return _student_number_registration_view(request, course, course_reg)
-            return render(request, 'canvas/course_registration/name_confirm.html', {
-                'guessed_name': guessed_names[0],
-            })
-        elif 'confirmed_name' in request.POST:
-            canvas_user = course.get_user(name=request.POST.get('confirmed_name', ''))
+            return render(
+                request,
+                "canvas/course_registration/name_confirm.html",
+                {
+                    "guessed_name": guessed_names[0],
+                },
+            )
+        elif "confirmed_name" in request.POST:
+            canvas_user = course.get_user(name=request.POST.get("confirmed_name", ""))
             if not canvas_user:
                 return HttpResponseBadRequest()
             course_reg.set_canvas_user(canvas_user)
             return _verify_registration_view(request, course, course_reg)
-    return render(request, 'canvas/course_registration/name_input.html')
+    return render(request, "canvas/course_registration/name_input.html")
 
 
 def _verify_registration_view(request, course, course_reg):
-    code = request.POST.get('code', None)
+    code = request.POST.get("code", None)
     if code is not None:
         valid = course_reg.check_verification_code(code)
         if valid:
-            messages.add_message(
+            messages.add_message(request, messages.SUCCESS, "You have successfully registered.")
+            return render(
                 request,
-                messages.SUCCESS,
-                'You have successfully registered.'
+                "canvas/course_registration/empty.html",
+                {
+                    "course": course,
+                },
             )
-            return render(request, 'canvas/course_registration/empty.html', {
-                'course': course,
-            })
         else:
-            messages.add_message(
+            messages.add_message(request, messages.ERROR, "Verification Failed.")
+            return render(
                 request,
-                messages.ERROR,
-                'Verification Failed.'
+                "canvas/course_registration/verification.html",
+                {
+                    "attempts": course_reg.verification_attempts,
+                },
             )
-            return render(request, 'canvas/course_registration/verification.html', {
-                'attempts': course_reg.verification_attempts,
-            })
     course_reg.send_verification_code()
-    return render(request, 'canvas/course_registration/verification.html', {
-        'attempts': course_reg.verification_attempts,
-    })
+    return render(
+        request,
+        "canvas/course_registration/verification.html",
+        {
+            "attempts": course_reg.verification_attempts,
+        },
+    )
 
 
 @login_required
@@ -105,9 +117,9 @@ def register_course_view(request, pk):
         messages.add_message(
             request,
             messages.ERROR,
-            'Registration has been blocked for you. Please contact your instructor.'
+            "Registration has been blocked for you. Please contact your instructor.",
         )
-        return render(request, 'canvas/course_registration/empty.html')
+        return render(request, "canvas/course_registration/empty.html")
 
     if not course_reg.canvas_user_id:
         return _name_registration_view(request, course, course_reg)
@@ -115,7 +127,11 @@ def register_course_view(request, pk):
     if not course_reg.is_verified:
         return _verify_registration_view(request, course, course_reg)
 
-    messages.add_message(request, messages.SUCCESS, 'You are already registered.')
-    return render(request, 'canvas/course_registration/empty.html', {
-        'course': course,
-    })
+    messages.add_message(request, messages.SUCCESS, "You are already registered.")
+    return render(
+        request,
+        "canvas/course_registration/empty.html",
+        {
+            "course": course,
+        },
+    )

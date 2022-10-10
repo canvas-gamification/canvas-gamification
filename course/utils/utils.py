@@ -26,8 +26,8 @@ def ensure_uqj(user, question):
         uqj.save()
 
     if not question:
-        exist_ids = {x['question_id'] for x in user.question_junctions.values('question_id')}
-        all_ids = {x['id'] for x in Question.objects.values('id')}
+        exist_ids = {x["question_id"] for x in user.question_junctions.values("question_id")}
+        all_ids = {x["id"] for x in Question.objects.values("id")}
         qs = all_ids - exist_ids
 
         for question_id in qs:
@@ -35,8 +35,8 @@ def ensure_uqj(user, question):
             uqj.save()
 
     if not user:
-        exist_ids = {x['user_id'] for x in question.user_junctions.values('user_id')}
-        all_ids = {x['id'] for x in MyUser.objects.values('id')}
+        exist_ids = {x["user_id"] for x in question.user_junctions.values("user_id")}
+        all_ids = {x["id"] for x in MyUser.objects.values("id")}
         qs = all_ids - exist_ids
 
         for user_id in qs:
@@ -82,27 +82,41 @@ def increment_char(c):
 
 
 class QuestionCreateException(Exception):
-
     def __init__(self, message, user_message):
         super().__init__()
         self.message = message
         self.user_message = user_message
 
 
-def create_multiple_choice_question(pk=None, title=None, text=None, answer=None, max_submission_allowed=None,
-                                    tutorial=None, author=None, category=None, difficulty=None, is_verified=None,
-                                    variables=None, choices=None, visible_distractor_count=None, answer_text=None,
-                                    distractors=None, course=None, event=None):
+def create_multiple_choice_question(
+    pk=None,
+    title=None,
+    text=None,
+    answer=None,
+    max_submission_allowed=None,
+    tutorial=None,
+    author=None,
+    category=None,
+    difficulty=None,
+    is_verified=None,
+    variables=None,
+    choices=None,
+    visible_distractor_count=None,
+    answer_text=None,
+    distractors=None,
+    course=None,
+    event=None,
+):
     if not answer and not answer_text:
         raise QuestionCreateException(
             message="answer or answer_text should be provided!",
-            user_message="Cannot create question due to an unknown error, please contact developers"
+            user_message="Cannot create question due to an unknown error, please contact developers",
         )
 
     if choices and (answer_text or distractors):
         raise QuestionCreateException(
             message="choices and (answer_text or distractors) cannot be set at the same time!",
-            user_message="Cannot create question due to an unknown error, please contact developers"
+            user_message="Cannot create question due to an unknown error, please contact developers",
         )
 
     if not variables:
@@ -110,7 +124,7 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
 
     if not choices:
         choices = {}
-        choice_label = 'a'
+        choice_label = "a"
 
         answer = choice_label
         choices[choice_label] = answer_text
@@ -129,39 +143,67 @@ def create_multiple_choice_question(pk=None, title=None, text=None, answer=None,
     from course.models.multiple_choice import MultipleChoiceQuestion
 
     if pk:
-        MultipleChoiceQuestion.objects.filter(pk=pk).update(title=title, text=text, answer=answer,
-                                                            max_submission_allowed=max_submission_allowed,
-                                                            tutorial=tutorial, author=author,
-                                                            category=category, difficulty=difficulty,
-                                                            is_verified=is_verified,
-                                                            variables=variables, choices=choices,
-                                                            visible_distractor_count=visible_distractor_count,
-                                                            course=course,
-                                                            event=event)
+        MultipleChoiceQuestion.objects.filter(pk=pk).update(
+            title=title,
+            text=text,
+            answer=answer,
+            max_submission_allowed=max_submission_allowed,
+            tutorial=tutorial,
+            author=author,
+            category=category,
+            difficulty=difficulty,
+            is_verified=is_verified,
+            variables=variables,
+            choices=choices,
+            visible_distractor_count=visible_distractor_count,
+            course=course,
+            event=event,
+        )
     else:
         try:
-            question = MultipleChoiceQuestion(title=title, text=text, answer=answer,
-                                              max_submission_allowed=max_submission_allowed, tutorial=tutorial,
-                                              author=author,
-                                              category=category, difficulty=difficulty, is_verified=is_verified,
-                                              variables=variables, choices=choices,
-                                              visible_distractor_count=visible_distractor_count,
-                                              course=course,
-                                              event=event)
+            question = MultipleChoiceQuestion(
+                title=title,
+                text=text,
+                answer=answer,
+                max_submission_allowed=max_submission_allowed,
+                tutorial=tutorial,
+                author=author,
+                category=category,
+                difficulty=difficulty,
+                is_verified=is_verified,
+                variables=variables,
+                choices=choices,
+                visible_distractor_count=visible_distractor_count,
+                course=course,
+                event=event,
+            )
             question.save()
         except Exception as e:
             print(e)
             raise QuestionCreateException(
                 message="Invalid list of arguments to create MultipleChoiceQuestion",
-                user_message="Cannot create question due to an unknown error, please contact developers"
+                user_message="Cannot create question due to an unknown error, please contact developers",
             )
         return question
     return None
 
 
-def create_java_question(pk=None, title=None, text=None, max_submission_allowed=None, tutorial=None, author=None,
-                         category=None, difficulty=None, is_verified=None, junit_template=None, variables=None,
-                         input_files=None, course=None, event=None):
+def create_java_question(
+    pk=None,
+    title=None,
+    text=None,
+    max_submission_allowed=None,
+    tutorial=None,
+    author=None,
+    category=None,
+    difficulty=None,
+    is_verified=None,
+    junit_template=None,
+    variables=None,
+    input_files=None,
+    course=None,
+    event=None,
+):
     if not max_submission_allowed:
         max_submission_allowed = 5
     if not is_verified:
@@ -170,6 +212,7 @@ def create_java_question(pk=None, title=None, text=None, max_submission_allowed=
         variables = []
 
     from course.models.java import JavaQuestion
+
     if pk:
         JavaQuestion.objects.filter(pk=pk).update(
             title=title,
@@ -205,9 +248,22 @@ def create_java_question(pk=None, title=None, text=None, max_submission_allowed=
         question.save()
 
 
-def create_parsons_question(pk=None, title=None, text=None, max_submission_allowed=None, tutorial=None, author=None,
-                            category=None, difficulty=None, is_verified=None, junit_template=None, variables=None,
-                            input_files=None, course=None, event=None):
+def create_parsons_question(
+    pk=None,
+    title=None,
+    text=None,
+    max_submission_allowed=None,
+    tutorial=None,
+    author=None,
+    category=None,
+    difficulty=None,
+    is_verified=None,
+    junit_template=None,
+    variables=None,
+    input_files=None,
+    course=None,
+    event=None,
+):
     if not max_submission_allowed:
         max_submission_allowed = 5
     if not is_verified:
@@ -216,6 +272,7 @@ def create_parsons_question(pk=None, title=None, text=None, max_submission_allow
         variables = []
 
     from course.models.parsons import ParsonsQuestion
+
     if pk:
         ParsonsQuestion.objects.filter(pk=pk).update(
             title=title,
@@ -253,10 +310,8 @@ def create_parsons_question(pk=None, title=None, text=None, max_submission_allow
 
 def create_mcq_submission(uqj=None, answer=None):
     from course.models.multiple_choice import MultipleChoiceSubmission
-    submission = MultipleChoiceSubmission(
-        uqj=uqj,
-        answer=answer
-    )
+
+    submission = MultipleChoiceSubmission(uqj=uqj, answer=answer)
     submission.save()
     return submission
 
@@ -282,18 +337,25 @@ def calculate_average_success(uqjs, category=None, difficulty=None):
         category_filter = Q(question__category=category) | Q(question__category__parent=category)
         if difficulty:
             solved = uqjs.filter(
-                category_filter, is_solved=True, question__difficulty=difficulty).count()
-            total = uqjs.annotate(Count('submissions')) \
-                .filter(category_filter, question__difficulty=difficulty, submissions__count__gt=0) \
+                category_filter,
+                is_solved=True,
+                question__difficulty=difficulty,
+            ).count()
+            total = (
+                uqjs.annotate(Count("submissions"))
+                .filter(
+                    category_filter,
+                    question__difficulty=difficulty,
+                    submissions__count__gt=0,
+                )
                 .count()
+            )
         else:
             solved = uqjs.filter(category_filter, is_solved=True).count()
-            total = uqjs.annotate(Count('submissions')) \
-                .filter(category_filter, submissions__count__gt=0) \
-                .count()
+            total = uqjs.annotate(Count("submissions")).filter(category_filter, submissions__count__gt=0).count()
     else:
         solved = uqjs.filter(is_solved=True).count()
-        total = uqjs.annotate(Count('submissions')).filter(submissions__count__gt=0).count()
+        total = uqjs.annotate(Count("submissions")).filter(submissions__count__gt=0).count()
 
     return success_rate(solved, total)
 

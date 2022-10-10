@@ -7,7 +7,10 @@ from .difficulty import DifficultyViewSet
 from .event import EventViewSet
 from .faq import FAQViewSet
 from .java_question import JavaQuestionViewSet
-from .multiple_choice_question import MultipleChoiceQuestionViewSet, SampleMultipleChoiceQuestionViewSet
+from .multiple_choice_question import (
+    MultipleChoiceQuestionViewSet,
+    SampleMultipleChoiceQuestionViewSet,
+)
 from .parsons_question import ParsonsQuestionViewSet
 from .question import QuestionViewSet
 from .question_category import QuestionCategoryViewSet

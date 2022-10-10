@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course', '0010_questioncategory_next_categories'),
+        ("course", "0010_questioncategory_next_categories"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='question',
-            name='max_submission_allowed',
+            model_name="question",
+            name="max_submission_allowed",
             field=models.IntegerField(blank=True, default=None),
         ),
     ]

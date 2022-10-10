@@ -12,7 +12,7 @@ class MultipleChoiceQuestion(VariableQuestion):
 
     @property
     def is_checkbox(self):
-        return ',' in self.answer
+        return "," in self.answer
 
 
 class MultipleChoiceSubmission(Submission):
@@ -20,6 +20,6 @@ class MultipleChoiceSubmission(Submission):
     def answer_display(self):
         values = []
         rendered_choices = self.uqj.get_rendered_choices()
-        for answer in self.answer.split(','):
-            values.append(rendered_choices.get(answer, 'Unknown'))
+        for answer in self.answer.split(","):
+            values.append(rendered_choices.get(answer, "Unknown"))
         return values

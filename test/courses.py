@@ -10,12 +10,10 @@ def add_base_course():
         url="http://canvas.ubc.ca",
         course_id=1,
         token="test token",
-
         allow_registration=True,
         visible_to_students=True,
         start_date=timezone.now(),
         end_date=timezone.now() + timezone.timedelta(days=10),
-
         verification_assignment_group_name="test",
         verification_assignment_name="test",
         bonus_assignment_group_name="test",
@@ -31,7 +29,7 @@ def add_base_event(course):
         course=course,
         count_for_tokens=False,
         start_date=timezone.now(),
-        end_date=timezone.now() + timezone.timedelta(days=10)
+        end_date=timezone.now() + timezone.timedelta(days=10),
     )
     event.save()
     return event

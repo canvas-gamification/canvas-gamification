@@ -4,16 +4,16 @@ from django.db import migrations
 
 
 def convert_normal_to_medium(apps, schema_editor):
-    Question = apps.get_model('course', 'Question')
-    Question.objects.filter(difficulty='NORMAL').update(difficulty='MEDIUM')
-    TokenValue = apps.get_model('course', 'TokenValue')
-    TokenValue.objects.filter(difficulty='NORMAL').update(difficulty='MEDIUM')
+    Question = apps.get_model("course", "Question")
+    Question.objects.filter(difficulty="NORMAL").update(difficulty="MEDIUM")
+    TokenValue = apps.get_model("course", "TokenValue")
+    TokenValue.objects.filter(difficulty="NORMAL").update(difficulty="MEDIUM")
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course', '0022_auto_20211203_1936'),
+        ("course", "0022_auto_20211203_1936"),
     ]
 
     operations = [

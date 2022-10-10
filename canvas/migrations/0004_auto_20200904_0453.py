@@ -9,45 +9,82 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('canvas', '0003_event'),
+        ("canvas", "0003_event"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='canvascourse',
-            name='bonus_assignment_group_id',
+            model_name="canvascourse",
+            name="bonus_assignment_group_id",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='canvascourse',
-            name='bonus_assignment_group_name',
-            field=models.CharField(default='Bonus', max_length=100),
+            model_name="canvascourse",
+            name="bonus_assignment_group_name",
+            field=models.CharField(default="Bonus", max_length=100),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='event',
-            name='count_for_tokens',
+            model_name="event",
+            name="count_for_tokens",
             field=models.BooleanField(default=True),
             preserve_default=False,
         ),
         migrations.CreateModel(
-            name='TokenUseOption',
+            name="TokenUseOption",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tokens_required', models.FloatField()),
-                ('points_given', models.IntegerField()),
-                ('maximum_number_of_use', models.IntegerField(default=1)),
-                ('assignment_name', models.CharField(max_length=100)),
-                ('assignment_id', models.IntegerField(blank=True, null=True)),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='token_use_options', to='canvas.CanvasCourse')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("tokens_required", models.FloatField()),
+                ("points_given", models.IntegerField()),
+                ("maximum_number_of_use", models.IntegerField(default=1)),
+                ("assignment_name", models.CharField(max_length=100)),
+                ("assignment_id", models.IntegerField(blank=True, null=True)),
+                (
+                    "course",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="token_use_options",
+                        to="canvas.CanvasCourse",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='TokenUse',
+            name="TokenUse",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('option', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='token_uses', to='canvas.TokenUseOption')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='token_uses', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "option",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="token_uses",
+                        to="canvas.TokenUseOption",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="token_uses",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

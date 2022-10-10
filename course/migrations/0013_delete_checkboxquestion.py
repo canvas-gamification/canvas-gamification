@@ -6,11 +6,11 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course', '0012_auto_20210420_2257'),
+        ("course", "0012_auto_20210420_2257"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='CheckboxQuestion',
+            name="CheckboxQuestion",
         ),
     ]

@@ -11,8 +11,14 @@ from canvas.utils.token_use import update_token_use, TokenUseException
 
 
 class TokenUseViewSet(viewsets.ViewSet):
-    @action(detail=False, methods=['POST'], url_path="use/(?P<course_pk>[^/.]+)",
-            permission_classes=[StudentsMustBeRegisteredPermission, ])
+    @action(
+        detail=False,
+        methods=["POST"],
+        url_path="use/(?P<course_pk>[^/.]+)",
+        permission_classes=[
+            StudentsMustBeRegisteredPermission,
+        ],
+    )
     def use_tokens(self, request, course_pk=None):
 
         if course_pk is None or not request.data:

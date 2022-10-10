@@ -14,8 +14,8 @@ class AnalyticsViewSet(viewsets.GenericViewSet):
     def list(self, request):
         return Response({})
 
-    @action(detail=False, methods=['get'], url_path='submission')
+    @action(detail=False, methods=["get"], url_path="submission")
     def submission(self, request):
-        submission_id = request.GET.get('id', None)
+        submission_id = request.GET.get("id", None)
         submission = get_object_or_404(Submission, pk=submission_id)
         return Response(get_submission_analytics(submission))

@@ -5,7 +5,10 @@ from rest_framework.response import Response
 
 import api.error_messages as ERROR_MESSAGES
 from accounts.models import MyUser
-from accounts.utils.email_functions import send_activation_email, activate_user
+from accounts.utils.email_functions import (
+    send_activation_email,
+    activate_user,
+)
 from api.serializers import UserRegistrationSerializer
 
 
@@ -21,7 +24,7 @@ class UserRegistrationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         send_activation_email(request, user)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def activate(self, request):
         uuid = request.data.get("uuid", None)
         token = request.data.get("token", None)

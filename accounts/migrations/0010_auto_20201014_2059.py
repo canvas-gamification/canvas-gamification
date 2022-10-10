@@ -7,18 +7,18 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0009_userconsent_user'),
+        ("accounts", "0009_userconsent_user"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userconsent',
-            name='consent',
+            model_name="userconsent",
+            name="consent",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='userconsent',
-            name='created_at',
+            model_name="userconsent",
+            name="created_at",
             field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
             preserve_default=False,
         ),

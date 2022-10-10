@@ -3,8 +3,8 @@ class LINES:
     INVALID = "Lines are invalid."
 
     ERROR_MESSAGES = {
-        'required': REQUIRED,
-        'null': REQUIRED,
-        'blank': REQUIRED,
-        'invalid': INVALID,
+        "required": REQUIRED,
+        "null": REQUIRED,
+        "blank": REQUIRED,
+        "invalid": INVALID,
     }

@@ -6,9 +6,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('canvas', '0010_canvascourseregistration_registration_type'),
-        ('canvas', '0010_auto_20211025_1714'),
+        ("canvas", "0010_canvascourseregistration_registration_type"),
+        ("canvas", "0010_auto_20211025_1714"),
     ]
 
-    operations = [
-    ]
+    operations = []

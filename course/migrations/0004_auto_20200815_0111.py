@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course', '0003_auto_20200815_0001'),
+        ("course", "0003_auto_20200815_0001"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='userquestionjunction',
-            name='is_partially_solved',
+            model_name="userquestionjunction",
+            name="is_partially_solved",
             field=models.BooleanField(db_index=True, default=False),
         ),
         migrations.AlterField(
-            model_name='userquestionjunction',
-            name='is_solved',
+            model_name="userquestionjunction",
+            name="is_solved",
             field=models.BooleanField(db_index=True, default=False),
         ),
         migrations.AlterField(
-            model_name='userquestionjunction',
-            name='last_viewed',
+            model_name="userquestionjunction",
+            name="last_viewed",
             field=models.DateTimeField(db_index=True, default=None, null=True),
         ),
     ]

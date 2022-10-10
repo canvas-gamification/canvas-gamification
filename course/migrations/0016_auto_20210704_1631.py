@@ -7,21 +7,21 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course', '0015_auto_20210704_1627'),
+        ("course", "0015_auto_20210704_1627"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='parsonsquestion',
-            name='additional_file_name',
+            model_name="parsonsquestion",
+            name="additional_file_name",
         ),
         migrations.RemoveField(
-            model_name='parsonsquestion',
-            name='lines',
+            model_name="parsonsquestion",
+            name="lines",
         ),
         migrations.AddField(
-            model_name='parsonssubmission',
-            name='answer_files',
+            model_name="parsonssubmission",
+            name="answer_files",
             field=course.fields.JSONField(default=dict),
         ),
     ]

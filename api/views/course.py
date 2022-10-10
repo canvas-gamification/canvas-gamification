@@ -11,8 +11,11 @@ from api.permissions import CourseEditPermission, CourseCreatePermission
 import api.error_messages as ERROR_MESSAGES
 from canvas.models.models import CanvasCourse, MyUser, Event
 from canvas.utils.utils import get_course_registration
-from general.services.action import course_registration_verify_action, course_registration_student_number_action, \
-    course_registration_confirm_name_action
+from general.services.action import (
+    course_registration_verify_action,
+    course_registration_student_number_action,
+    course_registration_confirm_name_action,
+)
 
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
@@ -20,27 +23,41 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     Optional Parameters
     ?registered: boolean => if true, filter retrieved courses by if user is currently registered in them
     """
+
     serializer_class = CourseSerializer
     action_serializers = {
-        'retrieve': CourseSerializer,
-        'list': CourseSerializerList,
+        "retrieve": CourseSerializer,
+        "list": CourseSerializerList,
     }
     permission_classes = [CourseEditPermission, CourseCreatePermission]
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, ]
-    filterset_fields = ['mock', 'name', 'allow_registration', 'visible_to_students', 'instructor', ]
-    ordering_fields = ['name', 'start_date', 'end_date', ]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+    ]
+    filterset_fields = [
+        "mock",
+        "name",
+        "allow_registration",
+        "visible_to_students",
+        "instructor",
+    ]
+    ordering_fields = [
+        "name",
+        "start_date",
+        "end_date",
+    ]
 
     def get_serializer_class(self):
-        if hasattr(self, 'action_serializers'):
+        if hasattr(self, "action_serializers"):
             return self.action_serializers.get(self.action, self.serializer_class)
 
         return super(CourseViewSet, self).get_serializer_class()
 
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
-        registered = self.request.query_params.get('registered', None)
+        registered = self.request.query_params.get("registered", None)
         if registered:
-            registered = registered.lower() == 'true'
+            registered = registered.lower() == "true"
 
         queryset = CanvasCourse.objects.all()
 
@@ -48,18 +65,19 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(visible_to_students=True).all()
 
         if registered:
-            registered_ids = user.canvascourseregistration_set.filter(status='VERIFIED') \
-                .values_list('course_id', flat=True)
+            registered_ids = user.canvascourseregistration_set.filter(status="VERIFIED").values_list(
+                "course_id", flat=True
+            )
             queryset = queryset.filter(pk__in=registered_ids)
 
         # Sort the events based on time
-        events_sort = Event.objects.all().order_by('start_date')
-        prefetch = Prefetch('events', queryset=events_sort)
+        events_sort = Event.objects.all().order_by("start_date")
+        prefetch = Prefetch("events", queryset=events_sort)
         queryset.prefetch_related(prefetch)
 
         return queryset.all()
 
-    @action(detail=True, methods=['get'], url_path="get-registration-status")
+    @action(detail=True, methods=["get"], url_path="get-registration-status")
     def get_registration_status(self, request, pk=None):
         """
         Returns the status of this logged-in user's course registration for a specific course.
@@ -69,34 +87,42 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         course_reg = get_course_registration(request.user, course)
 
         if course_reg.is_blocked:
-            return Response({
-                "status": "Blocked",
-                "message": "Registration has been blocked for you. Please contact your instructor.",
-                "attempts_remaining": course_reg.verification_attempts,
-            })
+            return Response(
+                {
+                    "status": "Blocked",
+                    "message": "Registration has been blocked for you. Please contact your instructor.",
+                    "attempts_remaining": course_reg.verification_attempts,
+                }
+            )
 
         if not course_reg.canvas_user_id:
             # if the CanvasCourseRegistration does not have a student number associated, then the user is not registered
-            return Response({
-                "status": "Not Registered",
-                "message": None,
-                "attempts_remaining": course_reg.verification_attempts,
-            })
+            return Response(
+                {
+                    "status": "Not Registered",
+                    "message": None,
+                    "attempts_remaining": course_reg.verification_attempts,
+                }
+            )
 
         if not course_reg.is_verified:
-            return Response({
-                "status": "Awaiting Verification",
-                "message": None,
-                "attempts_remaining": course_reg.verification_attempts,
-            })
+            return Response(
+                {
+                    "status": "Awaiting Verification",
+                    "message": None,
+                    "attempts_remaining": course_reg.verification_attempts,
+                }
+            )
         else:
-            return Response({
-                "status": "Registered",
-                "message": "You have already successfully registered in this course!",
-                "attempts_remaining": course_reg.verification_attempts,
-            })
+            return Response(
+                {
+                    "status": "Registered",
+                    "message": "You have already successfully registered in this course!",
+                    "attempts_remaining": course_reg.verification_attempts,
+                }
+            )
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def register(self, request, pk=None):
         """
         This endpoint completes the 'next' stage of course registration for this (user, course) pair. It decides what
@@ -122,9 +148,11 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             # Change status to PENDING-VERIFICATION after successfully find the user
             course_reg.unverify()
             course_registration_student_number_action(request.user)
-            return Response({
-                "success": True,
-            })
+            return Response(
+                {
+                    "success": True,
+                }
+            )
 
         if confirmed_name is not None:
             # if a confirmed name was given in the request data, try to find this canvas user using it. The confirmed
@@ -136,9 +164,11 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             # Change status to PENDING-VERIFICATION after successfully find the user
             course_reg.unverify()
             course_registration_confirm_name_action(request.user)
-            return Response({
-                "success": True,
-            })
+            return Response(
+                {
+                    "success": True,
+                }
+            )
 
         if name is not None:
             # if an inputted name is in the request data, try to guess the name properly.
@@ -149,19 +179,23 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 # If more than 1 name is guessed, then the UI moves to the student number confirmation
                 # since the student number confirmation is not the standard process, success = False lets the front-end
                 # know what to render.
-                return Response({
-                    "success": False,
-                    "guessed_name": None,
-                })
+                return Response(
+                    {
+                        "success": False,
+                        "guessed_name": None,
+                    }
+                )
 
-            return Response({
-                "success": True,
-                "guessed_name": guessed_names[0],
-            })
+            return Response(
+                {
+                    "success": True,
+                    "guessed_name": guessed_names[0],
+                }
+            )
 
         raise ValidationError(ERROR_MESSAGES.USER.INVALID)
 
-    @action(detail=True, methods=['post'], url_path="register-dashboard")
+    @action(detail=True, methods=["post"], url_path="register-dashboard")
     def register_dashboard(self, request, pk=None):
 
         name = request.data.get("name", None)
@@ -183,9 +217,11 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             course_reg.set_canvas_user(canvas_user)
             course_reg.unverify()
             course_registration_student_number_action(user)
-            return Response({
-                "success": True,
-            })
+            return Response(
+                {
+                    "success": True,
+                }
+            )
         if confirmed_name is not None:
             # if a confirmed name was given in the request data, try to find this canvas user using it. The confirmed
             # name should be the same as the guessed name that the API responded with earlier in the process.
@@ -196,9 +232,11 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             # Change status to PENDING-VERIFICATION after successfully find the user
             course_reg.unverify()
             course_registration_confirm_name_action(user)
-            return Response({
-                "success": True,
-            })
+            return Response(
+                {
+                    "success": True,
+                }
+            )
         if name is not None:
             # if an inputted name is in the request data, try to guess the name properly.
             guessed_names = course.guess_user(name)
@@ -208,18 +246,22 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 # If more than 1 name is guessed, then the UI moves to the student number confirmation
                 # since the student number confirmation is not the standard process, success = False lets the front-end
                 # know what to render.
-                return Response({
-                    "success": False,
-                    "guessed_name": None,
-                })
+                return Response(
+                    {
+                        "success": False,
+                        "guessed_name": None,
+                    }
+                )
 
-            return Response({
-                "success": True,
-                "guessed_name": guessed_names[0],
-            })
+            return Response(
+                {
+                    "success": True,
+                    "guessed_name": guessed_names[0],
+                }
+            )
         raise ValidationError(ERROR_MESSAGES.USER.INVALID)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=["post"])
     def verify(self, request, pk=None):
         """
         This endpoint completes the verification step of course registration.
@@ -234,12 +276,18 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
         valid = course_reg.check_verification_code(code)
         course_registration_verify_action(request.user)
-        return Response({
-            "success": valid,
-            "attempts_remaining": course_reg.verification_attempts,
-        })
+        return Response(
+            {
+                "success": valid,
+                "attempts_remaining": course_reg.verification_attempts,
+            }
+        )
 
-    @action(detail=True, methods=['get'], url_path='validate-event/(?P<event_pk>[^/.]+)')
+    @action(
+        detail=True,
+        methods=["get"],
+        url_path="validate-event/(?P<event_pk>[^/.]+)",
+    )
     def validate_event(self, request, pk=None, event_pk=None):
         """
         Validates that an event belongs to a particular course.
@@ -250,23 +298,23 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             raise ValidationError(ERROR_MESSAGES.COURSE.INVALID)
 
         if course.events.filter(pk=event_pk).exists():
-            return Response({
-                "success": True
-            })
+            return Response({"success": True})
 
         raise ValidationError(ERROR_MESSAGES.EVENT.INVALID)
 
-    @action(detail=True, methods=['get'], url_path='user-stats/(?P<category_pk>[^/.]+)')
+    @action(
+        detail=True,
+        methods=["get"],
+        url_path="user-stats/(?P<category_pk>[^/.]+)",
+    )
     def user_stats(self, request, pk=None, category_pk=None):
         """
         User stats.
         """
         success_rate = 0
         for pair in request.user.success_rate_by_category:
-            if pair['category'] == int(category_pk):
-                success_rate = pair['avgSuccess']
+            if pair["category"] == int(category_pk):
+                success_rate = pair["avgSuccess"]
                 break
 
-        return Response({
-            'success_rate': success_rate
-        })
+        return Response({"success_rate": success_rate})

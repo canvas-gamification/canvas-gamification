@@ -16,7 +16,7 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True,
         error_messages=ERROR_MESSAGES.PASSWORD.ERROR_MESSAGES,
-        validators=[validate_password]
+        validators=[validate_password],
     )
     password2 = serializers.CharField(
         write_only=True,
@@ -26,22 +26,22 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MyUser
-        fields = ['uid', 'token', 'password', 'password2']
+        fields = ["uid", "token", "password", "password2"]
 
     def validate(self, attrs):
-        user = verify_reset(attrs['uid'], attrs['token'])
+        user = verify_reset(attrs["uid"], attrs["token"])
         if not user:
             raise serializers.ValidationError(ERROR_MESSAGES.PASSWORD.INVALID_RESET_LINK)
         old_password = user.password
-        if old_password == attrs['password']:
+        if old_password == attrs["password"]:
             raise serializers.ValidationError(ERROR_MESSAGES.PASSWORD.DUPLICATED)
-        if attrs['password'] != attrs['password2']:
+        if attrs["password"] != attrs["password2"]:
             raise serializers.ValidationError(ERROR_MESSAGES.PASSWORD.MATCH)
         return attrs
 
     def create(self, validated_data):
-        uid = force_text(urlsafe_base64_decode(validated_data['uid']))
+        uid = force_text(urlsafe_base64_decode(validated_data["uid"]))
         user = MyUser.objects.get(pk=uid)
-        user.set_password(validated_data['password'])
+        user.set_password(validated_data["password"])
         user.save()
         return user

@@ -3,8 +3,8 @@ class FIRSTNAME:
     INVALID = "Legal first is invalid."
 
     ERROR_MESSAGES = {
-        'required': REQUIRED,
-        'null': REQUIRED,
-        'blank': REQUIRED,
-        'invalid': INVALID,
+        "required": REQUIRED,
+        "null": REQUIRED,
+        "blank": REQUIRED,
+        "invalid": INVALID,
     }

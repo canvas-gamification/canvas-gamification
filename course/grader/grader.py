@@ -9,13 +9,11 @@ from course.utils.variables import render_text
 
 
 class Grader:
-
     def grade(self, submission):
         raise NotImplementedError()
 
 
 class MultipleChoiceGrader(Grader):
-
     def grade(self, submission):
         number_of_choices = len(submission.uqj.get_rendered_choices())
         number_of_submissions = submission.uqj.submissions.exclude(pk=submission.pk).count()
@@ -23,8 +21,8 @@ class MultipleChoiceGrader(Grader):
         correct_answers = []
         correct_count = 0
         incorrect_count = 0
-        submission_answer = submission.answer.split(',')
-        submission_question_answer = submission.question.answer.split(',')
+        submission_answer = submission.answer.split(",")
+        submission_question_answer = submission.question.answer.split(",")
 
         for answer in submission_answer:
             if answer in submission_question_answer:
@@ -38,24 +36,27 @@ class MultipleChoiceGrader(Grader):
         if correct_count - incorrect_count == len(submission_question_answer):
             return True, round(1 - number_of_submissions / (number_of_choices - 1), 2)
         elif correct_count - incorrect_count > 0:
-            return True, round(((correct_count - incorrect_count) / len(
-                submission_question_answer)) - number_of_submissions / (number_of_choices - 1), 2)
+            return True, round(
+                ((correct_count - incorrect_count) / len(submission_question_answer))
+                - number_of_submissions / (number_of_choices - 1),
+                2,
+            )
         else:
             return False, 0
 
 
 class JunitGrader(Grader):
     HEADERS = {
-        'X-Auth-Token': JUDGE0_PASSWORD,
+        "X-Auth-Token": JUDGE0_PASSWORD,
     }
     BASE_URL = JUDGE0_HOST
 
     def get_compiler_script(self, submission):
-        f = open('./course/grader/junit_compiler.sh', 'r')
+        f = open("./course/grader/junit_compiler.sh", "r")
         compiler_script = f.read()
         compiler_script = compiler_script.replace(
             "{{user_code_filename}}",
-            submission.uqj.get_input_file_names() or ""
+            submission.uqj.get_input_file_names() or "",
         )
         f.close()
         return compiler_script
@@ -71,11 +72,14 @@ class JunitGrader(Grader):
         z = ZipFile(zipfile, "w")
 
         # Junit jar file
-        with open('./course/grader/junit-platform-console-standalone-1.6.2.jar', 'rb') as f:
-            z.writestr('junit-platform-console-standalone-1.6.2.jar', f.read())
+        with open(
+            "./course/grader/junit-platform-console-standalone-1.6.2.jar",
+            "rb",
+        ) as f:
+            z.writestr("junit-platform-console-standalone-1.6.2.jar", f.read())
 
-        with open('./course/grader/canvas-gamification-junit-tests.jar', 'rb') as f:
-            z.writestr('canvas-gamification-junit-tests.jar', f.read())
+        with open("./course/grader/canvas-gamification-junit-tests.jar", "rb") as f:
+            z.writestr("canvas-gamification-junit-tests.jar", f.read())
 
         # Junit template file
         z.writestr("MainTest.java", self.get_source_code(submission))
@@ -99,13 +103,16 @@ class JunitGrader(Grader):
         correct_testcases = 0
 
         for result in results:
-            if result['status'] == 'PASS':
+            if result["status"] == "PASS":
                 correct_testcases += 1
 
         if total_testcases == 0:
             return False, 0
 
-        return correct_testcases == total_testcases, correct_testcases / total_testcases
+        return (
+            correct_testcases == total_testcases,
+            correct_testcases / total_testcases,
+        )
 
     def evaluate(self, submission):
         submission.results = []
@@ -131,5 +138,5 @@ class JunitGrader(Grader):
             },
             headers=self.HEADERS,
         )
-        submission.tokens.append(r.json()['token'])
+        submission.tokens.append(r.json()["token"])
         self.evaluate(submission)

@@ -9,22 +9,22 @@ def parse_junit_xml(xml):
 
     try:
         doc = BeautifulSoup(xml)
-        test_cases = doc.findAll('testcase')
+        test_cases = doc.findAll("testcase")
 
         for test_case in test_cases:
             doc = {
-                'name': format_test_name(test_case['name']),
-                'status': "PASS",
-                'message': ""
+                "name": format_test_name(test_case["name"]),
+                "status": "PASS",
+                "message": "",
             }
 
             if test_case.error:
-                doc['status'] = "FAIL"
-                doc['message'] = format_message(test_case.error['message'])
+                doc["status"] = "FAIL"
+                doc["message"] = format_message(test_case.error["message"])
 
             if test_case.failure:
-                doc['status'] = "FAIL"
-                doc['message'] = format_message(test_case.failure['message'])
+                doc["status"] = "FAIL"
+                doc["message"] = format_message(test_case.failure["message"])
 
             results.append(doc)
     except Exception as e:
@@ -40,10 +40,10 @@ def format_message(message):
 
 
 def convert_camel_case_to_title_case(text):
-    title_case_str = re.sub('(.)([A-Z][a-z]+)', r'\1 \2', text)
-    return re.sub('([a-z0-9])([A-Z0-9])', r'\1 \2', title_case_str)
+    title_case_str = re.sub("(.)([A-Z][a-z]+)", r"\1 \2", text)
+    return re.sub("([a-z0-9])([A-Z0-9])", r"\1 \2", title_case_str)
 
 
 def format_test_name(name):
     title_case_str = convert_camel_case_to_title_case(name)
-    return title_case_str.replace('()', '').capitalize()
+    return title_case_str.replace("()", "").capitalize()

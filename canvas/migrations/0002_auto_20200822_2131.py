@@ -8,12 +8,12 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('canvas', '0001_initial'),
+        ("canvas", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='canvascourseregistration',
-            unique_together={('course', 'user')},
+            name="canvascourseregistration",
+            unique_together={("course", "user")},
         ),
     ]

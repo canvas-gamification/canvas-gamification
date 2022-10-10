@@ -8,7 +8,7 @@ from course.utils.utils import get_user_question_junction, get_question_title
 
 
 def _parsons_question_create_view(request, header):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ParsonsQuestionForm(request.user, request.POST)
 
         if form.is_valid():
@@ -17,20 +17,24 @@ def _parsons_question_create_view(request, header):
             question.is_verified = request.user.is_teacher
             question.save()
 
-            messages.add_message(request, messages.SUCCESS, 'Question was created successfully')
+            messages.add_message(request, messages.SUCCESS, "Question was created successfully")
 
             form = ParsonsQuestionForm(request.user)
     else:
         form = ParsonsQuestionForm(request.user)
 
-    return render(request, 'problem_create.html', {
-        'form': form,
-        'header': header,
-    })
+    return render(
+        request,
+        "problem_create.html",
+        {
+            "form": form,
+            "header": header,
+        },
+    )
 
 
 def _parsons_question_edit_view(request, question):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = ParsonsQuestionForm(request.user, request.POST)
 
         if form.is_valid():
@@ -40,24 +44,32 @@ def _parsons_question_edit_view(request, question):
             edited_question.is_verified = request.user.is_teacher
             edited_question.save()
 
-            messages.add_message(request, messages.SUCCESS, 'Question was edited successfully')
+            messages.add_message(request, messages.SUCCESS, "Question was edited successfully")
     else:
         form = ParsonsQuestionForm(request.user, instance=question)
 
-    return render(request, 'problem_create.html', {
-        'form': form,
-        'header': "Edit Question",
-    })
+    return render(
+        request,
+        "problem_create.html",
+        {
+            "form": form,
+            "header": "Edit Question",
+        },
+    )
 
 
 def _parsons_question_view(request, question, key):
     def return_render():
-        return render(request, 'parsons_question.html', {
-            'question': question,
-            'uqj': get_user_question_junction(request.user, question),
-            'submission_class': ParsonsSubmission,
-            'title': get_question_title(request.user, question, key)
-        })
+        return render(
+            request,
+            "parsons_question.html",
+            {
+                "question": question,
+                "uqj": get_user_question_junction(request.user, question),
+                "submission_class": ParsonsSubmission,
+                "title": get_question_title(request.user, question, key),
+            },
+        )
 
     if request.method == "POST":
 
@@ -65,8 +77,11 @@ def _parsons_question_view(request, question, key):
 
         try:
             submit_solution(question, request.user, code)
-            messages.add_message(request, messages.INFO,
-                                 "Your code has been submitted and is being evaluated! Refresh page to view results.")
+            messages.add_message(
+                request,
+                messages.INFO,
+                "Your code has been submitted and is being evaluated! Refresh page to view results.",
+            )
         except SubmissionException as e:
             messages.add_message(request, messages.ERROR, "{}".format(e))
 
@@ -74,9 +89,13 @@ def _parsons_question_view(request, question, key):
 
 
 def _parsons_submission_detail_view(request, submission):
-    return render(request, 'code_submission_detail.html', {
-        'submission': submission,
-    })
+    return render(
+        request,
+        "code_submission_detail.html",
+        {
+            "submission": submission,
+        },
+    )
 
 
 def submit_solution(question, user, solution):

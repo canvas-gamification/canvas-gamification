@@ -6,9 +6,9 @@ from canvas.utils.utils import get_total_event_grade
 
 
 class EventSerializer(serializers.ModelSerializer):
-    is_allowed_to_open = serializers.SerializerMethodField('get_is_allowed_to_open')
-    has_edit_permission = serializers.SerializerMethodField('get_has_edit_permission')
-    total_event_grade = serializers.SerializerMethodField('get_total_event_grade')
+    is_allowed_to_open = serializers.SerializerMethodField("get_is_allowed_to_open")
+    has_edit_permission = serializers.SerializerMethodField("get_has_edit_permission")
+    total_event_grade = serializers.SerializerMethodField("get_total_event_grade")
 
     def get_user(self):
         user = MyAnonymousUser()
@@ -43,5 +43,19 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['id', 'name', 'type', 'count_for_tokens', 'start_date', 'end_date', 'course', 'is_allowed_to_open',
-                  'has_edit_permission', 'is_open', 'is_exam', 'total_event_grade', 'is_not_available_yet', 'is_closed']
+        fields = [
+            "id",
+            "name",
+            "type",
+            "count_for_tokens",
+            "start_date",
+            "end_date",
+            "course",
+            "is_allowed_to_open",
+            "has_edit_permission",
+            "is_open",
+            "is_exam",
+            "total_event_grade",
+            "is_not_available_yet",
+            "is_closed",
+        ]

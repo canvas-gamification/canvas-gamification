@@ -8,12 +8,14 @@ from general.services.action import update_user_profile_action
 
 class UpdateProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UpdateProfileSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [
+        IsAuthenticated,
+    ]
 
     def get_queryset(self):
         return MyUser.objects.filter(id=self.request.user.id)
 
     def perform_update(self, serializer):
-        request = serializer.context['request']
+        request = serializer.context["request"]
         serializer.save()
         update_user_profile_action(request.user, request.data)

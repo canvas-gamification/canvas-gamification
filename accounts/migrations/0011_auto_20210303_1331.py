@@ -8,13 +8,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0010_auto_20201014_2059'),
+        ("accounts", "0010_auto_20201014_2059"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='userconsent',
-            name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='user', to=settings.AUTH_USER_MODEL),
+            model_name="userconsent",
+            name="user",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="user",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

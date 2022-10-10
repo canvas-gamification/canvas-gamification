@@ -8,12 +8,12 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('course', '0002_auto_20200814_2314'),
+        ("course", "0002_auto_20200814_2314"),
     ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='userquestionjunction',
-            unique_together={('user', 'question')},
+            name="userquestionjunction",
+            unique_together={("user", "question")},
         ),
     ]

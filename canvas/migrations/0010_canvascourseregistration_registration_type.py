@@ -6,13 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('canvas', '0009_auto_20210702_1305'),
+        ("canvas", "0009_auto_20210702_1305"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='canvascourseregistration',
-            name='registration_type',
-            field=models.CharField(choices=[('STUDENT', 'STUDENT'), ('TA', 'TA'), ('INSTRUCTOR', 'INSTRUCTOR')], default='STUDENT', max_length=10, null=True),
+            model_name="canvascourseregistration",
+            name="registration_type",
+            field=models.CharField(
+                choices=[
+                    ("STUDENT", "STUDENT"),
+                    ("TA", "TA"),
+                    ("INSTRUCTOR", "INSTRUCTOR"),
+                ],
+                default="STUDENT",
+                max_length=10,
+                null=True,
+            ),
         ),
     ]

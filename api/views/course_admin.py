@@ -4,20 +4,25 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from api.permissions import TeacherAccessPermission
-from api.serializers import CourseSerializer, CanvasCourseRegistrationSerializer
+from api.serializers import (
+    CourseSerializer,
+    CanvasCourseRegistrationSerializer,
+)
 from canvas.models.models import CanvasCourse, CanvasCourseRegistration
 from general.services.action import course_registration_update_action
 
 
 class CourseAdminViewSet(viewsets.GenericViewSet):
-    permission_classes = [TeacherAccessPermission, ]
+    permission_classes = [
+        TeacherAccessPermission,
+    ]
     queryset = CanvasCourse.objects.all()
     serializer_class = CourseSerializer
 
-    @action(detail=True, methods=['get'], url_path='registered-users')
+    @action(detail=True, methods=["get"], url_path="registered-users")
     def registered_users(self, request, pk=None):
         course = get_object_or_404(self.get_queryset(), pk=pk)
-        name = request.query_params.get('search', '')
+        name = request.query_params.get("search", "")
         course_registration_list = course.canvascourseregistration_set.all()
         # Filter courseregistration based on first name or last name
         first_name_filter = course_registration_list.filter(user__first_name__contains=name)
@@ -29,22 +34,22 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
             for course_registration in course_registration_list
         )
 
-    @action(detail=False, methods=['post'], url_path='change-status')
+    @action(detail=False, methods=["post"], url_path="change-status")
     def update_status(self, request):
-        '''
+        """
         Action that will update the status of a canvascourseregistration object.
-        '''
+        """
         registration_id = request.data.get("id")
         status = request.data.get("status")
         # Get the object and update its is_block and is_verified
         course_registration = get_object_or_404(CanvasCourseRegistration, id=registration_id)
-        if status == 'VERIFIED':
+        if status == "VERIFIED":
             course_registration.verify()
-        if status == 'BLOCKED':
+        if status == "BLOCKED":
             course_registration.block()
-        if status == 'PENDING_VERIFICATION':
+        if status == "PENDING_VERIFICATION":
             course_registration.unverify()
-        if status == 'UNREGISTERED':
+        if status == "UNREGISTERED":
             course_registration.unregister()
 
         course_registration.save()

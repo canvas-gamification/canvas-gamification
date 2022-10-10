@@ -9,4 +9,4 @@ class TokenUseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TokenUse
-        fields = ['option', 'num_used']
+        fields = ["option", "num_used"]

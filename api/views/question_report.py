@@ -11,7 +11,9 @@ from general.services.action import create_question_report_action
 class QuestionReportViewSet(viewsets.ModelViewSet):
     queryset = QuestionReport.objects.all()
     serializer_class = QuestionReportSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [
+        IsAuthenticated,
+    ]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

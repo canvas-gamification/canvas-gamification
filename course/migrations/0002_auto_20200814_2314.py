@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course', '0001_initial'),
+        ("course", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='userquestionjunction',
-            name='opened_question',
+            model_name="userquestionjunction",
+            name="opened_question",
         ),
         migrations.AddField(
-            model_name='userquestionjunction',
-            name='last_viewed',
+            model_name="userquestionjunction",
+            name="last_viewed",
             field=models.DateTimeField(default=None, null=True),
         ),
     ]

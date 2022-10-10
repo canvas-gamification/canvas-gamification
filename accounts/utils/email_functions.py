@@ -13,8 +13,12 @@ from canvas_gamification import settings
 
 class TokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
-        return six.text_type(user.pk) + six.text_type(timestamp) + six.text_type(user.is_active) + six.text_type(
-            user.last_login)
+        return (
+            six.text_type(user.pk)
+            + six.text_type(timestamp)
+            + six.text_type(user.is_active)
+            + six.text_type(user.last_login)
+        )
 
 
 account_activation_token_generator = TokenGenerator()
@@ -29,22 +33,34 @@ def activate_user(uidb64, token):
             user.is_active = True
             user.save()
             return user
-    except(TypeError, ValueError, OverflowError, AttributeError, MyUser.DoesNotExist):
+    except (
+        TypeError,
+        ValueError,
+        OverflowError,
+        AttributeError,
+        MyUser.DoesNotExist,
+    ):
         return None
     return None
 
 
 def send_activation_email(request, user):
-    mail_subject = 'Activate your account.'
-    message = render_to_string('accounts/activation_email.html', {
-        'user': user,
-        'domain': request.META['HTTP_ORIGIN'],
-        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': account_activation_token_generator.make_token(user),
-    })
+    mail_subject = "Activate your account."
+    message = render_to_string(
+        "accounts/activation_email.html",
+        {
+            "user": user,
+            "domain": request.META["HTTP_ORIGIN"],
+            "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+            "token": account_activation_token_generator.make_token(user),
+        },
+    )
     to_email = user.email
     email = EmailMessage(
-        mail_subject, message, from_email=settings.EMAIL_ACTIVATION, to=[to_email]
+        mail_subject,
+        message,
+        from_email=settings.EMAIL_ACTIVATION,
+        to=[to_email],
     )
     email.send()
 
@@ -57,35 +73,53 @@ def verify_reset(uidb64, token):
             user.last_login = datetime.now()
             user.save()
             return user
-    except(TypeError, ValueError, OverflowError, AttributeError, MyUser.DoesNotExist):
+    except (
+        TypeError,
+        ValueError,
+        OverflowError,
+        AttributeError,
+        MyUser.DoesNotExist,
+    ):
         return None
     return None
 
 
 def send_reset_email(request, user):
-    mail_subject = 'Reset your password'
-    message = render_to_string('accounts/password_reset_email.html', {
-        'user': user,
-        'domain': request.META['HTTP_ORIGIN'],
-        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': reset_password_token_generator.make_token(user),
-    })
+    mail_subject = "Reset your password"
+    message = render_to_string(
+        "accounts/password_reset_email.html",
+        {
+            "user": user,
+            "domain": request.META["HTTP_ORIGIN"],
+            "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+            "token": reset_password_token_generator.make_token(user),
+        },
+    )
     to_email = user.email
     email = EmailMessage(
-        mail_subject, message, from_email=settings.EMAIL_ACTIVATION, to=[to_email]
+        mail_subject,
+        message,
+        from_email=settings.EMAIL_ACTIVATION,
+        to=[to_email],
     )
     email.send()
 
 
 def send_contact_us_email(fullname, email, comment):
-    mail_subject = 'Contact Us Question'
-    message = render_to_string('accounts/contact_us_email.html', {
-        'fullname': fullname,
-        'email': email,
-        'comment': comment,
-    })
-    to_email = 'ubco.gamification@gmail.com'
+    mail_subject = "Contact Us Question"
+    message = render_to_string(
+        "accounts/contact_us_email.html",
+        {
+            "fullname": fullname,
+            "email": email,
+            "comment": comment,
+        },
+    )
+    to_email = "ubco.gamification@gmail.com"
     email = EmailMessage(
-        mail_subject, message, from_email=settings.EMAIL_ACTIVATION, to=[to_email]
+        mail_subject,
+        message,
+        from_email=settings.EMAIL_ACTIVATION,
+        to=[to_email],
     )
     email.send()

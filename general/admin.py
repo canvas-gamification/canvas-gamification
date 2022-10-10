@@ -10,11 +10,10 @@ from general.models.question_report import QuestionReport
 
 
 class FAQAdminForm(forms.ModelForm):
-
     def __init__(self, *args, **kwargs):
         super(FAQAdminForm, self).__init__(*args, **kwargs)
 
-        self.fields['answer'].widget = RichTextWidget(field_settings='advanced')
+        self.fields["answer"].widget = RichTextWidget(field_settings="advanced")
 
     class Meta:
         model = FAQ
@@ -22,18 +21,27 @@ class FAQAdminForm(forms.ModelForm):
 
 
 class FAQAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'question')
+    list_display = ("__str__", "question")
     form = FAQAdminForm
 
 
 class ActionAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'description', 'actor', 'token_change', 'status')
-    list_filter = ('status',)
+    list_display = (
+        "__str__",
+        "description",
+        "actor",
+        "token_change",
+        "status",
+    )
+    list_filter = ("status",)
 
 
 class QuestionReportAdmin(admin.ModelAdmin):
-    list_display = ('user', 'question', 'report')
-    list_filter = ('user', 'question',)
+    list_display = ("user", "question", "report")
+    list_filter = (
+        "user",
+        "question",
+    )
 
 
 admin.site.register(FAQ, FAQAdmin)

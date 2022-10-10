@@ -11,10 +11,17 @@ class CanvasCourseRegistrationViewSet(viewsets.ReadOnlyModelViewSet):
     Optional Parameters
     - Base filtering on the 'course' parameter
     """
+
     serializer_class = CanvasCourseRegistrationSerializer
-    permission_classes = [IsAuthenticated, ]
-    filter_backends = [DjangoFilterBackend, ]
-    filterset_fields = ['course', ]
+    permission_classes = [
+        IsAuthenticated,
+    ]
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    filterset_fields = [
+        "course",
+    ]
 
     def get_queryset(self):
         user = self.request.user

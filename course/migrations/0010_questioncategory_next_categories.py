@@ -6,13 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course', '0009_auto_20201120_1808'),
+        ("course", "0009_auto_20201120_1808"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='questioncategory',
-            name='next_categories',
-            field=models.ManyToManyField(blank=True, related_name='prev_categories', to='course.QuestionCategory'),
+            model_name="questioncategory",
+            name="next_categories",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="prev_categories",
+                to="course.QuestionCategory",
+            ),
         ),
     ]

@@ -32,10 +32,7 @@ class ParsonsSubmission(CodeSubmission):
     """
 
     def get_answer_files(self):
-        return {
-            file_name: code
-            for file_name, code in self.answer_files.items() if self.uqj.should_compile(file_name)
-        }
+        return {file_name: code for file_name, code in self.answer_files.items() if self.uqj.should_compile(file_name)}
 
     def get_embed_files(self):
         return self.answer_files

@@ -17,9 +17,13 @@ def course_list_view(request):
     if not request.user.is_authenticated or not request.user.is_teacher:
         courses.filter(visible_to_students=True)
 
-    return render(request, 'canvas/course_list.html', {
-        'courses': courses,
-    })
+    return render(
+        request,
+        "canvas/course_list.html",
+        {
+            "courses": courses,
+        },
+    )
 
 
 def course_view(request, pk):
@@ -28,13 +32,13 @@ def course_view(request, pk):
     if not course.has_view_permission(request.user):
         return render(request, "403.html", status=403)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         token_use_data = {}
         for key in request.POST.keys():
             match = re.fullmatch(r"token_use#(\d+)", key)
             if match:
                 token_use_option_id = int(match.group(1))
-                token_use_num = int(request.POST.get(key, '0') or 0)
+                token_use_num = int(request.POST.get(key, "0") or 0)
                 token_use_data[token_use_option_id] = token_use_num
         try:
             update_token_use(request.user, course, token_use_data)
@@ -50,12 +54,16 @@ def course_view(request, pk):
 
     course_reg = get_course_registration(request.user, course)
 
-    return render(request, 'canvas/course.html', {
-        'course': course,
-        'course_reg': course_reg,
-        'uqjs': uqjs,
-        'is_instructor': is_instructor,
-    })
+    return render(
+        request,
+        "canvas/course.html",
+        {
+            "course": course,
+            "course_reg": course_reg,
+            "uqjs": uqjs,
+            "is_instructor": is_instructor,
+        },
+    )
 
 
 def event_problem_set(request, event_id):
@@ -70,21 +78,29 @@ def event_problem_set(request, event_id):
     for i in range(len(uqjs)):
         uqjs_dict[i + 1] = uqjs[i]
 
-    return render(request, 'canvas/event_problem_set.html', {
-        'event': event,
-        'uqjs': uqjs_dict,
-        'is_instructor': event.course.has_edit_permission(request.user),
-    })
+    return render(
+        request,
+        "canvas/event_problem_set.html",
+        {
+            "event": event,
+            "uqjs": uqjs_dict,
+            "is_instructor": event.course.has_edit_permission(request.user),
+        },
+    )
 
 
 @user_passes_test(teacher_check)
 def events_options_view(request):
-    course_id = request.GET.get('course_id', -1)
+    course_id = request.GET.get("course_id", -1)
     course = get_object_or_404(CanvasCourse, pk=course_id)
 
-    return render(request, 'canvas/course_event_options.html', {
-        'events': course.events.all(),
-    })
+    return render(
+        request,
+        "canvas/course_event_options.html",
+        {
+            "events": course.events.all(),
+        },
+    )
 
 
 def create_event_view(request, pk):
@@ -93,35 +109,39 @@ def create_event_view(request, pk):
     if not course.has_edit_permission(request.user):
         return render(request, "403.html", status=403)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = CreateEventForm(request.POST)
         if form.is_valid():
             new_event = form.save(commit=False)
             new_event.course = course
             new_event.save()
-            messages.add_message(request, messages.SUCCESS, 'Event created successfully.')
+            messages.add_message(request, messages.SUCCESS, "Event created successfully.")
     else:
         form = CreateEventForm()
 
-    return render(request, 'canvas/event_create.html', {
-        'form': form,
-        'course': course,
-    })
+    return render(
+        request,
+        "canvas/event_create.html",
+        {
+            "form": form,
+            "course": course,
+        },
+    )
 
 
 def edit_event_view(request, pk):
     event = get_object_or_404(Event, pk=pk)
-    if request.method == 'POST':
+    if request.method == "POST":
         form = CreateEventForm(request.POST, instance=event)
 
         if form.is_valid():
             form.save()
-            messages.add_message(request, messages.SUCCESS, 'Event was edited successfully')
+            messages.add_message(request, messages.SUCCESS, "Event was edited successfully")
     else:
         form = CreateEventForm(instance=event)
 
-    return render(request, 'canvas/event_create.html', {
-        'form': form,
-        'event': event,
-        'header': 'Edit'
-    })
+    return render(
+        request,
+        "canvas/event_create.html",
+        {"form": form, "event": event, "header": "Edit"},
+    )

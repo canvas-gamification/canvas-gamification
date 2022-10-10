@@ -10,11 +10,21 @@ class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
     Query Parameters
     + Standard ordering is applied
     """
+
     serializer_class = ActionsSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [
+        IsAuthenticated,
+    ]
     pagination_class = BasePagination
     filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['time_modified', 'time_created', 'id', 'object_type', 'status', 'verb']
+    ordering_fields = [
+        "time_modified",
+        "time_created",
+        "id",
+        "object_type",
+        "status",
+        "verb",
+    ]
 
     def get_queryset(self):
         user = self.request.user

@@ -5,7 +5,7 @@ from accounts.models import MyUser, UserConsent
 
 
 class MyUserAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'username', 'email', 'role')
+    list_display = ("__str__", "username", "email", "role")
 
 
 admin.site.register(MyUser, MyUserAdmin)

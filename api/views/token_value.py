@@ -10,12 +10,16 @@ from course.models.models import QuestionCategory
 from course.utils.utils import get_token_values, get_token_value_object
 
 
-class TokenValueViewSet(viewsets.GenericViewSet,
-                        mixins.UpdateModelMixin,
-                        mixins.ListModelMixin,
-                        mixins.RetrieveModelMixin):
+class TokenValueViewSet(
+    viewsets.GenericViewSet,
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+):
     serializer_class = TokenValueSerializer
-    permission_classes = [TeacherAccessPermission, ]
+    permission_classes = [
+        TeacherAccessPermission,
+    ]
 
     def get_queryset(self):
         return get_token_values()
@@ -28,19 +32,20 @@ class TokenValueViewSet(viewsets.GenericViewSet,
         return {
             "token_values": [
                 self.get_serializer_class()(get_token_value_object(parent_category, difficulty)).data
-                for difficulty, x in DIFFICULTY_CHOICES],
+                for difficulty, x in DIFFICULTY_CHOICES
+            ],
             "children": [self.get_nested_token_values(category) for category in parent_category.sub_categories.all()],
             "category_name": parent_category.name,
         }
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def nested(self, request):
         return Response(self.get_nested_token_values())
 
-    @action(detail=False, methods=['patch'], url_path='update-bulk')
+    @action(detail=False, methods=["patch"], url_path="update-bulk")
     def update_bulk(self, request: Request):
         qs = self.get_queryset()
         data = request.data.get("data", [])
         for token_value in data:
-            qs.filter(pk=token_value['id']).update(value=token_value['value'])
+            qs.filter(pk=token_value["id"]).update(value=token_value["value"])
         return Response()

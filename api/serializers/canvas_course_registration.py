@@ -6,7 +6,7 @@ from canvas.models.models import CanvasCourseRegistration
 
 
 class CanvasCourseRegistrationSerializer(serializers.ModelSerializer):
-    token_uses = serializers.SerializerMethodField('get_token_uses')
+    token_uses = serializers.SerializerMethodField("get_token_uses")
 
     def get_token_uses(self, course_reg):
         token_uses = course_reg.get_token_uses()
@@ -28,5 +28,15 @@ class CanvasCourseRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CanvasCourseRegistration
-        fields = ['id', 'canvas_user_id', 'status', 'is_verified', 'is_blocked', 'token_uses', 'total_tokens_received',
-                  'available_tokens', 'username', 'name']
+        fields = [
+            "id",
+            "canvas_user_id",
+            "status",
+            "is_verified",
+            "is_blocked",
+            "token_uses",
+            "total_tokens_received",
+            "available_tokens",
+            "username",
+            "name",
+        ]

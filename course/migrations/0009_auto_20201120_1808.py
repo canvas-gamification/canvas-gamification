@@ -7,22 +7,22 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course', '0008_question_is_sample'),
+        ("course", "0008_question_is_sample"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='javaquestion',
-            name='additional_file_name',
+            model_name="javaquestion",
+            name="additional_file_name",
         ),
         migrations.AddField(
-            model_name='javaquestion',
-            name='input_file_names',
+            model_name="javaquestion",
+            name="input_file_names",
             field=course.fields.JSONField(default=dict),
         ),
         migrations.AddField(
-            model_name='javasubmission',
-            name='answer_files',
+            model_name="javasubmission",
+            name="answer_files",
             field=course.fields.JSONField(default=dict),
         ),
     ]

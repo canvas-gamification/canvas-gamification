@@ -5,7 +5,7 @@ def get_submission_analytics(submission):
     # 3 save it in the database (make sure to replace the old one)
 
     return {
-        'time_spent': 1,
+        "time_spent": 1,
     }
 
 

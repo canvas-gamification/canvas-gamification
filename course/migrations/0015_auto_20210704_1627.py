@@ -4,28 +4,30 @@ from django.db import migrations
 
 
 def fix_parsons_lines(apps, schema_editor):
-    ParsonsQuestion = apps.get_model('course', 'ParsonsQuestion')
+    ParsonsQuestion = apps.get_model("course", "ParsonsQuestion")
     for question in ParsonsQuestion.objects.all():
         if question.additional_file_name:
-            question.input_files = [{
-                "name": question.additional_file_name,
-                "compile": True,
-                "lines": question.lines,
-            }]
+            question.input_files = [
+                {
+                    "name": question.additional_file_name,
+                    "compile": True,
+                    "lines": question.lines,
+                }
+            ]
         else:
-            question.input_files = [{
-                "name": "code",
-                "compile": False,
-                "lines": question.lines,
-            }]
+            question.input_files = [
+                {
+                    "name": "code",
+                    "compile": False,
+                    "lines": question.lines,
+                }
+            ]
         question.save()
 
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('course', '0014_parsonsquestion_input_files'),
+        ("course", "0014_parsonsquestion_input_files"),
     ]
 
-    operations = [
-        migrations.RunPython(fix_parsons_lines, migrations.RunPython.noop)
-    ]
+    operations = [migrations.RunPython(fix_parsons_lines, migrations.RunPython.noop)]

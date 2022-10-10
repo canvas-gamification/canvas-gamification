@@ -24,8 +24,14 @@ from .update_profile import UpdateProfileSerializer
 from .token_use import TokenUseSerializer
 from .question import QuestionSerializer
 from .java_question import JavaQuestionSerializer, JavaSubmissionSerializer
-from .multiple_choice_question import MultipleChoiceQuestionSerializer, MultipleChoiceSubmissionSerializer
-from .parsons_question import ParsonsQuestionSerializer, ParsonsSubmissionSerializer
+from .multiple_choice_question import (
+    MultipleChoiceQuestionSerializer,
+    MultipleChoiceSubmissionSerializer,
+)
+from .parsons_question import (
+    ParsonsQuestionSerializer,
+    ParsonsSubmissionSerializer,
+)
 from .uqj import UQJSerializer
 from .canvas_course_registration import CanvasCourseRegistrationSerializer
 from .course import CourseSerializer, CourseSerializerList

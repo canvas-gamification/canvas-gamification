@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0002_myuser_role'),
+        ("accounts", "0002_myuser_role"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='myuser',
-            name='tokens',
+            model_name="myuser",
+            name="tokens",
             field=models.FloatField(default=0),
         ),
     ]

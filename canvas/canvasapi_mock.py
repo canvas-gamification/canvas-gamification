@@ -7,9 +7,7 @@ class Canvas(object):
 
 
 class Course(object):
-    attributes = {
-        'name': 'Mock Course'
-    }
+    attributes = {"name": "Mock Course"}
 
     def create_assignment(self, assignment, **kwargs):
         return Assignment()
@@ -22,9 +20,9 @@ class Course(object):
 
     def get_users(self, **kwargs):
         return [
-            User(1, 'Firstname Lastname', '00000000'),
-            User(2, 'multiple student', '12345678'),
-            User(3, 'multiple student', '13579135')
+            User(1, "Firstname Lastname", "00000000"),
+            User(2, "multiple student", "12345678"),
+            User(3, "multiple student", "13579135"),
         ]
 
     def submissions_bulk_update(self, **kwargs):

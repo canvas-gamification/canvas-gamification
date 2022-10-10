@@ -7,19 +7,31 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('canvas', '0005_canvascourse_mock'),
-        ('course', '0006_auto_20200921_2020'),
+        ("canvas", "0005_canvascourse_mock"),
+        ("course", "0006_auto_20200921_2020"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='question',
-            name='course',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='question_set', to='canvas.CanvasCourse'),
+            model_name="question",
+            name="course",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="question_set",
+                to="canvas.CanvasCourse",
+            ),
         ),
         migrations.AlterField(
-            model_name='question',
-            name='event',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='question_set', to='canvas.Event'),
+            model_name="question",
+            name="event",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="question_set",
+                to="canvas.Event",
+            ),
         ),
     ]

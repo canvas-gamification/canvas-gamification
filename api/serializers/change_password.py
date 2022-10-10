@@ -25,21 +25,21 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MyUser
-        fields = ['old_password', 'password', 'password2']
+        fields = ["old_password", "password", "password2"]
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
+        if attrs["password"] != attrs["password2"]:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
         return attrs
 
     def validate_old_password(self, value):
-        user = self.context['request'].user
+        user = self.context["request"].user
         if not user.check_password(value):
             raise serializers.ValidationError({"old_password": "Old password is not correct"})
         return value
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        user.set_password(validated_data['password'])
+        user = self.context["request"].user
+        user.set_password(validated_data["password"])
         user.save()
         return user

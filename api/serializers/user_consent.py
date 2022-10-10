@@ -34,5 +34,16 @@ class UserConsentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserConsent
-        fields = ['user', 'consent', 'legal_first_name', 'legal_last_name', 'student_number', 'date',
-                  'access_submitted_course_work', 'access_course_grades', 'is_student', 'gender', 'race']
+        fields = [
+            "user",
+            "consent",
+            "legal_first_name",
+            "legal_last_name",
+            "student_number",
+            "date",
+            "access_submitted_course_work",
+            "access_course_grades",
+            "is_student",
+            "gender",
+            "race",
+        ]

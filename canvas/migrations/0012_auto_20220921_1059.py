@@ -6,13 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('canvas', '0011_merge_20211116_1744'),
+        ("canvas", "0011_merge_20211116_1744"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='event',
-            name='type',
-            field=models.CharField(choices=[('ASSIGNMENT', 'ASSIGNMENT'), ('EXAM', 'EXAM'), ('CHALLENGE', 'CHALLENGE')], max_length=500),
+            model_name="event",
+            name="type",
+            field=models.CharField(
+                choices=[
+                    ("ASSIGNMENT", "ASSIGNMENT"),
+                    ("EXAM", "EXAM"),
+                    ("CHALLENGE", "CHALLENGE"),
+                ],
+                max_length=500,
+            ),
         ),
     ]

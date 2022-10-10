@@ -6,4 +6,4 @@ from accounts.models import MyUser
 class UserStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ['pk']
+        fields = ["pk"]

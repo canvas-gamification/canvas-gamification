@@ -11,14 +11,17 @@ def validate_recaptcha(response):
         return True
 
     try:
-        r = requests.post(settings.RECAPTCHA_URL, {
-            'secret': settings.RECAPTCHA_KEY,
-            'response': response,
-        })
+        r = requests.post(
+            settings.RECAPTCHA_URL,
+            {
+                "secret": settings.RECAPTCHA_KEY,
+                "response": response,
+            },
+        )
         data = r.json()
     except (ConnectionError, RequestException):
         logger = logging.getLogger(__name__)
         logger.error(traceback.format_exc())
         return False
 
-    return data.get('success', False)
+    return data.get("success", False)

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('canvas', '0004_auto_20200904_0453'),
+        ("canvas", "0004_auto_20200904_0453"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='canvascourse',
-            name='mock',
+            model_name="canvascourse",
+            name="mock",
             field=models.BooleanField(default=False),
         ),
     ]

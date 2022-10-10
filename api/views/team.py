@@ -14,7 +14,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
 
-    @action(detail=False, methods=['post'], url_path='create-and-join')
+    @action(detail=False, methods=["post"], url_path="create-and-join")
     def create_and_join(self, request):
         event_id = request.data.get("event_id", None)
         name = request.data.get("name", None)
@@ -24,7 +24,7 @@ class TeamViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(team)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['post'], url_path='join')
+    @action(detail=False, methods=["post"], url_path="join")
     def join(self, request):
         team_id = request.data.get("team_id", None)
         team = get_object_or_404(Team, id=team_id)

@@ -6,18 +6,33 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course', '0023_auto_20211203_1937'),
+        ("course", "0023_auto_20211203_1937"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='question',
-            name='difficulty',
-            field=models.CharField(choices=[('EASY', 'Easy'), ('MEDIUM', 'Medium'), ('HARD', 'Hard')], default='EASY', max_length=100),
+            model_name="question",
+            name="difficulty",
+            field=models.CharField(
+                choices=[
+                    ("EASY", "Easy"),
+                    ("MEDIUM", "Medium"),
+                    ("HARD", "Hard"),
+                ],
+                default="EASY",
+                max_length=100,
+            ),
         ),
         migrations.AlterField(
-            model_name='tokenvalue',
-            name='difficulty',
-            field=models.CharField(choices=[('EASY', 'Easy'), ('MEDIUM', 'Medium'), ('HARD', 'Hard')], max_length=100),
+            model_name="tokenvalue",
+            name="difficulty",
+            field=models.CharField(
+                choices=[
+                    ("EASY", "Easy"),
+                    ("MEDIUM", "Medium"),
+                    ("HARD", "Hard"),
+                ],
+                max_length=100,
+            ),
         ),
     ]

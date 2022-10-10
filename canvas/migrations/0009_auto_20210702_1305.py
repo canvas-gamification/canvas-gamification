@@ -4,23 +4,26 @@ from django.db import migrations, models
 
 
 def change_practice_to_assignment(apps, schema_editor):
-    events = apps.get_model('canvas', 'Event')
+    events = apps.get_model("canvas", "Event")
     for event in events.objects.all():
-        if event.type == 'PRACTICE':
-            event.type = 'ASSIGNMENT'
+        if event.type == "PRACTICE":
+            event.type = "ASSIGNMENT"
             event.save()
 
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('canvas', '0008_event_type'),
+        ("canvas", "0008_event_type"),
     ]
 
     operations = [
         migrations.RunPython(change_practice_to_assignment),
         migrations.AlterField(
-            model_name='event',
-            name='type',
-            field=models.CharField(choices=[('ASSIGNMENT', 'ASSIGNMENT'), ('EXAM', 'EXAM')], max_length=500),
+            model_name="event",
+            name="type",
+            field=models.CharField(
+                choices=[("ASSIGNMENT", "ASSIGNMENT"), ("EXAM", "EXAM")],
+                max_length=500,
+            ),
         ),
     ]

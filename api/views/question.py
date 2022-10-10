@@ -7,8 +7,12 @@ from rest_framework.response import Response
 
 from api.pagination import BasePagination
 from api.permissions import TeacherAccessPermission, HasDeletePermission
-from api.serializers import QuestionSerializer, MultipleChoiceQuestionSerializer, JavaQuestionSerializer, \
-    ParsonsQuestionSerializer
+from api.serializers import (
+    QuestionSerializer,
+    MultipleChoiceQuestionSerializer,
+    JavaQuestionSerializer,
+    ParsonsQuestionSerializer,
+)
 from course.models.models import Question, UserQuestionJunction
 from course.models.java import JavaQuestion
 from course.models.multiple_choice import MultipleChoiceQuestion
@@ -21,15 +25,41 @@ class QuestionViewSet(viewsets.ModelViewSet):
     Optional Parameters
     ?status: boolean => filter by status
     """
+
     queryset = Question.objects.filter(question_status=Question.CREATED)
     serializer_class = QuestionSerializer
-    permission_classes = [HasDeletePermission, TeacherAccessPermission, ]
-    filter_backends = [filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend]
-    ordering_fields = ['id', 'title', 'author', 'difficulty', 'event__name', 'category__name', 'category__parent__name',
-                       'is_verified']
-    search_fields = ['title', ]
-    filterset_fields = ['author', 'difficulty', 'course', 'event', 'is_verified', 'is_sample', 'category__name',
-                        'category__parent__name']
+    permission_classes = [
+        HasDeletePermission,
+        TeacherAccessPermission,
+    ]
+    filter_backends = [
+        filters.OrderingFilter,
+        filters.SearchFilter,
+        DjangoFilterBackend,
+    ]
+    ordering_fields = [
+        "id",
+        "title",
+        "author",
+        "difficulty",
+        "event__name",
+        "category__name",
+        "category__parent__name",
+        "is_verified",
+    ]
+    search_fields = [
+        "title",
+    ]
+    filterset_fields = [
+        "author",
+        "difficulty",
+        "course",
+        "event",
+        "is_verified",
+        "is_sample",
+        "category__name",
+        "category__parent__name",
+    ]
     pagination_class = BasePagination
 
     def get_question_serializer_class(self, question):
@@ -42,7 +72,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         return self.get_serializer_class()
 
     def get_serializer(self, *args, **kwargs):
-        question = kwargs.get('instance', None)
+        question = kwargs.get("instance", None)
         if not question and len(args) == 1:
             question = args[0]
 
@@ -51,7 +81,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         else:
             serializer_class = self.get_serializer_class()
 
-        kwargs['context'] = self.get_serializer_context()
+        kwargs["context"] = self.get_serializer_context()
         return serializer_class(*args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
@@ -61,19 +91,19 @@ class QuestionViewSet(viewsets.ModelViewSet):
         delete_question_action(self.get_serializer(question).data, request.user)
         return Response(self.get_serializer(question).data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['get'], url_path='download-questions')
+    @action(detail=False, methods=["get"], url_path="download-questions")
     def download_questions(self, request, *args, **kwargs):
-        '''
+        """
         Action that will display all questions after they have been filtered using the appropriate constructors,
         ready to put into a JSON file to download and export.
-        '''
+        """
         queryset = self.filter_queryset(self.get_queryset())
         serialized_questions = []
         for obj in queryset:
             serialized_questions.append(OrderedDict(self.get_serializer(obj).data))
         return Response(serialized_questions)
 
-    @action(detail=True, methods=['get'], url_path='count-favorite')
+    @action(detail=True, methods=["get"], url_path="count-favorite")
     def get_favorite_count(self, request, pk=None):
 
         uqj_count = UserQuestionJunction.objects.all().filter(question_id=pk, is_favorite=True).count()

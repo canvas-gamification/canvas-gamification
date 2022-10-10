@@ -8,7 +8,7 @@ class TeacherAccessPermission(permissions.IsAuthenticated):
 
 class UserConsentPermission(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
-        if request.method in ['GET', 'POST']:
+        if request.method in ["GET", "POST"]:
             return request.user == obj.user
         return False
 
@@ -54,7 +54,7 @@ class EventEditPermission(permissions.IsAuthenticated):
 
 class HasDeletePermission(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
-        if request.method == 'DELETE':
+        if request.method == "DELETE":
             return obj.author == request.user
         return True
 

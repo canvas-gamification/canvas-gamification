@@ -9,7 +9,7 @@ def login_overlay_middleware(get_response):
     # One-time configuration and initialization.
 
     def middleware(request):
-        if request.method == "POST" and 'login' in request.POST:
+        if request.method == "POST" and "login" in request.POST:
             login_form = LoginForm(request, data=request.POST, prefix="login")
             if login_form.is_valid():
                 login(request, login_form.get_user())

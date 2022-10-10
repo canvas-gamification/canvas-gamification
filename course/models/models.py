@@ -13,7 +13,11 @@ from accounts.models import MyUser
 from canvas.models.models import Event, CanvasCourse
 from course.fields import JSONField
 from course.utils.junit_xml import parse_junit_xml
-from course.utils.utils import get_token_value, ensure_uqj, calculate_average_success
+from course.utils.utils import (
+    get_token_value,
+    ensure_uqj,
+    calculate_average_success,
+)
 from course.utils.variables import render_text, generate_variables
 from general.services.action import create_submission_evaluation_action
 
@@ -27,8 +31,14 @@ DIFFICULTY_CHOICES = [
 class QuestionCategory(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
-    parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name="sub_categories")
-    next_categories = models.ManyToManyField('self', related_name="prev_categories", symmetrical=False, blank=True)
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="sub_categories",
+    )
+    next_categories = models.ManyToManyField("self", related_name="prev_categories", symmetrical=False, blank=True)
 
     def __str__(self):
         if self.parent is None:
@@ -44,10 +54,12 @@ class QuestionCategory(models.Model):
     def average_success_per_difficulty(self):
         res = []
         for difficulty, difficulty_name in DIFFICULTY_CHOICES:
-            res.append({
-                'difficulty': difficulty,
-                'avgSuccess': calculate_average_success(UserQuestionJunction.objects.all(), self, difficulty)
-            })
+            res.append(
+                {
+                    "difficulty": difficulty,
+                    "avgSuccess": calculate_average_success(UserQuestionJunction.objects.all(), self, difficulty),
+                }
+            )
         return res
 
     @property
@@ -65,30 +77,38 @@ class QuestionCategory(models.Model):
 
     @property
     def next_category_ids(self):
-        return list(self.next_categories.values_list('pk', flat=True))
+        return list(self.next_categories.values_list("pk", flat=True))
 
 
 class TokenValue(models.Model):
     value = models.FloatField()
-    category = models.ForeignKey(QuestionCategory, on_delete=models.CASCADE, related_name='token_values')
+    category = models.ForeignKey(
+        QuestionCategory,
+        on_delete=models.CASCADE,
+        related_name="token_values",
+    )
     difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES)
 
     def save(self, **kwargs):
         if self.value is None:
-            if self.difficulty == 'EASY':
+            if self.difficulty == "EASY":
                 self.value = 1
-            if self.difficulty == 'MEDIUM':
+            if self.difficulty == "MEDIUM":
                 self.value = 2
-            if self.difficulty == 'HARD':
+            if self.difficulty == "HARD":
                 self.value = 3
 
         super().save(**kwargs)
 
     class Meta:
-        unique_together = ('category', 'difficulty')
+        unique_together = ("category", "difficulty")
 
 
-QUESTION_TYPES = {'mc': 'multiple choice question', 'parsons': 'parsons question', 'java': 'java question'}
+QUESTION_TYPES = {
+    "mc": "multiple choice question",
+    "parsons": "parsons question",
+    "java": "java question",
+}
 
 
 class Question(PolymorphicModel):
@@ -104,21 +124,35 @@ class Question(PolymorphicModel):
     difficulty = models.CharField(max_length=100, choices=DIFFICULTY_CHOICES, default="EASY")
     is_sample = models.BooleanField(default=False)
 
-    course = models.ForeignKey(CanvasCourse, on_delete=models.SET_NULL, related_name='question_set', null=True,
-                               blank=True, db_index=True)
-    event = models.ForeignKey(Event, on_delete=models.SET_NULL, related_name='question_set', null=True, blank=True,
-                              db_index=True)
+    course = models.ForeignKey(
+        CanvasCourse,
+        on_delete=models.SET_NULL,
+        related_name="question_set",
+        null=True,
+        blank=True,
+        db_index=True,
+    )
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.SET_NULL,
+        related_name="question_set",
+        null=True,
+        blank=True,
+        db_index=True,
+    )
 
     is_verified = models.BooleanField(default=False)
 
-    CREATED = 'CREATED'
-    DELETED = 'DELETED'
-    QUESTION_STATUS_CHOICES = [
-        (CREATED, 'CREATED'),
-        (DELETED, 'DELETED')
-    ]
+    CREATED = "CREATED"
+    DELETED = "DELETED"
+    QUESTION_STATUS_CHOICES = [(CREATED, "CREATED"), (DELETED, "DELETED")]
 
-    question_status = models.CharField(max_length=10, choices=QUESTION_STATUS_CHOICES, null=True, default=CREATED)
+    question_status = models.CharField(
+        max_length=10,
+        choices=QUESTION_STATUS_CHOICES,
+        null=True,
+        default=CREATED,
+    )
 
     grader = None
 
@@ -152,7 +186,7 @@ class Question(PolymorphicModel):
 
     @property
     def is_multiple_choice(self):
-        return self.type_name == QUESTION_TYPES['mc']
+        return self.type_name == QUESTION_TYPES["mc"]
 
     def __str__(self):
         return "{} ({})".format(self.type_name, self.id)
@@ -214,7 +248,7 @@ class Question(PolymorphicModel):
         question_clone.course = event.course
         question_clone.event = event
         question_clone.author = event.course.instructor
-        question_clone.title += ' (Copy)'
+        question_clone.title += " (Copy)"
         question_clone.save()
         return question_clone
 
@@ -224,13 +258,23 @@ class VariableQuestion(Question):
 
 
 def random_seed():
-    seed = get_random_string(8, '0123456789')
+    seed = get_random_string(8, "0123456789")
     return int(seed)
 
 
 class UserQuestionJunction(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='question_junctions', db_index=True)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='user_junctions', db_index=True)
+    user = models.ForeignKey(
+        MyUser,
+        on_delete=models.CASCADE,
+        related_name="question_junctions",
+        db_index=True,
+    )
+    question = models.ForeignKey(
+        Question,
+        on_delete=models.CASCADE,
+        related_name="user_junctions",
+        db_index=True,
+    )
     random_seed = models.IntegerField(default=random_seed)
 
     last_viewed = models.DateTimeField(default=None, null=True, db_index=True)
@@ -242,7 +286,7 @@ class UserQuestionJunction(models.Model):
     is_favorite = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = ('user', 'question')
+        unique_together = ("user", "question")
 
     def viewed(self):
         self.last_viewed = datetime.now()
@@ -280,13 +324,14 @@ class UserQuestionJunction(models.Model):
 
     def get_rendered_choices(self):
         from course.models.multiple_choice import MultipleChoiceQuestion
+
         if not isinstance(self.question, MultipleChoiceQuestion):
             return {}
 
         choices = json.loads(self.question.choices) if type(self.question.choices) == str else self.question.choices
 
         keys = list(choices.keys())
-        keys = keys[:self.question.visible_distractor_count + len(self.question.answer.split(','))]
+        keys = keys[: self.question.visible_distractor_count + len(self.question.answer.split(","))]
         random.seed(self.random_seed)
         random.shuffle(keys)
 
@@ -301,36 +346,29 @@ class UserQuestionJunction(models.Model):
         random.seed(self.random_seed)
         rendered_lines = []
         for input_files in self.question.input_files:
-            lines = [
-                render_text(line, self.get_variables())
-                for line in input_files['lines']
-            ]
-            name = render_text(input_files['name'], self.get_variables())
+            lines = [render_text(line, self.get_variables()) for line in input_files["lines"]]
+            name = render_text(input_files["name"], self.get_variables())
             random.shuffle(lines)
-            rendered_lines.append({
-                'name': name,
-                'lines': lines
-            })
+            rendered_lines.append({"name": name, "lines": lines})
         return rendered_lines
 
     def get_input_files(self):
-        return [{
-            **input_file,
-            'name': render_text(input_file['name'], self.get_variables()),
-        } for input_file in self.question.get_input_files()]
+        return [
+            {
+                **input_file,
+                "name": render_text(input_file["name"], self.get_variables()),
+            }
+            for input_file in self.question.get_input_files()
+        ]
 
     def get_input_file_names(self):
-        input_files = [
-            x['name']
-            for x in self.get_input_files()
-            if x['compile']
-        ]
+        input_files = [x["name"] for x in self.get_input_files() if x["compile"]]
         return " ".join(input_files)
 
     def should_compile(self, file_name):
         for input_file in self.get_input_files():
-            if input_file['name'] == file_name:
-                return input_file['compile']
+            if input_file["name"] == file_name:
+                return input_file["compile"]
         return False
 
     def is_checkbox(self):
@@ -348,9 +386,9 @@ class UserQuestionJunction(models.Model):
             return "Solved"
         if self.is_partially_solved:
             return "Partially Solved"
-        if self.submissions.exists() and self.submissions.get_real_instances()[-1].status == 'Wrong':
+        if self.submissions.exists() and self.submissions.get_real_instances()[-1].status == "Wrong":
             return "Wrong"
-        if self.submissions.exists() and self.submissions.get_real_instances()[-1].status == 'Evaluating':
+        if self.submissions.exists() and self.submissions.get_real_instances()[-1].status == "Evaluating":
             return "Pending"
         if self.last_viewed:
             return "Unsolved"
@@ -369,7 +407,11 @@ class UserQuestionJunction(models.Model):
 
 
 class Submission(PolymorphicModel):
-    uqj = models.ForeignKey(UserQuestionJunction, on_delete=models.CASCADE, related_name='submissions')
+    uqj = models.ForeignKey(
+        UserQuestionJunction,
+        on_delete=models.CASCADE,
+        related_name="submissions",
+    )
     submission_time = models.DateTimeField(auto_now_add=True)
 
     answer = models.TextField(null=True, blank=True)
@@ -399,10 +441,10 @@ class Submission(PolymorphicModel):
     @property
     def status_color(self):
         dic = {
-            "Evaluating": 'default',
-            "Wrong": 'error',
-            "Partially Correct": 'warning',
-            "Correct": 'success',
+            "Evaluating": "default",
+            "Wrong": "error",
+            "Partially Correct": "warning",
+            "Correct": "success",
         }
 
         return dic[self.status]
@@ -493,7 +535,7 @@ class CodeSubmission(Submission):
     @property
     def is_compile_error(self):
         for result in self.results:
-            if result['status']['id'] != 6:
+            if result["status"]["id"] != 6:
                 return False
         return True
 
@@ -506,7 +548,7 @@ class CodeSubmission(Submission):
     @property
     def in_progress(self):
         for result in self.results:
-            if result['status']['id'] == 1 or result['status']['id'] == 2:
+            if result["status"]["id"] == 1 or result["status"]["id"] == 2:
                 return True
         return False
 
@@ -514,14 +556,14 @@ class CodeSubmission(Submission):
         self.question.grader.submit(self)
 
     def get_decoded_stderr(self):
-        return base64.b64decode(self.results[0]['stderr'] or "").decode('utf-8')
+        return base64.b64decode(self.results[0]["stderr"] or "").decode("utf-8")
 
     def get_decoded_results(self):
-        stdout = base64.b64decode(self.results[0]['stdout'] or "").decode('utf-8')
+        stdout = base64.b64decode(self.results[0]["stdout"] or "").decode("utf-8")
         return parse_junit_xml(stdout)
 
     def get_status_message(self):
-        return self.results[0]['status']['description']
+        return self.results[0]["status"]["description"]
 
     def get_formatted_test_results(self):
         return str(len(self.get_passed_test_results())) + "/" + str(self.get_num_tests())

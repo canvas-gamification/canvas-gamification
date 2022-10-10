@@ -8,15 +8,17 @@ import api.error_messages as ERROR_MESSAGES
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ['id', 'first_name', 'last_name', 'email']
+        fields = ["id", "first_name", "last_name", "email"]
 
     email = serializers.EmailField(
         read_only=True,
         error_messages=ERROR_MESSAGES.EMAIL.ERROR_MESSAGES,
-        validators=[UniqueValidator(
-            queryset=MyUser.objects.all(),
-            message=ERROR_MESSAGES.EMAIL.UNIQUE,
-        )]
+        validators=[
+            UniqueValidator(
+                queryset=MyUser.objects.all(),
+                message=ERROR_MESSAGES.EMAIL.UNIQUE,
+            )
+        ],
     )
 
     first_name = serializers.CharField(
@@ -30,11 +32,11 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
     )
 
     def create(self, validated_data):
-        user = self.context['request'].user
+        user = self.context["request"].user
 
-        user.first_name = validated_data['first_name']
-        user.last_name = validated_data['last_name']
-        user.email = validated_data['email']
+        user.first_name = validated_data["first_name"]
+        user.last_name = validated_data["last_name"]
+        user.email = validated_data["email"]
 
         user.save()
         return user

@@ -1,12 +1,13 @@
 from django.contrib.auth.models import AbstractUser, AnonymousUser
+
 # Create your models here.
 from django.db import models
 from django.db.models import Count, Q
 
 from course.utils.utils import ensure_uqj, success_rate
 
-STUDENT = 'Student'
-TEACHER = 'Teacher'
+STUDENT = "Student"
+TEACHER = "Teacher"
 
 USER_ROLE_CHOICES = [
     (TEACHER, TEACHER),
@@ -22,11 +23,11 @@ class MyAnonymousUser(AnonymousUser):
 
 class MyUser(AbstractUser):
     role = models.CharField(max_length=100, choices=USER_ROLE_CHOICES, default=STUDENT)
-    email = models.EmailField('email address', blank=True, unique=True)
+    email = models.EmailField("email address", blank=True, unique=True)
 
     @property
     def tokens(self):
-        return self.actions.all().aggregate(models.Sum('token_change'))['token_change__sum']
+        return self.actions.all().aggregate(models.Sum("token_change"))["token_change__sum"]
 
     @property
     def is_teacher(self):
@@ -47,26 +48,34 @@ class MyUser(AbstractUser):
     @property
     def success_rate_by_category(self):
         data = list(
-            self.question_junctions.values('question__category')
-                .annotate(total=Count('*'), solved=Count('pk', filter=Q(is_solved=True)))
+            self.question_junctions.values("question__category").annotate(
+                total=Count("*"), solved=Count("pk", filter=Q(is_solved=True))
+            )
         )
-        data = [{
-            'category': category['question__category'],
-            'avgSuccess': success_rate(category['solved'], category['total'])
-        } for category in data]
+        data = [
+            {
+                "category": category["question__category"],
+                "avgSuccess": success_rate(category["solved"], category["total"]),
+            }
+            for category in data
+        ]
         return data
 
     @property
     def success_rate_by_difficulty(self):
         data = list(
-            self.question_junctions.values('question__difficulty', 'question__category')
-                .annotate(total=Count('*'), solved=Count('pk', filter=Q(is_solved=True)))
+            self.question_junctions.values("question__difficulty", "question__category").annotate(
+                total=Count("*"), solved=Count("pk", filter=Q(is_solved=True))
+            )
         )
-        data = [{
-            'category': difficulty['question__category'],
-            'difficulty': difficulty['question__difficulty'],
-            'avgSuccess': success_rate(difficulty['solved'], difficulty['total'])
-        } for difficulty in data]
+        data = [
+            {
+                "category": difficulty["question__category"],
+                "difficulty": difficulty["question__difficulty"],
+                "avgSuccess": success_rate(difficulty["solved"], difficulty["total"]),
+            }
+            for difficulty in data
+        ]
         return data
 
     @property
@@ -79,16 +88,22 @@ class MyUser(AbstractUser):
 
 
 GENDER_CHOICES = [
-    ('MALE', 'Male'),
-    ('FEMALE', 'Female'),
-    ('NB', 'Non-binary'),
-    ('OTHER', 'Other'),
-    ('N/A', 'Prefer not to answer')
+    ("MALE", "Male"),
+    ("FEMALE", "Female"),
+    ("NB", "Non-binary"),
+    ("OTHER", "Other"),
+    ("N/A", "Prefer not to answer"),
 ]
 
 
 class UserConsent(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=False, related_name='consents')
+    user = models.ForeignKey(
+        MyUser,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=False,
+        related_name="consents",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     consent = models.BooleanField(default=False)
     access_submitted_course_work = models.BooleanField(default=False)

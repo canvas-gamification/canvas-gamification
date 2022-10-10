@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course', '0018_auto_20210717_2053'),
+        ("course", "0018_auto_20210717_2053"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='javaquestion',
-            name='input_file_names',
+            model_name="javaquestion",
+            name="input_file_names",
         ),
     ]

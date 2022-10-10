@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'canvas_gamification.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "canvas_gamification.settings")
 
 application = get_wsgi_application()

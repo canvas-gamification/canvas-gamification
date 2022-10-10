@@ -13,16 +13,19 @@ class UpdateUQJViewSet(viewsets.GenericViewSet):
     Query Parameters
     + Standard ordering is applied on the field 'last_viewed'
     """
-    serializer_class = UQJSerializer
-    permission_classes = [IsAuthenticated, ]
 
-    @action(detail=False, methods=['post'], url_path='update-favorite')
+    serializer_class = UQJSerializer
+    permission_classes = [
+        IsAuthenticated,
+    ]
+
+    @action(detail=False, methods=["post"], url_path="update-favorite")
     def update_is_favorite(self, request, pk=None):
         """
         Updates "is_favorite" for UserQuestionJunction
         """
-        status = request.data.get('status')
-        junction_id = request.data.get('id')
+        status = request.data.get("status")
+        junction_id = request.data.get("id")
         uqj = get_object_or_404(UserQuestionJunction, id=junction_id)
         uqj.is_favorite = status
         uqj.save()

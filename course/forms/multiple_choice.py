@@ -10,7 +10,7 @@ from course.widgets import RadioInlineSelect
 class ChoiceProblemCreateForm(ProblemCreateForm):
     choices = JSONFormField(
         widget=forms.HiddenInput(),
-        initial='{}',
+        initial="{}",
     )
 
 
@@ -18,12 +18,20 @@ class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
     class Meta:
         model = MultipleChoiceQuestion
         fields = (
-            'title', 'difficulty', 'category', 'course', 'event', 'text', 'visible_distractor_count', 'variables')
+            "title",
+            "difficulty",
+            "category",
+            "course",
+            "event",
+            "text",
+            "visible_distractor_count",
+            "variables",
+        )
 
     visible_distractor_count = forms.ChoiceField(
-        choices=[('999', 'All'), ('2', '2'), ('3', '3')],
-        initial='All',
-        widget=RadioInlineSelect()
+        choices=[("999", "All"), ("2", "2"), ("3", "3")],
+        initial="All",
+        widget=RadioInlineSelect(),
     )
 
     choices = None
@@ -31,10 +39,7 @@ class MultipleChoiceQuestionForm(ChoiceProblemCreateForm):
 
 
 class ChoiceForm(forms.Form):
-    text = forms.CharField(
-        label='Answer',
-        widget=RichTextWidget(field_settings='basic')
-    )
+    text = forms.CharField(label="Answer", widget=RichTextWidget(field_settings="basic"))
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

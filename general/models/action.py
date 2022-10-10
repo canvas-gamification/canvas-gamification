@@ -5,40 +5,40 @@ from accounts.models import MyUser
 
 
 class ActionStatus:
-    COMPLETE = 'Complete'
-    PENDING = 'Pending'
+    COMPLETE = "Complete"
+    PENDING = "Pending"
 
 
 class ActionVerb:
-    CREATED = 'Created'
-    COMPLETED = 'Completed'
-    OPENED = 'Opened'
-    DELETED = 'Deleted'
-    DELIVERED = 'Delivered'
-    READ = 'Read'
-    SOLVED = 'Solved'
-    SUBMITTED = 'Submitted'
-    SENT = 'Sent'
-    STARTED = 'Started'
-    USED = 'Used'
-    REGISTERED = 'Registered'
-    EDITED = 'Edited'
-    UNREAD = 'Unread'
-    SKIPPED = 'Skipped'
-    LOGGED_IN = 'Logged In'
-    LOGGED_OUT = 'Logged Out'
-    EVALUATED = 'Evaluated'
-    UPDATED = 'Updated'
-    DUPLICATED = 'Duplicated'
+    CREATED = "Created"
+    COMPLETED = "Completed"
+    OPENED = "Opened"
+    DELETED = "Deleted"
+    DELIVERED = "Delivered"
+    READ = "Read"
+    SOLVED = "Solved"
+    SUBMITTED = "Submitted"
+    SENT = "Sent"
+    STARTED = "Started"
+    USED = "Used"
+    REGISTERED = "Registered"
+    EDITED = "Edited"
+    UNREAD = "Unread"
+    SKIPPED = "Skipped"
+    LOGGED_IN = "Logged In"
+    LOGGED_OUT = "Logged Out"
+    EVALUATED = "Evaluated"
+    UPDATED = "Updated"
+    DUPLICATED = "Duplicated"
 
 
 class ActionObjectType:
-    QUESTION = 'Question'
-    USER = 'User'
-    SUBMISSION = 'Submission'
-    COURSE = 'Course'
-    EVENT = 'Event'
-    COURSE_REGISTRATION = 'Course Registration'
+    QUESTION = "Question"
+    USER = "User"
+    SUBMISSION = "Submission"
+    COURSE = "Course"
+    EVENT = "Event"
+    COURSE_REGISTRATION = "Course Registration"
 
 
 ACTION_STATUS_CHOICES = [
@@ -66,7 +66,7 @@ ACTION_VERB_CHOICES = [
     (ActionVerb.LOGGED_OUT, ActionVerb.LOGGED_OUT),
     (ActionVerb.EVALUATED, ActionVerb.EVALUATED),
     (ActionVerb.UPDATED, ActionVerb.UPDATED),
-    (ActionVerb.DUPLICATED, ActionVerb.DUPLICATED)
+    (ActionVerb.DUPLICATED, ActionVerb.DUPLICATED),
 ]
 
 OBJECT_TYPE_CHOICES = [
@@ -75,7 +75,10 @@ OBJECT_TYPE_CHOICES = [
     (ActionObjectType.SUBMISSION, ActionObjectType.SUBMISSION),
     (ActionObjectType.COURSE, ActionObjectType.COURSE),
     (ActionObjectType.EVENT, ActionObjectType.EVENT),
-    (ActionObjectType.COURSE_REGISTRATION, ActionObjectType.COURSE_REGISTRATION),
+    (
+        ActionObjectType.COURSE_REGISTRATION,
+        ActionObjectType.COURSE_REGISTRATION,
+    ),
 ]
 
 
@@ -83,7 +86,7 @@ class Action(models.Model):
     time_created = models.DateTimeField(auto_now_add=True)
     time_modified = models.DateTimeField(auto_now=True)
 
-    actor = models.ForeignKey(MyUser, related_name='actions', on_delete=models.CASCADE)
+    actor = models.ForeignKey(MyUser, related_name="actions", on_delete=models.CASCADE)
     description = models.CharField(max_length=500)
     token_change = models.FloatField(default=0)
     status = models.CharField(max_length=100, choices=ACTION_STATUS_CHOICES)
@@ -93,7 +96,17 @@ class Action(models.Model):
     data = jsonfield.JSONField(null=True)
 
     @classmethod
-    def create_action(cls, actor, description, token_change, status, verb, object_type=None, object_id=None, data=None):
+    def create_action(
+        cls,
+        actor,
+        description,
+        token_change,
+        status,
+        verb,
+        object_type=None,
+        object_id=None,
+        data=None,
+    ):
         action = Action(
             actor=actor,
             description=description,

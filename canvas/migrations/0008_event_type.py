@@ -6,13 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('canvas', '0007_tokenuse_num_used'),
+        ("canvas", "0007_tokenuse_num_used"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='event',
-            name='type',
-            field=models.CharField(choices=[('PRACTICE', 'PRACTICE'), ('ASSIGNMENT', 'ASSIGNMENT'), ('EXAM', 'EXAM')], default='PRACTICE', max_length=500),
+            model_name="event",
+            name="type",
+            field=models.CharField(
+                choices=[
+                    ("PRACTICE", "PRACTICE"),
+                    ("ASSIGNMENT", "ASSIGNMENT"),
+                    ("EXAM", "EXAM"),
+                ],
+                default="PRACTICE",
+                max_length=500,
+            ),
         ),
     ]

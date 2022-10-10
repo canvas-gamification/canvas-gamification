@@ -11,16 +11,18 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
         error_messages=ERROR_MESSAGES.EMAIL.ERROR_MESSAGES,
-        validators=[UniqueValidator(
-            queryset=MyUser.objects.all(),
-            message=ERROR_MESSAGES.EMAIL.UNIQUE,
-        )]
+        validators=[
+            UniqueValidator(
+                queryset=MyUser.objects.all(),
+                message=ERROR_MESSAGES.EMAIL.UNIQUE,
+            )
+        ],
     )
     password = serializers.CharField(
         write_only=True,
         required=True,
         error_messages=ERROR_MESSAGES.PASSWORD.ERROR_MESSAGES,
-        validators=[validate_password]
+        validators=[validate_password],
     )
     password2 = serializers.CharField(
         write_only=True,
@@ -35,13 +37,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MyUser
-        fields = ('email', 'password', 'password2', 'recaptcha_key')
+        fields = ("email", "password", "password2", "recaptcha_key")
 
     def create(self, validated_data):
-        user = MyUser.objects.create_user(
-            username=validated_data['email'],
-            email=validated_data['email'])
-        user.set_password(validated_data['password'])
+        user = MyUser.objects.create_user(username=validated_data["email"], email=validated_data["email"])
+        user.set_password(validated_data["password"])
 
         user.is_active = False
         user.save()
@@ -53,6 +53,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
+        if attrs["password"] != attrs["password2"]:
             raise serializers.ValidationError(ERROR_MESSAGES.PASSWORD.MATCH)
         return attrs
