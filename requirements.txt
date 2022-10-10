@@ -29,7 +29,6 @@ django-extensions==3.0.2
 ipython==7.16.1
 fuzzywuzzy==0.18.0
 python-Levenshtein==0.20.5
-flake8==3.8.3
 beautifulsoup4==4.9.3
 pyyaml==5.4
 uritemplate==3.0.1
