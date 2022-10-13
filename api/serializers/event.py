@@ -45,4 +45,4 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = ['id', 'name', 'type', 'count_for_tokens', 'start_date', 'end_date', 'course', 'is_allowed_to_open',
                   'has_edit_permission', 'is_open', 'is_exam', 'total_event_grade', 'is_not_available_yet', 'is_closed'
-                  , 'leader_board']
+            , 'leader_board']
