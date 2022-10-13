@@ -309,6 +309,16 @@ class Event(models.Model):
         return score
 
     @property
+    def leader_board(self):
+        if self.type == "CHALLENGE":
+            return [
+                {
+                    "name": challenge_team.name,
+                    "token": challenge_team.score,
+                } for challenge_team in self.team_set.all()
+            ]
+
+    @property
     def is_open(self):
         return self.start_date <= timezone.now() <= self.end_date
 
