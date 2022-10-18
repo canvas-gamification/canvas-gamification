@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -13,6 +14,8 @@ class TeamViewSet(viewsets.ModelViewSet):
     permission_classes = []
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['event']
 
     @action(detail=False, methods=['post'], url_path='create-and-join')
     def create_and_join(self, request):
