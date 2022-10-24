@@ -94,6 +94,7 @@ class CourseSerializer(serializers.ModelSerializer):
             "course_reg",
             "leader_board",
             "has_create_event_permission",
+            "description",
         ]
 
 
@@ -132,4 +133,5 @@ class CourseSerializerList(serializers.ModelSerializer):
             "status",
             "is_registered",
             "events",
+            "description",
         ]
