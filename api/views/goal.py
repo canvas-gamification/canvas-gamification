@@ -5,8 +5,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from api.serializers.goal import GoalSerializer
-from canvas.models.goal import Goal
+from api.serializers.goal import GoalSerializer, GoalItemSerializer
+from canvas.models.goal import Goal, GoalItem
 from course.models.models import QuestionCategory
 
 
@@ -26,9 +26,17 @@ class GoalViewSet(viewsets.ModelViewSet):
     def suggestions(self, request):
         category = QuestionCategory.objects.first()
 
-        goals = [
-            Goal(course_reg_id=1, category=category, number_of_questions=10, end_date=timezone.now()) for _ in range(10)
-        ]
+        goals = [Goal(course_reg_id=1, end_date=timezone.now()) for _ in range(2)]
 
         serializer = self.get_serializer(goals, many=True)
         return Response(serializer.data)
+
+
+class GoalItemViewSet(viewsets.ModelViewSet):
+    permission_classes = [
+        IsAuthenticated,
+    ]
+    serializer_class = GoalItemSerializer
+
+    def get_queryset(self):
+        return GoalItem.objects.filter(goal__course_reg__user=self.request.user)

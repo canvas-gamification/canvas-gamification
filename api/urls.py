@@ -36,7 +36,7 @@ from api.views import (
 from api.views.admin import AdminViewSet
 from api.views.analytics import AnalyticsViewSet
 from api.views.course_admin import CourseAdminViewSet
-from api.views.goal import GoalViewSet
+from api.views.goal import GoalViewSet, GoalItemViewSet
 from api.views.team import TeamViewSet
 
 router = DefaultRouter()
@@ -86,6 +86,7 @@ router.register(r"question-report", QuestionReportViewSet, basename="question-re
 # router.register(r"analytics", AnalyticsViewSet, basename="analytics")
 router.register(r"team", TeamViewSet, basename="team")
 router.register(r"goal", GoalViewSet, basename="goal")
+router.register(r"goal-item", GoalItemViewSet, basename="goal-item")
 
 app_name = "api"
 urlpatterns = [
