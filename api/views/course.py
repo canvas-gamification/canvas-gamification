@@ -78,7 +78,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         course = get_object_or_404(CanvasCourse, pk=pk)
         course_reg = get_course_registration(request.user, course)
 
-        if course.registration_mode == "Open" or code == course.registration_code:
+        if course.registration_mode == "OPEN" or code == course.registration_code:
             course_reg.verify()
             return Response(self.get_serializer(course).data)
         raise ValidationError(ERROR_MESSAGES.COURSE_REGISTRATION.INVALID_CODE)
