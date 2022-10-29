@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
 from canvas.models.goal import Goal, GoalItem
+from canvas.models.models import CanvasCourse
+from canvas.utils.utils import get_course_registration
 
 
 class GoalItemInnerSerializer(serializers.ModelSerializer):
@@ -17,11 +19,20 @@ class GoalItemSerializer(serializers.ModelSerializer):
 
 class GoalSerializer(serializers.ModelSerializer):
     goal_items = GoalItemInnerSerializer(many=True, read_only=True)
+    course_id = serializers.CharField(max_length=200, write_only=True)
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        course_id = validated_data.pop('course_id', None)
+        course = CanvasCourse.objects.get(id=course_id)
+        validated_data['course_reg'] = get_course_registration(user, course)
+
+        return super().create(validated_data)
 
     class Meta:
         model = Goal
         fields = [
-            "course_reg",
+            "course_id",
             "end_date",
             "start_date",
             "progress",
