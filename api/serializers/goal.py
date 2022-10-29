@@ -23,9 +23,9 @@ class GoalSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
-        course_id = validated_data.pop('course_id', None)
+        course_id = validated_data.pop("course_id", None)
         course = CanvasCourse.objects.get(id=course_id)
-        validated_data['course_reg'] = get_course_registration(user, course)
+        validated_data["course_reg"] = get_course_registration(user, course)
 
         return super().create(validated_data)
 

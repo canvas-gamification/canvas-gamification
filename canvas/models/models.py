@@ -9,6 +9,8 @@ from accounts.models import MyUser
 from canvas.utils.token_use import get_token_use
 from canvas.utils.utils import get_course_registration
 
+REGISTRATION_MODES = [("OPEN", "OPEN"), ("CODE", "CODE")]
+
 
 class CanvasCourse(models.Model):
     mock = models.BooleanField(default=False)
@@ -19,6 +21,8 @@ class CanvasCourse(models.Model):
     instructor = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
     description = models.CharField(max_length=500, null=True, blank=True)
 
+    registration_mode = models.CharField(max_length=100, choices=REGISTRATION_MODES, default="OPEN")
+    registration_code = models.CharField(max_length=100, null=True, blank=True)
     allow_registration = models.BooleanField(default=False)
     visible_to_students = models.BooleanField(default=False)
     start_date = models.DateTimeField(null=True)

@@ -15,7 +15,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['event']
+    filterset_fields = ["event"]
 
     @action(detail=False, methods=["post"], url_path="create-and-join")
     def create_and_join(self, request):

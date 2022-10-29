@@ -28,8 +28,5 @@ def get_course_registration(user, course):
         return qs.get()
     course_reg = CanvasCourseRegistration(user=user, course=course)
 
-    # Temporary verify all the users
-    course_reg.status = "VERIFIED"
-
     course_reg.save()
     return course_reg
