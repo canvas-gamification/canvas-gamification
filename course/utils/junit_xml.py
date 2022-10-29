@@ -20,11 +20,11 @@ def parse_junit_xml(xml):
 
             if test_case.error:
                 doc["status"] = "FAIL"
-                doc["message"] = format_message(test_case.error["message"])
+                doc["message"] = format_message(test_case.error.get("message", "Unexpected error"))
 
             if test_case.failure:
                 doc["status"] = "FAIL"
-                doc["message"] = format_message(test_case.failure["message"])
+                doc["message"] = format_message(test_case.failure.get("message", "Unexpected error"))
 
             results.append(doc)
     except Exception as e:
