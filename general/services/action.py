@@ -298,3 +298,29 @@ def create_view_question_action(question_id, user):
         object_id=question_id,
         data=None,
     )
+
+
+def create_goal_action(goal, user):
+    Action.create_action(
+        actor=user,
+        description="User created a goal.",
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.CREATED,
+        object_type=ActionObjectType.GOAL,
+        object_id=goal["id"],
+        data=goal,
+    )
+
+
+def create_goal_item_action(goal_item, user):
+    Action.create_action(
+        actor=user,
+        description="User created a goal item.",
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.CREATED,
+        object_type=ActionObjectType.GOAL_ITEM,
+        object_id=goal_item["id"],
+        data=goal_item,
+    )

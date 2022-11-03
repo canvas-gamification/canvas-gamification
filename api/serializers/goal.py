@@ -14,7 +14,7 @@ class GoalItemInnerSerializer(serializers.ModelSerializer):
 class GoalItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = GoalItem
-        fields = ["goal", "category", "difficulty", "progress", "number_of_questions"]
+        fields = ["id", "goal", "category", "difficulty", "progress", "number_of_questions"]
 
 
 class GoalSerializer(serializers.ModelSerializer):

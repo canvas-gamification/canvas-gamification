@@ -39,6 +39,8 @@ class ActionObjectType:
     COURSE = "Course"
     EVENT = "Event"
     COURSE_REGISTRATION = "Course Registration"
+    GOAL = "Goal"
+    GOAL_ITEM = "Goal Item"
 
 
 ACTION_STATUS_CHOICES = [
@@ -78,6 +80,14 @@ OBJECT_TYPE_CHOICES = [
     (
         ActionObjectType.COURSE_REGISTRATION,
         ActionObjectType.COURSE_REGISTRATION,
+    ),
+    (
+        ActionObjectType.GOAL,
+        ActionObjectType.GOAL,
+    ),
+    (
+        ActionObjectType.GOAL_ITEM,
+        ActionObjectType.GOAL_ITEM,
     ),
 ]
 
