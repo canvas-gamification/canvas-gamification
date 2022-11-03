@@ -40,6 +40,7 @@ class GoalSerializer(serializers.ModelSerializer):
             "is_finished",
             "number_of_questions",
             "goal_items",
+            "stats",
         ]
         read_only_fields = [
             "start_date",

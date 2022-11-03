@@ -3,6 +3,7 @@ from django.db.models import Sum
 from django.utils import timezone
 
 from canvas.models.models import CanvasCourseRegistration
+from canvas.services.goal import get_goal_stats
 from course.models.models import DIFFICULTY_CHOICES, QuestionCategory
 from course.services.question import get_solved_practice_questions_count
 
@@ -23,6 +24,10 @@ class Goal(models.Model):
     @property
     def number_of_questions(self):
         return self.goal_items.aggregate(Sum("number_of_questions"))["number_of_questions__sum"]
+
+    @property
+    def stats(self):
+        return get_goal_stats(self)
 
     def save(self, *args, **kwargs):
         if self.start_date is None:
