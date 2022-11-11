@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from accounts.models import MyUser
 from api.serializers import UserStatsSerializer
 from course.models.models import DIFFICULTY_CHOICES, QuestionCategory
-from course.utils.utils import calculate_average_success
+from course.utils.utils import calculate_average_success, calculate_solved_questions, success_rate
 
 
 class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
@@ -17,6 +17,38 @@ class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [
         IsAuthenticated,
     ]
+
+    def list(self, request, *args, **kwargs):
+        category_stats = []
+
+        for category in QuestionCategory.objects.all():
+            for difficulty, _ in DIFFICULTY_CHOICES:
+                solved, total = calculate_solved_questions(request.user.question_junctions, category, difficulty)
+                category_stats.append(
+                    {
+                        "category": category.id,
+                        "difficulty": difficulty,
+                        "questions_attempt": total,
+                        "questions_solved": solved,
+                        "avgSuccess": success_rate(solved, total),
+                    }
+                )
+            solved, total = calculate_solved_questions(request.user.question_junctions, category)
+            category_stats.append(
+                {
+                    "category": category.id,
+                    "difficulty": "ALL",
+                    "questions_attempt": total,
+                    "questions_solved": solved,
+                    "avgSuccess": success_rate(solved, total),
+                }
+            )
+
+        return Response(
+            {
+                "question_stats": category_stats,
+            }
+        )
 
     @action(
         detail=False,

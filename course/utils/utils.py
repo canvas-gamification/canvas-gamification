@@ -325,12 +325,7 @@ def get_question_title(user, question, key):
         return "Question " + str(key)
 
 
-def calculate_average_success(uqjs, category=None, difficulty=None):
-    """
-    Function that will calculate average success as a value between 0-1 depending on the queryset and filters given.
-    Accounts for a category filter, and a difficulty filter, both of which are optional.
-    """
-
+def calculate_solved_questions(uqjs, category=None, difficulty=None):
     uqjs = uqjs.filter(question__event=None, question__is_verified=True)
 
     if category:
@@ -356,6 +351,17 @@ def calculate_average_success(uqjs, category=None, difficulty=None):
     else:
         solved = uqjs.filter(is_solved=True).count()
         total = uqjs.annotate(Count("submissions")).filter(submissions__count__gt=0).count()
+
+    return solved, total
+
+
+def calculate_average_success(uqjs, category=None, difficulty=None):
+    """
+    Function that will calculate average success as a value between 0-1 depending on the queryset and filters given.
+    Accounts for a category filter, and a difficulty filter, both of which are optional.
+    """
+
+    solved, total = calculate_solved_questions(uqjs, category, difficulty)
 
     return success_rate(solved, total)
 
