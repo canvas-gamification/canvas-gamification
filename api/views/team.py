@@ -2,16 +2,17 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from api.serializers.team import TeamSerializer
 from canvas.models.models import Event
 from canvas.models.team import Team
-from canvas.services.team import create_and_join_team, join_team
+from canvas.services.team import create_and_join_team, join_team, get_my_team
 
 
 class TeamViewSet(viewsets.ModelViewSet):
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
     filter_backends = [DjangoFilterBackend]
@@ -35,3 +36,13 @@ class TeamViewSet(viewsets.ModelViewSet):
         join_team(team, request.user)
 
         return Response({"status": "success"})
+
+    @action(detail=False, methods=["get"], url_path="my-team")
+    def my_team(self, request):
+        event_id = request.GET.get("event_id", None)
+        event = get_object_or_404(Event, id=event_id)
+
+        team = get_my_team(event, request.user)
+
+        serializer = self.get_serializer(team)
+        return Response(serializer.data)
