@@ -8,7 +8,7 @@ def parse_junit_xml(xml):
     results = []
 
     try:
-        doc = BeautifulSoup(xml)
+        doc = BeautifulSoup(xml, "html.parser")
         test_cases = doc.findAll("testcase")
 
         for test_case in test_cases:
