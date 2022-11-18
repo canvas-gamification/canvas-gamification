@@ -1,3 +1,5 @@
+from typing import Optional
+
 from rest_framework.exceptions import PermissionDenied
 
 from accounts.models import MyUser
@@ -7,7 +9,7 @@ from canvas.utils.utils import get_course_registration
 import api.error_messages as ERROR_MESSAGES
 
 
-def create_and_join_team(event: Event, user: MyUser, name: str) -> Team:
+def create_and_join_team(event: Event, user: MyUser, name: Optional[str]) -> Team:
     course_reg = get_course_registration(user, event.course)
 
     leave_team(event, user)
@@ -17,6 +19,16 @@ def create_and_join_team(event: Event, user: MyUser, name: str) -> Team:
     team.save()
     team.course_registrations.set([course_reg])
     return team
+
+
+def get_my_team(event: Event, user: MyUser) -> Team:
+    course_reg = get_course_registration(user, event.course)
+    team = event.team_set.filter(course_registrations=course_reg).all()
+
+    if len(team) == 0:
+        return create_and_join_team(event, user, None)
+
+    return team.get()
 
 
 def join_team(team: Team, user: MyUser):
