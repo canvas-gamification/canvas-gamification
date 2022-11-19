@@ -1,6 +1,6 @@
-import distance
-from sklearn.cluster import AffinityPropagation
-import numpy as np
+# import distance
+# from sklearn.cluster import AffinityPropagation
+# import numpy as np
 
 from course.models.models import Submission
 
