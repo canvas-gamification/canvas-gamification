@@ -41,6 +41,10 @@ def cluster_texts(texts):
     return clusters
 
 
+def cluster_texts_2(texts):
+    return list(set(texts))
+
+
 def get_status_messages(submissions):
     status_messages = {}
 
@@ -66,7 +70,7 @@ def get_error_messages(submissions):
     if len(error_messages) == 0:
         return []
 
-    return cluster_texts(error_messages)
+    return cluster_texts_2(error_messages)
 
 
 def get_submission_stats(submissions):
