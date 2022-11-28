@@ -13,7 +13,7 @@ from canvas.models.models import CanvasCourse, Event
 from canvas.utils.utils import get_course_registration
 
 
-class CourseViewSet(viewsets.ReadOnlyModelViewSet):
+class CourseViewSet(viewsets.ModelViewSet):
     """
     Optional Parameters
     ?registered: boolean => if true, filter retrieved courses by if user is currently registered in them

@@ -96,7 +96,9 @@ class CourseSerializer(serializers.ModelSerializer):
             "has_create_event_permission",
             "description",
             "registration_mode",
+            "registration_code",
         ]
+        extra_kwargs = {"registration_code": {"write_only": True}}
 
 
 class CourseSerializerList(serializers.ModelSerializer):
