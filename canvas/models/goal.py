@@ -56,6 +56,10 @@ class GoalItem(models.Model):
             - self.get_initial_solved()
         )
 
+    @property
+    def category_name(self):
+        return self.category.full_name
+
     def save(self, *args, **kwargs):
         if self.initial_solved is None:
             self.initial_solved = get_solved_practice_questions_count(self.user.id, self.category_id, self.difficulty)

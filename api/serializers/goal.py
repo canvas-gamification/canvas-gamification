@@ -8,13 +8,13 @@ from canvas.utils.utils import get_course_registration
 class GoalItemInnerSerializer(serializers.ModelSerializer):
     class Meta:
         model = GoalItem
-        fields = ["id", "category", "difficulty", "progress", "number_of_questions"]
+        fields = ["id", "category", "difficulty", "progress", "number_of_questions", "category_name"]
 
 
 class GoalItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = GoalItem
-        fields = ["id", "goal", "category", "difficulty", "progress", "number_of_questions"]
+        fields = ["id", "goal", "category", "difficulty", "progress", "number_of_questions", "category_name"]
 
 
 class GoalSerializer(serializers.ModelSerializer):
