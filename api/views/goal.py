@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
@@ -31,11 +33,51 @@ class GoalViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path="suggestions")
     def suggestions(self, request):
         category = QuestionCategory.objects.first()
+        category2 = QuestionCategory.objects.last()
 
-        goals = [Goal(course_reg_id=1, end_date=timezone.now()) for _ in range(2)]
-
-        serializer = self.get_serializer(goals, many=True)
-        return Response(serializer.data)
+        data = [
+            {
+                "end_date": timezone.now() + timedelta(7),
+                "goal_items": [
+                    {
+                        "category": category.id,
+                        "category_name": category.full_name,
+                        "difficulty": "EASY",
+                        "number_of_questions": 2,
+                    },
+                    {
+                        "category": category.id,
+                        "category_name": category.full_name,
+                        "difficulty": "MEDIUM",
+                        "number_of_questions": 3,
+                    },
+                ],
+            },
+            {
+                "end_date": timezone.now() + timedelta(7),
+                "goal_items": [
+                    {
+                        "category": category2.id,
+                        "category_name": category2.full_name,
+                        "difficulty": "EASY",
+                        "number_of_questions": 5,
+                    },
+                    {
+                        "category": category2.id,
+                        "category_name": category2.full_name,
+                        "difficulty": "MEDIUM",
+                        "number_of_questions": 5,
+                    },
+                    {
+                        "category": category2.id,
+                        "category_name": category2.full_name,
+                        "difficulty": "HARD",
+                        "number_of_questions": 5,
+                    },
+                ],
+            },
+        ]
+        return Response(data)
 
 
 class GoalItemViewSet(viewsets.ModelViewSet):
