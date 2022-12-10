@@ -461,7 +461,7 @@ class Submission(PolymorphicModel):
         if self.is_partially_correct:
             return "Partially Correct"
 
-        return "Wrong"
+        return "Incorrect"
 
     @property
     def tokens_received(self):
