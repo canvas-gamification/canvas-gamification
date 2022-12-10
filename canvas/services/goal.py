@@ -82,14 +82,18 @@ def get_submission_stats(submissions):
     total = submissions.count()
     correct = correct_submissions.count()
 
+    total_questions = submissions.values("uqj__question").distinct().count()
+    correct_questions = correct_submissions.values("uqj__question").distinct().count()
+
     return {
         "total": total,
         "correct": correct,
         "partially_correct": partially_correct_submissions.count(),
         "wrong": wrong_submissions.count(),
         "success_rate": 0 if total == 0 else correct / total,
-        "total_questions": submissions.values("uqj__question").distinct().count(),
-        "correct_questions": correct_submissions.values("uqj__question").distinct().count(),
+        "total_questions": total_questions,
+        "correct_questions": correct_questions,
+        "questions_success_rate": 0 if total_questions == 0 else correct_questions / total_questions,
         "messages": get_status_messages(incorrect_submissions),
         "error_messages": get_error_messages(incorrect_submissions),
     }
