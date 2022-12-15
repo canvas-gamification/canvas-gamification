@@ -6,6 +6,7 @@ from datetime import datetime
 
 import jsonfield
 from django.db import models
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from polymorphic.models import PolymorphicModel
 
@@ -276,10 +277,11 @@ class UserQuestionJunction(models.Model):
     )
     random_seed = models.IntegerField(default=random_seed)
 
-    last_viewed = models.DateTimeField(default=None, null=True, db_index=True)
+    last_viewed = models.DateTimeField(default=None, null=True, blank=True, db_index=True)
     opened_tutorial = models.BooleanField(default=False)
     tokens_received = models.FloatField(default=0)
 
+    solved_at = models.DateTimeField(default=None, null=True, blank=True, db_index=True)
     is_solved = models.BooleanField(default=False, db_index=True)
     is_partially_solved = models.BooleanField(default=False, db_index=True)
     is_favorite = models.BooleanField(default=False)
@@ -400,7 +402,9 @@ class UserQuestionJunction(models.Model):
         return str(self.tokens_received) + "/" + str(self.question.token_value)
 
     def save(self, **kwargs):
-        self.is_solved = self.submissions.filter(is_correct=True).exists()
+        if not self.is_solved and self.submissions.filter(is_correct=True).exists():
+            self.is_solved = True
+            self.solved_at = timezone.now()
         self.is_partially_solved = not self.is_solved and self.submissions.filter(is_partially_correct=True).exists()
         super().save(**kwargs)
 

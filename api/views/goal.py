@@ -4,9 +4,12 @@ from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+import api.error_messages as ERROR_MESSAGES
 from api.serializers.goal import GoalSerializer, GoalItemSerializer
 from canvas.models.goal import Goal, GoalItem
 from course.models.models import QuestionCategory
@@ -29,6 +32,15 @@ class GoalViewSet(viewsets.ModelViewSet):
         super().perform_create(serializer)
         goal = serializer.data
         create_goal_action(goal, self.request.user)
+
+    @action(detail=True, methods=["post"], url_path="claim")
+    def claim(self, request, pk):
+        goal = get_object_or_404(self.get_queryset(), pk=pk)
+        if goal.progress < goal.number_of_questions:
+            raise ValidationError(ERROR_MESSAGES.GOAL.NOT_COMPLETED)
+        goal.claimed = True
+        goal.save()
+        return Response()
 
     @action(detail=False, methods=["get"], url_path="suggestions")
     def suggestions(self, request):
