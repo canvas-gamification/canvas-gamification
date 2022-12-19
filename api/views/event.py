@@ -1,7 +1,7 @@
-from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -12,6 +12,7 @@ from api.permissions import (
 )
 from api.serializers import EventSerializer
 from canvas.models.models import Event, EVENT_TYPE_CHOICES, CanvasCourse
+from canvas.services.event import get_event_stats
 from general.services.action import (
     create_event_action,
     update_event_action,
@@ -52,8 +53,13 @@ class EventViewSet(viewsets.ModelViewSet):
         serializer.save()
         update_event_action(request.user, serializer.data)
 
+    @action(detail=True, methods=['get'], url_path="stats")
+    def stats(self, request, pk=None):
+        event = get_object_or_404(Event, id=pk)
+        return Response(get_event_stats(event))
+
     @action(detail=False, methods=["get"], url_path="get-event-types")
-    def get_event_types(self, request, pk=None):
+    def get_event_types(self, request):
         """
         Returns a dictionary of the defined event types
         """
