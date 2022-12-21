@@ -58,4 +58,5 @@ class GoalItem(models.Model):
         return self.category.full_name
 
     def save(self, *args, **kwargs):
+        self.initial_solved = 0
         super().save(*args, **kwargs)

@@ -7,16 +7,16 @@ def get_question_stats(question):
 
     answers = {}
     for submission in submissions:
-        answer = choices[submission['answer']]
+        answer = choices[submission["answer"]]
         if answer not in answers:
             answers[answer] = 0
         answers[answer] += 1
 
     return {
-        'question': {
-            'title': question.title,
+        "question": {
+            "title": question.title,
         },
-        'answers': answers,
+        "answers": answers,
     }
 
 

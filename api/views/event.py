@@ -53,7 +53,7 @@ class EventViewSet(viewsets.ModelViewSet):
         serializer.save()
         update_event_action(request.user, serializer.data)
 
-    @action(detail=True, methods=['get'], url_path="stats")
+    @action(detail=True, methods=["get"], url_path="stats")
     def stats(self, request, pk=None):
         event = get_object_or_404(Event, id=pk)
         return Response(get_event_stats(event))
