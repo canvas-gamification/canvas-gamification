@@ -7,3 +7,4 @@ class ActionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Action
         exclude = []
+        read_only_fields = ["actor"]
