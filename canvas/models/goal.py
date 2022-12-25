@@ -49,8 +49,11 @@ class GoalItem(models.Model):
 
     @property
     def progress(self):
-        return get_solved_practice_questions_count(
-            self.user.id, self.category_id, self.difficulty, self.goal.start_date, self.goal.end_date
+        return min(
+            get_solved_practice_questions_count(
+                self.user.id, self.category_id, self.difficulty, self.goal.start_date, self.goal.end_date
+            ),
+            self.number_of_questions,
         )
 
     @property
