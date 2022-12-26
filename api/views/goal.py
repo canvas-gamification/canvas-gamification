@@ -13,6 +13,7 @@ import api.error_messages as ERROR_MESSAGES
 from api.serializers.goal import GoalSerializer, GoalItemSerializer
 from canvas.models.goal import Goal, GoalItem
 from course.models.models import QuestionCategory
+from course.services.question import get_unsolved_practice_questions_count_by_category
 from general.services.action import create_goal_action, create_goal_item_action
 
 
@@ -41,6 +42,11 @@ class GoalViewSet(viewsets.ModelViewSet):
         goal.claimed = True
         goal.save()
         return Response()
+
+    @action(detail=False, methods=["get"], url_path="limits")
+    def limits(self, request):
+        result = get_unsolved_practice_questions_count_by_category(request.user.id)
+        return Response(result)
 
     @action(detail=False, methods=["get"], url_path="suggestions")
     def suggestions(self, request):
