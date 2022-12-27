@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from rest_framework.permissions import SAFE_METHODS
 
 
 class TeacherAccessPermission(permissions.IsAuthenticated):
@@ -26,9 +27,11 @@ class CoursePermission(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
         if request.method == "POST":
             return True
-        if request.method == "PUT":
+        if request.method in ["PUT", "PATCH", "DELETE"]:
             return obj.has_edit_permission(obj, request.user)
-        return request.user.is_teacher or obj.instructor == request.user
+        if request.method == "GET":
+            return obj.has_view_permission(request.user)
+        return False
 
 
 class EventCreatePermission(permissions.IsAuthenticated):
