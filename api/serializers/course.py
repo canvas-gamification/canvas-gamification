@@ -13,6 +13,12 @@ from canvas.utils.utils import get_course_registration
 from course.models.models import UserQuestionJunction
 
 
+class CourseCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CanvasCourse
+        fields = ["name", "description", "url", "start_date", "end_date", "registration_mode", "registration_code"]
+
+
 class CourseSerializer(serializers.ModelSerializer):
     is_registered = serializers.SerializerMethodField("get_is_registered")
     events = EventSerializer(many=True, read_only=True)
@@ -75,11 +81,8 @@ class CourseSerializer(serializers.ModelSerializer):
         model = CanvasCourse
         fields = [
             "id",
-            "mock",
             "name",
             "url",
-            "course_id",
-            "token",
             "allow_registration",
             "visible_to_students",
             "start_date",
@@ -101,7 +104,7 @@ class CourseSerializer(serializers.ModelSerializer):
         extra_kwargs = {"registration_code": {"write_only": True}}
 
 
-class CourseSerializerList(serializers.ModelSerializer):
+class CourseListSerializer(serializers.ModelSerializer):
     is_registered = serializers.SerializerMethodField("get_is_registered")
     events = EventSerializer(many=True, read_only=True)
 
@@ -124,10 +127,8 @@ class CourseSerializerList(serializers.ModelSerializer):
         model = CanvasCourse
         fields = [
             "id",
-            "mock",
             "name",
             "url",
-            "course_id",
             "allow_registration",
             "visible_to_students",
             "start_date",
