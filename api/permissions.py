@@ -29,7 +29,9 @@ class CoursePermission(permissions.IsAuthenticated):
         if request.method in ["PUT", "PATCH", "DELETE"]:
             return obj.has_edit_permission(obj, request.user)
         if request.method == "GET":
-            return obj.has_view_permission(request.user)
+            return True
+            # TODO: this breaks the registrations
+            # return obj.has_view_permission(request.user)
         return False
 
 
