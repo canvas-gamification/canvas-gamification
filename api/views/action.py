@@ -1,11 +1,12 @@
-from rest_framework import viewsets, filters
+from rest_framework import filters, mixins
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import GenericViewSet
 
 from api.pagination import BasePagination
 from api.serializers import ActionsSerializer
 
 
-class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
+class ActionsViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, GenericViewSet):
     """
     Query Parameters
     + Standard ordering is applied
@@ -25,6 +26,10 @@ class ActionsViewSet(viewsets.ReadOnlyModelViewSet):
         "status",
         "verb",
     ]
+
+    def perform_create(self, serializer):
+        request = serializer.context["request"]
+        serializer.save(actor=request.user)
 
     def get_queryset(self):
         user = self.request.user

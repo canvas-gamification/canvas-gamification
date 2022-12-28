@@ -22,18 +22,17 @@ class StudentsMustBeRegisteredPermission(permissions.IsAuthenticated):
         return True
 
 
-class CourseEditPermission(permissions.IsAuthenticated):
-    def has_object_permission(self, request, view, obj):
-        if request.method == "PUT":
-            return obj.has_edit_permission(obj, request.user)
-        return True
-
-
-class CourseCreatePermission(permissions.IsAuthenticated):
+class CoursePermission(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
         if request.method == "POST":
-            return request.user.is_teacher
-        return True
+            return True
+        if request.method in ["PUT", "PATCH", "DELETE"]:
+            return obj.has_edit_permission(obj, request.user)
+        if request.method == "GET":
+            return True
+            # TODO: this breaks the registrations
+            # return obj.has_view_permission(request.user)
+        return False
 
 
 class EventCreatePermission(permissions.IsAuthenticated):
