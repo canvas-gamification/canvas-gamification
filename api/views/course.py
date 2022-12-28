@@ -87,6 +87,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
         if course.registration_mode == "OPEN" or code == course.registration_code:
             course_reg.verify()
+            course_reg.save()
             return Response(self.get_serializer(course).data)
         raise ValidationError(ERROR_MESSAGES.COURSE_REGISTRATION.INVALID_CODE)
 
