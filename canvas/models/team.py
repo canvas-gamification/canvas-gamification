@@ -27,12 +27,3 @@ class Team(models.Model):
             else:
                 names.append(course_reg.username)
         return names
-
-    @property
-    def member_usernames(self):
-        course_regs = self.course_registrations.all()
-        return [course_reg.username for course_reg in course_regs]
-
-    @property
-    def number_of_member(self):
-        return len(self.course_registrations.all())
