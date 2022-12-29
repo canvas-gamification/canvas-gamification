@@ -166,10 +166,16 @@ EVENT_TYPE_CHOICES = [
     ("CHALLENGE", "CHALLENGE"),
 ]
 
+CHALLENGE_TYPE_CHOICES = [
+    ("QUOTA", "QUOTA"),
+    ("TOP_3_TEAMS", "TOP_3_TEAMS"),
+]
+
 
 class Event(models.Model):
     name = models.CharField(max_length=500)
     type = models.CharField(max_length=500, choices=EVENT_TYPE_CHOICES)
+    challenge_type = models.CharField(max_length=500, choices=CHALLENGE_TYPE_CHOICES, blank=True, null=True)
     course = models.ForeignKey(CanvasCourse, related_name="events", on_delete=models.CASCADE)
     count_for_tokens = models.BooleanField()
     max_team_size = models.IntegerField(default=3, validators=[MinValueValidator(1)])
