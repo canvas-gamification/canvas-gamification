@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('canvas', '0020_remove_canvascourse_mock'),
+        ("canvas", "0020_remove_canvascourse_mock"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='event',
-            name='challenge_type',
-            field=models.CharField(blank=True, choices=[('QUOTA', 'QUOTA'), ('TOP_3_TEAMS', 'TOP_3_TEAMS')], max_length=500, null=True),
+            model_name="event",
+            name="challenge_type",
+            field=models.CharField(
+                blank=True, choices=[("QUOTA", "QUOTA"), ("TOP_3_TEAMS", "TOP_3_TEAMS")], max_length=500, null=True
+            ),
         ),
     ]
