@@ -16,3 +16,14 @@ class Team(models.Model):
     @property
     def score(self):
         return self.event.calculate_score(self)
+
+    @property
+    def member_names(self):
+        course_regs = self.course_registrations.all()
+        names = []
+        for course_reg in course_regs:
+            if course_reg.user.has_complete_profile:
+                names.append(course_reg.name)
+            else:
+                names.append(course_reg.username)
+        return names

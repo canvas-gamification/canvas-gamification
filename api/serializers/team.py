@@ -6,4 +6,15 @@ from canvas.models.team import Team
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ["id", "name", "event", "course_registrations", "score"]
+        fields = [
+            "id",
+            "time_created",
+            "time_modified",
+            "name",
+            "is_private",
+            "who_can_join",
+            "event",
+            "course_registrations",
+            "score",
+            "member_names",
+        ]

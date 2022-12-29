@@ -58,4 +58,5 @@ class EventSerializer(serializers.ModelSerializer):
             "total_event_grade",
             "is_not_available_yet",
             "is_closed",
+            "max_team_size",
         ]
