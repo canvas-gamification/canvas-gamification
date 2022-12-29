@@ -157,7 +157,6 @@ class CanvasCourseRegistration(models.Model):
 
     @property
     def name(self):
-        # registering in a course will force students to finish the profile?
         if self.user.has_name:
             return self.user.get_full_name()
         return self.user.username
