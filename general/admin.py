@@ -16,10 +16,12 @@ class ActionAdmin(admin.ModelAdmin):
         "__str__",
         "description",
         "actor",
+        "verb",
+        "object_type",
         "token_change",
-        "status",
+        "time_created",
     )
-    list_filter = ("status",)
+    list_filter = ("status", "verb", "object_type")
 
 
 class QuestionReportAdmin(admin.ModelAdmin):

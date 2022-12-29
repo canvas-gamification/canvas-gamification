@@ -12,6 +12,7 @@ class Goal(models.Model):
     course_reg = models.ForeignKey(CanvasCourseRegistration, on_delete=models.CASCADE, related_name="goals")
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
+    claimed = models.BooleanField(default=False, blank=True)
 
     @property
     def is_finished(self):
@@ -46,17 +47,19 @@ class GoalItem(models.Model):
     def user(self):
         return self.goal.course_reg.user
 
-    def get_initial_solved(self):
-        return self.initial_solved if self.initial_solved is not None else 0
-
     @property
     def progress(self):
-        return (
-            get_solved_practice_questions_count(self.user.id, self.category_id, self.difficulty)
-            - self.get_initial_solved()
+        return min(
+            get_solved_practice_questions_count(
+                self.user.id, self.category_id, self.difficulty, self.goal.start_date, self.goal.end_date
+            ),
+            self.number_of_questions,
         )
 
+    @property
+    def category_name(self):
+        return self.category.full_name
+
     def save(self, *args, **kwargs):
-        if self.initial_solved is None:
-            self.initial_solved = get_solved_practice_questions_count(self.user.id, self.category_id, self.difficulty)
+        self.initial_solved = 0
         super().save(*args, **kwargs)

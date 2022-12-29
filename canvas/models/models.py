@@ -13,11 +13,8 @@ REGISTRATION_MODES = [("OPEN", "OPEN"), ("CODE", "CODE")]
 
 
 class CanvasCourse(models.Model):
-    mock = models.BooleanField(default=False)
     name = models.CharField(max_length=500)
     url = models.URLField()
-    course_id = models.IntegerField()
-    token = models.CharField(max_length=500)
     instructor = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
     description = models.CharField(max_length=500, null=True, blank=True)
 
@@ -27,14 +24,6 @@ class CanvasCourse(models.Model):
     visible_to_students = models.BooleanField(default=False)
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
-
-    verification_assignment_group_name = models.CharField(max_length=100)
-    verification_assignment_group_id = models.IntegerField(null=True, blank=True)
-    verification_assignment_name = models.CharField(max_length=100)
-    verification_assignment_id = models.IntegerField(null=True, blank=True)
-
-    bonus_assignment_group_name = models.CharField(max_length=100)
-    bonus_assignment_group_id = models.IntegerField(null=True, blank=True)
 
     @property
     def status(self):
@@ -125,19 +114,18 @@ class CanvasCourseRegistration(models.Model):
 
     def verify(self):
         self.status = "VERIFIED"
-        self.save()
 
     def block(self):
         self.status = "BLOCKED"
-        self.save()
 
     def unregister(self):
         self.status = "UNREGISTERED"
-        self.save()
 
     def unverify(self):
         self.status = "PENDING_VERIFICATION"
-        self.save()
+
+    def set_instructor(self):
+        self.registration_type = INSTRUCTOR
 
     @property
     def total_tokens_received(self):

@@ -76,11 +76,13 @@ class SubmissionViewSet(viewsets.GenericViewSet):
         question = get_object_or_404(Question, id=question_id)
         query_set = self.filter_queryset(self.get_queryset())
 
-        if not request.user.is_teacher:
+        team = None
+        if not question.is_practice:
             teams = question.event.team_set.filter(course_registrations__user=request.user).all()
             team = None if len(teams) == 0 else teams[0]
 
-            if question.is_practice or team is None:
+        if not request.user.is_teacher:
+            if team is None:
                 query_set = query_set.filter(uqj__user=request.user)
             else:
                 users = [course_reg.user for course_reg in team.course_registrations.all()]

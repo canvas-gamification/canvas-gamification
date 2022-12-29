@@ -1,4 +1,4 @@
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
@@ -6,15 +6,16 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
-from api.serializers import CourseSerializer, CourseSerializerList
-from api.permissions import CourseEditPermission, CourseCreatePermission
+from api.serializers import CourseSerializer, CourseListSerializer
+from api.permissions import CoursePermission
 import api.error_messages as ERROR_MESSAGES
-from api.services.course import get_registered_students
+from api.serializers.course import CourseCreateSerializer
 from canvas.models.models import CanvasCourse, Event
+from canvas.services.course import register_instructor
 from canvas.utils.utils import get_course_registration
 
 
-class CourseViewSet(viewsets.ReadOnlyModelViewSet):
+class CourseViewSet(viewsets.ModelViewSet):
     """
     Optional Parameters
     ?registered: boolean => if true, filter retrieved courses by if user is currently registered in them
@@ -23,15 +24,15 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CourseSerializer
     action_serializers = {
         "retrieve": CourseSerializer,
-        "list": CourseSerializerList,
+        "list": CourseListSerializer,
+        "create": CourseCreateSerializer,
     }
-    permission_classes = [CourseEditPermission, CourseCreatePermission]
+    permission_classes = [CoursePermission]
     filter_backends = [
         DjangoFilterBackend,
         filters.OrderingFilter,
     ]
     filterset_fields = [
-        "mock",
         "name",
         "allow_registration",
         "visible_to_students",
@@ -57,8 +58,8 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
         queryset = CanvasCourse.objects.all()
 
-        if not user.is_authenticated or user.is_student:
-            queryset = queryset.filter(visible_to_students=True).all()
+        if user.is_student:
+            queryset = queryset.filter(Q(visible_to_students=True) | Q(instructor=user)).all()
 
         if registered:
             registered_ids = user.canvascourseregistration_set.filter(status="VERIFIED").values_list(
@@ -73,6 +74,11 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
         return queryset.all()
 
+    def perform_create(self, serializer):
+        request = serializer.context["request"]
+        course = serializer.save(instructor=request.user)
+        register_instructor(request.user, course)
+
     @action(detail=True, methods=["post"], url_path="register")
     def register(self, request, pk=None):
         code = request.data.get("code", None)
@@ -81,6 +87,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
         if course.registration_mode == "OPEN" or code == course.registration_code:
             course_reg.verify()
+            course_reg.save()
             return Response(self.get_serializer(course).data)
         raise ValidationError(ERROR_MESSAGES.COURSE_REGISTRATION.INVALID_CODE)
 
@@ -119,17 +126,3 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 break
 
         return Response({"success_rate": success_rate})
-
-    @action(detail=False, methods=["get"], url_path="registered-students")
-    def registered_students(self, request):
-        """
-        Given course id, return all students within a class
-        """
-        course_id = request.Get.get("course_id", None)
-        course = get_object_or_404(CanvasCourse, id=course_id)
-
-        course_regs = get_registered_students(course)
-
-        serializer = self.get_serializer(course_regs)
-        return Response(serializer.data)
-

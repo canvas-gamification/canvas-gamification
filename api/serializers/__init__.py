@@ -34,5 +34,5 @@ from .parsons_question import (
 )
 from .uqj import UQJSerializer
 from .canvas_course_registration import CanvasCourseRegistrationSerializer
-from .course import CourseSerializer, CourseSerializerList
+from .course import CourseSerializer, CourseListSerializer
 from .question_report import QuestionReportSerializer
