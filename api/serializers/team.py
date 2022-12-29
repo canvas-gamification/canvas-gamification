@@ -17,6 +17,4 @@ class TeamSerializer(serializers.ModelSerializer):
             "course_registrations",
             "score",
             "member_names",
-            "number_of_member",
-            "member_usernames",
         ]
