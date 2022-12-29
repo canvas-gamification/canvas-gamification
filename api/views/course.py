@@ -13,6 +13,7 @@ from api.serializers.course import CourseCreateSerializer
 from canvas.models.models import CanvasCourse, Event
 from canvas.services.course import register_instructor
 from canvas.utils.utils import get_course_registration
+from api.services.course import get_registered_students
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -126,3 +127,16 @@ class CourseViewSet(viewsets.ModelViewSet):
                 break
 
         return Response({"success_rate": success_rate})
+
+    @action(detail=False, methods=["get"], url_path="registered-students")
+    def registered_students(self, request):
+        """
+        Given course id, return all students within a class
+        """
+        course_id = request.Get.get("course_id", None)
+        course = get_object_or_404(CanvasCourse, id=course_id)
+
+        course_regs = get_registered_students(course)
+
+        serializer = self.get_serializer(course_regs)
+        return Response(serializer.data)
