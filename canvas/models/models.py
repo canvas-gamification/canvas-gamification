@@ -173,8 +173,8 @@ EVENT_TYPE_CHOICES = [
 ]
 
 CHALLENGE_TYPE_CHOICES = [
-    ("QUOTA", "QUOTA"),
-    ("TOP_TEAMS", "TOP_TEAMS"),
+    ("QUOTA", "QUOTA"),  # Receive token for each question solved
+    ("TOP_TEAMS", "TOP_TEAMS"),  # Be in the top 'challenge_type_value' team to receive token
 ]
 
 
@@ -182,6 +182,7 @@ class Event(models.Model):
     name = models.CharField(max_length=500)
     type = models.CharField(max_length=500, choices=EVENT_TYPE_CHOICES)
     challenge_type = models.CharField(max_length=500, choices=CHALLENGE_TYPE_CHOICES, blank=True, null=True)
+    challenge_type_value = models.FloatField(blank=True, null=True)
     course = models.ForeignKey(CanvasCourse, related_name="events", on_delete=models.CASCADE)
     count_for_tokens = models.BooleanField()
     max_team_size = models.IntegerField(default=3, validators=[MinValueValidator(1)])
