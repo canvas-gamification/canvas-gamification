@@ -26,6 +26,10 @@ class CanvasCourse(models.Model):
     end_date = models.DateTimeField(null=True)
 
     @property
+    def verified_course_registration(self):
+        return self.canvascourseregistration_set.filter(status="VERIFIED").all()
+
+    @property
     def status(self):
         if not self.allow_registration:
             return "Blocked"
@@ -157,7 +161,9 @@ class CanvasCourseRegistration(models.Model):
 
     @property
     def name(self):
-        return self.user.get_full_name()
+        if self.user.has_name:
+            return self.user.get_full_name()
+        return self.user.username
 
 
 EVENT_TYPE_CHOICES = [

@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
-from api.serializers import CourseSerializer, CourseListSerializer
+from api.serializers import CourseSerializer, CourseListSerializer, CanvasCourseRegistrationSerializer
 from api.permissions import CoursePermission
 import api.error_messages as ERROR_MESSAGES
 from api.serializers.course import CourseCreateSerializer
@@ -126,3 +126,14 @@ class CourseViewSet(viewsets.ModelViewSet):
                 break
 
         return Response({"success_rate": success_rate})
+
+    @action(detail=True, methods=["get"], url_path="course-registrations")
+    def course_registrations(self, request, pk):
+        """
+        Given course id, return all students within a class
+        """
+        course = get_object_or_404(CanvasCourse, id=pk)
+
+        course_regs = CanvasCourseRegistrationSerializer(course.verified_course_registration, many=True)
+
+        return Response(course_regs.data)

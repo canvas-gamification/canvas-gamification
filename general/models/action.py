@@ -10,37 +10,39 @@ class ActionStatus:
 
 
 class ActionVerb:
-    CREATED = "Created"
+    CLICKED = "Clicked"
     COMPLETED = "Completed"
-    OPENED = "Opened"
+    CREATED = "Created"
     DELETED = "Deleted"
     DELIVERED = "Delivered"
-    READ = "Read"
-    SOLVED = "Solved"
-    SUBMITTED = "Submitted"
-    SENT = "Sent"
-    STARTED = "Started"
-    USED = "Used"
-    REGISTERED = "Registered"
+    DUPLICATED = "Duplicated"
     EDITED = "Edited"
-    UNREAD = "Unread"
-    SKIPPED = "Skipped"
+    EVALUATED = "Evaluated"
     LOGGED_IN = "Logged In"
     LOGGED_OUT = "Logged Out"
-    EVALUATED = "Evaluated"
+    OPENED = "Opened"
+    READ = "Read"
+    REGISTERED = "Registered"
+    SENT = "Sent"
+    SKIPPED = "Skipped"
+    SOLVED = "Solved"
+    STARTED = "Started"
+    SUBMITTED = "Submitted"
+    UNREAD = "Unread"
     UPDATED = "Updated"
-    DUPLICATED = "Duplicated"
+    USED = "Used"
 
 
 class ActionObjectType:
-    QUESTION = "Question"
-    USER = "User"
-    SUBMISSION = "Submission"
+    BUTTON = "Button"
     COURSE = "Course"
-    EVENT = "Event"
     COURSE_REGISTRATION = "Course Registration"
+    EVENT = "Event"
     GOAL = "Goal"
     GOAL_ITEM = "Goal Item"
+    QUESTION = "Question"
+    SUBMISSION = "Submission"
+    USER = "User"
 
 
 ACTION_STATUS_CHOICES = [
@@ -49,46 +51,39 @@ ACTION_STATUS_CHOICES = [
 ]
 
 ACTION_VERB_CHOICES = [
-    (ActionVerb.CREATED, ActionVerb.CREATED),
+    (ActionVerb.CLICKED, ActionVerb.CLICKED),
     (ActionVerb.COMPLETED, ActionVerb.COMPLETED),
-    (ActionVerb.OPENED, ActionVerb.OPENED),
+    (ActionVerb.CREATED, ActionVerb.CREATED),
     (ActionVerb.DELETED, ActionVerb.DELETED),
     (ActionVerb.DELIVERED, ActionVerb.DELIVERED),
-    (ActionVerb.READ, ActionVerb.READ),
-    (ActionVerb.SOLVED, ActionVerb.SOLVED),
-    (ActionVerb.SUBMITTED, ActionVerb.SUBMITTED),
-    (ActionVerb.SENT, ActionVerb.SENT),
-    (ActionVerb.STARTED, ActionVerb.STARTED),
-    (ActionVerb.USED, ActionVerb.USED),
-    (ActionVerb.REGISTERED, ActionVerb.REGISTERED),
+    (ActionVerb.DUPLICATED, ActionVerb.DUPLICATED),
     (ActionVerb.EDITED, ActionVerb.EDITED),
-    (ActionVerb.UNREAD, ActionVerb.UNREAD),
-    (ActionVerb.SKIPPED, ActionVerb.SKIPPED),
+    (ActionVerb.EVALUATED, ActionVerb.EVALUATED),
     (ActionVerb.LOGGED_IN, ActionVerb.LOGGED_IN),
     (ActionVerb.LOGGED_OUT, ActionVerb.LOGGED_OUT),
-    (ActionVerb.EVALUATED, ActionVerb.EVALUATED),
+    (ActionVerb.OPENED, ActionVerb.OPENED),
+    (ActionVerb.READ, ActionVerb.READ),
+    (ActionVerb.REGISTERED, ActionVerb.REGISTERED),
+    (ActionVerb.SENT, ActionVerb.SENT),
+    (ActionVerb.SKIPPED, ActionVerb.SKIPPED),
+    (ActionVerb.SOLVED, ActionVerb.SOLVED),
+    (ActionVerb.STARTED, ActionVerb.STARTED),
+    (ActionVerb.SUBMITTED, ActionVerb.SUBMITTED),
+    (ActionVerb.UNREAD, ActionVerb.UNREAD),
     (ActionVerb.UPDATED, ActionVerb.UPDATED),
-    (ActionVerb.DUPLICATED, ActionVerb.DUPLICATED),
+    (ActionVerb.USED, ActionVerb.USED),
 ]
 
 OBJECT_TYPE_CHOICES = [
-    (ActionObjectType.QUESTION, ActionObjectType.QUESTION),
-    (ActionObjectType.USER, ActionObjectType.USER),
-    (ActionObjectType.SUBMISSION, ActionObjectType.SUBMISSION),
+    (ActionObjectType.BUTTON, ActionObjectType.BUTTON),
     (ActionObjectType.COURSE, ActionObjectType.COURSE),
+    (ActionObjectType.COURSE_REGISTRATION, ActionObjectType.COURSE_REGISTRATION),
     (ActionObjectType.EVENT, ActionObjectType.EVENT),
-    (
-        ActionObjectType.COURSE_REGISTRATION,
-        ActionObjectType.COURSE_REGISTRATION,
-    ),
-    (
-        ActionObjectType.GOAL,
-        ActionObjectType.GOAL,
-    ),
-    (
-        ActionObjectType.GOAL_ITEM,
-        ActionObjectType.GOAL_ITEM,
-    ),
+    (ActionObjectType.GOAL, ActionObjectType.GOAL),
+    (ActionObjectType.GOAL_ITEM, ActionObjectType.GOAL_ITEM),
+    (ActionObjectType.QUESTION, ActionObjectType.QUESTION),
+    (ActionObjectType.SUBMISSION, ActionObjectType.SUBMISSION),
+    (ActionObjectType.USER, ActionObjectType.USER),
 ]
 
 
