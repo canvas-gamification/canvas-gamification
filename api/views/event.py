@@ -11,7 +11,7 @@ from api.permissions import (
     EventEditPermission,
 )
 from api.serializers import EventSerializer
-from canvas.models.models import Event, EVENT_TYPE_CHOICES, CanvasCourse
+from canvas.models.models import Event, EVENT_TYPE_CHOICES, CanvasCourse, CHALLENGE_TYPE_CHOICES
 from canvas.services.event import get_event_stats
 from general.services.action import (
     create_event_action,
@@ -64,6 +64,13 @@ class EventViewSet(viewsets.ModelViewSet):
         Returns a dictionary of the defined event types
         """
         return Response(EVENT_TYPE_CHOICES)
+
+    @action(detail=False, methods=["get"], url_path="get-challenge-types")
+    def get_challenge_types(self, request, pk=None):
+        """
+        Returns a dictionary of the defined challenge types
+        """
+        return Response(CHALLENGE_TYPE_CHOICES)
 
     @action(detail=False, methods=["post"], url_path="import-event")
     def import_event(self, request):
