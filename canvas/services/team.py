@@ -15,7 +15,7 @@ def create_and_join_team(event: Event, user: MyUser, name: Optional[str]) -> Tea
     leave_team(event, user)
     team = Team()
     team.event = event
-    team.name = name if name is not None else user.get_full_name() + "'s Team"
+    team.name = name if name is not None else course_reg.name + "'s Team"
     team.save()
     team.course_registrations.set([course_reg])
     return team
