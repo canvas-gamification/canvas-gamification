@@ -4,6 +4,7 @@ from django.contrib import admin
 from general.models.action import Action
 from general.models.contact_us import ContactUs
 from general.models.faq import FAQ
+from general.models.page_view import PageView
 from general.models.question_report import QuestionReport
 
 
@@ -36,3 +37,4 @@ admin.site.register(FAQ, FAQAdmin)
 admin.site.register(Action, ActionAdmin)
 admin.site.register(ContactUs)
 admin.site.register(QuestionReport, QuestionReportAdmin)
+admin.site.register(PageView)
