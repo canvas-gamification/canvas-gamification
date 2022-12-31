@@ -26,6 +26,10 @@ class CanvasCourse(models.Model):
     end_date = models.DateTimeField(null=True)
 
     @property
+    def verified_course_registration(self):
+        return self.canvascourseregistration_set.filter(status="VERIFIED").all()
+
+    @property
     def status(self):
         if not self.allow_registration:
             return "Blocked"
