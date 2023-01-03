@@ -12,7 +12,7 @@ from api.permissions import (
 )
 from api.serializers import EventSerializer
 from canvas.models.models import Event, EVENT_TYPE_CHOICES, CanvasCourse, CHALLENGE_TYPE_CHOICES
-from canvas.services.event import get_event_stats
+from canvas.services.event import get_event_stats, set_featured
 from general.services.action import (
     create_event_action,
     update_event_action,
@@ -57,6 +57,12 @@ class EventViewSet(viewsets.ModelViewSet):
     def stats(self, request, pk=None):
         event = get_object_or_404(Event, id=pk)
         return Response(get_event_stats(event))
+
+    @action(detail=True, methods=["post"], url_path="set-featured")
+    def set_featured(self, request, pk=None):
+        event = get_object_or_404(Event, id=pk)
+        set_featured(event)
+        return Response("success")
 
     @action(detail=False, methods=["get"], url_path="get-event-types")
     def get_event_types(self, request):

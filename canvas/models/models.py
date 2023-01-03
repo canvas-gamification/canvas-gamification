@@ -185,6 +185,7 @@ class Event(models.Model):
     challenge_type_value = models.FloatField(blank=True, null=True)
     course = models.ForeignKey(CanvasCourse, related_name="events", on_delete=models.CASCADE)
     count_for_tokens = models.BooleanField()
+    featured = models.BooleanField(default=False)
     max_team_size = models.IntegerField(default=3, validators=[MinValueValidator(1)])
 
     start_date = models.DateTimeField(null=True)
