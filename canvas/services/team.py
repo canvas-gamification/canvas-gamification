@@ -3,7 +3,7 @@ from typing import Optional
 from rest_framework.exceptions import PermissionDenied
 
 from accounts.models import MyUser
-from canvas.models.models import Event
+from canvas.models.models import Event, CanvasCourseRegistration
 from canvas.models.team import Team
 from canvas.utils.utils import get_course_registration
 import api.error_messages as ERROR_MESSAGES
@@ -12,13 +12,16 @@ import api.error_messages as ERROR_MESSAGES
 def create_and_join_team(event: Event, user: MyUser, name: Optional[str], is_private, who_can_join) -> Team:
     course_reg = get_course_registration(user, event.course)
 
+    who_can_join_ids = who_can_join.split(',')
+    who_can_join_course_regs = CanvasCourseRegistration.objects.filter(id__in=who_can_join_ids).all()
+
     leave_team(event, user)
     team = Team()
     team.event = event
     team.name = name if name is not None else course_reg.name + "'s Team"
     team.is_private = is_private
-    team.who_can_join = who_can_join
     team.save()
+    team.who_can_join.set(who_can_join_course_regs)
     team.course_registrations.set([course_reg])
     return team
 
@@ -28,7 +31,7 @@ def get_my_team(event: Event, user: MyUser) -> Team:
     team = event.team_set.filter(course_registrations=course_reg).all()
 
     if len(team) == 0:
-        return create_and_join_team(event, user, None)
+        return create_and_join_team(event, user, None, is_private=False, who_can_join="")
 
     return team.get()
 
