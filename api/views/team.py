@@ -5,6 +5,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from api.permissions import TeamPermission
 from api.serializers.team import TeamSerializer
 from canvas.models.models import Event
 from canvas.models.team import Team
@@ -12,7 +13,7 @@ from canvas.services.team import create_and_join_team, join_team, get_my_team
 
 
 class TeamViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [TeamPermission]
     serializer_class = TeamSerializer
     queryset = Team.objects.all()
     filter_backends = [DjangoFilterBackend]
