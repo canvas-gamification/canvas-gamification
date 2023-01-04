@@ -163,7 +163,7 @@ class CanvasCourseRegistration(models.Model):
     def name(self):
         if self.user.has_name:
             return self.user.get_full_name()
-        return self.user.username
+        return "Anonymous Student"
 
 
 EVENT_TYPE_CHOICES = [

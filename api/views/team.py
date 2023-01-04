@@ -22,8 +22,10 @@ class TeamViewSet(viewsets.ModelViewSet):
     def create_and_join(self, request):
         event_id = request.data.get("event_id", None)
         name = request.data.get("name", None)
+        is_private = request.data.get("is_private", None)
+        who_can_join = request.data.get("who_can_join", None)
         event = get_object_or_404(Event, id=event_id)
-        team = create_and_join_team(event, request.user, name)
+        team = create_and_join_team(event, request.user, name, is_private, who_can_join)
 
         serializer = self.get_serializer(team)
         return Response(serializer.data)

@@ -9,15 +9,22 @@ from canvas.utils.utils import get_course_registration
 import api.error_messages as ERROR_MESSAGES
 
 
-def create_and_join_team(event: Event, user: MyUser, name: Optional[str]) -> Team:
+def create_and_join_team(event: Event, user: MyUser, name: Optional[str], is_private=None, who_can_join=None) -> Team:
     course_reg = get_course_registration(user, event.course)
 
     leave_team(event, user)
     team = Team()
     team.event = event
     team.name = name if name is not None else course_reg.name + "'s Team"
+    if is_private is not None:
+        team.is_private = is_private
     team.save()
+
     team.course_registrations.set([course_reg])
+
+    if who_can_join is not None:
+        team.who_can_join.set(who_can_join)
+
     return team
 
 
