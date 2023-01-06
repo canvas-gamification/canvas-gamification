@@ -55,6 +55,7 @@ class EventSerializer(serializers.ModelSerializer):
             "has_edit_permission",
             "is_open",
             "is_exam",
+            "total_tokens",
             "total_event_grade",
             "is_not_available_yet",
             "is_closed",

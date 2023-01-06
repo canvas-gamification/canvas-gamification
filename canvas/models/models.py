@@ -7,7 +7,7 @@ from django.utils import timezone
 
 from accounts.models import MyUser
 from canvas.utils.token_use import get_token_use
-from canvas.utils.utils import get_course_registration
+from canvas.utils.utils import get_course_registration, get_total_event_tokens
 
 REGISTRATION_MODES = [("OPEN", "OPEN"), ("CODE", "CODE")]
 
@@ -206,6 +206,10 @@ class Event(models.Model):
             score += uqjs.filter(question_id=question_id).aggregate(Max("tokens_received"))["tokens_received__max"]
 
         return score
+
+    @property
+    def total_tokens(self):
+        return get_total_event_tokens(self)
 
     @property
     def is_open(self):

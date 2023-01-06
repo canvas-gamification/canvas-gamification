@@ -3,16 +3,22 @@ from django.db.models import Sum, F, Count
 from course.utils.utils import get_token_value
 
 
+def get_total_event_tokens(event):
+    question_types = event.question_set.values("category", "difficulty").annotate(num_questions=Count("id"))
+
+    def group_token_value(total, curr):
+        return get_token_value(curr["category"], curr["difficulty"]) * curr["num_questions"] + total
+
+    token_value = reduce(group_token_value, question_types, 0)
+
+    return token_value
+
+
 def get_total_event_grade(event, user):
     uqjs = user.question_junctions.filter(question__event=event)
     token_recv = uqjs.aggregate(total=Sum(F("tokens_received")))["total"]
 
-    question_types = uqjs.all().values("question__category", "question__difficulty").annotate(num_questions=Count("id"))
-
-    def group_token_value(total, curr):
-        return get_token_value(curr["question__category"], curr["question__difficulty"]) * curr["num_questions"] + total
-
-    token_value = reduce(group_token_value, question_types, 0)
+    token_value = get_total_event_tokens(event)
 
     if not token_value == 0:
         return token_recv * 100 / token_value
