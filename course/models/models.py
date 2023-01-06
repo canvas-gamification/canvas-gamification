@@ -158,7 +158,11 @@ class Question(PolymorphicModel):
 
     @property
     def author_name(self):
-        return self.author.username if self.author else ""
+        if not self.author:
+            return ""
+        if self.author.has_name:
+            return self.author.get_full_name()
+        return "Anonymous Student"
 
     @property
     def full_category_name(self):
@@ -437,9 +441,9 @@ class Submission(PolymorphicModel):
 
     @property
     def author(self):
-        if self.uqj.user.has_complete_profile:
+        if self.uqj.user.has_name:
             return self.uqj.user.get_full_name()
-        return self.uqj.user.username
+        return "Anonymous Student"
 
     @property
     def status_color(self):
