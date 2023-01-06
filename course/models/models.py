@@ -252,6 +252,12 @@ class Question(PolymorphicModel):
         question_clone.save()
         return question_clone
 
+    def soft_delete(self):
+        self.event = None
+        self.is_verified = False
+        self.question_status = Question.DELETED
+        self.save()
+
 
 class VariableQuestion(Question):
     variables = jsonfield.JSONField()
