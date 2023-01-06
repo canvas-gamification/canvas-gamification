@@ -194,7 +194,7 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
-    def calculate_score(self, team):
+    def calculate_tokens(self, team):
         from course.models.models import UserQuestionJunction
 
         user_ids = [course_reg.user.id for course_reg in team.course_registrations.all()]
@@ -206,6 +206,17 @@ class Event(models.Model):
             score += uqjs.filter(question_id=question_id).aggregate(Max("tokens_received"))["tokens_received__max"]
 
         return score
+
+    def tokens_received(self, team):
+        tokens = self.calculate_tokens(team)
+        if self.challenge_type == "TOP_TEAMS":
+            count = 0
+            for other_team in self.team_set.all():
+                if self.calculate_tokens(other_team) > tokens:
+                    count += 1
+            if count >= self.challenge_type_value:
+                return 0
+        return tokens
 
     @property
     def total_tokens(self):
