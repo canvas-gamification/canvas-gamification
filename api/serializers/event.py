@@ -61,4 +61,6 @@ class EventSerializer(serializers.ModelSerializer):
             "is_closed",
             "max_team_size",
             "featured",
+            "challenge_type",
+            "challenge_type_value",
         ]
