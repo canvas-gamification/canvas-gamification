@@ -158,11 +158,7 @@ class Question(PolymorphicModel):
 
     @property
     def author_name(self):
-        if not self.author:
-            return ""
-        if self.author.has_name:
-            return self.author.get_full_name()
-        return "Anonymous Student"
+        return self.author.username if self.author else ""
 
     @property
     def full_category_name(self):
