@@ -1,4 +1,4 @@
-from course.models.models import Submission
+from course.models.models import Submission, Question
 
 
 def _get_status_messages(submissions):
@@ -68,3 +68,17 @@ def set_featured(event):
     event.course.events.update(featured=False)
     event.featured = True
     event.save()
+
+
+def add_question_set(event, category_id, difficulty, number_of_questions):
+    questions = Question.objects.filter(
+        event=None,
+        course=None,
+        is_verified=True,
+        question_status=Question.CREATED,
+        category_id=category_id,
+        difficulty=difficulty,
+    )[:number_of_questions]
+
+    for question in questions:
+        question.copy_to_event(event)
