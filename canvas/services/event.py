@@ -58,6 +58,7 @@ def get_question_stats(question):
         "error_messages": _get_error_messages(submissions),
         "submissions": _get_submission_status(submissions),
         "status_messages": _get_status_messages(submissions),
+        "total_submissions": submissions.count(),
     }
 
 
