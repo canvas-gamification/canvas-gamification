@@ -6,6 +6,7 @@ from general.models.contact_us import ContactUs
 from general.models.faq import FAQ
 from general.models.page_view import PageView
 from general.models.question_report import QuestionReport
+from general.models.survey import Survey
 
 
 class FAQAdmin(admin.ModelAdmin):
@@ -38,3 +39,4 @@ admin.site.register(Action, ActionAdmin)
 admin.site.register(ContactUs)
 admin.site.register(QuestionReport, QuestionReportAdmin)
 admin.site.register(PageView)
+admin.site.register(Survey)
