@@ -15,6 +15,6 @@ class TeamSerializer(serializers.ModelSerializer):
             "who_can_join",
             "event",
             "course_registrations",
-            "score",
+            "tokens_received",
             "member_names",
         ]

@@ -252,6 +252,12 @@ class Question(PolymorphicModel):
         question_clone.save()
         return question_clone
 
+    def soft_delete(self):
+        self.event = None
+        self.is_verified = False
+        self.question_status = Question.DELETED
+        self.save()
+
 
 class VariableQuestion(Question):
     variables = jsonfield.JSONField()
@@ -437,9 +443,9 @@ class Submission(PolymorphicModel):
 
     @property
     def author(self):
-        if self.uqj.user.has_complete_profile:
+        if self.uqj.user.has_name:
             return self.uqj.user.get_full_name()
-        return self.uqj.user.username
+        return "Anonymous Student"
 
     @property
     def status_color(self):

@@ -16,7 +16,17 @@ from course.models.models import UserQuestionJunction
 class CourseCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CanvasCourse
-        fields = ["name", "description", "url", "start_date", "end_date", "registration_mode", "registration_code"]
+        fields = [
+            "id",
+            "name",
+            "description",
+            "url",
+            "start_date",
+            "end_date",
+            "registration_mode",
+            "registration_code",
+        ]
+        read_only_fields = ["id"]
 
 
 class CourseSerializer(serializers.ModelSerializer):

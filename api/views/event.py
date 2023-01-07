@@ -12,7 +12,8 @@ from api.permissions import (
 )
 from api.serializers import EventSerializer
 from canvas.models.models import Event, EVENT_TYPE_CHOICES, CanvasCourse, CHALLENGE_TYPE_CHOICES
-from canvas.services.event import get_event_stats, set_featured
+from canvas.services.event import get_event_stats, set_featured, add_question_set
+from course.models.models import Question
 from general.services.action import (
     create_event_action,
     update_event_action,
@@ -52,6 +53,32 @@ class EventViewSet(viewsets.ModelViewSet):
         request = serializer.context["request"]
         serializer.save()
         update_event_action(request.user, serializer.data)
+
+    @action(detail=True, methods=["post"], url_path="add-question-set")
+    def add_question_set(self, request, pk=None):
+        event = get_object_or_404(Event, id=pk)
+        category = request.data.get("category", None)
+        difficulty = request.data.get("difficulty", None)
+        number_of_questions = request.data.get("number_of_questions", None)
+
+        add_question_set(event, category, difficulty, number_of_questions)
+        return Response("success")
+
+    @action(detail=True, methods=["post"], url_path="add-question")
+    def add_question(self, request, pk=None):
+        event = get_object_or_404(Event, id=pk)
+        question_id = request.data.get("question_id")
+        question = get_object_or_404(Question, id=question_id)
+        question.copy_to_event(event)
+        return Response("success")
+
+    @action(detail=True, methods=["post"], url_path="remove-question")
+    def remove_question(self, request, pk=None):
+        question_id = request.data.get("question_id")
+        question = get_object_or_404(Question, id=question_id, event_id=pk)
+        question.soft_delete()
+
+        return Response("success")
 
     @action(detail=True, methods=["get"], url_path="stats")
     def stats(self, request, pk=None):

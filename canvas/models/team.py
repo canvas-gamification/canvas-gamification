@@ -14,8 +14,8 @@ class Team(models.Model):
     course_registrations = models.ManyToManyField(CanvasCourseRegistration)
 
     @property
-    def score(self):
-        return self.event.calculate_score(self)
+    def tokens_received(self):
+        return self.event.tokens_received(self)
 
     @property
     def member_names(self):
