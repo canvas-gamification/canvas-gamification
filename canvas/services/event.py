@@ -53,6 +53,7 @@ def get_question_stats(question):
         "question": {
             "title": question.title,
         },
+        "has_variables": len(question.variables) > 0,
         "answers": answers,
         "error_messages": _get_error_messages(submissions),
         "submissions": _get_submission_status(submissions),
