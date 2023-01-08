@@ -80,6 +80,15 @@ class EventViewSet(viewsets.ModelViewSet):
 
         return Response("success")
 
+    @action(detail=False, methods=["get"], url_path="get-event-questions")
+    def get_event_questions(self, request, pk=None):
+        event_id = request.GET.get("event_id", None)
+        event = get_object_or_404(Event, id=event_id)
+
+        Question.get_serializer(event.question_set)
+
+        return Response(EVENT_TYPE_CHOICES)
+
     @action(detail=True, methods=["get"], url_path="stats")
     def stats(self, request, pk=None):
         event = get_object_or_404(Event, id=pk)
