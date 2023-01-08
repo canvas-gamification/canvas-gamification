@@ -85,9 +85,10 @@ class EventViewSet(viewsets.ModelViewSet):
         event_id = request.GET.get("event_id", None)
         event = get_object_or_404(Event, id=event_id)
 
-        Question.get_serializer(event.question_set)
+        # question doesn't have a serializer?
+        questions = Question.get_serializer(event.question_set)
 
-        return Response(EVENT_TYPE_CHOICES)
+        return Response(questions)
 
     @action(detail=True, methods=["get"], url_path="stats")
     def stats(self, request, pk=None):
