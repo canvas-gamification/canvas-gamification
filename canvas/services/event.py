@@ -1,4 +1,5 @@
 from course.models.models import Submission, Question
+from course.models.multiple_choice import MultipleChoiceQuestion
 
 
 def _get_status_messages(submissions):
@@ -41,10 +42,9 @@ def get_question_stats(question):
     submissions = Submission.objects.filter(uqj__question=question)
 
     answers = {}
-    if hasattr(question, "choices"):
-        choices = question.choices
+    if isinstance(question, MultipleChoiceQuestion):
         for submission in submissions:
-            answer = choices[submission.answer]
+            answer = submission.uqj.get_rendered_choices()[submission.answer]
             if answer not in answers:
                 answers[answer] = 0
             answers[answer] += 1
@@ -53,10 +53,12 @@ def get_question_stats(question):
         "question": {
             "title": question.title,
         },
+        "has_variables": len(question.variables) > 0,
         "answers": answers,
         "error_messages": _get_error_messages(submissions),
         "submissions": _get_submission_status(submissions),
         "status_messages": _get_status_messages(submissions),
+        "total_submissions": submissions.count(),
     }
 
 

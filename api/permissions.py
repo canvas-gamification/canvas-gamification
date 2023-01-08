@@ -78,3 +78,6 @@ class TeamPermission(permissions.IsAuthenticated):
     # TODO: fix permissions for teams
     def has_permission(self, request, view):
         return True
+
+    def has_object_permission(self, request, view, obj):
+        return obj.course_registrations.filter(user=request.user).exists()
