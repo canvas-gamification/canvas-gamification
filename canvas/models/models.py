@@ -133,11 +133,19 @@ class CanvasCourseRegistration(models.Model):
 
     @property
     def total_tokens_received(self):
-        event_ids = [x["id"] for x in self.course.events.filter(count_for_tokens=True).values("id")]
+        from course.models.models import Question
+        # events (all closed) + questions not in an event = tokens
+        event_ids = [
+            x["id"] for x in self.course.events.filter(count_for_tokens=True).filter(is_closed=True).values("id")
+        ]
+        # event_ids = [
+        #     x["id"] for x in self.course.events.filter(count_for_tokens=True).values("id")
+        # ]
         return (
             self.user.question_junctions.filter(question__event_id__in=event_ids).aggregate(Sum("tokens_received"))[
                 "tokens_received__sum"
             ]
+            + Question.objects.filter(event=None)
             or 0
         )
 
