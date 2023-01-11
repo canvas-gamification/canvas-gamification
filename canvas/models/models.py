@@ -2,7 +2,7 @@ import copy
 
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum, F, FloatField, Max
+from django.db.models import Sum, F, FloatField, Max, Q
 from django.utils import timezone
 
 from accounts.models import MyUser
@@ -134,18 +134,23 @@ class CanvasCourseRegistration(models.Model):
     @property
     def total_tokens_received(self):
         from course.models.models import Question
-        # events (all closed) + questions not in an event = tokens
         event_ids = [
-            x["id"] for x in self.course.events.filter(count_for_tokens=True).filter(is_closed=True).values("id")
+            x["id"] for x in self.course.events.filter(count_for_tokens=True, end_date__lt=timezone.now()).values("id")
         ]
-        # event_ids = [
-        #     x["id"] for x in self.course.events.filter(count_for_tokens=True).values("id")
+
+        # problem: practice questions does not belong to any of the courses, so practice_question_ids = []
+        # practice_question_ids = [
+        #     x["id"] for x in Question.objects.all().filter(course_id=self.course.id).values("id")
         # ]
+        # .filter(Q(question__event_id__in=event_ids), Q(question_id=practice_question_ids))
+        # But if we do only questions that do not belong to any events, we will double count different courses' tokens?
+
         return (
-            self.user.question_junctions.filter(question__event_id__in=event_ids).aggregate(Sum("tokens_received"))[
+            self.user.question_junctions
+            .filter(Q(question__event_id__in=event_ids), Q(question__event__isnull=True))
+            .aggregate(Sum("tokens_received"))[
                 "tokens_received__sum"
             ]
-            + Question.objects.filter(event=None)
             or 0
         )
 
