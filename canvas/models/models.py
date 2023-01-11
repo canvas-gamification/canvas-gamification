@@ -134,6 +134,7 @@ class CanvasCourseRegistration(models.Model):
     @property
     def total_tokens_received(self):
         from course.models.models import Question
+
         event_ids = [
             x["id"] for x in self.course.events.filter(count_for_tokens=True, end_date__lt=timezone.now()).values("id")
         ]
@@ -146,11 +147,9 @@ class CanvasCourseRegistration(models.Model):
         # But if we do only questions that do not belong to any events, we will double count different courses' tokens?
 
         return (
-            self.user.question_junctions
-            .filter(Q(question__event_id__in=event_ids), Q(question__event__isnull=True))
-            .aggregate(Sum("tokens_received"))[
-                "tokens_received__sum"
-            ]
+            self.user.question_junctions.filter(
+                Q(question__event_id__in=event_ids), Q(question__event__isnull=True)
+            ).aggregate(Sum("tokens_received"))["tokens_received__sum"]
             or 0
         )
 
