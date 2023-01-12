@@ -324,3 +324,16 @@ def create_goal_item_action(goal_item, user):
         object_id=goal_item["id"],
         data=goal_item,
     )
+
+
+def create_team_action(team, user):
+    Action.create_action(
+        actor=user,
+        description="User created a team.",
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.CREATED,
+        object_type=ActionObjectType.TEAM,
+        object_id=team.id,
+        data=team,
+    )

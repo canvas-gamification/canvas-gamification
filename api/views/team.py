@@ -10,6 +10,7 @@ from api.serializers.team import TeamSerializer
 from canvas.models.models import Event
 from canvas.models.team import Team
 from canvas.services.team import create_and_join_team, join_team, get_my_team
+from general.services.action import create_team_action
 
 
 class TeamViewSet(viewsets.ModelViewSet):
@@ -27,6 +28,8 @@ class TeamViewSet(viewsets.ModelViewSet):
         who_can_join = request.data.get("who_can_join", None)
         event = get_object_or_404(Event, id=event_id)
         team = create_and_join_team(event, request.user, name, is_private, who_can_join)
+
+        create_team_action(team, request.user)
 
         serializer = self.get_serializer(team)
         return Response(serializer.data)

@@ -43,6 +43,7 @@ class ActionObjectType:
     QUESTION = "Question"
     SUBMISSION = "Submission"
     USER = "User"
+    TEAM = "Team"
 
 
 ACTION_STATUS_CHOICES = [
