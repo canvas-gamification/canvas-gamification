@@ -31,6 +31,7 @@ class ActionVerb:
     UNREAD = "Unread"
     UPDATED = "Updated"
     USED = "Used"
+    JOINED = "Joined"
 
 
 class ActionObjectType:

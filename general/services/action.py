@@ -337,3 +337,16 @@ def create_team_action(team, user):
         object_id=team.id,
         data=team,
     )
+
+
+def join_team_action(team, user):
+    Action.create_action(
+        actor=user,
+        description="User joined a team.",
+        token_change=0,
+        status=ActionStatus.COMPLETE,
+        verb=ActionVerb.JOINED,
+        object_type=ActionObjectType.TEAM,
+        object_id=team.id,
+        data=team,
+    )
