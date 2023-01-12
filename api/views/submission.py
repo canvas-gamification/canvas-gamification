@@ -22,9 +22,10 @@ from api.serializers.multiple_choice_question import (
 from api.serializers.parsons_question import (
     ParsonsSubmissionHiddenDetailsSerializer,
 )
+from canvas.models.models import EVENT_TYPE_CHOICES
 from course.exceptions import SubmissionException
 from course.models.java import JavaQuestion, JavaSubmission
-from course.models.models import Submission, Question
+from course.models.models import Submission, Question, UserQuestionJunction
 from course.models.multiple_choice import (
     MultipleChoiceQuestion,
     MultipleChoiceSubmission,
@@ -35,7 +36,7 @@ from course.services.submission import (
     submit_mcq_solution,
     submit_parsons_solution,
 )
-from general.services.action import create_submission_action
+from general.services.action import create_submission_action, team_complete_challenge_action
 
 
 class SubmissionViewSet(viewsets.GenericViewSet):
@@ -121,6 +122,30 @@ class SubmissionViewSet(viewsets.GenericViewSet):
             raise ValidationError("{}".format(e))
 
         create_submission_action(submission)
+
+        if question.event.type == EVENT_TYPE_CHOICES.CHALLENGE:
+            course = question.course
+            course_reg = course.canvascourseregistration_set.filter(user=request.user)
+
+            event = question.event
+            team = event.team_set.filter(course_registrations__contains=[course_reg])
+
+            if team.course_registrations_set.count() > 1:
+                users = [course_reg.user for course_reg in team.course_registrations.all()]
+                solved_uqjs = UserQuestionJunction.objects.all().filter(user__in=users, is_solved=True)
+                solved_event_question_id = [
+                    solved_uqj.question.id
+                    for solved_uqj in solved_uqjs
+                    if solved_uqj.question.event.id is question.event.id
+                ]
+
+                solved_event_question_id = list(set(solved_event_question_id))
+                event_question_ids = [ele['id'] for ele in event.question_set.values_list('id')]
+
+                if len(event_question_ids) is len(solved_event_question_id):
+                    team_complete_challenge_action(question.event.id, team, request.user)
+
+
         return Response(
             self.get_serialized_data(submission),
             status=status.HTTP_201_CREATED,
