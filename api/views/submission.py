@@ -140,11 +140,10 @@ class SubmissionViewSet(viewsets.GenericViewSet):
                 ]
 
                 solved_event_question_id = list(set(solved_event_question_id))
-                event_question_ids = [ele['id'] for ele in event.question_set.values_list('id')]
+                event_question_ids = [ele["id"] for ele in event.question_set.values_list("id")]
 
                 if len(event_question_ids) is len(solved_event_question_id):
                     team_complete_challenge_action(question.event.id, team, request.user)
-
 
         return Response(
             self.get_serialized_data(submission),
