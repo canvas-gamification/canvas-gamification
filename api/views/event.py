@@ -132,6 +132,7 @@ class EventViewSet(viewsets.ModelViewSet):
             {
                 "event_id": event.id,
                 "event_type": event.type,
+                "event_name": event.name,
                 "leader_board": [
                     {
                         "name": team.name,
