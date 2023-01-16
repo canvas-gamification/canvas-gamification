@@ -138,7 +138,7 @@ class EventViewSet(viewsets.ModelViewSet):
                         "member_names": team.member_names,
                     }
                     for team in event.team_set
-                ]
+                ],
             }
             for event in course.event
         ]
