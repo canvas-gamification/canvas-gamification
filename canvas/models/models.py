@@ -39,16 +39,6 @@ class CanvasCourse(models.Model):
             return "Finished"
         return "In Session"
 
-    @property
-    def leader_board(self):
-        return [
-            {
-                "name": course_reg.user.get_full_name(),
-                "token": course_reg.total_tokens_received,
-            }
-            for course_reg in self.canvascourseregistration_set.all()
-        ]
-
     def is_registered(self, user):
         if user.is_anonymous:
             return False
