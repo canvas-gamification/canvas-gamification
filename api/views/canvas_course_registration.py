@@ -1,5 +1,8 @@
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 
 from api.serializers import CanvasCourseRegistrationSerializer
@@ -26,3 +29,21 @@ class CanvasCourseRegistrationViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return CanvasCourseRegistration.objects.filter(user=user).all()
+
+    @action(detail=True, methods=["get"], url_path="total-tokens-received")
+    def total_tokens_received(self, request, pk):
+        """
+        Given course_reg id, Return all students for a course_reg
+        """
+        course_reg = get_object_or_404(CanvasCourseRegistration, id=pk)
+        events = course_reg.course.events.filter(count_for_tokens=True, end_date__lt=timezone.now())
+        tokens = 0
+
+        for event in events:
+            team = event.team_set.filter(course_registrations=course_reg).first()
+            if team is None:
+                tokens += 0
+            else:
+                tokens += event.tokens_received(team)
+
+        return tokens
