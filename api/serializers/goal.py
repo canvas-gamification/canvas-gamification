@@ -40,7 +40,6 @@ class GoalSerializer(serializers.ModelSerializer):
             "is_finished",
             "number_of_questions",
             "goal_items",
-            "stats",
             "claimed",
         ]
         read_only_fields = [

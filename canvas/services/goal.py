@@ -1,8 +1,12 @@
 # import distance
 # from sklearn.cluster import AffinityPropagation
 # import numpy as np
+from django.contrib.contenttypes.models import ContentType
 
+from course.models.java import JavaQuestion
 from course.models.models import Submission
+from course.models.multiple_choice import MultipleChoiceQuestion
+from course.models.parsons import ParsonsQuestion
 
 
 def levenshtein(texts):
@@ -100,6 +104,10 @@ def get_submission_stats(submissions):
 
 
 def get_goal_item_stats(goal_item):
+    mcq_ctype = ContentType.objects.get_for_model(MultipleChoiceQuestion)
+    java_ctype = ContentType.objects.get_for_model(JavaQuestion)
+    parsons_ctype = ContentType.objects.get_for_model(ParsonsQuestion)
+
     submissions = Submission.objects.filter(
         uqj__user=goal_item.goal.course_reg.user,
         uqj__question__category=goal_item.category,
@@ -120,8 +128,26 @@ def get_goal_item_stats(goal_item):
         old_submissions = old_submissions.filter(uqj__question__difficulty=goal_item.difficulty)
 
     return {
-        "old_submissions": get_submission_stats(old_submissions),
-        "submissions": get_submission_stats(submissions),
+        "mcq": {
+            "submissions": get_submission_stats(submissions.filter(uqj__question__polymorphic_ctype=mcq_ctype)),
+            "old_submissions": get_submission_stats(old_submissions.filter(uqj__question__polymorphic_ctype=mcq_ctype)),
+        },
+        "java": {
+            "submissions": get_submission_stats(submissions.filter(uqj__question__polymorphic_ctype=java_ctype)),
+            "old_submissions": get_submission_stats(
+                old_submissions.filter(uqj__question__polymorphic_ctype=java_ctype)
+            ),
+        },
+        "parsons": {
+            "submissions": get_submission_stats(submissions.filter(uqj__question__polymorphic_ctype=parsons_ctype)),
+            "old_submissions": get_submission_stats(
+                old_submissions.filter(uqj__question__polymorphic_ctype=parsons_ctype)
+            ),
+        },
+        "all": {
+            "submissions": get_submission_stats(submissions),
+            "old_submissions": get_submission_stats(old_submissions),
+        },
     }
 
 
