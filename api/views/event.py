@@ -133,8 +133,8 @@ class EventViewSet(viewsets.ModelViewSet):
                 "event_id": event.id,
                 "leader_board": [
                     {
-                        "team_name": team.name,
-                        "team_token": team.tokens_received,
+                        "name": team.name,
+                        "token": team.tokens_received,
                         "member_names": team.member_names,
                     }
                     for team in event.team_set
