@@ -132,28 +132,6 @@ class CanvasCourseRegistration(models.Model):
         self.registration_type = INSTRUCTOR
 
     @property
-    def total_tokens_received(self):
-        from course.models.models import Question
-
-        event_ids = [
-            x["id"] for x in self.course.events.filter(count_for_tokens=True, end_date__lt=timezone.now()).values("id")
-        ]
-
-        # problem: practice questions does not belong to any of the courses, so practice_question_ids = []
-        # practice_question_ids = [
-        #     x["id"] for x in Question.objects.all().filter(course_id=self.course.id).values("id")
-        # ]
-        # .filter(Q(question__event_id__in=event_ids), Q(question_id=practice_question_ids))
-        # But if we do only questions that do not belong to any events, we will double count different courses' tokens?
-
-        return (
-            self.user.question_junctions.filter(
-                Q(question__event_id__in=event_ids), Q(question__event__isnull=True)
-            ).aggregate(Sum("tokens_received"))["tokens_received__sum"]
-            or 0
-        )
-
-    @property
     def available_tokens(self):
         tokens_used = self.user.token_uses.filter(option__course=self.course).aggregate(
             available_tokens=Sum(
