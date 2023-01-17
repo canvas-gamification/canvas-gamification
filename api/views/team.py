@@ -29,9 +29,9 @@ class TeamViewSet(viewsets.ModelViewSet):
         event = get_object_or_404(Event, id=event_id)
         team = create_and_join_team(event, request.user, name, is_private, who_can_join)
 
-        create_team_action(team, request.user)
-
         serializer = self.get_serializer(team)
+        create_team_action(serializer.data, request.user)
+
         return Response(serializer.data)
 
     @action(detail=False, methods=["post"], url_path="join")
@@ -40,7 +40,8 @@ class TeamViewSet(viewsets.ModelViewSet):
         team = get_object_or_404(Team, id=team_id)
 
         join_team(team, request.user)
-        join_team_action(team, request.user)
+        serializer = self.get_serializer(team)
+        join_team_action(serializer.data, request.user)
 
         return Response({"status": "success"})
 
