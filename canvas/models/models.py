@@ -62,11 +62,11 @@ class CanvasCourse(models.Model):
 
     def has_edit_permission(self, user):
         course_reg = get_course_registration(user, self)
-        return course_reg.registration_type == INSTRUCTOR
+        return user.is_teacher or course_reg.registration_type == INSTRUCTOR
 
     def has_create_event_permission(self, user):
         course_reg = get_course_registration(user, self)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
+        return user.is_teacher or course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
 
 def random_verification_code():
