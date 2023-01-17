@@ -74,6 +74,7 @@ ACTION_VERB_CHOICES = [
     (ActionVerb.UNREAD, ActionVerb.UNREAD),
     (ActionVerb.UPDATED, ActionVerb.UPDATED),
     (ActionVerb.USED, ActionVerb.USED),
+    (ActionVerb.JOINED, ActionVerb.JOINED),
 ]
 
 OBJECT_TYPE_CHOICES = [
@@ -86,6 +87,7 @@ OBJECT_TYPE_CHOICES = [
     (ActionObjectType.QUESTION, ActionObjectType.QUESTION),
     (ActionObjectType.SUBMISSION, ActionObjectType.SUBMISSION),
     (ActionObjectType.USER, ActionObjectType.USER),
+    (ActionObjectType.TEAM, ActionObjectType.TEAM),
 ]
 
 
