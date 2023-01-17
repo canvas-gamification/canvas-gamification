@@ -132,16 +132,6 @@ class CanvasCourseRegistration(models.Model):
         self.registration_type = INSTRUCTOR
 
     @property
-    def total_tokens_received(self):
-        event_ids = [x["id"] for x in self.course.events.filter(count_for_tokens=True).values("id")]
-        return (
-            self.user.question_junctions.filter(question__event_id__in=event_ids).aggregate(Sum("tokens_received"))[
-                "tokens_received__sum"
-            ]
-            or 0
-        )
-
-    @property
     def available_tokens(self):
         tokens_used = self.user.token_uses.filter(option__course=self.course).aggregate(
             available_tokens=Sum(
