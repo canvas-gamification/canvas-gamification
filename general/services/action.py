@@ -334,7 +334,7 @@ def create_team_action(team, user):
         status=ActionStatus.COMPLETE,
         verb=ActionVerb.CREATED,
         object_type=ActionObjectType.TEAM,
-        object_id=team.id,
+        object_id=team["id"],
         data=team,
     )
 
@@ -347,19 +347,6 @@ def join_team_action(team, user):
         status=ActionStatus.COMPLETE,
         verb=ActionVerb.JOINED,
         object_type=ActionObjectType.TEAM,
-        object_id=team.id,
-        data=team,
-    )
-
-
-def team_complete_challenge_action(event_id, team, user):
-    Action.create_action(
-        actor=user,
-        description="User's Team has completed the challenge.",
-        token_change=0,
-        status=ActionStatus.COMPLETE,
-        verb=ActionVerb.COMPLETED,
-        object_type=ActionObjectType.EVENT,
-        object_id=event_id,
+        object_id=team["id"],
         data=team,
     )
