@@ -2,7 +2,7 @@ import copy
 
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Sum, F, FloatField, Max, Q
+from django.db.models import Sum, F, FloatField, Max
 from django.utils import timezone
 
 from accounts.models import MyUser
