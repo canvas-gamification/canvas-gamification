@@ -127,6 +127,7 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         course_id = request.Get.get("course_id", None)
         course = get_object_or_404(CanvasCourse, id=course_id)
+        events = course.event
 
         leader_boards = [
             {
@@ -142,7 +143,7 @@ class EventViewSet(viewsets.ModelViewSet):
                     for team in event.team_set
                 ],
             }
-            for event in course.event
+            for event in events
         ]
 
         return Response(leader_boards)
