@@ -22,10 +22,9 @@ from api.serializers.multiple_choice_question import (
 from api.serializers.parsons_question import (
     ParsonsSubmissionHiddenDetailsSerializer,
 )
-from canvas.models.models import EVENT_TYPE_CHOICES
 from course.exceptions import SubmissionException
 from course.models.java import JavaQuestion, JavaSubmission
-from course.models.models import Submission, Question, UserQuestionJunction
+from course.models.models import Submission, Question
 from course.models.multiple_choice import (
     MultipleChoiceQuestion,
     MultipleChoiceSubmission,
@@ -36,7 +35,7 @@ from course.services.submission import (
     submit_mcq_solution,
     submit_parsons_solution,
 )
-from general.services.action import create_submission_action, team_complete_challenge_action
+from general.services.action import create_submission_action
 
 
 class SubmissionViewSet(viewsets.GenericViewSet):
