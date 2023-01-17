@@ -138,8 +138,8 @@ class CourseViewSet(viewsets.ModelViewSet):
 
         return Response(course_regs.data)
 
-    @action(detail=True, methods=["get"], url_path="course-leader-board")
-    def course_leader_board(self, request, pk):
+    @action(detail=True, methods=["get"], url_path="leader-board")
+    def leader_board(self, request, pk):
         """
         Given course id, return the leader board for the course.
         """
