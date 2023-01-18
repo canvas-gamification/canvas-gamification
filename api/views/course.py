@@ -149,7 +149,7 @@ class CourseViewSet(viewsets.ModelViewSet):
                 "name": course_reg.user.get_full_name(),
                 "token": course_reg.total_tokens_received,
             }
-            for course_reg in course.canvascourseregistration_set.all()
+            for course_reg in course.canvascourseregistration_set.all() if course_reg.is_verified
         ]
 
         return Response(leader_board)
