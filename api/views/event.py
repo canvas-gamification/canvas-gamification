@@ -120,30 +120,19 @@ class EventViewSet(viewsets.ModelViewSet):
             status=status.HTTP_201_CREATED,
         )
 
-    @action(detail=True, method=["get"], url_path="event-leader-boards")
-    def event_leader_boards(self, request, pk):
+    @action(detail=True, methods=["get"], url_path="leader-board")
+    def leader_board(self, request, pk):
         """
-        Given course id, return the all the events' leader board of a course.
+        Given event id, return the event leader board.
         """
-        course_id = request.Get.get("course_id", None)
-        course = get_object_or_404(CanvasCourse, id=course_id)
-        events = course.event.all()
-
-        leader_boards = [
-            {
-                "event_id": event.id,
-                "event_type": event.type,
-                "event_name": event.name,
-                "leader_board": [
-                    {
-                        "name": team.name,
-                        "token": team.tokens_received,
-                        "member_names": team.member_names,
-                    }
-                    for team in event.team_set
-                ],
-            }
-            for event in events
+        event = get_object_or_404(Event, id=pk)
+        leader_board = [
+                {
+                    "name": team.name,
+                    "token": team.tokens_received,
+                    "member_names": team.member_names,
+                }
+                for team in event.team_set.all()
         ]
 
-        return Response(leader_boards)
+        return Response(leader_board)
