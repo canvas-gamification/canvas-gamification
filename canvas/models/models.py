@@ -46,7 +46,7 @@ class CanvasCourse(models.Model):
                 "name": course_reg.user.get_full_name(),
                 "token": course_reg.total_tokens_received,
             }
-            for course_reg in self.canvascourseregistration_set.all()
+            for course_reg in self.canvascourseregistration_set.filter(status="VERIFIED").all()
         ]
 
     def is_registered(self, user):
@@ -130,6 +130,19 @@ class CanvasCourseRegistration(models.Model):
 
     def set_instructor(self):
         self.registration_type = INSTRUCTOR
+
+    @property
+    def total_tokens_received(self):
+        events = self.course.events.filter(count_for_tokens=True, end_date__lt=timezone.now())
+        tokens = 0
+
+        for event in events:
+            team = event.team_set.filter(course_registrations=self).first()
+            if team is None:
+                tokens += 0
+            else:
+                tokens += event.tokens_received(team)
+        return tokens
 
     @property
     def available_tokens(self):
