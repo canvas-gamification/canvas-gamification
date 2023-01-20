@@ -62,11 +62,11 @@ class CanvasCourse(models.Model):
 
     def has_edit_permission(self, user):
         course_reg = get_course_registration(user, self)
-        return course_reg.registration_type == INSTRUCTOR
+        return user.is_teacher or course_reg.registration_type == INSTRUCTOR
 
     def has_create_event_permission(self, user):
         course_reg = get_course_registration(user, self)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
+        return user.is_teacher or course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
 
 def random_verification_code():
@@ -130,16 +130,6 @@ class CanvasCourseRegistration(models.Model):
 
     def set_instructor(self):
         self.registration_type = INSTRUCTOR
-
-    @property
-    def total_tokens_received(self):
-        event_ids = [x["id"] for x in self.course.events.filter(count_for_tokens=True).values("id")]
-        return (
-            self.user.question_junctions.filter(question__event_id__in=event_ids).aggregate(Sum("tokens_received"))[
-                "tokens_received__sum"
-            ]
-            or 0
-        )
 
     @property
     def available_tokens(self):

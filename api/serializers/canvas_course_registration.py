@@ -35,7 +35,6 @@ class CanvasCourseRegistrationSerializer(serializers.ModelSerializer):
             "is_verified",
             "is_blocked",
             "token_uses",
-            "total_tokens_received",
             "available_tokens",
             "username",
             "name",
