@@ -162,7 +162,7 @@ class Question(PolymorphicModel):
 
     @property
     def full_category_name(self):
-        return self.category.full_name
+        return self.category.full_name if self.category else ""
 
     @property
     def category_name(self):

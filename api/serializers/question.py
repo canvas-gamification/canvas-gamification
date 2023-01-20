@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
-from api.serializers import EventSerializer, QuestionCategorySerializer
+from api.serializers import EventSerializer
 from course.models.models import Question
 
 
@@ -9,7 +9,6 @@ class QuestionSerializer(serializers.ModelSerializer):
     status = serializers.SerializerMethodField("get_uqj_status")
     is_author = serializers.SerializerMethodField("get_is_author")
     event_obj = SerializerMethodField("get_event_obj")
-    category_obj = SerializerMethodField("get_category_obj")
 
     class Meta:
         model = Question
@@ -30,8 +29,9 @@ class QuestionSerializer(serializers.ModelSerializer):
             "event",
             "event_obj",
             "category",
-            "category_obj",
             "parent_category_name",
+            "full_category_name",
+            "category_name",
             "course",
             "status",
             "is_sample",
@@ -56,6 +56,3 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     def get_event_obj(self, question):
         return EventSerializer(question.event).data
-
-    def get_category_obj(self, question):
-        return QuestionCategorySerializer(question.category).data
