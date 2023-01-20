@@ -364,6 +364,7 @@ class UserQuestionJunction(models.Model):
             {
                 **input_file,
                 "name": render_text(input_file["name"], self.get_variables()),
+                "template": render_text(input_file.get("template", ""), self.get_variables())
             }
             for input_file in self.question.get_input_files()
         ]
