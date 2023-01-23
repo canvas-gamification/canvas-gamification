@@ -91,6 +91,7 @@ class ParsonsSubmissionSerializer(serializers.ModelSerializer):
             "show_detail",
             "status_color",
             "author",
+            "bugs",
         ]
 
     question = QuestionSerializer()

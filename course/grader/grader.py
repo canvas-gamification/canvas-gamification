@@ -53,11 +53,12 @@ class JunitGrader(Grader):
 
     def get_compiler_script(self, submission):
         f = open("./course/grader/junit_compiler.sh", "r")
+        file_names = submission.uqj.get_input_file_names() or ""
+        class_names = file_names.replace(".java", ".class")
+
         compiler_script = f.read()
-        compiler_script = compiler_script.replace(
-            "{{user_code_filename}}",
-            submission.uqj.get_input_file_names() or "",
-        )
+        compiler_script = compiler_script.replace("{{user_code_filename}}", file_names)
+        compiler_script = compiler_script.replace("{{user_code_classname}}", class_names)
         f.close()
         return compiler_script
 
@@ -80,6 +81,9 @@ class JunitGrader(Grader):
 
         with open("./course/grader/canvas-gamification-junit-tests.jar", "rb") as f:
             z.writestr("canvas-gamification-junit-tests.jar", f.read())
+
+        with open("./course/grader/spotbugs-4.7.3.tgz", "rb") as f:
+            z.writestr("spotbugs-4.7.3.tgz", f.read())
 
         # Junit template file
         z.writestr("MainTest.java", self.get_source_code(submission))

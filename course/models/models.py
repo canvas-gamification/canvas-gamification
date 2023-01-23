@@ -13,6 +13,7 @@ from polymorphic.models import PolymorphicModel
 from accounts.models import MyUser
 from canvas.models.models import Event, CanvasCourse
 from course.utils.junit_xml import parse_junit_xml
+from course.utils.spotbugs_xml import parse_spotbugs_xml
 from course.utils.utils import (
     get_token_value,
     ensure_uqj,
@@ -364,7 +365,7 @@ class UserQuestionJunction(models.Model):
             {
                 **input_file,
                 "name": render_text(input_file["name"], self.get_variables()),
-                "template": render_text(input_file.get("template", ""), self.get_variables())
+                "template": render_text(input_file.get("template", ""), self.get_variables()),
             }
             for input_file in self.question.get_input_files()
         ]
@@ -568,9 +569,20 @@ class CodeSubmission(Submission):
     def get_decoded_stderr(self):
         return base64.b64decode(self.results[0]["stderr"] or "").decode("utf-8")
 
+    def get_decoded_stdout(self):
+        return base64.b64decode(self.results[0]["stdout"] or "").decode("utf-8")
+
     def get_decoded_results(self):
-        stdout = base64.b64decode(self.results[0]["stdout"] or "").decode("utf-8")
-        return parse_junit_xml(stdout)
+        xml = self.get_decoded_stdout().split("==SEPARATOR==")[0]
+        return parse_junit_xml(xml)
+
+    @property
+    def bugs(self):
+        output_array = self.get_decoded_stdout().split("==SEPARATOR==")
+        if len(output_array) < 2:
+            return ""
+        xml = output_array[1]
+        return parse_spotbugs_xml(xml)
 
     def get_status_message(self):
         return self.results[0]["status"]["description"]
