@@ -39,6 +39,16 @@ class CanvasCourse(models.Model):
             return "Finished"
         return "In Session"
 
+    @property
+    def leader_board(self):
+        return [
+            {
+                "name": course_reg.user.get_full_name(),
+                "token": course_reg.total_tokens_received,
+            }
+            for course_reg in self.canvascourseregistration_set.filter(status="VERIFIED").all()
+        ]
+
     def is_registered(self, user):
         if user.is_anonymous:
             return False
@@ -52,11 +62,11 @@ class CanvasCourse(models.Model):
 
     def has_edit_permission(self, user):
         course_reg = get_course_registration(user, self)
-        return course_reg.registration_type == INSTRUCTOR
+        return user.is_teacher or course_reg.registration_type == INSTRUCTOR
 
     def has_create_event_permission(self, user):
         course_reg = get_course_registration(user, self)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
+        return user.is_teacher or course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
 
 def random_verification_code():
@@ -123,13 +133,16 @@ class CanvasCourseRegistration(models.Model):
 
     @property
     def total_tokens_received(self):
-        event_ids = [x["id"] for x in self.course.events.filter(count_for_tokens=True).values("id")]
-        return (
-            self.user.question_junctions.filter(question__event_id__in=event_ids).aggregate(Sum("tokens_received"))[
-                "tokens_received__sum"
-            ]
-            or 0
-        )
+        events = self.course.events.filter(count_for_tokens=True, end_date__lt=timezone.now())
+        tokens = 0
+
+        for event in events:
+            team = event.team_set.filter(course_registrations=self).first()
+            if team is None:
+                tokens += 0
+            else:
+                tokens += event.tokens_received(team)
+        return tokens
 
     @property
     def available_tokens(self):
