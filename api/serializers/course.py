@@ -105,6 +105,7 @@ class CourseSerializer(serializers.ModelSerializer):
             "uqjs",
             "question_set",
             "course_reg",
+            "leader_board",
             "has_create_event_permission",
             "description",
             "registration_mode",
