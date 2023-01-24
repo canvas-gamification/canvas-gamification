@@ -31,6 +31,7 @@ class ActionVerb:
     UNREAD = "Unread"
     UPDATED = "Updated"
     USED = "Used"
+    JOINED = "Joined"
 
 
 class ActionObjectType:
@@ -43,6 +44,7 @@ class ActionObjectType:
     QUESTION = "Question"
     SUBMISSION = "Submission"
     USER = "User"
+    TEAM = "Team"
 
 
 ACTION_STATUS_CHOICES = [
@@ -72,6 +74,7 @@ ACTION_VERB_CHOICES = [
     (ActionVerb.UNREAD, ActionVerb.UNREAD),
     (ActionVerb.UPDATED, ActionVerb.UPDATED),
     (ActionVerb.USED, ActionVerb.USED),
+    (ActionVerb.JOINED, ActionVerb.JOINED),
 ]
 
 OBJECT_TYPE_CHOICES = [
@@ -84,6 +87,7 @@ OBJECT_TYPE_CHOICES = [
     (ActionObjectType.QUESTION, ActionObjectType.QUESTION),
     (ActionObjectType.SUBMISSION, ActionObjectType.SUBMISSION),
     (ActionObjectType.USER, ActionObjectType.USER),
+    (ActionObjectType.TEAM, ActionObjectType.TEAM),
 ]
 
 
