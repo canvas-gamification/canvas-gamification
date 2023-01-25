@@ -119,3 +119,20 @@ class EventViewSet(viewsets.ModelViewSet):
             self.get_serializer(cloned_event).data,
             status=status.HTTP_201_CREATED,
         )
+
+    @action(detail=True, methods=["get"], url_path="leader-board")
+    def leader_board(self, request, pk):
+        """
+        Given event id, return the event leader board.
+        """
+        event = get_object_or_404(Event, id=pk)
+        leader_board = [
+            {
+                "name": team.name,
+                "token": team.tokens_received,
+                "member_names": team.member_names,
+            }
+            for team in event.team_set.all()
+        ]
+
+        return Response(leader_board)

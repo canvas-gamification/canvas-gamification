@@ -137,3 +137,19 @@ class CourseViewSet(viewsets.ModelViewSet):
         course_regs = CanvasCourseRegistrationSerializer(course.verified_course_registration, many=True)
 
         return Response(course_regs.data)
+
+    @action(detail=True, methods=["get"], url_path="leader-board")
+    def leader_board(self, request, pk):
+        """
+        Given course id, return the leader board for the course.
+        """
+        course = get_object_or_404(CanvasCourse, id=pk)
+        leader_board = [
+            {
+                "name": course_reg.user.get_full_name(),
+                "token": course_reg.total_tokens_received,
+            }
+            for course_reg in course.canvascourseregistration_set.all().filter(status="VERIFIED").all()
+        ]
+
+        return Response(leader_board)
