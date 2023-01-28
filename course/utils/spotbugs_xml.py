@@ -17,7 +17,7 @@ def parse_spotbugs_xml(xml):
                     "type": bug_instance["type"],
                     "short_message": bug_instance.shortmessage.text.strip(),
                     "long_message": bug_instance.longmessage.text.strip(),
-                    "source_line": bug_instance.find("sourceline").message.text.strip(),
+                    "source_line": bug_instance.find("sourceline", recursive=False).message.text.strip(),
                 }
             )
 
