@@ -127,7 +127,12 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         event = get_object_or_404(Event, id=pk)
         leader_board = [
-            {"name": team.name, "token": team.tokens_received, "member_names": team.member_names, "team_id": team.id}
+            {
+                "name": team.name,
+                "token": team.tokens_received,
+                "member_names": team.member_names,
+                "team_id": team.id,
+            }
             for team in event.team_set.all()
         ]
 
