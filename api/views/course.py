@@ -148,6 +148,7 @@ class CourseViewSet(viewsets.ModelViewSet):
             {
                 "name": course_reg.user.get_full_name(),
                 "token": course_reg.total_tokens_received,
+                "course_reg_id": course_reg.id,
             }
             for course_reg in course.canvascourseregistration_set.all().filter(status="VERIFIED").all()
         ]
