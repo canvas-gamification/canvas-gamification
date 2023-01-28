@@ -131,6 +131,7 @@ class EventViewSet(viewsets.ModelViewSet):
                 "name": team.name,
                 "token": team.tokens_received,
                 "member_names": team.member_names,
+                "team_id": team.id
             }
             for team in event.team_set.all()
         ]
