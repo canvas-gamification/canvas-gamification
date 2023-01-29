@@ -24,7 +24,6 @@ class QuestionSerializer(serializers.ModelSerializer):
             "difficulty",
             "is_verified",
             "token_value",
-            "success_rate",
             "type_name",
             "event",
             "event_obj",

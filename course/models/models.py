@@ -181,10 +181,6 @@ class Question(PolymorphicModel):
         return get_token_value(self.category, self.difficulty)
 
     @property
-    def success_rate(self):
-        return calculate_average_success(self.user_junctions.all())
-
-    @property
     def is_open(self):
         return self.event is not None and self.event.is_open
 
