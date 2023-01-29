@@ -47,7 +47,6 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
             "type_name",
             "visible_distractor_count",
             "token_value",
-            "success_rate",
             "event",
             "event_obj",
             "is_sample",
