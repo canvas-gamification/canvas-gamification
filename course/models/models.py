@@ -52,22 +52,6 @@ class QuestionCategory(models.Model):
         return self.__str__()
 
     @property
-    def average_success_per_difficulty(self):
-        res = []
-        for difficulty, difficulty_name in DIFFICULTY_CHOICES:
-            res.append(
-                {
-                    "difficulty": difficulty,
-                    "avgSuccess": calculate_average_success(UserQuestionJunction.objects.all(), self, difficulty),
-                }
-            )
-        return res
-
-    @property
-    def average_success(self):
-        return calculate_average_success(UserQuestionJunction.objects.all(), self)
-
-    @property
     def question_count(self):
         if self.parent is None:
             cnt = 0
