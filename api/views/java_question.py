@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from api.pagination import BasePagination
-from api.permissions import TeacherAccessPermission
+from api.permissions import QuestionPermission
 from api.serializers import JavaQuestionSerializer
 from course.models.java import JavaQuestion
 from general.services.action import (
@@ -12,7 +12,7 @@ from general.services.action import (
 
 class JavaQuestionViewSet(viewsets.ModelViewSet):
     queryset = JavaQuestion.objects.all()
-    permission_classes = [TeacherAccessPermission]
+    permission_classes = [QuestionPermission]
     serializer_class = JavaQuestionSerializer
     pagination_class = BasePagination
 

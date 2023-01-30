@@ -37,6 +37,7 @@ class CourseSerializer(serializers.ModelSerializer):
     uqjs = serializers.SerializerMethodField("get_uqjs")
     course_reg = serializers.SerializerMethodField("get_course_reg")
     has_create_event_permission = serializers.SerializerMethodField("get_create_event_permission")
+    has_view_permission = serializers.SerializerMethodField("get_has_view_permission")
 
     def get_user(self):
         user = MyAnonymousUser()
@@ -87,6 +88,15 @@ class CourseSerializer(serializers.ModelSerializer):
 
         return course.has_create_event_permission(user)
 
+    def get_has_view_permission(self, course):
+        user = self.get_user()
+
+        # if user is not logged in or the request has no user attached
+        if not user.is_authenticated:
+            return False
+
+        return course.has_view_permission(user)
+
     class Meta:
         model = CanvasCourse
         fields = [
@@ -106,6 +116,7 @@ class CourseSerializer(serializers.ModelSerializer):
             "question_set",
             "course_reg",
             "has_create_event_permission",
+            "has_view_permission",
             "description",
             "registration_mode",
             "registration_code",
@@ -116,6 +127,7 @@ class CourseSerializer(serializers.ModelSerializer):
 class CourseListSerializer(serializers.ModelSerializer):
     is_registered = serializers.SerializerMethodField("get_is_registered")
     events = EventSerializer(many=True, read_only=True)
+    has_view_permission = serializers.SerializerMethodField("get_has_view_permission")
 
     def get_user(self):
         user = MyAnonymousUser()
@@ -131,6 +143,15 @@ class CourseListSerializer(serializers.ModelSerializer):
             return False
 
         return course.is_registered(user)
+
+    def get_has_view_permission(self, course):
+        user = self.get_user()
+
+        # if user is not logged in or the request has no user attached
+        if not user.is_authenticated:
+            return False
+
+        return course.has_view_permission(user)
 
     class Meta:
         model = CanvasCourse
@@ -148,4 +169,5 @@ class CourseListSerializer(serializers.ModelSerializer):
             "events",
             "description",
             "registration_mode",
+            "has_view_permission",
         ]

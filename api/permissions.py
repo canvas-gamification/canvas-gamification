@@ -1,9 +1,32 @@
 from rest_framework import permissions
+from rest_framework.permissions import SAFE_METHODS
+
+from canvas.models.models import Event
 
 
 class TeacherAccessPermission(permissions.IsAuthenticated):
     def has_permission(self, request, view):
         return super().has_permission(request, view) and request.user.is_teacher
+
+
+class QuestionPermission(permissions.IsAuthenticated):
+    def has_permission(self, request, view):
+        if not super().has_permission(request, view):
+            return False
+
+        if request.method == "POST":
+            event_id = request.data.get("event", None)
+            event = Event.objects.filter(id=event_id).first()
+            if not event:
+                return False
+            return event.has_edit_permission(request.user)
+
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return obj.has_view_permission(request.user)
+        return obj.has_edit_permission(request.user)
 
 
 class UserConsentPermission(permissions.IsAuthenticated):

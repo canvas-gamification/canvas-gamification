@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.pagination import BasePagination
-from api.permissions import TeacherAccessPermission, HasDeletePermission
+from api.permissions import HasDeletePermission, QuestionPermission
 from api.serializers import (
     QuestionSerializer,
     MultipleChoiceQuestionSerializer,
@@ -26,11 +26,10 @@ class QuestionViewSet(viewsets.ModelViewSet):
     ?status: boolean => filter by status
     """
 
-    queryset = Question.objects.filter(question_status=Question.CREATED)
     serializer_class = QuestionSerializer
     permission_classes = [
         HasDeletePermission,
-        TeacherAccessPermission,
+        QuestionPermission,
     ]
     filter_backends = [
         filters.OrderingFilter,
@@ -61,6 +60,13 @@ class QuestionViewSet(viewsets.ModelViewSet):
         "category__parent__name",
     ]
     pagination_class = BasePagination
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Question.objects.filter(question_status=Question.CREATED)
+        if not user.is_teacher:
+            queryset.filter(author=user)
+        return queryset
 
     def get_question_serializer_class(self, question):
         if isinstance(question, MultipleChoiceQuestion):

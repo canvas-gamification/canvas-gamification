@@ -218,7 +218,11 @@ class Question(PolymorphicModel):
         return self.event.has_view_permission(user)
 
     def has_edit_permission(self, user):
-        return user.is_teacher
+        if user.is_teacher:
+            return True
+        if self.event and self.event.course.has_create_event_permission(user):
+            return True
+        return False
 
     def copy_to_event(self, event):
         question_clone = copy.deepcopy(self)

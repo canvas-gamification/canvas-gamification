@@ -48,7 +48,7 @@ class CanvasCourse(models.Model):
         return self.instructor == user
 
     def has_view_permission(self, user):
-        return user.is_teacher or self.is_instructor(user) or self.is_registered(user)
+        return user.is_teacher or self.is_instructor(user) or (self.is_registered(user) and self.status == "In Session")
 
     def has_edit_permission(self, user):
         course_reg = get_course_registration(user, self)
