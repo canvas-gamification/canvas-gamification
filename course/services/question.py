@@ -43,15 +43,10 @@ def get_number_of_questions_counted_by_category_and_difficulty():
 
     for category in categories:
         for difficulty, _ in DIFFICULTY_CHOICES:
-            available_questions = category.question_set.filter(
-                category=category,
-                difficulty=difficulty
-            ).count()
+            available_questions = category.question_set.filter(category=category, difficulty=difficulty).count()
 
-            result.append({
-                "category": category.id,
-                "difficulty": difficulty,
-                "available_questions": available_questions
-            })
+            result.append(
+                {"category": category.id, "difficulty": difficulty, "available_questions": available_questions}
+            )
 
     return result
