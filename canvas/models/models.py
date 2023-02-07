@@ -14,7 +14,7 @@ REGISTRATION_MODES = [("OPEN", "OPEN"), ("CODE", "CODE")]
 
 class CanvasCourse(models.Model):
     name = models.CharField(max_length=500)
-    url = models.URLField()
+    url = models.URLField(null=True, blank=True)
     instructor = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
     description = models.CharField(max_length=500, null=True, blank=True)
 
