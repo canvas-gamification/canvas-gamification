@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('canvas', '0022_event_featured'),
+        ("canvas", "0022_event_featured"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='canvascourse',
-            name='url',
+            model_name="canvascourse",
+            name="url",
             field=models.URLField(blank=True, null=True),
         ),
     ]
