@@ -1,4 +1,4 @@
-from course.models.models import UserQuestionJunction, QuestionCategory, DIFFICULTY_CHOICES
+from course.models.models import UserQuestionJunction, QuestionCategory, DIFFICULTY_CHOICES, Question
 
 
 def get_solved_practice_questions_count(user_id, category_id, difficulty, start_time, end_time):
@@ -43,7 +43,13 @@ def get_number_of_questions_counted_by_category_and_difficulty():
 
     for category in categories:
         for difficulty, _ in DIFFICULTY_CHOICES:
-            available_questions = category.question_set.filter(difficulty=difficulty).count()
+            available_questions = category.question_set.filter(
+                difficulty=difficulty,
+                is_verified=True,
+                course=None,
+                event=None,
+                question_status=Question.CREATED
+            ).count()
 
             result.append(
                 {"category": category.id, "difficulty": difficulty, "available_questions": available_questions}
