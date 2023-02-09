@@ -14,6 +14,7 @@ from api.serializers import EventSerializer
 from canvas.models.models import Event, EVENT_TYPE_CHOICES, CanvasCourse, CHALLENGE_TYPE_CHOICES
 from canvas.services.event import get_event_stats, set_featured, add_question_set
 from course.models.models import Question
+from course.services.question import get_number_of_questions_counted_by_category_and_difficulty
 from general.services.action import (
     create_event_action,
     update_event_action,
@@ -137,3 +138,8 @@ class EventViewSet(viewsets.ModelViewSet):
         ]
 
         return Response(leader_board)
+
+    @action(detail=False, methods=["get"], url_path="limits")
+    def limits(self, request):
+        result = get_number_of_questions_counted_by_category_and_difficulty()
+        return Response(result)
