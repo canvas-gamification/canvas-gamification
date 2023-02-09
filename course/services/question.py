@@ -44,11 +44,7 @@ def get_number_of_questions_counted_by_category_and_difficulty():
     for category in categories:
         for difficulty, _ in DIFFICULTY_CHOICES:
             available_questions = category.question_set.filter(
-                difficulty=difficulty,
-                is_verified=True,
-                course=None,
-                event=None,
-                question_status=Question.CREATED
+                difficulty=difficulty, is_verified=True, course=None, event=None, question_status=Question.CREATED
             ).count()
 
             result.append(
