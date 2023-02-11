@@ -43,9 +43,9 @@ class SubmissionAdmin(admin.ModelAdmin):
         "uqj__user__username",
         "is_correct",
         "is_partially_correct",
-        "uqj__question",
     )
     list_display = ("__str__", "grade", "is_correct", "is_partially_correct")
+    readonly_fields = ['uqj']
 
 
 class TokenValueAdmin(admin.ModelAdmin):
