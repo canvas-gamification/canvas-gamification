@@ -48,6 +48,7 @@ class MultipleChoiceGrader(Grader):
 class JunitGrader(Grader):
     HEADERS = {
         "X-Auth-Token": JUDGE0_PASSWORD,
+        "X-Auth-User": JUDGE0_PASSWORD,
     }
     BASE_URL = JUDGE0_HOST
 
@@ -118,6 +119,13 @@ class JunitGrader(Grader):
             correct_testcases / total_testcases,
         )
 
+    def remove(self, submission):
+        token = submission.tokens[0]
+        requests.delete(
+            "{}/submissions/{}".format(self.BASE_URL, token),
+            headers=self.HEADERS,
+        )
+
     def evaluate(self, submission):
         submission.results = []
 
@@ -126,7 +134,11 @@ class JunitGrader(Grader):
             "{}/submissions/{}?base64_encoded=true".format(self.BASE_URL, token),
             headers=self.HEADERS,
         )
-        submission.results.append(r.json())
+
+        results = r.json()
+        submission.results.append(results)
+        if not submission.in_progress:
+            self.remove(submission)
 
     def submit(self, submission):
         submission.tokens = []
