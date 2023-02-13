@@ -45,7 +45,7 @@ class SubmissionAdmin(admin.ModelAdmin):
         "is_partially_correct",
     )
     list_display = ("__str__", "grade", "is_correct", "is_partially_correct")
-    readonly_fields = ['uqj']
+    readonly_fields = ["uqj"]
 
 
 class TokenValueAdmin(admin.ModelAdmin):

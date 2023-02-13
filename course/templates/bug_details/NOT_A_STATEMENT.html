@@ -1,0 +1,34 @@
+<p>The Java compiler raises the "not a statement" error when it encounters a line of code that is not a valid statement.
+    There are several reasons why this error can occur:</p>
+<ol>
+    <li>
+        <p>When an expression is attempted to be executed as a standalone statement. Expressions are not considered
+            statements in Java and must be assigned to a variable or used in a larger statement. For example, the code "<code>1
+                + 1;</code>" would raise this error. To resolve the issue, the expression should be used in a larger
+            statement, such as "<code>int result = 1 + 1;</code>".</p>
+    </li>
+    <li>
+        <p>When a programmer uses keywords as method or variable names. Java has reserved keywords that have a specific
+            meaning and cannot be used as names for methods or variables. For example, "<code>int if = 5;</code>" would
+            raise a compilation error because "if" is a keyword. Similarly, a method cannot be named after a keyword
+            such as "<code>public void while() {...}</code>".</p>
+    </li>
+    <li>
+        <p>When parentheses are forgotten after a method call. Parentheses are required after method calls to indicate
+            that a method is being executed and to pass any required arguments. For example, the code
+            "<code>methodA;</code>" in the following class would raise an error:</p>
+        <pre>
+public class AClass {
+    public void methodA() {
+        ...
+    }
+    public void methodB() {
+        // call methodA
+        methodA;
+    }
+}
+        </pre>
+        <p>To resolve the issue, the parentheses should be added after the method call, like this:
+            "<code>methodA();</code>".</p>
+    </li>
+</ol>

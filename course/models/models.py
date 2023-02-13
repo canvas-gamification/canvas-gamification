@@ -12,13 +12,10 @@ from polymorphic.models import PolymorphicModel
 
 from accounts.models import MyUser
 from canvas.models.models import Event, CanvasCourse
+from course.utils.custom_bugs import custom_patterns, find_custom_bugs, find_bugs_from_compile_error
 from course.utils.junit_xml import parse_junit_xml
 from course.utils.spotbugs_xml import parse_spotbugs_xml
-from course.utils.utils import (
-    get_token_value,
-    ensure_uqj,
-    calculate_average_success,
-)
+from course.utils.utils import get_token_value, ensure_uqj
 from course.utils.variables import render_text, generate_variables
 from general.services.action import create_submission_evaluation_action
 
@@ -563,10 +560,21 @@ class CodeSubmission(Submission):
     @property
     def bugs(self):
         output_array = self.get_decoded_stdout().split("==SEPARATOR==")
-        if len(output_array) < 2:
-            return ""
-        xml = output_array[1]
-        return parse_spotbugs_xml(xml)
+        compile_error = self.get_decoded_stderr()
+        if len(output_array) >= 2:
+            xml = output_array[1]
+            bugs = parse_spotbugs_xml(xml)
+        else:
+            bugs = {"patterns": [], "bugs": []}
+
+        bugs["patterns"].extend(custom_patterns())
+
+        answer_files = self.get_answer_files()
+        for file_name, code in answer_files.items():
+            bugs["bugs"].extend(find_custom_bugs(file_name, code))
+            bugs["bugs"].extend(find_bugs_from_compile_error(file_name, compile_error))
+
+        return bugs
 
     def get_status_message(self):
         return self.results[0]["status"]["description"]
