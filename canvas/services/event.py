@@ -82,5 +82,6 @@ def add_question_set(event, category_id, difficulty, number_of_questions):
         difficulty=difficulty,
     )[:number_of_questions]
 
-    for question in questions:
-        question.copy_to_event(event)
+    index = 0  # in case items is empty and you need it after the loop
+    for index, question in enumerate(questions, start=1):
+        question.copy_to_event(event, str(index))

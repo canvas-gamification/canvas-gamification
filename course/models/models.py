@@ -221,7 +221,7 @@ class Question(PolymorphicModel):
             return True
         return False
 
-    def copy_to_event(self, event):
+    def copy_to_event(self, event, title: str = None):
         question_clone = copy.deepcopy(self)
         question_clone.id = None
         question_clone.pk = None
@@ -230,7 +230,10 @@ class Question(PolymorphicModel):
         question_clone.course = event.course
         question_clone.event = event
         question_clone.author = event.course.instructor
-        question_clone.title += " (Copy)"
+        if title is not None:
+            question_clone.title = title
+        else:
+            question_clone.title += " (Copy)"
         question_clone.save()
         return question_clone
 
