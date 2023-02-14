@@ -135,7 +135,12 @@ class CanvasCourseRegistration(models.Model):
 
         from course.models.models import UserQuestionJunction
 
-        practiced_uqjs = UserQuestionJunction.objects.filter(user=self.user, is_solved=True, question__event=None)
+        practiced_uqjs = UserQuestionJunction.objects.filter(
+            user=self.user,
+            question__course=None,
+            question__is_verified=True,
+            question__status="CREATED",
+        )
         for uqj in practiced_uqjs:
             tokens += uqj.tokens_received
         # print('token: ', tokens) # token: xx is printed multiple times, and eventually ends at 0. why?
