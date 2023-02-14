@@ -11,21 +11,21 @@ def get_submission_bugs(submissions):
     all_patterns = {}
 
     for submission in submissions.all():
-        if not hasattr(submission, 'bugs'):
+        if not hasattr(submission, "bugs"):
             continue
         data = submission.bugs
-        for bug in data['bugs']:
-            if bug['type'] not in all_bugs:
-                all_bugs[bug['type']] = bug
-                all_bugs[bug['type']]['count'] = 0
-            all_bugs[bug['type']]['count'] += 1
-        for pattern in data['patterns']:
-            if pattern['type'] not in all_patterns:
-                all_patterns[pattern['type']] = pattern
+        for bug in data["bugs"]:
+            if bug["type"] not in all_bugs:
+                all_bugs[bug["type"]] = bug
+                all_bugs[bug["type"]]["count"] = 0
+            all_bugs[bug["type"]]["count"] += 1
+        for pattern in data["patterns"]:
+            if pattern["type"] not in all_patterns:
+                all_patterns[pattern["type"]] = pattern
 
     return {
-        'bugs': all_bugs.values(),
-        'patterns': all_patterns.values(),
+        "bugs": all_bugs.values(),
+        "patterns": all_patterns.values(),
     }
 
 
@@ -50,7 +50,7 @@ def get_submission_stats(submissions):
         "total_questions": total_questions,
         "correct_questions": correct_questions,
         "questions_success_rate": 0 if total_questions == 0 else correct_questions / total_questions,
-        "bugs": get_submission_bugs(incorrect_submissions)
+        "bugs": get_submission_bugs(incorrect_submissions),
     }
 
 
