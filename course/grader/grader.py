@@ -83,8 +83,8 @@ class JunitGrader(Grader):
         with open("./course/grader/canvas-gamification-junit-tests.jar", "rb") as f:
             z.writestr("canvas-gamification-junit-tests.jar", f.read())
 
-        with open("./course/grader/spotbugs-4.7.3.tgz", "rb") as f:
-            z.writestr("spotbugs-4.7.3.tgz", f.read())
+        # with open("./course/grader/spotbugs-4.7.3.tgz", "rb") as f:
+        #     z.writestr("spotbugs-4.7.3.tgz", f.read())
 
         # Junit template file
         z.writestr("MainTest.java", self.get_source_code(submission))
