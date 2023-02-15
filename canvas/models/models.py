@@ -132,6 +132,19 @@ class CanvasCourseRegistration(models.Model):
                 tokens += 0
             else:
                 tokens += event.tokens_received(team)
+
+        from course.models.models import Question
+
+        practiced_uqjs = self.user.question_junctions.filter(
+            user=self.user,
+            question__course=None,
+            question__event=None,
+            question__is_verified=True,
+            question__question_status=Question.CREATED,
+        )
+        for uqj in practiced_uqjs:
+            tokens += uqj.tokens_received
+
         return tokens
 
     @property
