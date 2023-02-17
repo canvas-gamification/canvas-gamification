@@ -120,11 +120,12 @@ class JunitGrader(Grader):
         )
 
     def remove(self, submission):
-        token = submission.tokens[0]
-        requests.delete(
-            "{}/submissions/{}".format(self.BASE_URL, token),
-            headers=self.HEADERS,
-        )
+        pass
+        # token = submission.tokens[0]
+        # requests.delete(
+        #     "{}/submissions/{}".format(self.BASE_URL, token),
+        #     headers=self.HEADERS,
+        # )
 
     def evaluate(self, submission):
         submission.results = []
