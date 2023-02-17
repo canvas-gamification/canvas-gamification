@@ -14,6 +14,9 @@ class QuestionPermission(permissions.IsAuthenticated):
         if not super().has_permission(request, view):
             return False
 
+        if request.user.is_teacher:
+            return True
+
         if request.method == "POST":
             event_id = request.data.get("event", None)
             event = Event.objects.filter(id=event_id).first()
