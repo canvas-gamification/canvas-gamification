@@ -153,7 +153,7 @@ class JunitGrader(Grader):
                 "status": {
                     "id": 13,
                     "description": "Internal Error",
-                }
+                },
             }
         else:
             results = r.json()
