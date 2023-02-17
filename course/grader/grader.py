@@ -136,7 +136,22 @@ class JunitGrader(Grader):
             headers=self.HEADERS,
         )
 
-        results = r.json()
+        if r.status_code != 200:
+            results = {
+                "stdout": "",
+                "time": "0",
+                "memory": 0,
+                "stderr": "",
+                "token": "4e00f214-b8cb-4fcb-977b-429113c81ece",
+                "compile_output": "",
+                "message": "",
+                "status": {
+                    "id": 13,
+                    "description": "Internal Error",
+                }
+            }
+        else:
+            results = r.json()
         submission.results.append(results)
         if not submission.in_progress:
             self.remove(submission)
