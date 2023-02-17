@@ -509,6 +509,7 @@ class Submission(PolymorphicModel):
         super().save(*args, **kwargs)
 
         if not self.in_progress:
+            self.question.grader.clean_up(self)
             create_submission_evaluation_action(self)
 
     def submit(self):

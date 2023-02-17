@@ -12,6 +12,9 @@ class Grader:
     def grade(self, submission):
         raise NotImplementedError()
 
+    def clean_up(self, submission):
+        raise NotImplementedError()
+
 
 class MultipleChoiceGrader(Grader):
     def grade(self, submission):
@@ -43,6 +46,9 @@ class MultipleChoiceGrader(Grader):
             )
         else:
             return False, 0
+
+    def clean_up(self, submission):
+        pass
 
 
 class JunitGrader(Grader):
@@ -119,13 +125,12 @@ class JunitGrader(Grader):
             correct_testcases / total_testcases,
         )
 
-    def remove(self, submission):
-        pass
-        # token = submission.tokens[0]
-        # requests.delete(
-        #     "{}/submissions/{}".format(self.BASE_URL, token),
-        #     headers=self.HEADERS,
-        # )
+    def clean_up(self, submission):
+        token = submission.tokens[0]
+        requests.delete(
+            "{}/submissions/{}".format(self.BASE_URL, token),
+            headers=self.HEADERS,
+        )
 
     def evaluate(self, submission):
         submission.results = []
@@ -153,8 +158,6 @@ class JunitGrader(Grader):
         else:
             results = r.json()
         submission.results.append(results)
-        if not submission.in_progress:
-            self.remove(submission)
 
     def submit(self, submission):
         submission.tokens = []
