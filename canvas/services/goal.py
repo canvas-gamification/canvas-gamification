@@ -4,6 +4,7 @@ from course.models.java import JavaQuestion
 from course.models.models import Submission
 from course.models.multiple_choice import MultipleChoiceQuestion
 from course.models.parsons import ParsonsQuestion
+from course.services.question import get_solved_questions_ratio
 
 
 def get_submission_bugs(submissions):
@@ -54,6 +55,31 @@ def get_submission_stats(submissions):
     }
 
 
+def get_goal_item_conclusion(goal_item):
+    ratio = get_solved_questions_ratio(goal_item.goal.course_reg.user, goal_item.category_id, goal_item.difficulty)
+
+    if ratio < 0.2:
+        return {
+            "status": "NO_DATA",
+            "message": "To draw a conclusion, more questions need to be solved as the current data is insufficient.",
+        }
+    if ratio < 0.8:
+        return {
+            "status": "NEED_PRACTICE",
+            "message": "You need to solve more questions to improve your understanding of the topic. "
+            "Practice is essential for mastering any subject. Keep up the good work!",
+        }
+    if goal_item.difficulty != "HARD":
+        return {
+            "status": "MASTER",
+            "message": "Good work! It's time to start solving harder questions to improve your skills.",
+        }
+    return {
+        "status": "MASTER",
+        "message": "Good job! Now, let's move on to the next categories and continue building your skills.",
+    }
+
+
 def get_goal_item_stats(goal_item):
     mcq_ctype = ContentType.objects.get_for_model(MultipleChoiceQuestion)
     java_ctype = ContentType.objects.get_for_model(JavaQuestion)
@@ -99,6 +125,7 @@ def get_goal_item_stats(goal_item):
             "submissions": get_submission_stats(submissions),
             "old_submissions": get_submission_stats(old_submissions),
         },
+        "conclusion": get_goal_item_conclusion(goal_item),
     }
 
 
