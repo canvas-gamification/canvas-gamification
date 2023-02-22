@@ -131,7 +131,7 @@ class CourseSerializer(serializers.ModelSerializer):
             "description",
             "registration_mode",
             "registration_code",
-            "secret_registration_code"
+            "secret_registration_code",
         ]
         extra_kwargs = {"registration_code": {"write_only": True}}
 
