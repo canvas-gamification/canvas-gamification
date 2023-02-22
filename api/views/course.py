@@ -26,6 +26,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         "retrieve": CourseSerializer,
         "list": CourseListSerializer,
         "create": CourseCreateSerializer,
+        "edit": CourseCreateSerializer,
     }
     permission_classes = [CoursePermission]
     filter_backends = [
