@@ -73,7 +73,7 @@ def find_custom_bugs(file_name, code):
         + find_bugs_with_regex(
             file_name,
             code,
-            r"if\s*\([^()]*[^=]=[^=][^()]*\)\s*{",
+            r"if\s*\([^{}]*[^=]=[^=][^{}]*\)\s*{",
             "IF_ASSIGNMENT",
             "Assignment in if statement",
         )
@@ -87,7 +87,7 @@ def find_custom_bugs(file_name, code):
         + find_bugs_with_regex(
             file_name,
             code,
-            r"(if|for|while)\s*\([^()]*\)\s*;",
+            r"(if|for|while)\s*\([^{}]*\)\s*;",
             "SEMICOLON_AFTER_FLOW",
             "Useless flow controll",
         )
