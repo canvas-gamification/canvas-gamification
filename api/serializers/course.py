@@ -33,7 +33,6 @@ class CourseSerializer(serializers.ModelSerializer):
     is_registered = serializers.SerializerMethodField("get_is_registered")
     events = EventSerializer(many=True, read_only=True)
     token_use_options = TokenUseOptionSerializer(many=True, read_only=True)
-    question_set = QuestionSerializer(many=True, read_only=True)
     course_reg = serializers.SerializerMethodField("get_course_reg")
     has_create_event_permission = serializers.SerializerMethodField("get_create_event_permission")
     has_view_permission = serializers.SerializerMethodField("get_has_view_permission")
@@ -95,7 +94,6 @@ class CourseSerializer(serializers.ModelSerializer):
             "is_registered",
             "token_use_options",
             "events",
-            "question_set",
             "course_reg",
             "has_create_event_permission",
             "has_view_permission",
