@@ -34,7 +34,6 @@ class CourseSerializer(serializers.ModelSerializer):
     events = EventSerializer(many=True, read_only=True)
     token_use_options = TokenUseOptionSerializer(many=True, read_only=True)
     question_set = QuestionSerializer(many=True, read_only=True)
-    uqjs = serializers.SerializerMethodField("get_uqjs")
     course_reg = serializers.SerializerMethodField("get_course_reg")
     has_create_event_permission = serializers.SerializerMethodField("get_create_event_permission")
     has_view_permission = serializers.SerializerMethodField("get_has_view_permission")
@@ -45,22 +44,6 @@ class CourseSerializer(serializers.ModelSerializer):
         if request and hasattr(request, "user"):
             user = request.user
         return user
-
-    def get_uqjs(self, course):
-        user = self.get_user()
-
-        if not user.is_authenticated:
-            return []
-
-        is_instructor = course.has_edit_permission(user)
-        if is_instructor:
-            uqjs = UserQuestionJunction.objects.filter(user=user, question__course=course).all()
-        else:
-            uqjs = UserQuestionJunction.objects.none()
-
-        serialized_uqjs = [UQJSerializer(uqj).data for uqj in uqjs]
-
-        return serialized_uqjs
 
     def get_is_registered(self, course):
         user = self.get_user()
@@ -112,7 +95,6 @@ class CourseSerializer(serializers.ModelSerializer):
             "is_registered",
             "token_use_options",
             "events",
-            "uqjs",
             "question_set",
             "course_reg",
             "has_create_event_permission",
