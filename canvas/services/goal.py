@@ -55,24 +55,27 @@ def get_submission_stats(submissions):
     }
 
 
-def get_goal_item_conclusion(goal_item):
+def get_goal_item_conclusion(goal_item, stats):
     ratio = get_solved_questions_ratio(goal_item.goal.course_reg.user, goal_item.category_id, goal_item.difficulty)
+    category_name = goal_item.category.full_name
 
     if ratio < 0.2:
         return {
             "status": "NO_DATA",
-            "message": "To draw a conclusion, more questions need to be solved as the current data is insufficient.",
+            "message": "To make a recommendation, "
+                       "more questions need to be solved as the current data is insufficient.",
         }
-    if ratio < 0.8:
+    if ratio < 0.8 and stats['success_rate'] < 0.8:
         return {
             "status": "NEED_PRACTICE",
-            "message": "You need to solve more questions to improve your understanding of the topic. "
-            "Practice is essential for mastering any subject. Keep up the good work!",
+            "message": f"You need to solve more questions in {category_name} to improve your understanding of the "
+                       f"topic. Practice is essential for mastering any subject.",
         }
     if goal_item.difficulty != "HARD":
         return {
             "status": "MASTER",
-            "message": "Good work! It's time to start solving harder questions to improve your skills.",
+            "message": f"Good work! It's time to start solving harder questions in {category_name} "
+                       f"to improve your skills.",
         }
     return {
         "status": "MASTER",
@@ -104,6 +107,8 @@ def get_goal_item_stats(goal_item):
         submissions = submissions.filter(uqj__question__difficulty=goal_item.difficulty)
         old_submissions = old_submissions.filter(uqj__question__difficulty=goal_item.difficulty)
 
+    all_stats = get_submission_stats(submissions | old_submissions)
+
     return {
         "mcq": {
             "submissions": get_submission_stats(submissions.filter(uqj__question__polymorphic_ctype=mcq_ctype)),
@@ -125,7 +130,7 @@ def get_goal_item_stats(goal_item):
             "submissions": get_submission_stats(submissions),
             "old_submissions": get_submission_stats(old_submissions),
         },
-        "conclusion": get_goal_item_conclusion(goal_item),
+        "conclusion": get_goal_item_conclusion(goal_item, all_stats),
     }
 
 
