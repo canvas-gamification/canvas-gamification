@@ -50,4 +50,4 @@ def convert_camel_case_to_title_case(text):
 def format_test_name(name):
     title_case_str = convert_camel_case_to_title_case(name)
     title_case_str = title_case_str.replace("()", "").capitalize()
-    return re.sub(r'\[\d+\]$', '', title_case_str)
+    return re.sub(r"\[\d+\]$", "", title_case_str)

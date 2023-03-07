@@ -37,7 +37,7 @@ to change from LF ro CRLF.
 Dependencies
 ------------
 
-* Python 3.7
+* Python 3.8
     * *Required Packages* is listed in requirements.txt
 * Docker
     * Required to run judge0 locally or deploying the website.
