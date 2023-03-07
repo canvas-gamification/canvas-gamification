@@ -89,7 +89,7 @@ def find_custom_bugs(file_name, code):
             code,
             r"(if|for|while)\s*\([^{}]*\)\s*;",
             "SEMICOLON_AFTER_FLOW",
-            "Useless flow controll",
+            "Useless flow control",
         )
     )
 
