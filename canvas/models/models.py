@@ -253,18 +253,21 @@ class Event(models.Model):
             return "Closed"
         return "Open"
 
+    def is_author(self, user):
+        return self.author == user
+
     def has_view_permission(self, user):
-        if self.course.is_instructor(user) or user.is_teacher:
+        if self.course.is_instructor(user) or user.is_teacher or self.is_author(user):
             return True
         return self.is_open and self.course.is_registered(user)
 
     def has_edit_permission(self, user):
         course_reg = get_course_registration(user, self.course)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR or self.is_author(user)
 
     def has_create_permission(self, user):
         course_reg = get_course_registration(user, self.course)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR or self.is_author(user)
 
     def is_allowed_to_open(self, user):
         return self.course.is_registered(user) and self.is_open
