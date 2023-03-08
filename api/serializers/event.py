@@ -51,6 +51,7 @@ class EventSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "course",
+            "author",
             "is_allowed_to_open",
             "has_edit_permission",
             "is_open",
