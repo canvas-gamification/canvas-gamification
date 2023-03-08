@@ -35,6 +35,7 @@ class CourseSerializer(serializers.ModelSerializer):
     token_use_options = TokenUseOptionSerializer(many=True, read_only=True)
     course_reg = serializers.SerializerMethodField("get_course_reg")
     has_create_event_permission = serializers.SerializerMethodField("get_create_event_permission")
+    has_create_challenge_permission = serializers.SerializerMethodField("get_create_challenge_permission")
     has_view_permission = serializers.SerializerMethodField("get_has_view_permission")
 
     def get_user(self):
@@ -70,6 +71,15 @@ class CourseSerializer(serializers.ModelSerializer):
 
         return course.has_create_event_permission(user)
 
+    def get_create_challenge_permission(self, course):
+        user = self.get_user()
+
+        # if user is not logged in or the request has no user attached
+        if not user.is_authenticated:
+            return False
+
+        return course.has_create_challenge_permission(user)
+
     def get_has_view_permission(self, course):
         user = self.get_user()
 
@@ -96,6 +106,7 @@ class CourseSerializer(serializers.ModelSerializer):
             "events",
             "course_reg",
             "has_create_event_permission",
+            "has_create_challenge_permission",
             "has_view_permission",
             "description",
             "registration_mode",
