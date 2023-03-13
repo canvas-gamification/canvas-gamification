@@ -47,7 +47,7 @@ class EventViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         request = serializer.context["request"]
-        serializer.save()
+        event = serializer.save(author=request.user)
         create_event_action(request.user, serializer.data)
 
     def perform_update(self, serializer):

@@ -190,6 +190,7 @@ class Event(models.Model):
     challenge_type = models.CharField(max_length=500, choices=CHALLENGE_TYPE_CHOICES, blank=True, null=True)
     challenge_type_value = models.FloatField(blank=True, null=True)
     course = models.ForeignKey(CanvasCourse, related_name="events", on_delete=models.CASCADE)
+    author = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
     count_for_tokens = models.BooleanField()
     featured = models.BooleanField(default=False)
     max_team_size = models.IntegerField(default=3, validators=[MinValueValidator(1)])
@@ -252,18 +253,21 @@ class Event(models.Model):
             return "Closed"
         return "Open"
 
+    def is_author(self, user):
+        return self.author == user
+
     def has_view_permission(self, user):
-        if self.course.is_instructor(user) or user.is_teacher:
+        if self.course.is_instructor(user) or user.is_teacher or self.is_author(user):
             return True
         return self.is_open and self.course.is_registered(user)
 
     def has_edit_permission(self, user):
         course_reg = get_course_registration(user, self.course)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR or self.is_author(user)
 
     def has_create_permission(self, user):
         course_reg = get_course_registration(user, self.course)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR or self.is_author(user)
 
     def is_allowed_to_open(self, user):
         return self.course.is_registered(user) and self.is_open
