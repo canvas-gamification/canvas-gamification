@@ -37,6 +37,7 @@ class CourseSerializer(serializers.ModelSerializer):
     has_create_event_permission = serializers.SerializerMethodField("get_create_event_permission")
     has_create_challenge_permission = serializers.SerializerMethodField("get_create_challenge_permission")
     has_view_permission = serializers.SerializerMethodField("get_has_view_permission")
+    secret_registration_code = serializers.SerializerMethodField("get_secret_registration_code")
 
     def get_user(self):
         user = MyAnonymousUser()
@@ -89,6 +90,16 @@ class CourseSerializer(serializers.ModelSerializer):
 
         return course.has_view_permission(user)
 
+    def get_secret_registration_code(self, course):
+        user = self.get_user()
+
+        # if user is not logged in or the request has no user attached
+        if not user.is_authenticated:
+            return False
+        if course.has_edit_permission(user):
+            return course.registration_code
+        return None
+
     class Meta:
         model = CanvasCourse
         fields = [
@@ -111,6 +122,7 @@ class CourseSerializer(serializers.ModelSerializer):
             "description",
             "registration_mode",
             "registration_code",
+            "secret_registration_code",
         ]
         extra_kwargs = {"registration_code": {"write_only": True}}
 
