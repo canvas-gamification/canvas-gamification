@@ -1,7 +1,7 @@
 from rest_framework import permissions
 from rest_framework.permissions import SAFE_METHODS
 
-from canvas.models.models import Event
+from canvas.models.models import Event, CanvasCourse
 
 
 class TeacherAccessPermission(permissions.IsAuthenticated):
@@ -62,10 +62,21 @@ class CoursePermission(permissions.IsAuthenticated):
 
 
 class EventCreatePermission(permissions.IsAuthenticated):
-    def has_object_permission(self, request, view, obj):
-        user = request.user
+    def has_permission(self, request, view):
+        if not super().has_permission(request, view):
+            return False
+        if request.user.is_teacher:
+            return True
+
         if request.method == "POST":
-            return obj.has_create_permission(user)
+            course_id = request.data.get("course", None)
+            type = request.data.get("type", None)
+            course = CanvasCourse.objects.filter(id=course_id).first()
+            if not course:
+                return False
+            if type == "CHALLENGE":
+                return course.has_create_challenge_permission(request.user)
+            return course.has_create_event_permission(request.user)
         return True
 
 
