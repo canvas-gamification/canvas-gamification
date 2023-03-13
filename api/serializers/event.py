@@ -65,3 +65,4 @@ class EventSerializer(serializers.ModelSerializer):
             "challenge_type",
             "challenge_type_value",
         ]
+        read_only_fields = ["author"]
