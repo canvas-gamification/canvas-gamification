@@ -59,8 +59,7 @@ class CanvasCourse(models.Model):
         return user.is_teacher or course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
     def has_create_challenge_permission(self, user):
-        course_reg = get_course_registration(user, self)
-        return user.is_teacher or course_reg.registration_type in [reg_type[0] for reg_type in REGISTRATION_TYPE]
+        return user.is_teacher or self.is_instructor(user) or self.is_registered(user)
 
 
 def random_verification_code():
