@@ -134,8 +134,8 @@ class EventViewSet(viewsets.ModelViewSet):
                 "member_names": team.member_names,
                 "team_id": team.id,
             }
-            for team in event.team_set.all() if
-            team.course_registrations.all().filter(registration_type="STUDENT").all()
+            for team in event.team_set.all()
+            if team.course_registrations.all().filter(registration_type="STUDENT").all()
         ]
 
         return Response(leader_board)
