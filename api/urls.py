@@ -32,12 +32,13 @@ from api.views import (
     UpdateUQJViewSet,
     QuestionReportViewSet,
 )
+from api.views.action import ExportActionViewSet
 
 from api.views.admin import AdminViewSet
 from api.views.analytics import AnalyticsViewSet
 from api.views.course_admin import CourseAdminViewSet
 from api.views.goal import GoalViewSet, GoalItemViewSet
-from api.views.page_view import PageViewViewSet
+from api.views.page_view import PageViewViewSet, ExportPageViewViewSet
 from api.views.survey import SurveyViewSet
 from api.views.team import TeamViewSet
 
@@ -91,6 +92,8 @@ router.register(r"goal", GoalViewSet, basename="goal")
 router.register(r"goal-item", GoalItemViewSet, basename="goal-item")
 router.register(r"page-view", PageViewViewSet, basename="page-view")
 router.register(r"survey", SurveyViewSet, basename="survey")
+router.register(r"export/page-view", ExportPageViewViewSet, basename='export-page-view')
+router.register(r"export/action", ExportActionViewSet, basename='export-action')
 
 app_name = "api"
 urlpatterns = [
