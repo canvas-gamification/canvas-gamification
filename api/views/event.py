@@ -135,7 +135,7 @@ class EventViewSet(viewsets.ModelViewSet):
                 "team_id": team.id,
             }
             for team in event.team_set.all()
-            if team.course_registrations.all().filter(status="VERIFIED", registration_type="STUDENT").all()
+            if team.course_registrations.filter(status="VERIFIED", registration_type="STUDENT").exists()
         ]
 
         return Response(leader_board)
