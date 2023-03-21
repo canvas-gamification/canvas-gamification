@@ -151,7 +151,9 @@ class CourseViewSet(viewsets.ModelViewSet):
                 "token": course_reg.total_tokens_received,
                 "course_reg_id": course_reg.id,
             }
-            for course_reg in course.canvascourseregistration_set.all().filter(status="VERIFIED").all()
+            for course_reg in course.canvascourseregistration_set.filter(
+                status="VERIFIED", registration_type="STUDENT"
+            ).all()
         ]
 
         return Response(leader_board)
