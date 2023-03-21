@@ -82,6 +82,45 @@ def add_question_set(event, category_id, difficulty, number_of_questions):
         difficulty=difficulty,
     )[:number_of_questions]
 
-    index = 0  # in case items is empty and you need it after the loop
-    for index, question in enumerate(questions, start=1):
-        question.copy_to_event(event, str(index))
+    question_titles = [question["title"] for question in event.question_set.values("title")]
+    question_titles.sort()
+    print(question_titles)
+
+    if len(question_titles) == 0:
+        index = 0  # in case items is empty, and you need it after the loop
+        for index, question in enumerate(questions, start=1):
+            question.copy_to_event(event, str(index))
+        return
+
+    available_titles = get_available_question_titles(question_titles)
+    if len(available_titles) == 0:
+        title = len(question_titles) + 1
+        index = 0
+        for index, question in enumerate(questions, start=0):
+            question.copy_to_event(event, str(index + title))
+    else:
+        for index, question in enumerate(questions):
+            max_idx_of_available_titles = len(available_titles) - 1
+            if index > max_idx_of_available_titles:
+                question.copy_to_event(event, str(int(question_titles[-1]) + (index - max_idx_of_available_titles)))
+            else:
+                question.copy_to_event(event, str(available_titles[index]))
+
+
+# TODO: This is based on the assumption that the question names are stored in numbers...hmmmm
+def get_available_question_titles(question_titles: list):
+    available_titles = []
+    diff = 1
+    question_titles = [int(title) for title in question_titles]
+
+    if question_titles[0] != 1:
+        while question_titles[0] > diff:
+            available_titles.append(str(diff))
+            diff += 1
+    for i in range(0, len(question_titles)):
+        if question_titles[i] - 1 != diff:
+            while question_titles[i] > diff + i:
+                available_titles.append(str(diff + i))
+                diff += 1
+
+    return available_titles
