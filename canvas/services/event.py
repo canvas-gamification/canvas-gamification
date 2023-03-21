@@ -1,5 +1,6 @@
 from course.models.models import Submission, Question
 from course.models.multiple_choice import MultipleChoiceQuestion
+import re
 
 
 def _get_status_messages(submissions):
@@ -109,9 +110,24 @@ def add_question_set(event, category_id, difficulty, number_of_questions):
 
 # TODO: This is based on the assumption that the question names are stored in numbers...hmmmm
 def get_available_question_titles(question_titles: list):
+    # TODO: if the existing question name is not in "1", "5" form. (v)
+    #  Other naming possibilities:
+    #  (1) name in the form of "Q1": string with number.
+    #  (2) name in the form of "Question one": string without number.
     available_titles = []
     diff = 1
-    question_titles = [int(title) for title in question_titles]
+
+    # modify question_titiles so it only contains pure numbers titles. Titles w/o numbers will be removed
+    for idx, question_title in enumerate(question_titles):
+        if has_numbers(question_title):
+            # nums_in_str = ''.join((char if char in '0123456789' else ' ') for char in question_title)
+            # listOfNumbers = [int(i) for i in nums_in_str.split()]
+            # question_titles[idx] = listOfNumbers[0]
+            question_titles[idx] = scrape_number_from_string(question_title)
+        # else:
+        #     del question_titles[idx]
+
+        #TODO: remove question_title that don't numbers in it. Should not remove while iterating through the list?
 
     if question_titles[0] != 1:
         while question_titles[0] > diff:
@@ -124,3 +140,11 @@ def get_available_question_titles(question_titles: list):
                 diff += 1
 
     return available_titles
+
+
+def has_numbers(string):
+    return any(char.isdigit() for char in string)
+
+
+def scrape_number_from_string(string):
+    return re.search('[0-9]+', string).group()
