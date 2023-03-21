@@ -110,35 +110,39 @@ def add_question_set(event, category_id, difficulty, number_of_questions):
 
 # TODO: This is based on the assumption that the question names are stored in numbers...hmmmm
 def get_available_question_titles(question_titles: list):
-    # TODO: if the existing question name is not in "1", "5" form. (v)
-    #  Other naming possibilities:
-    #  (1) name in the form of "Q1": string with number.
-    #  (2) name in the form of "Question one": string without number.
     available_titles = []
     diff = 1
 
+    to_delete_titles = []
     # modify question_titiles so it only contains pure numbers titles. Titles w/o numbers will be removed
     for idx, question_title in enumerate(question_titles):
         if has_numbers(question_title):
-            # nums_in_str = ''.join((char if char in '0123456789' else ' ') for char in question_title)
-            # listOfNumbers = [int(i) for i in nums_in_str.split()]
-            # question_titles[idx] = listOfNumbers[0]
+            print('in-if', question_title)
             question_titles[idx] = scrape_number_from_string(question_title)
-        # else:
-        #     del question_titles[idx]
+            print('in-if', question_titles[idx])
+        else:
+            print('in-else', question_title)
+            to_delete_titles.append(question_titles[idx])
 
-        #TODO: remove question_title that don't numbers in it. Should not remove while iterating through the list?
+    for e in to_delete_titles:
+        question_titles.remove(e)
+
+    question_titles = [int(title) for title in question_titles]
+    question_titles.sort()
+    print(question_titles)
 
     if question_titles[0] != 1:
         while question_titles[0] > diff:
             available_titles.append(str(diff))
             diff += 1
+    print(available_titles)
     for i in range(0, len(question_titles)):
         if question_titles[i] - 1 != diff:
             while question_titles[i] > diff + i:
                 available_titles.append(str(diff + i))
                 diff += 1
 
+    print(available_titles)
     return available_titles
 
 
