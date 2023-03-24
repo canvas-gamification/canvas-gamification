@@ -74,6 +74,14 @@ def set_featured(event):
 
 
 def add_question_set(event, category_id, difficulty, number_of_questions):
+    def begins_with_numbers(string):
+        # return any(char.isdigit() for char in string)
+        return string[0].isdigit()
+
+    def extract_1st_number(string):
+        # return re.search('[0-9]+', string).group()
+        return re.findall(r'\d+', string)[0]
+
     questions = Question.objects.filter(
         event=None,
         course=None,
@@ -83,72 +91,20 @@ def add_question_set(event, category_id, difficulty, number_of_questions):
         difficulty=difficulty,
     )[:number_of_questions]
 
-    question_titles = [question["title"] for question in event.question_set.values("title")]
-    question_titles.sort()
-    print(question_titles)
+    used_titles = [question["title"] for question in event.question_set.values("title")]
+    used_titles = [extract_1st_number(title) for title in used_titles if begins_with_numbers(title)]
+    used_titles.sort()
+    print(used_titles)
 
-    if len(question_titles) == 0:
-        index = 0  # in case items is empty, and you need it after the loop
-        for index, question in enumerate(questions, start=1):
-            question.copy_to_event(event, str(index))
+    if len(used_titles) == 0:
+        idx = 0  # in case items is empty, and you need it after the loop
+        for idx, q in enumerate(questions, start=1):
+            q.copy_to_event(event, str(idx))
         return
 
-    available_titles = get_available_question_titles(question_titles)
-    if len(available_titles) == 0:
-        title = len(question_titles) + 1
-        index = 0
-        for index, question in enumerate(questions, start=0):
-            question.copy_to_event(event, str(index + title))
-    else:
-        for index, question in enumerate(questions):
-            max_idx_of_available_titles = len(available_titles) - 1
-            if index > max_idx_of_available_titles:
-                question.copy_to_event(event, str(int(question_titles[-1]) + (index - max_idx_of_available_titles)))
-            else:
-                question.copy_to_event(event, str(available_titles[index]))
-
-
-# TODO: This is based on the assumption that the question names are stored in numbers...hmmmm
-def get_available_question_titles(question_titles: list):
-    available_titles = []
-    diff = 1
-
-    to_delete_titles = []
-    # modify question_titiles so it only contains pure numbers titles. Titles w/o numbers will be removed
-    for idx, question_title in enumerate(question_titles):
-        if has_numbers(question_title):
-            print('in-if', question_title)
-            question_titles[idx] = scrape_number_from_string(question_title)
-            print('in-if', question_titles[idx])
-        else:
-            print('in-else', question_title)
-            to_delete_titles.append(question_titles[idx])
-
-    for e in to_delete_titles:
-        question_titles.remove(e)
-
-    question_titles = [int(title) for title in question_titles]
-    question_titles.sort()
-    print(question_titles)
-
-    if question_titles[0] != 1:
-        while question_titles[0] > diff:
-            available_titles.append(str(diff))
-            diff += 1
-    print(available_titles)
-    for i in range(0, len(question_titles)):
-        if question_titles[i] - 1 != diff:
-            while question_titles[i] > diff + i:
-                available_titles.append(str(diff + i))
-                diff += 1
-
-    print(available_titles)
-    return available_titles
-
-
-def has_numbers(string):
-    return any(char.isdigit() for char in string)
-
-
-def scrape_number_from_string(string):
-    return re.search('[0-9]+', string).group()
+    title = 1
+    for idx, q in enumerate(questions):
+        while used_titles.count(str(title)) != 0:
+            title += 1
+        q.copy_to_event(event, str(title))
+        title += 1
