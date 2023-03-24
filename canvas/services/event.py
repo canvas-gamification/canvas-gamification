@@ -74,7 +74,7 @@ def set_featured(event):
 
 
 def add_question_set(event, category_id, difficulty, number_of_questions):
-    def begins_with_numbers(string):
+    def begins_with_number(string):
         # return any(char.isdigit() for char in string)
         return string[0].isdigit()
 
@@ -92,7 +92,7 @@ def add_question_set(event, category_id, difficulty, number_of_questions):
     )[:number_of_questions]
 
     used_titles = [question["title"] for question in event.question_set.values("title")]
-    used_titles = [extract_1st_number(title) for title in used_titles if begins_with_numbers(title)]
+    used_titles = [extract_1st_number(title) for title in used_titles if begins_with_number(title)]
     used_titles.sort()
     print(used_titles)
 
