@@ -80,7 +80,7 @@ def add_question_set(event, category_id, difficulty, number_of_questions):
 
     def extract_1st_number(string):
         # return re.search('[0-9]+', string).group()
-        return re.findall(r'\d+', string)[0]
+        return re.findall(r"\d+", string)[0]
 
     questions = Question.objects.filter(
         event=None,

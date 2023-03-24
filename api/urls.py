@@ -92,8 +92,8 @@ router.register(r"goal", GoalViewSet, basename="goal")
 router.register(r"goal-item", GoalItemViewSet, basename="goal-item")
 router.register(r"page-view", PageViewViewSet, basename="page-view")
 router.register(r"survey", SurveyViewSet, basename="survey")
-router.register(r"export/page-view", ExportPageViewViewSet, basename='export-page-view')
-router.register(r"export/action", ExportActionViewSet, basename='export-action')
+router.register(r"export/page-view", ExportPageViewViewSet, basename="export-page-view")
+router.register(r"export/action", ExportActionViewSet, basename="export-action")
 
 app_name = "api"
 urlpatterns = [
