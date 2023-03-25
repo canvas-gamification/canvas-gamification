@@ -123,3 +123,43 @@ def send_contact_us_email(fullname, email, comment):
         to=[to_email],
     )
     email.send()
+
+
+def send_question_report_email(question_report):
+    mail_subject = "A question was reported"
+    message = render_to_string(
+        "accounts/question_report_email.html",
+        {
+            "question_id": question_report.question_id,
+            "details": question_report.report_details,
+            "type": question_report.report,
+            "email": question_report.user.email,
+        },
+    )
+    to_email = "bowen.hui@ubc.ca"
+    email = EmailMessage(
+        mail_subject,
+        message,
+        from_email=settings.EMAIL_ACTIVATION,
+        to=[to_email],
+    )
+    email.send()
+
+
+def course_create_email(course):
+    mail_subject = "A course was created"
+    message = render_to_string(
+        "accounts/course_create_email.html",
+        {
+            "course_id": course.id,
+            "email": course.instructor.email,
+        },
+    )
+    to_email = "bowen.hui@ubc.ca"
+    email = EmailMessage(
+        mail_subject,
+        message,
+        from_email=settings.EMAIL_ACTIVATION,
+        to=[to_email],
+    )
+    email.send()

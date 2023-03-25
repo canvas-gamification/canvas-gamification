@@ -1,8 +1,8 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 
+from accounts.utils.email_functions import send_question_report_email
 from api.serializers import QuestionReportSerializer
 from general.models.question_report import QuestionReport
 from general.services.action import create_question_report_action
@@ -16,9 +16,9 @@ class QuestionReportViewSet(viewsets.ModelViewSet):
     ]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        report = serializer.save(user=self.request.user)
         create_question_report_action(serializer.data, self.request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        send_question_report_email(report)
 
     def get_queryset(self):
         user = self.request.user

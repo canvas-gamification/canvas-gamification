@@ -6,6 +6,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
+from accounts.utils.email_functions import course_create_email
 from api.serializers import CourseSerializer, CourseListSerializer, CanvasCourseRegistrationSerializer
 from api.permissions import CoursePermission
 import api.error_messages as ERROR_MESSAGES
@@ -78,6 +79,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         request = serializer.context["request"]
         course = serializer.save(instructor=request.user)
+        course_create_email(course)
         register_instructor(request.user, course)
 
     @action(detail=True, methods=["post"], url_path="register")
