@@ -300,7 +300,7 @@ class Event(models.Model):
 # class EventSet(models.Model):
 #     name = models.CharField(max_length=500)
 #     course = models.ForeignKey(CanvasCourse, related_name="eventSets", on_delete=models.CASCADE)
-#     event_set = models.ManyToManyField(Event, related_name="eventSets", blank=True)
+#     events = models.ManyToManyField(Event, related_name="eventSets", blank=True)
 #     tokens = models.FloatField()
 
 
