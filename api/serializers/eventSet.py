@@ -7,6 +7,7 @@
 #     class Meta:
 #         model = EventSet
 #         fields = [
+#             "id",
 #             "name",
 #             "course",
 #             "event",
