@@ -2,7 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 
 from api.serializers.eventSet import EventSetSerializer
-from canvas.models.event_set import EventSet
+from canvas.models.models import EventSet
 
 
 class EventSetViewSet(viewsets.ModelViewSet):

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from canvas.models.event_set import EventSet
+from canvas.models.models import EventSet
 
 
 class EventSetSerializer(serializers.ModelSerializer):
