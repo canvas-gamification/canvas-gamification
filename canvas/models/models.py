@@ -301,7 +301,7 @@ class Event(models.Model):
 #     name = models.CharField(max_length=500)
 #     course = models.ForeignKey(CanvasCourse, related_name="eventSets", on_delete=models.CASCADE)
 #     events = models.ManyToManyField(Event, related_name="eventSets", blank=True)
-#     token_worth = models.FloatField()
+#     tokens_worth = models.FloatField()
 
 
 class TokenUseOption(models.Model):

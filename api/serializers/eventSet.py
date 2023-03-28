@@ -11,5 +11,5 @@
 #             "name",
 #             "course",
 #             "event",
-#             "token_worth",
+#             "tokens_worth",
 #         ]
