@@ -11,6 +11,7 @@ from api.serializers import CourseSerializer, CourseListSerializer, CanvasCourse
 from api.permissions import CoursePermission
 import api.error_messages as ERROR_MESSAGES
 from api.serializers.course import CourseCreateSerializer
+# from api.serializers.eventSet import EventSetSerializer
 from canvas.models.models import CanvasCourse, Event
 from canvas.services.course import register_instructor
 from canvas.utils.utils import get_course_registration
@@ -159,3 +160,14 @@ class CourseViewSet(viewsets.ModelViewSet):
         ]
 
         return Response(leader_board)
+
+    # @action(detail=True, methods=["get"], url_path="course-event-sets")
+    # def course_event_sets(self, request, pk):
+    #     """
+    #     Given course id, return all event-sets within a course
+    #     """
+    #     course = get_object_or_404(CanvasCourse, id=pk)
+    #
+    #     event_sets = EventSetSerializer(course.eventSets, many=True)
+    #
+    #     return Response(event_sets.data)

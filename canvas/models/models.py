@@ -148,6 +148,11 @@ class CanvasCourseRegistration(models.Model):
         for uqj in practiced_uqjs:
             tokens += uqj.tokens_received
 
+        # event_sets = EventSet.objects.filter(course=self.course)
+        # for event_set in event_sets:
+        #     if all(event.is_closed for event in event_set):
+        #         tokens += event_set.tokens_worth
+
         return tokens
 
     @property
@@ -297,11 +302,16 @@ class Event(models.Model):
         return cloned_event
 
 
-# class EventSet(models.Model):
-#     name = models.CharField(max_length=500)
-#     course = models.ForeignKey(CanvasCourse, related_name="eventSets", on_delete=models.CASCADE)
-#     events = models.ManyToManyField(Event, related_name="eventSets", blank=True)
-#     tokens_worth = models.FloatField()
+class EventSet(models.Model):
+    name = models.CharField(max_length=500)
+    course = models.ForeignKey(CanvasCourse, related_name="eventSets", on_delete=models.CASCADE)
+    events = models.ManyToManyField(Event, related_name="eventSets", blank=True)
+    tokens_worth = models.FloatField()
+
+    @property
+    def is_closed(self):
+        return self.events.filter(end_date__lt=timezone.now()).count() == self.events.count()
+
 
 
 class TokenUseOption(models.Model):

@@ -1,5 +1,7 @@
 from functools import reduce
 from django.db.models import Sum, F, Count
+
+# from course.models.models import UserQuestionJunction
 from course.utils.utils import get_token_value
 
 
@@ -36,3 +38,13 @@ def get_course_registration(user, course):
 
     course_reg.save()
     return course_reg
+
+
+# def get_has_solved_event(event, user):
+#     event_questions = event.question_set.all()
+#     uqjs = UserQuestionJunction.objects.filter(user_id=user.id, is_solved=True, question__in=event_questions)
+#
+#     if uqjs.exists():
+#         return True
+#
+#     return False
