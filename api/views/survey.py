@@ -43,17 +43,17 @@ class SurveyViewSet(viewsets.mixins.CreateModelMixin, viewsets.mixins.ListModelM
             end_date__lt=timezone.now() + timezone.timedelta(weeks=4),
         ).all()
 
-        has_final_survey = Survey.objects.filter(user=request.user, code='final').exists()
-        has_initial_survey = Survey.objects.filter(user=request.user, code='initial').exists()
+        has_final_survey = Survey.objects.filter(user=request.user, code="final").exists()
+        has_initial_survey = Survey.objects.filter(user=request.user, code="initial").exists()
 
         if not has_initial_survey:
-            return Response({"code": 'initial'})
+            return Response({"code": "initial"})
 
         if has_final_survey:
             return Response({"code": None})
 
         for course in courses:
             if course.is_registered(request.user):
-                return Response({"code": 'final'})
+                return Response({"code": "final"})
 
         return Response({"code": None})
