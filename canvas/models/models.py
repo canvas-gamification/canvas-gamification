@@ -313,7 +313,6 @@ class EventSet(models.Model):
         return self.events.filter(end_date__lt=timezone.now()).count() == self.events.count()
 
 
-
 class TokenUseOption(models.Model):
     course = models.ForeignKey(
         CanvasCourse,

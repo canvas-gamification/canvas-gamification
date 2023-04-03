@@ -11,6 +11,7 @@ from api.serializers import CourseSerializer, CourseListSerializer, CanvasCourse
 from api.permissions import CoursePermission
 import api.error_messages as ERROR_MESSAGES
 from api.serializers.course import CourseCreateSerializer
+
 # from api.serializers.eventSet import EventSetSerializer
 from canvas.models.models import CanvasCourse, Event
 from canvas.services.course import register_instructor
