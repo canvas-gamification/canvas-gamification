@@ -75,8 +75,8 @@ def set_featured(event):
 
 def add_question_set(event, category_id, difficulty, number_of_questions):
     def extract_1st_number(string):
-        ls = re.findall(r"\d+", string)
-        return ls[0] if ls else -1
+        g = re.search(r"\d+", string)
+        return g.group() if g else -1
 
     questions = Question.objects.filter(
         event=None,
@@ -87,11 +87,10 @@ def add_question_set(event, category_id, difficulty, number_of_questions):
         difficulty=difficulty,
     )[:number_of_questions]
 
-    used_titles = [question["title"] for question in event.question_set.values("title")]
-    used_titles = [extract_1st_number(title) for title in used_titles]
+    used_titles = [extract_1st_number(question["title"]) for question in event.question_set.values("title")]
 
     title = 1
-    for idx, q in enumerate(questions):
+    for q in questions:
         while str(title) in used_titles:
             title += 1
         q.copy_to_event(event, str(title))
