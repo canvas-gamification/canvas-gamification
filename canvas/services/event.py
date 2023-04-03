@@ -1,5 +1,6 @@
 from course.models.models import Submission, Question
 from course.models.multiple_choice import MultipleChoiceQuestion
+import re
 
 
 def _get_status_messages(submissions):
@@ -73,6 +74,10 @@ def set_featured(event):
 
 
 def add_question_set(event, category_id, difficulty, number_of_questions):
+    def extract_1st_number(string):
+        g = re.search(r"\d+", string)
+        return g.group() if g else -1
+
     questions = Question.objects.filter(
         event=None,
         course=None,
@@ -82,6 +87,11 @@ def add_question_set(event, category_id, difficulty, number_of_questions):
         difficulty=difficulty,
     )[:number_of_questions]
 
-    index = 0  # in case items is empty and you need it after the loop
-    for index, question in enumerate(questions, start=1):
-        question.copy_to_event(event, str(index))
+    used_titles = [extract_1st_number(question["title"]) for question in event.question_set.values("title")]
+
+    title = 1
+    for q in questions:
+        while str(title) in used_titles:
+            title += 1
+        q.copy_to_event(event, str(title))
+        title += 1
