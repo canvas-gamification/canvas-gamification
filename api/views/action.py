@@ -67,6 +67,7 @@ class ExportActionViewSet(
         "time_created": ["range", "lt", "gt"],
         "time_modified": ["range", "lt", "gt"],
         "actor": ["exact"],
+        "actor__role": ["exact"],
         "token_change": ["exact", "lt", "gt"],
         "status": ["exact"],
         "verb": ["exact"],

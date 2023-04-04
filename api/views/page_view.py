@@ -49,6 +49,7 @@ class ExportPageViewViewSet(
     filterset_fields = {
         "time_created": ["range", "lt", "gt"],
         "user": ["exact"],
+        "user__role": ["exact"],
     }
     search_fields = [
         "url",
