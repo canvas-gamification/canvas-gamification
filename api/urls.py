@@ -41,6 +41,7 @@ from api.views.goal import GoalViewSet, GoalItemViewSet
 from api.views.page_view import PageViewViewSet, ExportPageViewViewSet
 from api.views.survey import SurveyViewSet
 from api.views.team import TeamViewSet
+from api.views.user import ExportUserViewSet
 from api.views.user_consent import ExportUserConsentViewSet
 
 router = DefaultRouter()
@@ -96,6 +97,7 @@ router.register(r"survey", SurveyViewSet, basename="survey")
 router.register(r"export/page-view", ExportPageViewViewSet, basename="export-page-view")
 router.register(r"export/action", ExportActionViewSet, basename="export-action")
 router.register(r"export/consent", ExportUserConsentViewSet, basename="export-consent")
+router.register(r"export/user", ExportUserViewSet, basename="export-user")
 
 app_name = "api"
 urlpatterns = [
