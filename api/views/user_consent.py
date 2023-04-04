@@ -30,10 +30,7 @@ class UserConsentViewSet(viewsets.ModelViewSet):
             remove_user_consent_action(request.user, request.data)
 
 
-class ExportUserConsentViewSet(
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet
-):
+class ExportUserConsentViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = UserConsent.objects.all()
     serializer_class = UserConsentSerializer
     permission_classes = [TeacherAccessPermission]
