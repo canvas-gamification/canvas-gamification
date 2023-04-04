@@ -30,5 +30,5 @@ class ExportUserViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     @property
     def default_response_headers(self):
         headers = super().default_response_headers
-        headers["Content-Disposition"] = 'attachment; filename="consents.csv"'
+        headers["Content-Disposition"] = 'attachment; filename="users.csv"'
         return headers

@@ -39,7 +39,7 @@ from api.views.analytics import AnalyticsViewSet
 from api.views.course_admin import CourseAdminViewSet
 from api.views.goal import GoalViewSet, GoalItemViewSet
 from api.views.page_view import PageViewViewSet, ExportPageViewViewSet
-from api.views.survey import SurveyViewSet
+from api.views.survey import SurveyViewSet, ExportSurveyViewSet
 from api.views.team import TeamViewSet
 from api.views.user import ExportUserViewSet
 from api.views.user_consent import ExportUserConsentViewSet
@@ -98,6 +98,7 @@ router.register(r"export/page-view", ExportPageViewViewSet, basename="export-pag
 router.register(r"export/action", ExportActionViewSet, basename="export-action")
 router.register(r"export/consent", ExportUserConsentViewSet, basename="export-consent")
 router.register(r"export/user", ExportUserViewSet, basename="export-user")
+router.register(r"export/survey", ExportSurveyViewSet, basename="export-survey")
 
 app_name = "api"
 urlpatterns = [

@@ -1,10 +1,12 @@
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins, filters
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from api.permissions import TeacherAccessPermission
+from api.renderers import CSVRenderer
 from api.serializers.survey import SurveySerializer
 from canvas.models.models import CanvasCourse
 from general.models.survey import Survey
@@ -57,3 +59,28 @@ class SurveyViewSet(viewsets.mixins.CreateModelMixin, viewsets.mixins.ListModelM
                 return Response({"code": "final"})
 
         return Response({"code": None})
+
+
+class ExportSurveyViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Survey.objects.all()
+    serializer_class = SurveySerializer
+    permission_classes = [TeacherAccessPermission]
+    renderer_classes = [CSVRenderer]
+
+    filter_backends = [filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend]
+    ordering_fields = [
+        "time_created",
+    ]
+    filterset_fields = {
+        "user": ["exact"],
+        "user__role": ["exact"],
+        "time_created": ["range", "lt", "gt"],
+        "code": ["exact"],
+    }
+    search_fields = ["response"]
+
+    @property
+    def default_response_headers(self):
+        headers = super().default_response_headers
+        headers["Content-Disposition"] = 'attachment; filename="surveys.csv"'
+        return headers
