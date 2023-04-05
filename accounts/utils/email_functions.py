@@ -115,7 +115,7 @@ def send_contact_us_email(fullname, email, comment):
             "comment": comment,
         },
     )
-    to_email = "ubco.gamification@gmail.com"
+    to_email = "bowen.hui@ubc.ca"
     email = EmailMessage(
         mail_subject,
         message,

@@ -1,10 +1,11 @@
+from drf_queryfields import QueryFieldsMixin
 from rest_framework import serializers
 
 import api.error_messages as ERROR_MESSAGES
 from accounts.models import UserConsent
 
 
-class UserConsentSerializer(serializers.ModelSerializer):
+class UserConsentSerializer(QueryFieldsMixin, serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
 
     consent = serializers.BooleanField(
