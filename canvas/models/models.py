@@ -264,6 +264,16 @@ class Event(models.Model):
     def is_author(self, user):
         return self.author == user
 
+    def has_solved_event(self, user):
+        event_questions = self.question_set.all()
+
+        from course.models.models import UserQuestionJunction
+        uqjs = UserQuestionJunction.objects.filter(user_id=user.id, is_solved=True, question__in=event_questions)
+
+        if uqjs.exists():
+            return True
+        return False
+
     def has_view_permission(self, user):
         if self.course.is_instructor(user) or user.is_teacher or self.is_author(user):
             return True

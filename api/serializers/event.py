@@ -3,7 +3,6 @@ from rest_framework import serializers
 from accounts.models import MyAnonymousUser
 from canvas.models.models import Event
 
-from canvas.utils.utils import get_total_event_grade, get_has_solved_event
 from canvas.utils.utils import get_total_event_grade
 
 
@@ -46,7 +45,11 @@ class EventSerializer(serializers.ModelSerializer):
 
     def get_has_solved_event(self, event):
         user = self.get_user()
-        return get_has_solved_event(event, user)
+
+        if not user.is_authenticated:
+            return False
+
+        return event.has_solved_event(user)
 
     class Meta:
         model = Event

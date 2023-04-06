@@ -3,7 +3,6 @@ from rest_framework import serializers
 from accounts.models import MyAnonymousUser
 from api.serializers import EventSerializer
 from canvas.models.models import EventSet
-from canvas.utils.utils import get_has_solved_event
 
 
 class EventSetSerializer(serializers.ModelSerializer):
@@ -22,7 +21,11 @@ class EventSetSerializer(serializers.ModelSerializer):
         check if all events in the event_set has been solved
         """
         user = self.get_user()
-        return all(get_has_solved_event(event, user) for event in event_set.events.all())
+
+        if not user.is_authenticated:
+            return False
+
+        return all(event.has_solved_event(user) for event in event_set.events.all())
 
     class Meta:
         model = EventSet
