@@ -1,6 +1,5 @@
 from functools import reduce
 from django.db.models import Sum, F, Count
-
 from course.utils.utils import get_token_value
 
 
