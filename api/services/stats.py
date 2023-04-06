@@ -1,5 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
 
+from canvas.models.models import Event
 from course.models.java import JavaQuestion
 from course.models.models import QuestionCategory, DIFFICULTY_CHOICES
 from course.models.multiple_choice import MultipleChoiceQuestion
@@ -69,8 +70,11 @@ def get_question_stats(user):
 
 
 def get_challenge_stats(user):
+    events = Event.objects.filter(type='CHALLENGE')
+    challenges_solved = sum(event.has_solved_event(user) for event in events)
+
     return {
-        "challenges_completed": 0,
+        "challenges_completed": challenges_solved,
     }
 
 
