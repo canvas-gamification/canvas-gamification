@@ -150,7 +150,7 @@ class CanvasCourseRegistration(models.Model):
 
         event_sets = EventSet.objects.filter(course=self.course).all()
         for event_set in event_sets:
-            if all(event.is_closed for event in event_set.events.all()):
+            if all(event.has_solved_event(self.user) for event in event_set.events.all()):
                 tokens += event_set.tokens_worth
 
         return tokens
