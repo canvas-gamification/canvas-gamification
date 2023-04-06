@@ -3,7 +3,7 @@ from rest_framework import serializers
 from accounts.models import MyAnonymousUser
 from canvas.models.models import Event
 
-# from canvas.utils.utils import get_total_event_grade, get_has_solved_event
+from canvas.utils.utils import get_total_event_grade, get_has_solved_event
 from canvas.utils.utils import get_total_event_grade
 
 
@@ -11,7 +11,7 @@ class EventSerializer(serializers.ModelSerializer):
     is_allowed_to_open = serializers.SerializerMethodField("get_is_allowed_to_open")
     has_edit_permission = serializers.SerializerMethodField("get_has_edit_permission")
     total_event_grade = serializers.SerializerMethodField("get_total_event_grade")
-    # has_solved_event = serializers.SerializerMethodField("get_has_solved_event")
+    has_solved_event = serializers.SerializerMethodField("get_has_solved_event")
 
     def get_user(self):
         user = MyAnonymousUser()
@@ -44,9 +44,9 @@ class EventSerializer(serializers.ModelSerializer):
 
         return event.has_edit_permission(user)
 
-    # def get_has_solved_event(self, event):
-    #     user = self.get_user()
-    #     return get_has_solved_event(event, user)
+    def get_has_solved_event(self, event):
+        user = self.get_user()
+        return get_has_solved_event(event, user)
 
     class Meta:
         model = Event
@@ -71,6 +71,6 @@ class EventSerializer(serializers.ModelSerializer):
             "featured",
             "challenge_type",
             "challenge_type_value",
-            # "has_solved_event",
+            "has_solved_event",
         ]
         read_only_fields = ["author"]
