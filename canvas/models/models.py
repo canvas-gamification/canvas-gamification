@@ -268,6 +268,7 @@ class Event(models.Model):
         event_questions = self.question_set.all()
 
         from course.models.models import UserQuestionJunction
+
         uqjs = UserQuestionJunction.objects.filter(user_id=user.id, is_solved=True, question__in=event_questions)
 
         if uqjs.exists():
