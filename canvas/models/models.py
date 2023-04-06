@@ -318,7 +318,6 @@ class EventSet(models.Model):
     events = models.ManyToManyField(Event, related_name="eventSets", blank=True)
     tokens_worth = models.FloatField()
 
-    @property
     def is_closed(self):
         return self.events.filter(end_date__lt=timezone.now()).count() == self.events.count()
 
