@@ -188,7 +188,7 @@ CHALLENGE_TYPE_CHOICES = [
 
 
 class Event(models.Model):
-    name = models.CharField(max_length=500)
+    name = models.CharField(max_length=500, unique=True)
     type = models.CharField(max_length=500, choices=EVENT_TYPE_CHOICES)
     challenge_type = models.CharField(max_length=500, choices=CHALLENGE_TYPE_CHOICES, blank=True, null=True)
     challenge_type_value = models.FloatField(blank=True, null=True)
