@@ -151,7 +151,7 @@ class CanvasCourseRegistration(models.Model):
         event_sets = EventSet.objects.filter(course=self.course).all()
         for event_set in event_sets:
             if all(event.has_solved_event(self.user) for event in event_set.events.all()):
-                tokens += event_set.tokens_worth
+                tokens += event_set.tokens
 
         return tokens
 
@@ -317,7 +317,11 @@ class EventSet(models.Model):
     name = models.CharField(max_length=500)
     course = models.ForeignKey(CanvasCourse, related_name="eventSets", on_delete=models.CASCADE)
     events = models.ManyToManyField(Event, related_name="eventSets", blank=True)
-    tokens_worth = models.FloatField()
+    tokens = models.FloatField()
+
+    def has_edit_permission(self, user):
+        course_reg = get_course_registration(user, self.course)
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
 
 class TokenUseOption(models.Model):
