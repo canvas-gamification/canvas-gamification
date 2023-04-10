@@ -34,6 +34,6 @@ class EventSetSerializer(serializers.ModelSerializer):
             "name",
             "course",
             "events",
-            "tokens_worth",
+            "tokens",
             "has_earn_tokens",
         ]
