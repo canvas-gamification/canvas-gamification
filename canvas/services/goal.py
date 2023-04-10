@@ -1,76 +1,33 @@
-# import distance
-# from sklearn.cluster import AffinityPropagation
-# import numpy as np
+from django.contrib.contenttypes.models import ContentType
 
+from course.models.java import JavaQuestion
 from course.models.models import Submission
+from course.models.multiple_choice import MultipleChoiceQuestion
+from course.models.parsons import ParsonsQuestion
+from course.services.question import get_solved_questions_ratio
 
 
-def levenshtein(texts):
-    texts = np.asarray(texts, dtype=object)
-    similarity = np.array([[distance.levenshtein(list(w1), list(w2)) for w1 in texts] for w2 in texts])
-    similarity = -1 * similarity
-    return similarity
+def get_submission_bugs(submissions):
+    all_bugs = {}
+    all_patterns = {}
 
+    for submission in submissions.all():
+        if not hasattr(submission, "bugs"):
+            continue
+        data = submission.bugs
+        for bug in data["bugs"]:
+            if bug["type"] not in all_bugs:
+                all_bugs[bug["type"]] = bug
+                all_bugs[bug["type"]]["count"] = 0
+            all_bugs[bug["type"]]["count"] += 1
+        for pattern in data["patterns"]:
+            if pattern["type"] not in all_patterns:
+                all_patterns[pattern["type"]] = pattern
 
-def text_clustering(texts):
-    texts = [t.split() for t in texts]
-    similarity = levenshtein(texts)
-    affprop = AffinityPropagation(
-        affinity="precomputed", damping=0.5, verbose=False, random_state=0, max_iter=1_000, convergence_iter=10
-    )
-    affprop.fit(similarity)
-    return affprop
-
-
-def cluster_texts(texts):
-    affprop = text_clustering(texts)
-    labels = np.unique(affprop.labels_)
-    texts = np.asarray(texts)
-    clusters = []
-
-    for cluster_id in labels:
-        cluster = np.unique(texts[np.nonzero(affprop.labels_ == cluster_id)])
-        clusters.append(
-            {
-                "exemplar": texts[affprop.cluster_centers_indices_[cluster_id]],
-                "count": len(cluster),
-                "cluster": cluster,
-            }
-        )
-
-    return clusters
-
-
-def cluster_texts_2(texts):
-    return list(set(texts))
-
-
-def get_status_messages(submissions):
-    status_messages = {}
-
-    for s in submissions.all():
-        if hasattr(s, "get_status_message"):
-            message = s.get_status_message()
-            if message not in status_messages:
-                status_messages[message] = 0
-            status_messages[message] += 1
-
-    return status_messages
-
-
-def get_error_messages(submissions):
-    error_messages = []
-
-    for s in submissions.all():
-        if hasattr(s, "get_failed_test_results"):
-            results = s.get_failed_test_results()
-            for result in results:
-                error_messages.append(result["message"])
-
-    if len(error_messages) == 0:
-        return []
-
-    return cluster_texts_2(error_messages)
+    return {
+        "bugs": all_bugs.values(),
+        "patterns": all_patterns.values(),
+    }
 
 
 def get_submission_stats(submissions):
@@ -94,12 +51,43 @@ def get_submission_stats(submissions):
         "total_questions": total_questions,
         "correct_questions": correct_questions,
         "questions_success_rate": 0 if total_questions == 0 else correct_questions / total_questions,
-        "messages": get_status_messages(incorrect_submissions),
-        "error_messages": get_error_messages(incorrect_submissions),
+        "bugs": get_submission_bugs(incorrect_submissions),
+    }
+
+
+def get_goal_item_conclusion(goal_item, stats):
+    ratio = get_solved_questions_ratio(goal_item.goal.course_reg.user, goal_item.category_id, goal_item.difficulty)
+    category_name = goal_item.category.full_name
+
+    if ratio < 0.2:
+        return {
+            "status": "NO_DATA",
+            "message": "To make a recommendation, "
+            "more questions need to be solved as the current data is insufficient.",
+        }
+    if ratio < 0.8 and stats["success_rate"] < 0.8:
+        return {
+            "status": "NEED_PRACTICE",
+            "message": f"You need to solve more questions in {category_name} to improve your understanding of the "
+            f"topic. Practice is essential for mastering any subject.",
+        }
+    if goal_item.difficulty != "HARD":
+        return {
+            "status": "MASTER",
+            "message": f"Good work! It's time to start solving harder questions in {category_name} "
+            f"to improve your skills.",
+        }
+    return {
+        "status": "MASTER",
+        "message": "Good job! Now, let's move on to the next categories and continue building your skills.",
     }
 
 
 def get_goal_item_stats(goal_item):
+    mcq_ctype = ContentType.objects.get_for_model(MultipleChoiceQuestion)
+    java_ctype = ContentType.objects.get_for_model(JavaQuestion)
+    parsons_ctype = ContentType.objects.get_for_model(ParsonsQuestion)
+
     submissions = Submission.objects.filter(
         uqj__user=goal_item.goal.course_reg.user,
         uqj__question__category=goal_item.category,
@@ -119,9 +107,30 @@ def get_goal_item_stats(goal_item):
         submissions = submissions.filter(uqj__question__difficulty=goal_item.difficulty)
         old_submissions = old_submissions.filter(uqj__question__difficulty=goal_item.difficulty)
 
+    all_stats = get_submission_stats(submissions | old_submissions)
+
     return {
-        "old_submissions": get_submission_stats(old_submissions),
-        "submissions": get_submission_stats(submissions),
+        "mcq": {
+            "submissions": get_submission_stats(submissions.filter(uqj__question__polymorphic_ctype=mcq_ctype)),
+            "old_submissions": get_submission_stats(old_submissions.filter(uqj__question__polymorphic_ctype=mcq_ctype)),
+        },
+        "java": {
+            "submissions": get_submission_stats(submissions.filter(uqj__question__polymorphic_ctype=java_ctype)),
+            "old_submissions": get_submission_stats(
+                old_submissions.filter(uqj__question__polymorphic_ctype=java_ctype)
+            ),
+        },
+        "parsons": {
+            "submissions": get_submission_stats(submissions.filter(uqj__question__polymorphic_ctype=parsons_ctype)),
+            "old_submissions": get_submission_stats(
+                old_submissions.filter(uqj__question__polymorphic_ctype=parsons_ctype)
+            ),
+        },
+        "all": {
+            "submissions": get_submission_stats(submissions),
+            "old_submissions": get_submission_stats(old_submissions),
+        },
+        "conclusion": get_goal_item_conclusion(goal_item, all_stats),
     }
 
 

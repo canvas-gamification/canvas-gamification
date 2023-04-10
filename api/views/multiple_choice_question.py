@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from api.pagination import BasePagination
-from api.permissions import TeacherAccessPermission
+from api.permissions import QuestionPermission
 from api.serializers import MultipleChoiceQuestionSerializer
 from course.models.multiple_choice import MultipleChoiceQuestion
 from general.services.action import (
@@ -17,7 +17,7 @@ class SampleMultipleChoiceQuestionViewSet(viewsets.ReadOnlyModelViewSet):
 
 class MultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
     queryset = MultipleChoiceQuestion.objects.all()
-    permission_classes = [TeacherAccessPermission]
+    permission_classes = [QuestionPermission]
     serializer_class = MultipleChoiceQuestionSerializer
     pagination_class = BasePagination
 

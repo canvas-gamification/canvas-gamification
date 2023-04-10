@@ -14,7 +14,7 @@ REGISTRATION_MODES = [("OPEN", "OPEN"), ("CODE", "CODE")]
 
 class CanvasCourse(models.Model):
     name = models.CharField(max_length=500)
-    url = models.URLField()
+    url = models.URLField(null=True, blank=True)
     instructor = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
     description = models.CharField(max_length=500, null=True, blank=True)
 
@@ -39,16 +39,6 @@ class CanvasCourse(models.Model):
             return "Finished"
         return "In Session"
 
-    @property
-    def leader_board(self):
-        return [
-            {
-                "name": course_reg.user.get_full_name(),
-                "token": course_reg.total_tokens_received,
-            }
-            for course_reg in self.canvascourseregistration_set.all()
-        ]
-
     def is_registered(self, user):
         if user.is_anonymous:
             return False
@@ -58,15 +48,18 @@ class CanvasCourse(models.Model):
         return self.instructor == user
 
     def has_view_permission(self, user):
-        return user.is_teacher or self.is_instructor(user) or self.is_registered(user)
+        return user.is_teacher or self.is_instructor(user) or (self.is_registered(user) and self.status == "In Session")
 
     def has_edit_permission(self, user):
         course_reg = get_course_registration(user, self)
-        return course_reg.registration_type == INSTRUCTOR
+        return user.is_teacher or course_reg.registration_type == INSTRUCTOR
 
     def has_create_event_permission(self, user):
         course_reg = get_course_registration(user, self)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
+        return user.is_teacher or course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
+
+    def has_create_challenge_permission(self, user):
+        return user.is_teacher or self.is_instructor(user) or self.is_registered(user)
 
 
 def random_verification_code():
@@ -133,13 +126,29 @@ class CanvasCourseRegistration(models.Model):
 
     @property
     def total_tokens_received(self):
-        event_ids = [x["id"] for x in self.course.events.filter(count_for_tokens=True).values("id")]
-        return (
-            self.user.question_junctions.filter(question__event_id__in=event_ids).aggregate(Sum("tokens_received"))[
-                "tokens_received__sum"
-            ]
-            or 0
+        events = self.course.events.filter(count_for_tokens=True, end_date__lt=timezone.now())
+        tokens = 0
+
+        for event in events:
+            team = event.team_set.filter(course_registrations=self).first()
+            if team is None:
+                tokens += 0
+            else:
+                tokens += event.tokens_received(team)
+
+        from course.models.models import Question
+
+        practiced_uqjs = self.user.question_junctions.filter(
+            user=self.user,
+            question__course=None,
+            question__event=None,
+            question__is_verified=True,
+            question__question_status=Question.CREATED,
         )
+        for uqj in practiced_uqjs:
+            tokens += uqj.tokens_received
+
+        return tokens
 
     @property
     def available_tokens(self):
@@ -184,6 +193,7 @@ class Event(models.Model):
     challenge_type = models.CharField(max_length=500, choices=CHALLENGE_TYPE_CHOICES, blank=True, null=True)
     challenge_type_value = models.FloatField(blank=True, null=True)
     course = models.ForeignKey(CanvasCourse, related_name="events", on_delete=models.CASCADE)
+    author = models.ForeignKey(MyUser, on_delete=models.SET_NULL, null=True, blank=True)
     count_for_tokens = models.BooleanField()
     featured = models.BooleanField(default=False)
     max_team_size = models.IntegerField(default=3, validators=[MinValueValidator(1)])
@@ -248,18 +258,21 @@ class Event(models.Model):
             return "Closed"
         return "Open"
 
+    def is_author(self, user):
+        return self.author == user
+
     def has_view_permission(self, user):
-        if self.course.is_instructor(user) or user.is_teacher:
+        if self.course.is_instructor(user) or user.is_teacher or self.is_author(user):
             return True
         return self.is_open and self.course.is_registered(user)
 
     def has_edit_permission(self, user):
         course_reg = get_course_registration(user, self.course)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR or self.is_author(user)
 
     def has_create_permission(self, user):
         course_reg = get_course_registration(user, self.course)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR or self.is_author(user)
 
     def is_allowed_to_open(self, user):
         return self.course.is_registered(user) and self.is_open

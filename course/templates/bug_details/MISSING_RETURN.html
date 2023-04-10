@@ -1,0 +1,31 @@
+<p>
+    A "missing return statement" error in Java occurs when a method is declared to return a value, but the method
+    doesn't
+    have a return statement that returns the required type of value. The Java compiler requires a return statement in
+    every non-void method, unless it can prove that all execution paths through the method will eventually return a
+    value.
+</p>
+<h2>Example</h2>
+<p>Consider the following code:</p>
+<pre>
+int getSum(int a, int b) {
+   if (a > b) {
+      return a + b;
+   }
+}
+</pre>
+<p>
+    In this code, the `getSum` method is declared to return an `int`, but if `a <= b`, there's no return statement in the
+    method and the compiler will raise a "missing return statement" error.
+</p>
+<h2>Solution</h2>
+<p>To fix this error, you need to add a return statement in all possible execution paths of the method, like this:</p>
+<pre>
+int getSum(int a, int b) {
+   if (a > b) {
+      return a + b;
+   } else {
+      return 0;
+   }
+}
+</pre>

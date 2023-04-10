@@ -5,15 +5,17 @@ from bs4 import BeautifulSoup
 
 
 def parse_junit_xml(xml):
-    results = []
+    results = {}
 
     try:
         doc = BeautifulSoup(xml, "html.parser")
         test_cases = doc.findAll("testcase")
 
         for test_case in test_cases:
+            name = format_test_name(test_case["name"])
+
             doc = {
-                "name": format_test_name(test_case["name"]),
+                "name": name,
                 "status": "PASS",
                 "message": "",
             }
@@ -26,12 +28,13 @@ def parse_junit_xml(xml):
                 doc["status"] = "FAIL"
                 doc["message"] = format_message(test_case.failure.get("message", "Unexpected error"))
 
-            results.append(doc)
+            if name not in results or doc["status"] == "FAIL":
+                results[name] = doc
     except Exception as e:
         logger = logging.getLogger(__name__)
         logger.error(e)
 
-    return results
+    return results.values()
 
 
 def format_message(message):
@@ -46,4 +49,5 @@ def convert_camel_case_to_title_case(text):
 
 def format_test_name(name):
     title_case_str = convert_camel_case_to_title_case(name)
-    return title_case_str.replace("()", "").capitalize()
+    title_case_str = title_case_str.replace("()", "").capitalize()
+    return re.sub(r"\[\d+\]$", "", title_case_str)

@@ -1,0 +1,27 @@
+<p>
+    In Java, for loops are used to repeat a section of code for a specific number of times. The for loop has three parts:
+    the initialization, the condition, and the increment. These three parts are separated by semi-colons ; in Java.
+</p>
+<p>
+    Misusing a comma , instead of a semi-colon ; as a separator in a for loop can result in a syntax error and cause the
+    code to not execute as intended. For example:
+</p>
+<pre>
+for (int i=0, i<10, i++) {
+    System.out.println("This is not correct syntax");
+}
+</pre>
+<p>
+    In the code above, a comma , is being used instead of a semi-colon ; to separate the three parts of the for loop.
+    This will result in a syntax error as the compiler will not understand the code and will not be able to execute
+    it.
+</p>
+<p>
+    To avoid this mistake, it is important to understand the proper usage of semi-colons as separators in Java and to use
+    them correctly when writing for loops. The correct code should be written as follows:
+</p>
+<pre>
+for (int i=0; i<10; i++) {
+    System.out.println("This is correct syntax");
+}
+</pre>

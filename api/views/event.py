@@ -14,6 +14,7 @@ from api.serializers import EventSerializer
 from canvas.models.models import Event, EVENT_TYPE_CHOICES, CanvasCourse, CHALLENGE_TYPE_CHOICES
 from canvas.services.event import get_event_stats, set_featured, add_question_set, clear_featured
 from course.models.models import Question
+from course.services.question import get_number_of_questions_counted_by_category_and_difficulty
 from general.services.action import (
     create_event_action,
     update_event_action,
@@ -46,7 +47,7 @@ class EventViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         request = serializer.context["request"]
-        serializer.save()
+        event = serializer.save(author=request.user)
         create_event_action(request.user, serializer.data)
 
     def perform_update(self, serializer):
@@ -125,3 +126,27 @@ class EventViewSet(viewsets.ModelViewSet):
             self.get_serializer(cloned_event).data,
             status=status.HTTP_201_CREATED,
         )
+
+    @action(detail=True, methods=["get"], url_path="leader-board")
+    def leader_board(self, request, pk):
+        """
+        Given event id, return the event leader board.
+        """
+        event = get_object_or_404(Event, id=pk)
+        leader_board = [
+            {
+                "name": team.name,
+                "token": team.tokens_received,
+                "member_names": team.member_names,
+                "team_id": team.id,
+            }
+            for team in event.team_set.all()
+            if team.course_registrations.filter(status="VERIFIED", registration_type="STUDENT").exists()
+        ]
+
+        return Response(leader_board)
+
+    @action(detail=False, methods=["get"], url_path="limits")
+    def limits(self, request):
+        result = get_number_of_questions_counted_by_category_and_difficulty()
+        return Response(result)

@@ -33,10 +33,11 @@ class CourseSerializer(serializers.ModelSerializer):
     is_registered = serializers.SerializerMethodField("get_is_registered")
     events = EventSerializer(many=True, read_only=True)
     token_use_options = TokenUseOptionSerializer(many=True, read_only=True)
-    question_set = QuestionSerializer(many=True, read_only=True)
-    uqjs = serializers.SerializerMethodField("get_uqjs")
     course_reg = serializers.SerializerMethodField("get_course_reg")
     has_create_event_permission = serializers.SerializerMethodField("get_create_event_permission")
+    has_create_challenge_permission = serializers.SerializerMethodField("get_create_challenge_permission")
+    has_view_permission = serializers.SerializerMethodField("get_has_view_permission")
+    secret_registration_code = serializers.SerializerMethodField("get_secret_registration_code")
 
     def get_user(self):
         user = MyAnonymousUser()
@@ -44,22 +45,6 @@ class CourseSerializer(serializers.ModelSerializer):
         if request and hasattr(request, "user"):
             user = request.user
         return user
-
-    def get_uqjs(self, course):
-        user = self.get_user()
-
-        if not user.is_authenticated:
-            return []
-
-        is_instructor = course.has_edit_permission(user)
-        if is_instructor:
-            uqjs = UserQuestionJunction.objects.filter(user=user, question__course=course).all()
-        else:
-            uqjs = UserQuestionJunction.objects.none()
-
-        serialized_uqjs = [UQJSerializer(uqj).data for uqj in uqjs]
-
-        return serialized_uqjs
 
     def get_is_registered(self, course):
         user = self.get_user()
@@ -87,6 +72,34 @@ class CourseSerializer(serializers.ModelSerializer):
 
         return course.has_create_event_permission(user)
 
+    def get_create_challenge_permission(self, course):
+        user = self.get_user()
+
+        # if user is not logged in or the request has no user attached
+        if not user.is_authenticated:
+            return False
+
+        return course.has_create_challenge_permission(user)
+
+    def get_has_view_permission(self, course):
+        user = self.get_user()
+
+        # if user is not logged in or the request has no user attached
+        if not user.is_authenticated:
+            return False
+
+        return course.has_view_permission(user)
+
+    def get_secret_registration_code(self, course):
+        user = self.get_user()
+
+        # if user is not logged in or the request has no user attached
+        if not user.is_authenticated:
+            return False
+        if course.has_edit_permission(user):
+            return course.registration_code
+        return None
+
     class Meta:
         model = CanvasCourse
         fields = [
@@ -102,14 +115,14 @@ class CourseSerializer(serializers.ModelSerializer):
             "is_registered",
             "token_use_options",
             "events",
-            "uqjs",
-            "question_set",
             "course_reg",
-            "leader_board",
             "has_create_event_permission",
+            "has_create_challenge_permission",
+            "has_view_permission",
             "description",
             "registration_mode",
             "registration_code",
+            "secret_registration_code",
         ]
         extra_kwargs = {"registration_code": {"write_only": True}}
 
@@ -117,6 +130,7 @@ class CourseSerializer(serializers.ModelSerializer):
 class CourseListSerializer(serializers.ModelSerializer):
     is_registered = serializers.SerializerMethodField("get_is_registered")
     events = EventSerializer(many=True, read_only=True)
+    has_view_permission = serializers.SerializerMethodField("get_has_view_permission")
 
     def get_user(self):
         user = MyAnonymousUser()
@@ -133,6 +147,15 @@ class CourseListSerializer(serializers.ModelSerializer):
 
         return course.is_registered(user)
 
+    def get_has_view_permission(self, course):
+        user = self.get_user()
+
+        # if user is not logged in or the request has no user attached
+        if not user.is_authenticated:
+            return False
+
+        return course.has_view_permission(user)
+
     class Meta:
         model = CanvasCourse
         fields = [
@@ -149,4 +172,5 @@ class CourseListSerializer(serializers.ModelSerializer):
             "events",
             "description",
             "registration_mode",
+            "has_view_permission",
         ]

@@ -12,6 +12,9 @@ class Grader:
     def grade(self, submission):
         raise NotImplementedError()
 
+    def clean_up(self, submission):
+        raise NotImplementedError()
+
 
 class MultipleChoiceGrader(Grader):
     def grade(self, submission):
@@ -44,20 +47,25 @@ class MultipleChoiceGrader(Grader):
         else:
             return False, 0
 
+    def clean_up(self, submission):
+        pass
+
 
 class JunitGrader(Grader):
     HEADERS = {
         "X-Auth-Token": JUDGE0_PASSWORD,
+        "X-Auth-User": JUDGE0_PASSWORD,
     }
     BASE_URL = JUDGE0_HOST
 
     def get_compiler_script(self, submission):
         f = open("./course/grader/junit_compiler.sh", "r")
+        file_names = submission.uqj.get_input_file_names() or ""
+        class_names = file_names.replace(".java", ".class")
+
         compiler_script = f.read()
-        compiler_script = compiler_script.replace(
-            "{{user_code_filename}}",
-            submission.uqj.get_input_file_names() or "",
-        )
+        compiler_script = compiler_script.replace("{{user_code_filename}}", file_names)
+        compiler_script = compiler_script.replace("{{user_code_classname}}", class_names)
         f.close()
         return compiler_script
 
@@ -80,6 +88,9 @@ class JunitGrader(Grader):
 
         with open("./course/grader/canvas-gamification-junit-tests.jar", "rb") as f:
             z.writestr("canvas-gamification-junit-tests.jar", f.read())
+
+        # with open("./course/grader/spotbugs-4.7.3.tgz", "rb") as f:
+        #     z.writestr("spotbugs-4.7.3.tgz", f.read())
 
         # Junit template file
         z.writestr("MainTest.java", self.get_source_code(submission))
@@ -114,6 +125,13 @@ class JunitGrader(Grader):
             correct_testcases / total_testcases,
         )
 
+    def clean_up(self, submission):
+        token = submission.tokens[0]
+        requests.delete(
+            "{}/submissions/{}".format(self.BASE_URL, token),
+            headers=self.HEADERS,
+        )
+
     def evaluate(self, submission):
         submission.results = []
 
@@ -122,7 +140,24 @@ class JunitGrader(Grader):
             "{}/submissions/{}?base64_encoded=true".format(self.BASE_URL, token),
             headers=self.HEADERS,
         )
-        submission.results.append(r.json())
+
+        if r.status_code != 200:
+            results = {
+                "stdout": "",
+                "time": "0",
+                "memory": 0,
+                "stderr": "",
+                "token": "4e00f214-b8cb-4fcb-977b-429113c81ece",
+                "compile_output": "",
+                "message": "",
+                "status": {
+                    "id": 13,
+                    "description": "Internal Error",
+                },
+            }
+        else:
+            results = r.json()
+        submission.results.append(results)
 
     def submit(self, submission):
         submission.tokens = []

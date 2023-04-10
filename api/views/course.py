@@ -6,6 +6,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
+from accounts.utils.email_functions import course_create_email
 from api.serializers import CourseSerializer, CourseListSerializer, CanvasCourseRegistrationSerializer
 from api.permissions import CoursePermission
 import api.error_messages as ERROR_MESSAGES
@@ -26,6 +27,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         "retrieve": CourseSerializer,
         "list": CourseListSerializer,
         "create": CourseCreateSerializer,
+        "edit": CourseCreateSerializer,
     }
     permission_classes = [CoursePermission]
     filter_backends = [
@@ -77,6 +79,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         request = serializer.context["request"]
         course = serializer.save(instructor=request.user)
+        course_create_email(course)
         register_instructor(request.user, course)
 
     @action(detail=True, methods=["post"], url_path="register")
@@ -137,3 +140,22 @@ class CourseViewSet(viewsets.ModelViewSet):
         course_regs = CanvasCourseRegistrationSerializer(course.verified_course_registration, many=True)
 
         return Response(course_regs.data)
+
+    @action(detail=True, methods=["get"], url_path="leader-board")
+    def leader_board(self, request, pk):
+        """
+        Given course id, return the leader board for the course.
+        """
+        course = get_object_or_404(CanvasCourse, id=pk)
+        leader_board = [
+            {
+                "name": course_reg.user.get_full_name(),
+                "token": course_reg.total_tokens_received,
+                "course_reg_id": course_reg.id,
+            }
+            for course_reg in course.canvascourseregistration_set.filter(
+                status="VERIFIED", registration_type="STUDENT"
+            ).all()
+        ]
+
+        return Response(leader_board)

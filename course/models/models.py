@@ -12,12 +12,10 @@ from polymorphic.models import PolymorphicModel
 
 from accounts.models import MyUser
 from canvas.models.models import Event, CanvasCourse
+from course.utils.custom_bugs import custom_patterns, find_custom_bugs, find_bugs_from_compile_error
 from course.utils.junit_xml import parse_junit_xml
-from course.utils.utils import (
-    get_token_value,
-    ensure_uqj,
-    calculate_average_success,
-)
+from course.utils.spotbugs_xml import parse_spotbugs_xml
+from course.utils.utils import get_token_value, ensure_uqj
 from course.utils.variables import render_text, generate_variables
 from general.services.action import create_submission_evaluation_action
 
@@ -49,22 +47,6 @@ class QuestionCategory(models.Model):
     @property
     def full_name(self):
         return self.__str__()
-
-    @property
-    def average_success_per_difficulty(self):
-        res = []
-        for difficulty, difficulty_name in DIFFICULTY_CHOICES:
-            res.append(
-                {
-                    "difficulty": difficulty,
-                    "avgSuccess": calculate_average_success(UserQuestionJunction.objects.all(), self, difficulty),
-                }
-            )
-        return res
-
-    @property
-    def average_success(self):
-        return calculate_average_success(UserQuestionJunction.objects.all(), self)
 
     @property
     def question_count(self):
@@ -162,7 +144,7 @@ class Question(PolymorphicModel):
 
     @property
     def full_category_name(self):
-        return self.category.full_name
+        return self.category.full_name if self.category else ""
 
     @property
     def category_name(self):
@@ -194,10 +176,6 @@ class Question(PolymorphicModel):
     @property
     def token_value(self):
         return get_token_value(self.category, self.difficulty)
-
-    @property
-    def success_rate(self):
-        return calculate_average_success(self.user_junctions.all())
 
     @property
     def is_open(self):
@@ -237,9 +215,13 @@ class Question(PolymorphicModel):
         return self.event.has_view_permission(user)
 
     def has_edit_permission(self, user):
-        return user.is_teacher
+        if user.is_teacher:
+            return True
+        if self.event and self.event.course.has_create_event_permission(user):
+            return True
+        return False
 
-    def copy_to_event(self, event):
+    def copy_to_event(self, event, title: str = None):
         question_clone = copy.deepcopy(self)
         question_clone.id = None
         question_clone.pk = None
@@ -248,7 +230,10 @@ class Question(PolymorphicModel):
         question_clone.course = event.course
         question_clone.event = event
         question_clone.author = event.course.instructor
-        question_clone.title += " (Copy)"
+        if title is not None:
+            question_clone.title = title
+        else:
+            question_clone.title += " (Copy)"
         question_clone.save()
         return question_clone
 
@@ -364,6 +349,7 @@ class UserQuestionJunction(models.Model):
             {
                 **input_file,
                 "name": render_text(input_file["name"], self.get_variables()),
+                "template": render_text(input_file.get("template", ""), self.get_variables()),
             }
             for input_file in self.question.get_input_files()
         ]
@@ -523,6 +509,7 @@ class Submission(PolymorphicModel):
         super().save(*args, **kwargs)
 
         if not self.in_progress:
+            self.question.grader.clean_up(self)
             create_submission_evaluation_action(self)
 
     def submit(self):
@@ -567,9 +554,31 @@ class CodeSubmission(Submission):
     def get_decoded_stderr(self):
         return base64.b64decode(self.results[0]["stderr"] or "").decode("utf-8")
 
+    def get_decoded_stdout(self):
+        return base64.b64decode(self.results[0]["stdout"] or "").decode("utf-8")
+
     def get_decoded_results(self):
-        stdout = base64.b64decode(self.results[0]["stdout"] or "").decode("utf-8")
-        return parse_junit_xml(stdout)
+        xml = self.get_decoded_stdout().split("==SEPARATOR==")[0]
+        return parse_junit_xml(xml)
+
+    @property
+    def bugs(self):
+        output_array = self.get_decoded_stdout().split("==SEPARATOR==")
+        compile_error = self.get_decoded_stderr()
+        if len(output_array) >= 2:
+            xml = output_array[1]
+            bugs = parse_spotbugs_xml(xml)
+        else:
+            bugs = {"patterns": [], "bugs": []}
+
+        bugs["patterns"].extend(custom_patterns())
+
+        answer_files = self.get_answer_files()
+        for file_name, code in answer_files.items():
+            bugs["bugs"].extend(find_custom_bugs(file_name, code))
+            bugs["bugs"].extend(find_bugs_from_compile_error(file_name, compile_error))
+
+        return bugs
 
     def get_status_message(self):
         return self.results[0]["status"]["description"]

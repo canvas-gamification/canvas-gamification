@@ -1,0 +1,36 @@
+<p>
+    The incorrect usage of a semi-colon after an `if` selection structure before the `if` statement or after the `for`
+    or
+    `while` repetition structure before the respective loop can result in syntax errors and cause the program to behave
+    in unexpected ways.
+</p>
+<p>For example, consider the following code:</p>
+<pre>
+<code>
+if (condition); {
+  // code to be executed if condition is true
+}
+</code>
+</pre>
+<p>
+    Here, the semi-colon after the `if` statement terminates the `if` statement, and the code within the curly brackets
+    becomes an independent block of code that is executed unconditionally, regardless of whether the condition is true
+    or false.
+</p>
+<p>Similarly, consider the following code:</p>
+<pre>
+<code>
+for (int i = 0; i < 10; i++); {
+  // code to be executed in each iteration of the loop
+}
+</code>
+</pre>
+<p>
+    Here, the semi-colon after the `for` loop terminates the loop and the code within the curly brackets becomes an
+    independent block of code that is executed unconditionally, without any repetition.
+</p>
+<p>
+    To avoid these issues, it is important to make sure that the semi-colons are used correctly and only placed after
+    the statements that need to be terminated, such as statements within the `if` condition or statements within the
+    `for` or `while` loop.
+</p>

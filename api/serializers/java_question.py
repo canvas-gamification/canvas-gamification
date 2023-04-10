@@ -45,7 +45,6 @@ class JavaQuestionSerializer(serializers.ModelSerializer):
             "junit_template",
             "input_files",
             "token_value",
-            "success_rate",
             "type_name",
             "event",
             "event_obj",
@@ -90,6 +89,7 @@ class JavaSubmissionSerializer(serializers.ModelSerializer):
             "show_detail",
             "status_color",
             "author",
+            "bugs",
         ]
 
     question = QuestionSerializer()

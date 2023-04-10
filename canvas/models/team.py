@@ -25,5 +25,5 @@ class Team(models.Model):
             if course_reg.user.has_complete_profile:
                 names.append(course_reg.name)
             else:
-                names.append(course_reg.username)
+                names.append("Anonymous User")
         return names

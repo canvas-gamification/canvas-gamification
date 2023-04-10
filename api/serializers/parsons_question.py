@@ -44,7 +44,6 @@ class ParsonsQuestionSerializer(serializers.ModelSerializer):
             "variables",
             "junit_template",
             "token_value",
-            "success_rate",
             "type_name",
             "event",
             "event_obj",
@@ -91,6 +90,7 @@ class ParsonsSubmissionSerializer(serializers.ModelSerializer):
             "show_detail",
             "status_color",
             "author",
+            "bugs",
         ]
 
     question = QuestionSerializer()
