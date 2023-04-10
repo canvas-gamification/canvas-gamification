@@ -319,6 +319,10 @@ class EventSet(models.Model):
     events = models.ManyToManyField(Event, related_name="eventSets", blank=True)
     tokens = models.FloatField()
 
+    def has_edit_permission(self, user):
+        course_reg = get_course_registration(user, self.course)
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
+
 
 class TokenUseOption(models.Model):
     course = models.ForeignKey(
