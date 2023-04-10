@@ -70,7 +70,7 @@ def get_question_stats(user):
 
 
 def get_challenge_stats(user):
-    events = Event.objects.filter(type='CHALLENGE')
+    events = Event.objects.filter(type="CHALLENGE")
     challenges_solved = sum(event.has_solved_event(user) for event in events)
 
     return {
