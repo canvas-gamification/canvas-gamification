@@ -6,13 +6,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('canvas', '0025_eventset'),
+        ("canvas", "0025_eventset"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='eventset',
-            old_name='tokens_worth',
-            new_name='tokens',
+            model_name="eventset",
+            old_name="tokens_worth",
+            new_name="tokens",
         ),
     ]
