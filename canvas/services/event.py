@@ -72,6 +72,12 @@ def set_featured(event):
     event.save()
 
 
+def clear_featured(event):
+    event.course.events.update(featured=False)
+    event.featured = False
+    event.save()
+
+
 def add_question_set(event, category_id, difficulty, number_of_questions):
     questions = Question.objects.filter(
         event=None,

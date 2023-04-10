@@ -228,6 +228,8 @@ class Event(models.Model):
 
     @property
     def is_closed(self):
+        if self.featured & (self.end_date < timezone.now()):
+            self.featured = False
         return self.end_date < timezone.now()
 
     @property
