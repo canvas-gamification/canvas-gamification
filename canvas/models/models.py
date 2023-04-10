@@ -188,7 +188,7 @@ CHALLENGE_TYPE_CHOICES = [
 
 
 class Event(models.Model):
-    name = models.CharField(max_length=500, unique=True)
+    name = models.CharField(max_length=500)
     type = models.CharField(max_length=500, choices=EVENT_TYPE_CHOICES)
     challenge_type = models.CharField(max_length=500, choices=CHALLENGE_TYPE_CHOICES, blank=True, null=True)
     challenge_type_value = models.FloatField(blank=True, null=True)
@@ -200,6 +200,11 @@ class Event(models.Model):
 
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['name', 'course'], name='course_assessment_name_unique')
+        ]
 
     def __str__(self):
         return self.name
