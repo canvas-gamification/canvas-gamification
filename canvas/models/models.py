@@ -292,6 +292,7 @@ class Event(models.Model):
         cloned_event.id = None
         cloned_event.name += " (Copy)"
         cloned_event.course = course
+        cloned_event.featured = False
         cloned_event.save()
 
         for question in self.question_set.all():
