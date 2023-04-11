@@ -73,6 +73,11 @@ def set_featured(event):
     event.save()
 
 
+def clear_featured(event):
+    event.featured = False
+    event.save()
+
+
 def add_question_set(event, category_id, difficulty, number_of_questions):
     def extract_1st_number(string):
         g = re.search(r"\d+", string)
