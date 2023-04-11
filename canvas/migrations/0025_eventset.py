@@ -7,18 +7,23 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('canvas', '0024_event_author'),
+        ("canvas", "0024_event_author"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='EventSet',
+            name="EventSet",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=500)),
-                ('tokens', models.FloatField()),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='event_sets', to='canvas.CanvasCourse')),
-                ('events', models.ManyToManyField(blank=True, related_name='event_sets', to='canvas.Event')),
+                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("name", models.CharField(max_length=500)),
+                ("tokens", models.FloatField()),
+                (
+                    "course",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, related_name="event_sets", to="canvas.CanvasCourse"
+                    ),
+                ),
+                ("events", models.ManyToManyField(blank=True, related_name="event_sets", to="canvas.Event")),
             ],
         ),
     ]
