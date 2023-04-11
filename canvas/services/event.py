@@ -74,7 +74,6 @@ def set_featured(event):
 
 
 def clear_featured(event):
-    event.course.events.update(featured=False)
     event.featured = False
     event.save()
 
