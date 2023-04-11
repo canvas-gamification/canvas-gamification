@@ -202,9 +202,7 @@ class Event(models.Model):
     end_date = models.DateTimeField(null=True)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['name', 'course'], name='course_assessment_name_unique')
-        ]
+        unique_together = ("course", "name")
 
     def __str__(self):
         return self.name
