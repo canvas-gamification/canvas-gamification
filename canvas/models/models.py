@@ -206,6 +206,9 @@ class Event(models.Model):
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
 
+    class Meta:
+        unique_together = ("course", "name")
+
     def __str__(self):
         return self.name
 
