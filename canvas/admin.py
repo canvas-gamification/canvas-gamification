@@ -7,6 +7,7 @@ from canvas.models.models import (
     Event,
     TokenUseOption,
     TokenUse,
+    EventSet,
 )
 from canvas.models.team import Team
 from canvas.models.goal import Goal, GoalItem
@@ -19,3 +20,4 @@ admin.site.register(TokenUse)
 admin.site.register(Team)
 admin.site.register(Goal)
 admin.site.register(GoalItem)
+admin.site.register(EventSet)

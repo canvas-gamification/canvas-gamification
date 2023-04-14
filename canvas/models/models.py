@@ -148,6 +148,11 @@ class CanvasCourseRegistration(models.Model):
         for uqj in practiced_uqjs:
             tokens += uqj.tokens_received
 
+        event_sets = EventSet.objects.filter(course=self.course).all()
+        for event_set in event_sets:
+            if all(event.has_solved_event(self.user) for event in event_set.events.all()):
+                tokens += event_set.tokens
+
         return tokens
 
     @property
@@ -259,6 +264,17 @@ class Event(models.Model):
     def is_author(self, user):
         return self.author == user
 
+    def has_solved_event(self, user):
+        event_questions = self.question_set.all()
+
+        from course.models.models import UserQuestionJunction
+
+        uqjs = UserQuestionJunction.objects.filter(user_id=user.id, is_solved=True, question__in=event_questions)
+
+        if uqjs.exists():
+            return True
+        return False
+
     def has_view_permission(self, user):
         if self.course.is_instructor(user) or user.is_teacher or self.is_author(user):
             return True
@@ -296,6 +312,17 @@ class Event(models.Model):
             question.copy_to_event(cloned_event)
 
         return cloned_event
+
+
+class EventSet(models.Model):
+    name = models.CharField(max_length=500)
+    course = models.ForeignKey(CanvasCourse, related_name="event_sets", on_delete=models.CASCADE)
+    events = models.ManyToManyField(Event, related_name="event_sets", blank=True)
+    tokens = models.FloatField()
+
+    def has_edit_permission(self, user):
+        course_reg = get_course_registration(user, self.course)
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
 
 class TokenUseOption(models.Model):
