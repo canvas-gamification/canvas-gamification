@@ -285,11 +285,21 @@ class Event(models.Model):
 
     def has_edit_permission(self, user):
         course_reg = get_course_registration(user, self.course)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR or self.is_author(user)
+        return (
+            user.is_teacher
+            or course_reg.registration_type == TA
+            or course_reg.registration_type == INSTRUCTOR
+            or self.is_author(user)
+        )
 
     def has_create_permission(self, user):
         course_reg = get_course_registration(user, self.course)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR or self.is_author(user)
+        return (
+            user.is_teacher
+            or course_reg.registration_type == TA
+            or course_reg.registration_type == INSTRUCTOR
+            or self.is_author(user)
+        )
 
     def is_allowed_to_open(self, user):
         return self.course.is_registered(user) and self.is_open
