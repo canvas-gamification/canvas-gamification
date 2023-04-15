@@ -108,7 +108,7 @@ class Question(PolymorphicModel):
 
     course = models.ForeignKey(
         CanvasCourse,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name="question_set",
         null=True,
         blank=True,
@@ -116,7 +116,7 @@ class Question(PolymorphicModel):
     )
     event = models.ForeignKey(
         Event,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name="question_set",
         null=True,
         blank=True,
