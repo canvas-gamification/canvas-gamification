@@ -35,6 +35,8 @@ class SurveyViewSet(viewsets.mixins.CreateModelMixin, viewsets.mixins.ListModelM
 
     def perform_create(self, serializer):
         request = serializer.context["request"]
+        code = request.data["code"]
+        self.get_queryset().filter(code=code).delete()
         serializer.save(user=request.user)
 
     @action(detail=False, methods=["get"], url_path="check")
