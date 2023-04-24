@@ -71,6 +71,8 @@ class CourseViewSet(viewsets.ModelViewSet):
 
         # Sort the events based on time
         events_sort = Event.objects.all().order_by("start_date")
+        for event in events_sort:
+            event.update_featured()
         prefetch = Prefetch("events", queryset=events_sort)
         queryset.prefetch_related(prefetch)
 

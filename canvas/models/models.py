@@ -296,6 +296,11 @@ class Event(models.Model):
 
         return cloned_event
 
+    def update_featured(self):
+        if self.is_closed:
+            self.featured = False
+            self.save()
+
 
 class TokenUseOption(models.Model):
     course = models.ForeignKey(
