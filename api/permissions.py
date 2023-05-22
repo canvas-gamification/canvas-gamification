@@ -73,10 +73,15 @@ class EventCreatePermission(permissions.IsAuthenticated):
             type = request.data.get("type", None)
             course = CanvasCourse.objects.filter(id=course_id).first()
             if not course:
-                return False
+                return True
             if type == "CHALLENGE":
                 return course.has_create_challenge_permission(request.user)
             return course.has_create_event_permission(request.user)
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        if request.method == "POST":
+            return obj.has_create_event_permission(request.user)
         return True
 
 
