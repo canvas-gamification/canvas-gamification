@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from accounts.utils.email_functions import course_create_email
 from api.serializers import CourseSerializer, CourseListSerializer, CanvasCourseRegistrationSerializer
-from api.permissions import CoursePermission
+from api.permissions import CoursePermission, GradeBookPermission
 import api.error_messages as ERROR_MESSAGES
 from api.serializers.course import CourseCreateSerializer
 
@@ -174,3 +174,28 @@ class CourseViewSet(viewsets.ModelViewSet):
         event_sets = EventSetSerializer(course.eventSets, many=True)
 
         return Response(event_sets.data)
+
+    @action(detail=True, methods=["get"], url_path="grade-book", permission_classes=[GradeBookPermission])
+    def course_grade_book(self, request, pk):
+        course = get_object_or_404(CanvasCourse, id=pk)
+        events = course.events
+
+        teams = []
+        for event in events.all():
+            teams.extend(event.team_set.all())
+
+        results = []
+        for team in teams:
+            for course_reg in team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED"):
+                consent = course_reg.user.consents.last()
+                results.append({
+                    'grade': team.tokens_received,
+                    'total': team.event.total_tokens,
+                    'name': course_reg.name,
+                    'event_name': team.event.name,
+                    'legal_first_name': consent.legal_first_name if consent else "",
+                    'legal_last_name': consent.legal_last_name if consent else "",
+                })
+
+        return Response(results)
+

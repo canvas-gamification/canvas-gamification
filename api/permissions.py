@@ -48,6 +48,13 @@ class StudentsMustBeRegisteredPermission(permissions.IsAuthenticated):
         return True
 
 
+class GradeBookPermission(permissions.IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        if request.method == "GET":
+            return obj.has_edit_permission(request.user)
+        return True
+
+
 class CoursePermission(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
         if request.method == "POST":
