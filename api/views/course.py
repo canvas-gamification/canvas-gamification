@@ -188,15 +188,16 @@ class CourseViewSet(viewsets.ModelViewSet):
         for team in teams:
             for course_reg in team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED"):
                 consent = course_reg.user.consents.last()
-                results.append({
-                    'grade': team.tokens_received,
-                    'total': team.event.total_tokens,
-                    'name': course_reg.name,
-                    'event_name': team.event.name,
-                    'legal_first_name': consent.legal_first_name if consent else "",
-                    'legal_last_name': consent.legal_last_name if consent else "",
-                    'student_number': consent.student_number if consent else "",
-                })
+                results.append(
+                    {
+                        "grade": team.tokens_received,
+                        "total": team.event.total_tokens,
+                        "name": course_reg.name,
+                        "event_name": team.event.name,
+                        "legal_first_name": consent.legal_first_name if consent else "",
+                        "legal_last_name": consent.legal_last_name if consent else "",
+                        "student_number": consent.student_number if consent else "",
+                    }
+                )
 
         return Response(results)
-
