@@ -184,20 +184,46 @@ class CourseViewSet(viewsets.ModelViewSet):
         for event in events.all():
             teams.extend(event.team_set.all())
 
+        """
+        So, the for team in teams basically means go user by user. Team also seems to store what event it is a team in
+        ie. team.event works. So maybe team.event.id would also work. So inside the results.appen or maybe before and
+        then append array results (between consent and results.append) get event id, run a query for the uqj's/questions
+        in that event, then for each uqj use the get submissions by question id and user (user may have to be for every
+        user in the team, and since only one user in team it wouldn't add any data, just extra step to try and access
+        what is needed for the filter) Compare the tokens earned or maybe the grade on each submission to find the 
+        highest, then also have a counter running as you go through each submission to count how many there are or 
+        maybe just use a .length depending on format. Add or append the highest score plus the submission count for
+        each question onto results. Unsure how labelling that would work.
+        
+        ------
+        
+        from course.models.models import UserQuestionJunction
+
+        user_ids = [course_reg.user.id for course_reg in team.course_registrations.all()]
+        question_ids = [question.id for question in self.question_set.all()]
+        uqjs = UserQuestionJunction.objects.filter(user_id__in=user_ids)
+
+        score = 0
+        for question_id in question_ids:
+            score += uqjs.filter(question_id=question_id).aggregate(Max("tokens_received"))["tokens_received__max"]
+
+        return score
+        """
+
         results = []
         for team in teams:
             for course_reg in team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED"):
                 consent = course_reg.user.consents.last()
-                results.append(
-                    {
-                        "grade": team.tokens_received,
-                        "total": team.event.total_tokens,
-                        "name": course_reg.name,
-                        "event_name": team.event.name,
-                        "legal_first_name": consent.legal_first_name if consent else "",
-                        "legal_last_name": consent.legal_last_name if consent else "",
-                        "student_number": consent.student_number if consent else "",
-                    }
-                )
+                # questions = []
+                # for ques in
+                results.append({
+                    'grade': team.tokens_received,
+                    'total': team.event.total_tokens,
+                    'name': course_reg.name,
+                    'event_name': team.event.name,
+                    'legal_first_name': consent.legal_first_name if consent else "",
+                    'legal_last_name': consent.legal_last_name if consent else "",
+                    'student_number': consent.student_number if consent else "",
+                })
 
         return Response(results)
