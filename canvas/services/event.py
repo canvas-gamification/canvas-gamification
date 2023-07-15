@@ -53,6 +53,7 @@ def get_question_stats(question):
     return {
         "question": {
             "title": question.title,
+            "text": question.text,
         },
         "has_variables": len(question.variables) > 0,
         "answers": answers,
