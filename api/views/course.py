@@ -209,13 +209,29 @@ class CourseViewSet(viewsets.ModelViewSet):
 
         return score
         """
-
+        from course.models.models import UserQuestionJunction, Submission
+        print("test")
         results = []
+        attempts = []
         for team in teams:
             for course_reg in team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED"):
                 consent = course_reg.user.consents.last()
-                # questions = []
-                # for ques in
+                question_ids = event.question_set.all()
+                uqjs = UserQuestionJunction.objects.filter(user__event__event_sets__in=event.id)
+                for question_id in question_ids:
+                    question = uqjs.filter(question_id=question_id)
+                    submissions = Submission.objects.filter(question_id=question_id)
+                    max_grade = 0
+                    for submission in submissions:
+                        if submission.user == course_reg.user:  # if it's the user in the team
+                            max_grade = max(max_grade, submission.grade)
+                    attempts.append({
+                        'question_grade': max_grade,
+                        'attempts': question.num_attempts(course_reg.user),
+                    })
+
+                    print("/////////////////////   question grade: " + max_grade + "   attempts: " +
+                          question.num_attempts(course_reg.user) + " **************************")
                 results.append({
                     'grade': team.tokens_received,
                     'total': team.event.total_tokens,
@@ -224,6 +240,7 @@ class CourseViewSet(viewsets.ModelViewSet):
                     'legal_first_name': consent.legal_first_name if consent else "",
                     'legal_last_name': consent.legal_last_name if consent else "",
                     'student_number': consent.student_number if consent else "",
+                    # 'question_details': attempts,
                 })
 
         return Response(results)
