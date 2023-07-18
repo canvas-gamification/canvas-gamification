@@ -64,7 +64,7 @@ def get_question_stats(question):
 
 
 def get_event_stats(event):
-    return [get_question_stats(question) for question in event.question_set.all().order_by('title')]
+    return [get_question_stats(question) for question in event.question_set.all().order_by("title")]
 
 
 def set_featured(event):
