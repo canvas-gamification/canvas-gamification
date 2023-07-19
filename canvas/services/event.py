@@ -53,6 +53,7 @@ def get_question_stats(question):
     return {
         "question": {
             "title": question.title,
+            "text": question.text,
         },
         "has_variables": len(question.variables) > 0,
         "answers": answers,
@@ -64,7 +65,7 @@ def get_question_stats(question):
 
 
 def get_event_stats(event):
-    return [get_question_stats(question) for question in event.question_set.all()]
+    return [get_question_stats(question) for question in event.question_set.all().order_by("title")]
 
 
 def set_featured(event):
