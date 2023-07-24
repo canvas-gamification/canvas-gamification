@@ -184,54 +184,24 @@ class CourseViewSet(viewsets.ModelViewSet):
         for event in events.all():
             teams.extend(event.team_set.all())
 
-        """
-        So, the for team in teams basically means go user by user. Team also seems to store what event it is a team in
-        ie. team.event works. So maybe team.event.id would also work. So inside the results.appen or maybe before and
-        then append array results (between consent and results.append) get event id, run a query for the uqj's/questions
-        in that event, then for each uqj use the get submissions by question id and user (user may have to be for every
-        user in the team, and since only one user in team it wouldn't add any data, just extra step to try and access
-        what is needed for the filter) Compare the tokens earned or maybe the grade on each submission to find the 
-        highest, then also have a counter running as you go through each submission to count how many there are or 
-        maybe just use a .length depending on format. Add or append the highest score plus the submission count for
-        each question onto results. Unsure how labelling that would work.
-        
-        ------
-        
-        from course.models.models import UserQuestionJunction
-
-        user_ids = [course_reg.user.id for course_reg in team.course_registrations.all()]
-        question_ids = [question.id for question in self.question_set.all()]
-        uqjs = UserQuestionJunction.objects.filter(user_id__in=user_ids)
-
-        score = 0
-        for question_id in question_ids:
-            score += uqjs.filter(question_id=question_id).aggregate(Max("tokens_received"))["tokens_received__max"]
-
-        return score
-        """
         from course.models.models import UserQuestionJunction, Submission
-        print("test")
         results = []
-        attempts = []
         for team in teams:
             for course_reg in team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED"):
+                attempts = []
                 consent = course_reg.user.consents.last()
-                question_ids = event.question_set.all()
-                uqjs = UserQuestionJunction.objects.filter(user__event__event_sets__in=event.id)
+                question_ids = [question.id for question in team.event.question_set.all().order_by('title')]
                 for question_id in question_ids:
-                    question = uqjs.filter(question_id=question_id)
-                    submissions = Submission.objects.filter(question_id=question_id)
+                    question = UserQuestionJunction.objects.get(id=question_id)
+                    submissions = Submission.objects.filter(uqj__question__id=question_id, uqj__user=course_reg.user)
                     max_grade = 0
                     for submission in submissions:
-                        if submission.user == course_reg.user:  # if it's the user in the team
-                            max_grade = max(max_grade, submission.grade)
+                        max_grade = max(max_grade, submission.grade)
                     attempts.append({
+                        'title': question.question.title,
                         'question_grade': max_grade,
-                        'attempts': question.num_attempts(course_reg.user),
+                        'attempts': submissions.count(),
                     })
-
-                    print("/////////////////////   question grade: " + max_grade + "   attempts: " +
-                          question.num_attempts(course_reg.user) + " **************************")
                 results.append({
                     'grade': team.tokens_received,
                     'total': team.event.total_tokens,
@@ -240,7 +210,7 @@ class CourseViewSet(viewsets.ModelViewSet):
                     'legal_first_name': consent.legal_first_name if consent else "",
                     'legal_last_name': consent.legal_last_name if consent else "",
                     'student_number': consent.student_number if consent else "",
-                    # 'question_details': attempts,
+                    'question_details': attempts,
                 })
 
         return Response(results)
