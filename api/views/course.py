@@ -192,13 +192,13 @@ class CourseViewSet(viewsets.ModelViewSet):
                 consent = course_reg.user.consents.last()
                 question_ids = [question.id for question in team.event.question_set.all().order_by('title')]
                 for question_id in question_ids:
-                    question = UserQuestionJunction.objects.get(id=question_id)
+                    uqj = UserQuestionJunction.objects.get(id=question_id)
                     submissions = Submission.objects.filter(uqj__question__id=question_id, uqj__user=course_reg.user)
                     max_grade = 0
                     for submission in submissions:
                         max_grade = max(max_grade, submission.grade)
                     attempts.append({
-                        'title': question.question.title,
+                        'title': uqj.question.title,
                         'question_grade': max_grade,
                         'attempts': submissions.count(),
                     })
