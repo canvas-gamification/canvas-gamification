@@ -16,6 +16,7 @@ from api.serializers.eventSet import EventSetSerializer
 from canvas.models.models import CanvasCourse, Event
 from canvas.services.course import register_instructor
 from canvas.utils.utils import get_course_registration
+from course.models.models import UserQuestionJunction, Submission
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -184,21 +185,19 @@ class CourseViewSet(viewsets.ModelViewSet):
         for event in events.all():
             teams.extend(event.team_set.all())
 
-        from course.models.models import UserQuestionJunction, Submission
         results = []
         for team in teams:
             for course_reg in team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED"):
                 attempts = []
                 consent = course_reg.user.consents.last()
-                question_ids = [question.id for question in team.event.question_set.all().order_by('title')]
-                for question_id in question_ids:
-                    uqj = UserQuestionJunction.objects.get(id=question_id)
-                    submissions = Submission.objects.filter(uqj__question__id=question_id, uqj__user=course_reg.user)
+                questions = team.event.question_set.all().order_by('title')
+                for question in questions:
+                    submissions = Submission.objects.filter(uqj__question__id=question.id, uqj__user=course_reg.user)
                     max_grade = 0
                     for submission in submissions:
                         max_grade = max(max_grade, submission.grade)
                     attempts.append({
-                        'title': uqj.question.title,
+                        'title': question.title,
                         'question_grade': max_grade,
                         'attempts': submissions.count(),
                     })
