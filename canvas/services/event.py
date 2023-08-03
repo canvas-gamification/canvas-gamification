@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from course.models.models import Submission, Question
 from course.models.multiple_choice import MultipleChoiceQuestion
 import re
@@ -50,6 +52,22 @@ def get_question_stats(question):
                 answers[answer] = 0
             answers[answer] += 1
 
+    teams = []
+    recent_submissions = submissions.filter(uqj__user__role="Student")
+    teams.extend(question.event.team_set.all())
+    users = 0
+    for team in teams:
+        for course_reg in team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED"):
+            users = users + 1
+            user_submissions = submissions.filter(uqj__user=course_reg.user)
+            if user_submissions:
+                latest = user_submissions.latest('submission_time')
+                recent_submissions = recent_submissions.filter(Q(submission_time=latest.submission_time,
+                                                                 uqj__user=course_reg.user) |
+                                                               ~Q(uqj__user=course_reg.user))
+            else:
+                recent_submissions = recent_submissions.exclude(uqj__user=course_reg.user)
+
     return {
         "question": {
             "title": question.title,
@@ -58,9 +76,10 @@ def get_question_stats(question):
         "has_variables": len(question.variables) > 0,
         "answers": answers,
         "error_messages": _get_error_messages(submissions),
-        "submissions": _get_submission_status(submissions),
+        "submissions": _get_submission_status(recent_submissions),
         "status_messages": _get_status_messages(submissions),
         "total_submissions": submissions.count(),
+        "users": users,  # this feels like it should not go here
     }
 
 
