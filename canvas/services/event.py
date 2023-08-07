@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import OuterRef, Subquery, F
 
 from course.models.models import Submission, Question
 from course.models.multiple_choice import MultipleChoiceQuestion
