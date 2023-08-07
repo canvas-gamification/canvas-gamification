@@ -33,11 +33,12 @@ def _get_error_messages(submissions):
     return error_messages
 
 
-def _get_submission_status(submissions):
+def _get_submission_status(submissions, students):
     return {
         "Correct": submissions.filter(is_correct=True).count(),
         "Partially Correct": submissions.filter(is_correct=False, is_partially_correct=True).count(),
         "Incorrect": submissions.filter(is_correct=False, is_partially_correct=False).count(),
+        "Unattempted": students - submissions.count(),
     }
 
 
@@ -52,21 +53,22 @@ def get_question_stats(question):
                 answers[answer] = 0
             answers[answer] += 1
 
-    teams = []
-    recent_submissions = submissions.filter(uqj__user__role="Student")
-    teams.extend(question.event.team_set.all())
-    users = 0
-    for team in teams:
-        for course_reg in team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED"):
-            users = users + 1
-            user_submissions = submissions.filter(uqj__user=course_reg.user)
-            if user_submissions:
-                latest = user_submissions.latest('submission_time')
-                recent_submissions = recent_submissions.filter(Q(submission_time=latest.submission_time,
-                                                                 uqj__user=course_reg.user) |
-                                                               ~Q(uqj__user=course_reg.user))
-            else:
-                recent_submissions = recent_submissions.exclude(uqj__user=course_reg.user)
+    most_recent_submission_time_for_submission_author = (
+        submissions
+        .filter(uqj__user=OuterRef('uqj__user'))
+        .order_by('-submission_time')
+        .values('submission_time')[:1]
+    )
+
+    recent_submissions = (
+        submissions
+        .filter(uqj__user__role="Student")
+        .annotate(recent_timestamp=Subquery(most_recent_submission_time_for_submission_author))
+        .filter(submission_time=F('recent_timestamp'))
+    )
+
+    student_course_registrations = question.course.verified_course_registration.filter(registration_type="STUDENT")\
+        .count()
 
     return {
         "question": {
@@ -76,10 +78,10 @@ def get_question_stats(question):
         "has_variables": len(question.variables) > 0,
         "answers": answers,
         "error_messages": _get_error_messages(submissions),
-        "submissions": _get_submission_status(recent_submissions),
+        "submissions": _get_submission_status(recent_submissions, student_course_registrations),
         "status_messages": _get_status_messages(submissions),
         "total_submissions": submissions.count(),
-        "users": users,  # this feels like it should not go here
+        "student_course_registrations": student_course_registrations,  # this feels like it should not go here
     }
 
 
