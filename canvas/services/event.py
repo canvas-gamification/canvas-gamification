@@ -1,6 +1,7 @@
 from course.models.models import Submission, Question
 from course.models.multiple_choice import MultipleChoiceQuestion
 import re
+import json
 
 
 def _get_status_messages(submissions):
@@ -44,8 +45,9 @@ def get_question_stats(question):
 
     answers = {}
     if isinstance(question, MultipleChoiceQuestion):
+        choices = json.loads(question.choices) if type(question.choices) == str else question.choices
         for submission in submissions:
-            answer = submission.uqj.get_rendered_choices()[submission.answer]
+            answer = choices[submission.answer]
             if answer not in answers:
                 answers[answer] = 0
             answers[answer] += 1
