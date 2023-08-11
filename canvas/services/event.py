@@ -38,7 +38,7 @@ def _get_submission_status(submissions, students):
         "Correct": submissions.filter(is_correct=True).count(),
         "Partially Correct": submissions.filter(is_correct=False, is_partially_correct=True).count(),
         "Incorrect": submissions.filter(is_correct=False, is_partially_correct=False).count(),
-        "Unattempted": students - submissions.count(),
+        "Not Attempted": students - submissions.count(),
     }
 
 
@@ -81,7 +81,7 @@ def get_question_stats(question):
         "submissions": _get_submission_status(recent_submissions, student_course_registrations),
         "status_messages": _get_status_messages(submissions),
         "total_submissions": submissions.count(),
-        "student_course_registrations": student_course_registrations,  # this feels like it should not go here
+        "student_course_registrations": student_course_registrations,
     }
 
 
