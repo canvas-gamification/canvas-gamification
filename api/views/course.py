@@ -190,24 +190,28 @@ class CourseViewSet(viewsets.ModelViewSet):
             for course_reg in team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED"):
                 attempts = []
                 consent = course_reg.user.consents.last()
-                questions = team.event.question_set.all().order_by('title')
+                questions = team.event.question_set.all().order_by("title")
                 for question in questions:
                     submissions = question.user_junctions.get(user=course_reg.user).submissions.all()
                     best_attempt_grade = max([submission.grade for submission in submissions]) if submissions else 0
-                    attempts.append({
-                        'title': question.title,
-                        'question_grade': best_attempt_grade,
-                        'attempts': submissions.count(),
-                    })
-                results.append({
-                    'grade': team.tokens_received,
-                    'total': team.event.total_tokens,
-                    'name': course_reg.name,
-                    'event_name': team.event.name,
-                    'legal_first_name': consent.legal_first_name if consent else "",
-                    'legal_last_name': consent.legal_last_name if consent else "",
-                    'student_number': consent.student_number if consent else "",
-                    'question_details': attempts,
-                })
+                    attempts.append(
+                        {
+                            "title": question.title,
+                            "question_grade": best_attempt_grade,
+                            "attempts": submissions.count(),
+                        }
+                    )
+                results.append(
+                    {
+                        "grade": team.tokens_received,
+                        "total": team.event.total_tokens,
+                        "name": course_reg.name,
+                        "event_name": team.event.name,
+                        "legal_first_name": consent.legal_first_name if consent else "",
+                        "legal_last_name": consent.legal_last_name if consent else "",
+                        "student_number": consent.student_number if consent else "",
+                        "question_details": attempts,
+                    }
+                )
 
         return Response(results)
