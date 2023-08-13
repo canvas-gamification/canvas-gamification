@@ -56,21 +56,18 @@ def get_question_stats(question):
             answers[answer] += 1
 
     most_recent_submission_time_for_submission_author = (
-        submissions
-        .filter(uqj__user=OuterRef('uqj__user'))
-        .order_by('-submission_time')
-        .values('submission_time')[:1]
+        submissions.filter(uqj__user=OuterRef("uqj__user")).order_by("-submission_time").values("submission_time")[:1]
     )
 
     recent_submissions = (
-        submissions
-        .filter(uqj__user__role="Student")
+        submissions.filter(uqj__user__role="Student")
         .annotate(recent_timestamp=Subquery(most_recent_submission_time_for_submission_author))
-        .filter(submission_time=F('recent_timestamp'))
+        .filter(submission_time=F("recent_timestamp"))
     )
 
-    student_course_registrations = question.course.verified_course_registration.filter(registration_type="STUDENT")\
-        .count()
+    student_course_registrations = question.course.verified_course_registration.filter(
+        registration_type="STUDENT"
+    ).count()
 
     return {
         "question": {
