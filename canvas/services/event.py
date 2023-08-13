@@ -34,12 +34,12 @@ def _get_error_messages(submissions):
     return error_messages
 
 
-def _get_submission_status(submissions, students):
+def _get_submission_status(submissions, num_students):
     return {
         "Correct": submissions.filter(is_correct=True).count(),
         "Partially Correct": submissions.filter(is_correct=False, is_partially_correct=True).count(),
         "Incorrect": submissions.filter(is_correct=False, is_partially_correct=False).count(),
-        "Not Attempted": students - submissions.count(),
+        "Not Attempted": num_students - submissions.count(),
     }
 
 
@@ -65,7 +65,7 @@ def get_question_stats(question):
         .filter(submission_time=F("recent_timestamp"))
     )
 
-    student_course_registrations = question.course.verified_course_registration.filter(
+    num_students_registered_in_course = question.course.verified_course_registration.filter(
         registration_type="STUDENT"
     ).count()
 
@@ -77,10 +77,10 @@ def get_question_stats(question):
         "has_variables": len(question.variables) > 0,
         "answers": answers,
         "error_messages": _get_error_messages(submissions),
-        "submissions": _get_submission_status(recent_submissions, student_course_registrations),
+        "submissions": _get_submission_status(recent_submissions, num_students_registered_in_course),
         "status_messages": _get_status_messages(submissions),
         "total_submissions": submissions.count(),
-        "student_course_registrations": student_course_registrations,
+        "num_students_registered_in_course": num_students_registered_in_course,
     }
 
 
