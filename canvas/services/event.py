@@ -47,23 +47,25 @@ def get_question_stats(question):
     users = []
     progress_submission_statuses = [0, 0, 0]
     student_submissions = submissions.filter(uqj__user__role="Student")
-    correct_submissions = student_submissions.filter(is_correct=True).values('uqj__user_id')
+    correct_submissions = student_submissions.filter(is_correct=True).values("uqj__user_id")
     for correct in correct_submissions:
-        if not users.__contains__(correct['uqj__user_id']):
+        if not users.__contains__(correct["uqj__user_id"]):
             progress_submission_statuses[0] += 1
-            users.append(correct['uqj__user_id'])
+            users.append(correct["uqj__user_id"])
 
-    partially_correct_submissions = student_submissions.filter(is_partially_correct=True).values('uqj__user_id')
+    partially_correct_submissions = student_submissions.filter(is_partially_correct=True).values("uqj__user_id")
     for partial in partially_correct_submissions:
-        if not users.__contains__(partial['uqj__user_id']):
+        if not users.__contains__(partial["uqj__user_id"]):
             progress_submission_statuses[1] += 1
-            users.append(partial['uqj__user_id'])
+            users.append(partial["uqj__user_id"])
 
-    incorrect_submissions = student_submissions.filter(is_partially_correct=False, is_correct=False).values('uqj__user_id')
+    incorrect_submissions = student_submissions.filter(is_partially_correct=False, is_correct=False).values(
+        "uqj__user_id"
+    )
     for incorrect in incorrect_submissions:
-        if not users.__contains__(incorrect['uqj__user_id']):
+        if not users.__contains__(incorrect["uqj__user_id"]):
             progress_submission_statuses[2] += 1
-            users.append(incorrect['uqj__user_id'])
+            users.append(incorrect["uqj__user_id"])
 
     return {
         "question": {
