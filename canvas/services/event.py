@@ -34,15 +34,6 @@ def _get_error_messages(submissions):
     return error_messages
 
 
-def _get_submission_status(submissions, num_students):
-    return {
-        "Correct": submissions.filter(is_correct=True).count(),
-        "Partially Correct": submissions.filter(is_correct=False, is_partially_correct=True).count(),
-        "Incorrect": submissions.filter(is_correct=False, is_partially_correct=False).count(),
-        "Not Attempted": num_students - submissions.count(),
-    }
-
-
 def get_question_stats(question):
     submissions = Submission.objects.filter(uqj__question=question)
 
@@ -55,19 +46,26 @@ def get_question_stats(question):
                 answers[answer] = 0
             answers[answer] += 1
 
-    most_recent_submission_time_for_submission_author = (
-        submissions.filter(uqj__user=OuterRef("uqj__user")).order_by("-submission_time").values("submission_time")[:1]
-    )
+    users = []
+    progress_submission_statuses = [0, 0, 0]
+    student_submissions = submissions.filter(uqj__user__role="Student")
+    correct_submissions = student_submissions.filter(is_correct=True).values('uqj__user_id')
+    for correct in correct_submissions:
+        if not users.__contains__(correct['uqj__user_id']):
+            progress_submission_statuses[0] += 1
+            users.append(correct['uqj__user_id'])
 
-    recent_submissions = (
-        submissions.filter(uqj__user__role="Student")
-        .annotate(recent_timestamp=Subquery(most_recent_submission_time_for_submission_author))
-        .filter(submission_time=F("recent_timestamp"))
-    )
+    partially_correct_submissions = student_submissions.filter(is_partially_correct=True).values('uqj__user_id')
+    for partial in partially_correct_submissions:
+        if not users.__contains__(partial['uqj__user_id']):
+            progress_submission_statuses[1] += 1
+            users.append(partial['uqj__user_id'])
 
-    num_students_registered_in_course = question.course.verified_course_registration.filter(
-        registration_type="STUDENT"
-    ).count()
+    incorrect_submissions = student_submissions.filter(is_partially_correct=False, is_correct=False).values('uqj__user_id')
+    for incorrect in incorrect_submissions:
+        if not users.__contains__(incorrect['uqj__user_id']):
+            progress_submission_statuses[2] += 1
+            users.append(incorrect['uqj__user_id'])
 
     return {
         "question": {
@@ -77,10 +75,14 @@ def get_question_stats(question):
         "has_variables": len(question.variables) > 0,
         "answers": answers,
         "error_messages": _get_error_messages(submissions),
-        "submissions": _get_submission_status(recent_submissions, num_students_registered_in_course),
+        "submissions": {
+            "Correct": progress_submission_statuses[0],
+            "Partially Correct": progress_submission_statuses[1],
+            "Incorrect": progress_submission_statuses[2],
+        },
         "status_messages": _get_status_messages(submissions),
         "total_submissions": submissions.count(),
-        "num_students_registered_in_course": num_students_registered_in_course,
+        "num_students_attempted": len(users),
     }
 
 
