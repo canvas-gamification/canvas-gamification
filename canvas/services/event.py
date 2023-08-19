@@ -1,5 +1,3 @@
-from django.db.models import OuterRef, Subquery, F
-
 from course.models.models import Submission, Question
 from course.models.multiple_choice import MultipleChoiceQuestion
 import re
