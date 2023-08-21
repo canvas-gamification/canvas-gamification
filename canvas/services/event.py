@@ -44,28 +44,26 @@ def get_question_stats(question):
                 answers[answer] = 0
             answers[answer] += 1
 
-    users = []
-    progress_submission_statuses = [0, 0, 0]
-    student_submissions = submissions.filter(uqj__user__role="Student")
-    correct_submissions = student_submissions.filter(is_correct=True).values("uqj__user_id")
-    for correct in correct_submissions:
-        if not users.__contains__(correct["uqj__user_id"]):
-            progress_submission_statuses[0] += 1
-            users.append(correct["uqj__user_id"])
+    correct_submissions_users = set()
+    partially_correct_submissions_users = set()
+    incorrect_submissions_users = set()
 
-    partially_correct_submissions = student_submissions.filter(is_partially_correct=True).values("uqj__user_id")
-    for partial in partially_correct_submissions:
-        if not users.__contains__(partial["uqj__user_id"]):
-            progress_submission_statuses[1] += 1
-            users.append(partial["uqj__user_id"])
-
-    incorrect_submissions = student_submissions.filter(is_partially_correct=False, is_correct=False).values(
-        "uqj__user_id"
+    student_submissions = submissions.filter(uqj__user__role="Student").values(
+        "uqj__user_id", "is_correct", "is_partially_correct"
     )
-    for incorrect in incorrect_submissions:
-        if not users.__contains__(incorrect["uqj__user_id"]):
-            progress_submission_statuses[2] += 1
-            users.append(incorrect["uqj__user_id"])
+
+    for submission in student_submissions:
+        if submission["is_correct"]:
+            correct_submissions_users.add(submission["uqj__user_id"])
+        elif submission["is_partially_correct"]:
+            partially_correct_submissions_users.add(submission["uqj__user_id"])
+        else:
+            incorrect_submissions_users.add(submission["uqj__user_id"])
+
+    partially_correct_submissions_users = partially_correct_submissions_users.difference(correct_submissions_users)
+    incorrect_submissions_users = incorrect_submissions_users.difference(
+        correct_submissions_users, partially_correct_submissions_users
+    )
 
     return {
         "question": {
@@ -76,13 +74,15 @@ def get_question_stats(question):
         "answers": answers,
         "error_messages": _get_error_messages(submissions),
         "submissions": {
-            "Correct": progress_submission_statuses[0],
-            "Partially Correct": progress_submission_statuses[1],
-            "Incorrect": progress_submission_statuses[2],
+            "Correct": len(correct_submissions_users),
+            "Partially Correct": len(partially_correct_submissions_users),
+            "Incorrect": len(incorrect_submissions_users),
         },
         "status_messages": _get_status_messages(submissions),
         "total_submissions": submissions.count(),
-        "num_students_attempted": len(users),
+        "num_students_attempted": len(correct_submissions_users)
+        + len(partially_correct_submissions_users)
+        + len(incorrect_submissions_users),
     }
 
 
