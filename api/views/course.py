@@ -16,7 +16,6 @@ from api.serializers.eventSet import EventSetSerializer
 from canvas.models.models import CanvasCourse, Event
 from canvas.services.course import register_instructor
 from canvas.utils.utils import get_course_registration
-from course.models.models import UserQuestionJunction, Submission
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -183,11 +182,18 @@ class CourseViewSet(viewsets.ModelViewSet):
 
         teams = []
         for event in events.all():
-            teams.extend(event.team_set.all())
+            if request.user.is_student:
+                teams.extend(event.team_set.filter(course_registrations=request.user.id))
+            else:
+                teams.extend(event.team_set.all())
 
         results = []
         for team in teams:
-            for course_reg in team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED"):
+            if request.user.is_student:
+                course_registrations = team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED", user=request.user.id)
+            else:
+                course_registrations = team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED")
+            for course_reg in course_registrations:
                 attempts = []
                 consent = course_reg.user.consents.last()
                 questions = team.event.question_set.all().order_by("title")

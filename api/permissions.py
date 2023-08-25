@@ -51,7 +51,10 @@ class StudentsMustBeRegisteredPermission(permissions.IsAuthenticated):
 class GradeBookPermission(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
         if request.method == "GET":
-            return obj.has_edit_permission(request.user)
+            if request.user.is_student:
+                return obj.is_registered(request.user)
+            else:
+                return obj.has_edit_permission(request.user)
         return True
 
 
