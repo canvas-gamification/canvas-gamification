@@ -190,17 +190,19 @@ class CourseViewSet(viewsets.ModelViewSet):
         results = []
         for team in teams:
             if request.user.is_student:
-                course_registrations = team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED", user=request.user.id)
+                course_registrations = team.course_registrations.filter(
+                    registration_type="STUDENT", status="VERIFIED", user=request.user.id
+                )
             else:
                 course_registrations = team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED")
             for course_reg in course_registrations:
-                attempts = []
+                question_details = []
                 consent = course_reg.user.consents.last()
                 questions = team.event.question_set.all().order_by("title")
                 for question in questions:
                     submissions = question.user_junctions.get(user=course_reg.user).submissions.all()
                     best_attempt_grade = max([submission.grade for submission in submissions]) if submissions else 0
-                    attempts.append(
+                    question_details.append(
                         {
                             "title": question.title,
                             "question_grade": best_attempt_grade,
@@ -216,7 +218,7 @@ class CourseViewSet(viewsets.ModelViewSet):
                         "legal_first_name": consent.legal_first_name if consent else "",
                         "legal_last_name": consent.legal_last_name if consent else "",
                         "student_number": consent.student_number if consent else "",
-                        "question_details": attempts,
+                        "question_details": question_details,
                     }
                 )
 

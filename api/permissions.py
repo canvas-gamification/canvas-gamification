@@ -48,6 +48,8 @@ class StudentsMustBeRegisteredPermission(permissions.IsAuthenticated):
         return True
 
 
+# TODO: have separate endpoints for the "see all grade book data" vs "see MY grade book data" and have different
+#  permissions for each
 class GradeBookPermission(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
         if request.method == "GET":
