@@ -334,8 +334,8 @@ class Event(models.Model):
 
 class EventSet(models.Model):
     name = models.CharField(max_length=500)
-    course = models.ForeignKey(CanvasCourse, related_name="eventSets", on_delete=models.CASCADE)
-    events = models.ManyToManyField(Event, related_name="eventSets", blank=True)
+    course = models.ForeignKey(CanvasCourse, related_name="event_sets", on_delete=models.CASCADE)
+    events = models.ManyToManyField(Event, related_name="event_sets", blank=True)
     tokens = models.FloatField()
 
     def has_edit_permission(self, user):
