@@ -24,5 +24,6 @@ class ObtainAuthTokenView(ObtainAuthToken):
                 "is_teacher": user.is_teacher,
                 "is_student": user.is_student,
                 "has_consent": user.has_consent,
+                "community_jwt": user.community_jwt,
             }
         )

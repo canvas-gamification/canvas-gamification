@@ -35,6 +35,8 @@ class SurveyViewSet(viewsets.mixins.CreateModelMixin, viewsets.mixins.ListModelM
 
     def perform_create(self, serializer):
         request = serializer.context["request"]
+        code = request.data["code"]
+        self.get_queryset().filter(code=code).delete()
         serializer.save(user=request.user)
 
     @action(detail=False, methods=["get"], url_path="check")
@@ -48,15 +50,17 @@ class SurveyViewSet(viewsets.mixins.CreateModelMixin, viewsets.mixins.ListModelM
         has_final_survey = Survey.objects.filter(user=request.user, code="final").exists()
         has_initial_survey = Survey.objects.filter(user=request.user, code="initial").exists()
 
-        if not has_initial_survey:
-            return Response({"code": "initial"})
+        # Comment out logic for survey check as it is not currently required
 
-        if has_final_survey:
-            return Response({"code": None})
+        # if not has_initial_survey:
+        #     return Response({"code": "initial"})
+        #
+        # if has_final_survey:
+        #     return Response({"code": None})
 
-        for course in courses:
-            if course.is_registered(request.user):
-                return Response({"code": "final"})
+        # for course in courses:
+        #     if course.is_registered(request.user):
+        #         return Response({"code": "final"})
 
         return Response({"code": None})
 

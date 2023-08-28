@@ -1,8 +1,10 @@
 from django.contrib.auth.models import AbstractUser, AnonymousUser
+import jwt
 
 # Create your models here.
 from django.db import models
 from django.db.models import Count, Q
+from django.conf import settings
 
 from course.utils.utils import ensure_uqj, success_rate
 
@@ -81,6 +83,16 @@ class MyUser(AbstractUser):
     @property
     def has_consent(self):
         return self.consents.exists()
+
+    @property
+    def community_jwt(self):
+        private_key = settings.COMMUNITY_JWT_PRIVATE_KEY
+        user_data = {
+            "sub": self.id,
+            "email": self.email or self.username,
+            "name": self.get_full_name() or self.email,
+        }
+        return jwt.encode(user_data, private_key, algorithm="HS256")
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

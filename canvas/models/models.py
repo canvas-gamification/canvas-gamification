@@ -206,6 +206,9 @@ class Event(models.Model):
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
 
+    class Meta:
+        unique_together = ("course", "name")
+
     def __str__(self):
         return self.name
 
@@ -282,11 +285,21 @@ class Event(models.Model):
 
     def has_edit_permission(self, user):
         course_reg = get_course_registration(user, self.course)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR or self.is_author(user)
+        return (
+            user.is_teacher
+            or course_reg.registration_type == TA
+            or course_reg.registration_type == INSTRUCTOR
+            or self.is_author(user)
+        )
 
     def has_create_permission(self, user):
         course_reg = get_course_registration(user, self.course)
-        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR or self.is_author(user)
+        return (
+            user.is_teacher
+            or course_reg.registration_type == TA
+            or course_reg.registration_type == INSTRUCTOR
+            or self.is_author(user)
+        )
 
     def is_allowed_to_open(self, user):
         return self.course.is_registered(user) and self.is_open
@@ -305,12 +318,29 @@ class Event(models.Model):
         cloned_event.id = None
         cloned_event.name += " (Copy)"
         cloned_event.course = course
+        cloned_event.featured = False
         cloned_event.save()
 
         for question in self.question_set.all():
             question.copy_to_event(cloned_event)
 
         return cloned_event
+
+    def update_featured(self):
+        if self.is_closed:
+            self.featured = False
+            self.save()
+
+
+class EventSet(models.Model):
+    name = models.CharField(max_length=500)
+    course = models.ForeignKey(CanvasCourse, related_name="event_sets", on_delete=models.CASCADE)
+    events = models.ManyToManyField(Event, related_name="event_sets", blank=True)
+    tokens = models.FloatField()
+
+    def has_edit_permission(self, user):
+        course_reg = get_course_registration(user, self.course)
+        return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 
 
 class EventSet(models.Model):

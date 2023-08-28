@@ -241,6 +241,8 @@ if HEROKU:
     prod_db = dj_database_url.config(conn_max_age=500)
     DATABASES["default"].update(prod_db)
 
+COMMUNITY_JWT_PRIVATE_KEY = os.environ.get("COMMUNITY_JWT_PRIVATE_KEY", "")
+
 if DEBUG is False:
     sentry_sdk.init(
         dsn=os.environ["SENTRY_DSN"],

@@ -1,6 +1,7 @@
 from course.models.models import Submission, Question
 from course.models.multiple_choice import MultipleChoiceQuestion
 import re
+import json
 
 
 def _get_status_messages(submissions):
@@ -44,8 +45,9 @@ def get_question_stats(question):
 
     answers = {}
     if isinstance(question, MultipleChoiceQuestion):
+        choices = json.loads(question.choices) if type(question.choices) == str else question.choices
         for submission in submissions:
-            answer = submission.uqj.get_rendered_choices()[submission.answer]
+            answer = choices[submission.answer]
             if answer not in answers:
                 answers[answer] = 0
             answers[answer] += 1
@@ -53,6 +55,7 @@ def get_question_stats(question):
     return {
         "question": {
             "title": question.title,
+            "text": question.text,
         },
         "has_variables": len(question.variables) > 0,
         "answers": answers,
@@ -64,12 +67,17 @@ def get_question_stats(question):
 
 
 def get_event_stats(event):
-    return [get_question_stats(question) for question in event.question_set.all()]
+    return [get_question_stats(question) for question in event.question_set.all().order_by("title")]
 
 
 def set_featured(event):
     event.course.events.update(featured=False)
     event.featured = True
+    event.save()
+
+
+def clear_featured(event):
+    event.featured = False
     event.save()
 
 

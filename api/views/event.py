@@ -12,7 +12,7 @@ from api.permissions import (
 )
 from api.serializers import EventSerializer
 from canvas.models.models import Event, EVENT_TYPE_CHOICES, CanvasCourse, CHALLENGE_TYPE_CHOICES
-from canvas.services.event import get_event_stats, set_featured, add_question_set
+from canvas.services.event import get_event_stats, set_featured, add_question_set, clear_featured
 from course.models.models import Question
 from course.services.question import get_number_of_questions_counted_by_category_and_difficulty
 from general.services.action import (
@@ -90,6 +90,12 @@ class EventViewSet(viewsets.ModelViewSet):
     def set_featured(self, request, pk=None):
         event = get_object_or_404(Event, id=pk)
         set_featured(event)
+        return Response("success")
+
+    @action(detail=True, methods=["post"], url_path="clear-featured")
+    def clear_featured(self, request, pk=None):
+        event = get_object_or_404(Event, id=pk)
+        clear_featured(event)
         return Response("success")
 
     @action(detail=False, methods=["get"], url_path="get-event-types")
