@@ -274,7 +274,7 @@ class Event(models.Model):
 
         uqjs = UserQuestionJunction.objects.filter(user_id=user.id, is_solved=True, question__in=event_questions)
 
-        if uqjs.exists():
+        if uqjs.count() == event_questions.count():
             return True
         return False
 
