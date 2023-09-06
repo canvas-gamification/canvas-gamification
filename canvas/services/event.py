@@ -1,4 +1,4 @@
-from course.models.models import Submission, Question
+from course.models.models import Submission, Question, UserQuestionJunction
 from course.models.multiple_choice import MultipleChoiceQuestion
 import re
 import json
@@ -44,26 +44,7 @@ def get_question_stats(question):
                 answers[answer] = 0
             answers[answer] += 1
 
-    correct_submissions_users = set()
-    partially_correct_submissions_users = set()
-    incorrect_submissions_users = set()
-
-    student_submissions = submissions.filter(uqj__user__role="Student").values(
-        "uqj__user_id", "is_correct", "is_partially_correct"
-    )
-
-    for submission in student_submissions:
-        if submission["is_correct"]:
-            correct_submissions_users.add(submission["uqj__user_id"])
-        elif submission["is_partially_correct"]:
-            partially_correct_submissions_users.add(submission["uqj__user_id"])
-        else:
-            incorrect_submissions_users.add(submission["uqj__user_id"])
-
-    partially_correct_submissions_users = partially_correct_submissions_users.difference(correct_submissions_users)
-    incorrect_submissions_users = incorrect_submissions_users.difference(
-        correct_submissions_users, partially_correct_submissions_users
-    )
+    uqjs = UserQuestionJunction.objects.filter(question=question)
 
     return {
         "question": {
@@ -74,15 +55,13 @@ def get_question_stats(question):
         "answers": answers,
         "error_messages": _get_error_messages(submissions),
         "submissions": {
-            "Correct": len(correct_submissions_users),
-            "Partially Correct": len(partially_correct_submissions_users),
-            "Incorrect": len(incorrect_submissions_users),
+            "Correct": uqjs.filter(is_solved=True).count(),
+            "Partially Correct": uqjs.filter(is_partially_solved=True).count(),
+            "Incorrect": uqjs.filter(is_solved=False, is_partially_solved=False).count(),
         },
         "status_messages": _get_status_messages(submissions),
         "total_submissions": submissions.count(),
-        "num_students_attempted": len(correct_submissions_users)
-        + len(partially_correct_submissions_users)
-        + len(incorrect_submissions_users),
+        "num_students_attempted": uqjs.count(),
     }
 
 
