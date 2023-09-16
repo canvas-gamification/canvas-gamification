@@ -1,3 +1,5 @@
+from django.db.models import Count
+
 from course.models.models import Submission, Question, UserQuestionJunction
 from course.models.multiple_choice import MultipleChoiceQuestion
 import re
@@ -44,7 +46,11 @@ def get_question_stats(question):
                 answers[answer] = 0
             answers[answer] += 1
 
-    uqjs = UserQuestionJunction.objects.filter(question=question)
+    uqjs = (
+        UserQuestionJunction.objects.filter(question=question)
+        .annotate(submission_count=Count("submission"))
+        .filter(submission_count__gt=0)
+    )
 
     return {
         "question": {
