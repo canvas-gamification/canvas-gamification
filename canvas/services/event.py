@@ -48,8 +48,8 @@ def get_question_stats(question):
 
     uqjs = (
         UserQuestionJunction.objects.filter(question=question)
-        .annotate(submission_count=Count("submission"))
-        .filter(submission_count__gt=0)
+        .annotate(submissions_count=Count("submissions"))
+        .filter(submissions_count__gt=0)
     )
 
     return {
