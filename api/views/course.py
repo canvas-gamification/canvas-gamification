@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from accounts.utils.email_functions import course_create_email
 from api.serializers import CourseSerializer, CourseListSerializer, CanvasCourseRegistrationSerializer
-from api.permissions import CoursePermission, GradeBookPermission
+from api.permissions import CoursePermission, GradeBookPermission, StudentsMustBeRegisteredPermission
 import api.error_messages as ERROR_MESSAGES
 from api.serializers.course import CourseCreateSerializer
 
@@ -175,6 +175,40 @@ class CourseViewSet(viewsets.ModelViewSet):
 
         return Response(event_sets.data)
 
+    @action(detail=True, methods=["get"], url_path="my-grades", permission_classes=[StudentsMustBeRegisteredPermission])
+    def my_grades(self, request, pk):
+        course = get_object_or_404(CanvasCourse, id=pk)
+        events = course.events
+
+        teams = []
+        for event in events.all():
+            teams.extend(event.team_set.filter(course_registrations=request.user.id))
+
+        results = []
+        for team in teams:
+            for course_reg in team.course_registrations.filter(status="VERIFIED", user=request.user):
+                uqjs = course_reg.user.question_junctions.filter(question__event_id__in=[team.event_id])
+
+                results.append(
+                    {
+                        "grade": team.tokens_received,
+                        "total": team.event.total_tokens,
+                        "name": course_reg.name,
+                        "event_name": team.event.name,
+                        "event_id": team.event.id,
+                        "question_details": [
+                            {
+                                "title": uqj.question.title,
+                                "question_grade": uqj.grade,
+                                "attempts": uqj.submissions.count(),
+                            }
+                            for uqj in uqjs
+                        ],
+                    }
+                )
+
+        return Response(results)
+
     @action(detail=True, methods=["get"], url_path="grade-book", permission_classes=[GradeBookPermission])
     def course_grade_book(self, request, pk):
         course = get_object_or_404(CanvasCourse, id=pk)
@@ -188,6 +222,9 @@ class CourseViewSet(viewsets.ModelViewSet):
         for team in teams:
             for course_reg in team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED"):
                 consent = course_reg.user.consents.last()
+
+                uqjs = course_reg.user.question_junctions.filter(question__event_id__in=[team.event_id])
+
                 results.append(
                     {
                         "grade": team.tokens_received,
@@ -197,6 +234,14 @@ class CourseViewSet(viewsets.ModelViewSet):
                         "legal_first_name": consent.legal_first_name if consent else "",
                         "legal_last_name": consent.legal_last_name if consent else "",
                         "student_number": consent.student_number if consent else "",
+                        "question_details": [
+                            {
+                                "title": uqj.question.title,
+                                "question_grade": uqj.grade,
+                                "attempts": uqj.submissions.count(),
+                            }
+                            for uqj in uqjs
+                        ],
                     }
                 )
 

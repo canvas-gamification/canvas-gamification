@@ -271,6 +271,7 @@ class UserQuestionJunction(models.Model):
     last_viewed = models.DateTimeField(default=None, null=True, blank=True, db_index=True)
     opened_tutorial = models.BooleanField(default=False)
     tokens_received = models.FloatField(default=0)
+    grade = models.FloatField(default=0)
 
     solved_at = models.DateTimeField(default=None, null=True, blank=True, db_index=True)
     is_solved = models.BooleanField(default=False, db_index=True)
@@ -504,6 +505,7 @@ class Submission(PolymorphicModel):
 
             if self.question.is_exam or token_change > 0:
                 user_question_junction.tokens_received = received_tokens
+                user_question_junction.grade = self.grade
                 user_question_junction.save()
 
         super().save(*args, **kwargs)
