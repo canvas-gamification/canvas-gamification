@@ -1,4 +1,4 @@
-from course.models.models import Submission, Question
+from course.models.models import Submission, Question, UserQuestionJunction
 from course.models.multiple_choice import MultipleChoiceQuestion
 import re
 import json
@@ -32,14 +32,6 @@ def _get_error_messages(submissions):
     return error_messages
 
 
-def _get_submission_status(submissions):
-    return {
-        "Correct": submissions.filter(is_correct=True).count(),
-        "Partially Correct": submissions.filter(is_correct=False, is_partially_correct=True).count(),
-        "Incorrect": submissions.filter(is_correct=False, is_partially_correct=False).count(),
-    }
-
-
 def get_question_stats(question):
     submissions = Submission.objects.filter(uqj__question=question)
 
@@ -52,6 +44,8 @@ def get_question_stats(question):
                 answers[answer] = 0
             answers[answer] += 1
 
+    uqjs = UserQuestionJunction.objects.filter(question=question)
+
     return {
         "question": {
             "title": question.title,
@@ -60,9 +54,14 @@ def get_question_stats(question):
         "has_variables": len(question.variables) > 0,
         "answers": answers,
         "error_messages": _get_error_messages(submissions),
-        "submissions": _get_submission_status(submissions),
+        "submissions": {
+            "Correct": uqjs.filter(is_solved=True).count(),
+            "Partially Correct": uqjs.filter(is_partially_solved=True).count(),
+            "Incorrect": uqjs.filter(is_solved=False, is_partially_solved=False).count(),
+        },
         "status_messages": _get_status_messages(submissions),
         "total_submissions": submissions.count(),
+        "num_students_attempted": uqjs.count(),
     }
 
 
