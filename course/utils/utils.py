@@ -60,7 +60,9 @@ def get_token_value_object(category, difficulty):
 
 
 def get_token_value(category, difficulty):
-    return get_token_value_object(category, difficulty).value
+    if isinstance(category, str):
+        return get_token_value_object(category, difficulty).value
+    return get_token_value_object(category.id, difficulty).value
 
 
 def get_token_values():
