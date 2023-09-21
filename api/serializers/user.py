@@ -12,6 +12,7 @@ class UserSerializer(QueryFieldsMixin, serializers.ModelSerializer):
             "last_name",
             "username",
             "email",
+            "nickname",
             "role",
             "date_joined",
         ]
