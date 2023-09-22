@@ -8,7 +8,7 @@ import api.error_messages as ERROR_MESSAGES
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ["id", "first_name", "last_name", "email"]
+        fields = ["id", "first_name", "last_name", "email", "nickname"]
 
     email = serializers.EmailField(
         read_only=True,
@@ -31,11 +31,17 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         error_messages=ERROR_MESSAGES.LASTNAME.ERROR_MESSAGES,
     )
 
+    nickname = serializers.CharField(
+        required=True,
+        error_messages=ERROR_MESSAGES.NICKNAME.ERROR_MESSAGES,
+    )
+
     def create(self, validated_data):
         user = self.context["request"].user
 
         user.first_name = validated_data["first_name"]
         user.last_name = validated_data["last_name"]
+        user.nickname = validated_data["nickname"]
         user.email = validated_data["email"]
 
         user.save()

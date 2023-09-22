@@ -26,6 +26,7 @@ class MyAnonymousUser(AnonymousUser):
 class MyUser(AbstractUser):
     role = models.CharField(max_length=100, choices=USER_ROLE_CHOICES, default=STUDENT)
     email = models.EmailField("email address", blank=True, unique=True)
+    nickname = models.CharField("nickname", max_length=30, blank=True)
 
     @property
     def tokens(self):
@@ -42,6 +43,10 @@ class MyUser(AbstractUser):
     @property
     def has_name(self):
         return self.first_name is not None and self.first_name != ""
+
+    @property
+    def has_nickname(self):
+        return self.nickname is not None and self.nickname != ""
 
     @property
     def has_complete_profile(self):
@@ -123,6 +128,7 @@ class UserConsent(models.Model):
 
     legal_first_name = models.CharField(max_length=100, null=True, blank=True)
     legal_last_name = models.CharField(max_length=100, null=True, blank=True)
+    nickname = models.CharField(max_length=100, null=True, blank=True)
     gender = models.CharField(max_length=100, choices=GENDER_CHOICES, null=True, blank=True)
     race = models.CharField(max_length=500, null=True, blank=True)
 
