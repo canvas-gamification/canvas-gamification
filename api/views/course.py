@@ -233,7 +233,6 @@ class CourseViewSet(viewsets.ModelViewSet):
                         "event_name": team.event.name,
                         "legal_first_name": consent.legal_first_name if consent else "",
                         "legal_last_name": consent.legal_last_name if consent else "",
-                        "nickname": consent.nickname if consent and consent.nickname else "",
                         "student_number": consent.student_number if consent else "",
                         "question_details": [
                             {
