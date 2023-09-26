@@ -18,6 +18,18 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             )
         ],
     )
+    legal_first_name = serializers.CharField(
+        required=True,
+        error_messages=ERROR_MESSAGES.FIRSTNAME.ERROR_MESSAGES,
+    )
+    legal_last_name = serializers.CharField(
+        required=True,
+        error_messages=ERROR_MESSAGES.LASTNAME.ERROR_MESSAGES,
+    )
+    nickname = serializers.CharField(
+        required=True,
+        error_messages=ERROR_MESSAGES.NICKNAME.ERROR_MESSAGES,
+    )
     password = serializers.CharField(
         write_only=True,
         required=True,
