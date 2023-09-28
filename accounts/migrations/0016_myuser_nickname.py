@@ -24,8 +24,8 @@ class Migration(migrations.Migration):
         ),
         migrations.RunPython(forwards_func),
         migrations.AlterField(
-            model_name='myuser',
-            name='nickname',
+            model_name="myuser",
+            name="nickname",
             field=models.CharField(max_length=100, verbose_name="nickname"),
             preserve_default=False,
         ),
