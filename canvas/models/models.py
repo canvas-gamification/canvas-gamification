@@ -6,7 +6,6 @@ from django.db.models import Sum, F, FloatField, Max
 from django.utils import timezone
 
 from accounts.models import MyUser
-from accounts.utils.generate_default_name import generate_default_name
 from canvas.utils.token_use import get_token_use
 from canvas.utils.utils import get_course_registration, get_total_event_tokens
 
@@ -176,9 +175,10 @@ class CanvasCourseRegistration(models.Model):
 
     @property
     def name(self):
-        if self.user.has_nickname:
-            return self.user.nickname
-        return generate_default_name()
+        if not self.user.nickname:
+            raise ValueError(f"User {self.user.id} does not have a nickname")
+
+        return self.user.nickname
 
 
 EVENT_TYPE_CHOICES = [

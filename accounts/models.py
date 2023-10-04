@@ -45,10 +45,6 @@ class MyUser(AbstractUser):
         return self.first_name is not None and self.first_name != ""
 
     @property
-    def has_nickname(self):
-        return self.nickname is not None and self.nickname != ""
-
-    @property
     def has_complete_profile(self):
         return self.has_name
 

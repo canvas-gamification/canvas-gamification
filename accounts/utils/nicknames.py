@@ -1,5 +1,3 @@
-import random
-
 adjectives = [
     "admiring",
     "adoring",
@@ -235,7 +233,10 @@ animals = [
 ]
 
 
-def generate_default_name():
-    adjective = random.choice(adjectives)
-    animal = random.choice(animals)
-    return f"{adjective} {animal}"
+def get_all_nicknames():
+    permutations = []
+    for adjective in adjectives:
+        for animal in animals:
+            permutations.append(f"{adjective} {animal}")
+
+    return permutations

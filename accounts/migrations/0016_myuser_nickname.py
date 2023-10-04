@@ -1,12 +1,22 @@
+import random
+
 from django.db import migrations, models
-from accounts.utils.generate_default_name import generate_default_name
+from accounts.utils.nicknames import get_all_nicknames
 
 
 def forwards_func(apps, schema_editor):
     MyUser = apps.get_model("accounts", "myuser")
     my_users = MyUser.objects.select_for_update()
+    all_available_nicknames = get_all_nicknames()
+    random.shuffle(all_available_nicknames)
+    all_available_nicknames = set(all_available_nicknames)
+
     for my_user in my_users:
-        my_user.nickname = generate_default_name()
+        if len(all_available_nicknames) <= 0:
+            raise ValueError("No more available nicknames")
+
+        new_nickname = all_available_nicknames.pop()
+        my_user.nickname = new_nickname
         my_user.save()
 
 
