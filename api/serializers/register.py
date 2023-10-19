@@ -18,11 +18,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             )
         ],
     )
-    legal_first_name = serializers.CharField(
+    first_name = serializers.CharField(
         required=True,
         error_messages=ERROR_MESSAGES.FIRSTNAME.ERROR_MESSAGES,
     )
-    legal_last_name = serializers.CharField(
+    last_name = serializers.CharField(
         required=True,
         error_messages=ERROR_MESSAGES.LASTNAME.ERROR_MESSAGES,
     )
@@ -49,7 +49,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MyUser
-        fields = ("email", "password", "password2", "recaptcha_key")
+        fields = ("email", "first_name", "last_name", "nickname", "password", "password2", "recaptcha_key")
 
     def create(self, validated_data):
         user = MyUser.objects.create_user(username=validated_data["email"], email=validated_data["email"])
