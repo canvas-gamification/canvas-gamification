@@ -175,10 +175,11 @@ class CanvasCourseRegistration(models.Model):
 
     @property
     def name(self):
-        if not self.user.nickname:
-            raise ValueError(f"User {self.user.id} does not have a nickname")
-
         return self.user.nickname
+
+    @property
+    def full_name(self):
+        return f"{self.user.first_name} {self.user.last_name}"
 
 
 EVENT_TYPE_CHOICES = [
