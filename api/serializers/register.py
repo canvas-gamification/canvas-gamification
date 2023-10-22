@@ -52,7 +52,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ("email", "first_name", "last_name", "nickname", "password", "password2", "recaptcha_key")
 
     def create(self, validated_data):
-        user = MyUser.objects.create_user(username=validated_data["email"], email=validated_data["email"])
+        user = MyUser.objects.create_user(
+            username=validated_data["email"],
+            email=validated_data["email"],
+            first_name=validated_data["first_name"],
+            last_name=validated_data["last_name"],
+            nickname=validated_data["nickname"],
+        )
         user.set_password(validated_data["password"])
 
         user.is_active = False
