@@ -17,6 +17,12 @@ class UserConsentViewSet(viewsets.ModelViewSet):
     serializer_class = UserConsentSerializer
     permission_classes = [IsAuthenticated, UserConsentPermission]
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_teacher:
+            return UserConsent.objects.all()
+        return UserConsent.objects.filter(user=user)
+
     def perform_create(self, serializer):
         request = serializer.context["request"]
         serializer.save(user=request.user)
