@@ -177,7 +177,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["get"], url_path="my-grades", permission_classes=[StudentsMustBeRegisteredPermission])
     def my_grades(self, request, pk):
-        course = get_object_or_404(CanvasCourse, id=pk)
+        course = self.get_object()
         events = course.events
 
         teams = []
@@ -211,7 +211,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["get"], url_path="grade-book", permission_classes=[GradeBookPermission])
     def course_grade_book(self, request, pk):
-        course = get_object_or_404(CanvasCourse, id=pk)
+        course = self.get_object()
         events = course.events
 
         teams = []

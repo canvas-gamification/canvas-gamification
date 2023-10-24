@@ -15,7 +15,7 @@ from general.services.action import (
 class UserConsentViewSet(viewsets.ModelViewSet):
     queryset = UserConsent.objects.all()
     serializer_class = UserConsentSerializer
-    permission_classes = [IsAuthenticated, UserConsentPermission]
+    permission_classes = [UserConsentPermission]
 
     def get_queryset(self):
         user = self.request.user
