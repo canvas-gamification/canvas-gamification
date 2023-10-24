@@ -175,6 +175,10 @@ class CanvasCourseRegistration(models.Model):
 
     @property
     def name(self):
+        return self.user.nickname
+
+    @property
+    def full_name(self):
         if self.user.has_name:
             return self.user.get_full_name()
         return "Anonymous Student"

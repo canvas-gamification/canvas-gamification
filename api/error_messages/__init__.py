@@ -26,3 +26,4 @@ from .title import TITLE
 from .token_use import TOKEN_USE
 from .user import USER
 from .visible_distractor_count import VISIBLE_DISTRACTOR_COUNT
+from .nickname import NICKNAME

@@ -26,6 +26,7 @@ class MyAnonymousUser(AnonymousUser):
 class MyUser(AbstractUser):
     role = models.CharField(max_length=100, choices=USER_ROLE_CHOICES, default=STUDENT)
     email = models.EmailField("email address", blank=True, unique=True)
+    nickname = models.CharField("nickname", max_length=100)
 
     @property
     def tokens(self):
