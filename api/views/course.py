@@ -221,24 +221,20 @@ class CourseViewSet(viewsets.ModelViewSet):
         results = []
         for team in teams:
             for course_reg in team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED"):
-                consent = course_reg.user.consents.last()
-
                 uqjs = course_reg.user.question_junctions.filter(question__event_id__in=[team.event_id])
 
                 results.append(
                     {
                         "grade": team.tokens_received,
                         "total": team.event.total_tokens,
-                        "name": course_reg.name,
+                        "name": course_reg.full_name,
                         "event_name": team.event.name,
-                        "legal_first_name": consent.legal_first_name if consent else "",
-                        "legal_last_name": consent.legal_last_name if consent else "",
-                        "student_number": consent.student_number if consent else "",
                         "question_details": [
                             {
                                 "title": uqj.question.title,
                                 "question_grade": uqj.grade,
                                 "attempts": uqj.submissions.count(),
+                                "max_attempts": uqj.question.max_submission_allowed
                             }
                             for uqj in uqjs
                         ],
