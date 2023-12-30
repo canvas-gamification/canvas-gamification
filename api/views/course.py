@@ -215,7 +215,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         students = course.verified_course_registration.filter(registration_type="STUDENT")
         results = []
 
-        for event in course.events.all():
+        for event in course.events.filter(type__in=["ASSIGNMENT", "EXAM"]):
             for student in students:
                 uqjs = student.user.question_junctions.filter(question__event_id__in=[event.id])
                 results.append(
