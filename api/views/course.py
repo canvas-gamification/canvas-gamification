@@ -212,29 +212,24 @@ class CourseViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"], url_path="grade-book", permission_classes=[GradeBookPermission])
     def course_grade_book(self, request, pk):
         course = self.get_object()
-        events = course.events
-
-        teams = []
-        for event in events.all():
-            teams.extend(event.team_set.all())
-
+        students = course.verified_course_registration.filter(registration_type="STUDENT")
         results = []
-        for team in teams:
-            for course_reg in team.course_registrations.filter(registration_type="STUDENT", status="VERIFIED"):
-                uqjs = course_reg.user.question_junctions.filter(question__event_id__in=[team.event_id])
 
+        for event in course.events.all():
+            for student in students:
+                uqjs = student.user.question_junctions.filter(question__event_id__in=[event.id])
                 results.append(
                     {
-                        "grade": team.tokens_received,
-                        "total": team.event.total_tokens,
-                        "name": course_reg.full_name,
-                        "event_name": team.event.name,
+                        "grade": sum(uqjs.values_list("grade", flat=True)),
+                        "total": event.total_tokens,
+                        "name": student.full_name,
+                        "event_name": event.name,
                         "question_details": [
                             {
                                 "title": uqj.question.title,
                                 "question_grade": uqj.grade,
                                 "attempts": uqj.submissions.count(),
-                                "max_attempts": uqj.question.max_submission_allowed
+                                "max_attempts": uqj.question.max_submission_allowed,
                             }
                             for uqj in uqjs
                         ],
