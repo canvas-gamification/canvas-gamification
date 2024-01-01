@@ -180,8 +180,8 @@ class CourseViewSet(viewsets.ModelViewSet):
         course = self.get_object()
         students = course.verified_course_registration.filter(registration_type="STUDENT", user=request.user)
         if students.count() == 0:
-            # TODO: Ask keyvan about what to do if length is 0
-            print("Hello")
+            # TODO: define message elsewhere to be consistent with how other errors are defined
+            raise ValueError('No student found for this course.')
         student = students[0]
         results = []
 
