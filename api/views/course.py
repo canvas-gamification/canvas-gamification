@@ -180,8 +180,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         course = self.get_object()
         students = course.verified_course_registration.filter(registration_type="STUDENT", user=request.user)
         if students.count() == 0:
-            # TODO: define message elsewhere to be consistent with how other errors are defined
-            raise ValueError('No student found for this course.')
+            raise ValueError(ERROR_MESSAGES.TOKEN_USE.NO_STUDENT_GRADES_FOUND)
         student = students[0]
         results = []
 
