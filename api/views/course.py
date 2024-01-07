@@ -178,35 +178,31 @@ class CourseViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"], url_path="my-grades", permission_classes=[StudentsMustBeRegisteredPermission])
     def my_grades(self, request, pk):
         course = self.get_object()
-        events = course.events
-
-        teams = []
-        for event in events.all():
-            teams.extend(event.team_set.filter(course_registrations=request.user.id))
-
+        students = course.verified_course_registration.filter(registration_type="STUDENT", user=request.user)
+        if students.count() == 0:
+            raise ValueError(ERROR_MESSAGES.TOKEN_USE.NO_STUDENT_GRADES_FOUND)
+        student = students[0]
         results = []
-        for team in teams:
-            for course_reg in team.course_registrations.filter(status="VERIFIED", user=request.user):
-                uqjs = course_reg.user.question_junctions.filter(question__event_id__in=[team.event_id])
 
-                results.append(
-                    {
-                        "grade": team.tokens_received,
-                        "total": team.event.total_tokens,
-                        "name": course_reg.name,
-                        "event_name": team.event.name,
-                        "event_id": team.event.id,
-                        "question_details": [
-                            {
-                                "title": uqj.question.title,
-                                "question_grade": uqj.grade,
-                                "attempts": uqj.submissions.count(),
-                            }
-                            for uqj in uqjs
-                        ],
-                    }
-                )
-
+        for event in course.events.filter(type__in=["ASSIGNMENT", "EXAM"]):
+            uqjs = student.user.question_junctions.filter(question__event_id__in=[event.id])
+            results.append(
+                {
+                    "grade": sum(uqjs.values_list("tokens_received", flat=True)),
+                    "total": event.total_tokens,
+                    "name": student.full_name,
+                    "event_name": event.name,
+                    "question_details": [
+                        {
+                            "title": uqj.question.title,
+                            "question_grade": uqj.tokens_received,
+                            "attempts": uqj.submissions.count(),
+                            "max_attempts": uqj.question.max_submission_allowed,
+                        }
+                        for uqj in uqjs
+                    ],
+                }
+            )
         return Response(results)
 
     @action(detail=True, methods=["get"], url_path="grade-book", permission_classes=[GradeBookPermission])
