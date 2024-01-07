@@ -220,14 +220,14 @@ class CourseViewSet(viewsets.ModelViewSet):
                 uqjs = student.user.question_junctions.filter(question__event_id__in=[event.id])
                 results.append(
                     {
-                        "grade": sum(uqjs.values_list("grade", flat=True)),
+                        "grade": sum(uqjs.values_list("tokens_received", flat=True)),
                         "total": event.total_tokens,
                         "name": student.full_name,
                         "event_name": event.name,
                         "question_details": [
                             {
                                 "title": uqj.question.title,
-                                "question_grade": uqj.grade,
+                                "question_grade": uqj.tokens_received,
                                 "attempts": uqj.submissions.count(),
                                 "max_attempts": uqj.question.max_submission_allowed,
                             }
