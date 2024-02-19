@@ -246,6 +246,7 @@ class Question(PolymorphicModel):
 
 class VariableQuestion(Question):
     variables = jsonfield.JSONField()
+    variation_types = jsonfield.JSONField(default=[])
 
 
 def random_seed():

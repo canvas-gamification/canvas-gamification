@@ -24,6 +24,7 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
     )
     choices = serializers.JSONField()
     variables = serializers.JSONField()
+    variation_types = serializers.JSONField()
     event_obj = SerializerMethodField("get_event_obj")
     category_obj = SerializerMethodField("get_category_obj")
 
@@ -43,6 +44,7 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
             "difficulty",
             "is_verified",
             "variables",
+            "variation_types",
             "choices",
             "type_name",
             "visible_distractor_count",
