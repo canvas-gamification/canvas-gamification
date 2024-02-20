@@ -251,12 +251,12 @@ VARIATION_TYPES = [
     "Function Name Change",
     "Prototype Added",
     "Prototype Removed",
-    "Order Swap",
+    "Method Parameter Order Change",
     "Constant Change",
     "Polarity Reverse",
     "Data Type Change",
     "No Variations",
-    "Console Format Change",
+    "Console Output Format Change",
     "Question Text Change",
 ]
 
