@@ -249,8 +249,6 @@ class Question(PolymorphicModel):
 VARIATION_TYPES = [
     "Variable Name Change",
     "Function Name Change",
-    "Prototype Added",
-    "Prototype Removed",
     "Method Parameter Order Change",
     "Constant Change",
     "Polarity Reverse",
@@ -272,7 +270,7 @@ def validate_variation_type_json(variation_types):
 
 class VariableQuestion(Question):
     variables = jsonfield.JSONField()
-    variation_types = jsonfield.JSONField(default=[], validators=[validate_variation_type_json])
+    variation_types = jsonfield.JSONField(blank=True, default=[], validators=[validate_variation_type_json])
 
 
 def random_seed():
