@@ -23,6 +23,7 @@ class JavaQuestionSerializer(serializers.ModelSerializer):
         error_messages=ERROR_MESSAGES.INPUT_FILES.ERROR_MESSAGES,
     )
     variables = serializers.JSONField()
+    variation_types = serializers.JSONField(required=False)
     event_obj = SerializerMethodField("get_event_obj")
     category_obj = SerializerMethodField("get_category_obj")
 
@@ -42,6 +43,7 @@ class JavaQuestionSerializer(serializers.ModelSerializer):
             "difficulty",
             "is_verified",
             "variables",
+            "variation_types",
             "junit_template",
             "input_files",
             "token_value",

@@ -5,10 +5,12 @@ import random
 from datetime import datetime
 
 import jsonfield
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from polymorphic.models import PolymorphicModel
+import api.error_messages as ERROR_MESSAGES
 
 from accounts.models import MyUser
 from canvas.models.models import Event, CanvasCourse
@@ -244,8 +246,31 @@ class Question(PolymorphicModel):
         self.save()
 
 
+VARIATION_TYPES = [
+    "Variable Name Change",
+    "Function Name Change",
+    "Method Parameter Order Change",
+    "Constant Change",
+    "Polarity Reverse",
+    "Data Type Change",
+    "No Variations",
+    "Console Output Format Change",
+    "Question Text Change",
+]
+
+
+def validate_variation_type_json(variation_types):
+    if not isinstance(variation_types, list):
+        raise ValidationError(ERROR_MESSAGES.QUESTION.VARIATION_TYPE_LIST)
+    for item in variation_types:
+        if item not in VARIATION_TYPES:
+            raise ValidationError(ERROR_MESSAGES.QUESTION.INVALID_VARIATION)
+    return variation_types
+
+
 class VariableQuestion(Question):
     variables = jsonfield.JSONField()
+    variation_types = jsonfield.JSONField(blank=True, default=[], validators=[validate_variation_type_json])
 
 
 def random_seed():
