@@ -12,6 +12,8 @@ class JavaQuestion(VariableQuestion):
             "name": string
             "compile": boolean // whether to compile this input as a separate file or not
             "template": string
+            "hidden": boolean // whether this file should not be displayed to the user and added to the submission later
+
         }...]
     """
     junit_template = models.TextField()

@@ -20,6 +20,11 @@ def submit_java_solution(question, user, answer_dict):
     submission.answer_files = answer_dict
     submission.uqj = uqj
 
+    for input_file in uqj.get_input_files():
+        if "hidden" in input_file.keys() and input_file["hidden"]:
+            hidden_file = {input_file["name"]: input_file["template"]}
+            submission.answer_files.update(hidden_file)
+
     submission.submit()
     submission.save()
     uqj.save()
