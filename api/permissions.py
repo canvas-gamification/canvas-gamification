@@ -33,6 +33,11 @@ class QuestionPermission(permissions.IsAuthenticated):
 
 
 class UserConsentPermission(permissions.IsAuthenticated):
+    def has_permission(self, request, view):
+        if view.detail:
+            return True
+        return False
+
     def has_object_permission(self, request, view, obj):
         if request.method in ["GET", "POST"]:
             return request.user == obj.user
