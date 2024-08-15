@@ -23,6 +23,9 @@ class JavaQuestion(VariableQuestion):
     def get_input_files(self):
         return self.input_files
 
+    def get_hidden_input_files(self):
+        return {file["name"]: file["template"] for file in self.input_files}
+
 
 class JavaSubmission(CodeSubmission):
     answer_files = jsonfield.JSONField()

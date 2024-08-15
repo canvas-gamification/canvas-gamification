@@ -202,6 +202,9 @@ class Question(PolymorphicModel):
     def get_input_files(self):
         return {}
 
+    def get_hidden_input_files(self):
+        return {}
+
     def save(self, *args, **kwargs):
         if self.max_submission_allowed is None:
             self.max_submission_allowed = 10 if self.event is not None and self.event.type == "EXAM" else 100

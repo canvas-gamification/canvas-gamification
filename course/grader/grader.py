@@ -99,6 +99,12 @@ class JunitGrader(Grader):
         for filename, code in submission.get_answer_files().items():
             z.writestr(filename, code)
 
+        # Hidden input files
+        for filename, code in submission.question.get_hidden_input_files().items():
+            z.writestr(
+                render_text(filename, submission.uqj.get_variables()), render_text(code, submission.uqj.get_variables())
+            )
+
         # End of writing to zipfile
         z.close()
         return encodebytes(zipfile.getvalue()).decode("UTF-8").strip()
