@@ -60,16 +60,28 @@ def get_goal_item_conclusion(goal_item, stats):
     category_name = goal_item.category.full_name
 
     if ratio < 0.2:
-        return {
-            "status": "NO_DATA",
-            "message": "To make a recommendation, "
-            "more questions need to be solved as the current data is insufficient.",
-        }
-    if ratio < 0.8 and stats["success_rate"] < 0.8:
+        if goal_item.goal.claimed:
+            return {
+                "status": "NO_DATA",
+                "message": "To make a recommendation, "
+                "more questions need to be solved as the number of questions in the goal is insufficient.",
+            }
+        else:
+            return {
+                "status": "NO_DATA",
+                "message": "To make a recommendation, "
+                "more questions need to be solved as the current data is insufficient.",
+            }
+    if ratio < 0.8 and (stats["success_rate"] < 0.8 or stats["questions_success_rate"] < 0.8):
         return {
             "status": "NEED_PRACTICE",
             "message": f"You need to solve more questions in {category_name} to improve your understanding of the "
             f"topic. Practice is essential for mastering any subject.",
+        }
+    if not goal_item.goal.claimed:
+        return {
+            "status": "MASTER",
+            "message": f"Good work! Finish up the remaining questions to solidify your skills.",
         }
     if goal_item.difficulty != "HARD":
         return {
