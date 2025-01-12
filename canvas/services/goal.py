@@ -64,19 +64,19 @@ def get_goal_item_conclusion(goal_item, stats):
             return {
                 "status": "NO_DATA",
                 "message": "To make a recommendation, "
-                           "more questions need to be solved as the number of questions in the goal is insufficient.",
+            "more questions need to be solved as the number of questions in the goal is insufficient.",
             }
         else:
             return {
                 "status": "NO_DATA",
                 "message": "To make a recommendation, "
-                           "more questions need to be solved as the current data is insufficient.",
+            "more questions need to be solved as the current data is insufficient.",
             }
     if ratio < 0.8 and (stats["success_rate"] < 0.8 or stats["questions_success_rate"] < 0.8):
         return {
             "status": "NEED_PRACTICE",
             "message": f"You need to solve more questions in {category_name} to improve your understanding of the "
-                       f"topic. Practice is essential for mastering any subject.",
+            f"topic. Practice is essential for mastering any subject.",
         }
     if not goal_item.goal.claimed:
         return {
@@ -87,7 +87,7 @@ def get_goal_item_conclusion(goal_item, stats):
         return {
             "status": "MASTER",
             "message": f"Good work! It's time to start solving harder questions in {category_name} "
-                       f"to improve your skills.",
+            f"to improve your skills.",
         }
     return {
         "status": "MASTER",
