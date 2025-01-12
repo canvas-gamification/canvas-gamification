@@ -64,13 +64,13 @@ def get_goal_item_conclusion(goal_item, stats):
             return {
                 "status": "NO_DATA",
                 "message": "To make a recommendation, "
-            "more questions need to be solved as the number of questions in the goal is insufficient.",
+                "more questions need to be solved as the number of questions in the goal is insufficient.",
             }
         else:
             return {
                 "status": "NO_DATA",
                 "message": "To make a recommendation, "
-            "more questions need to be solved as the current data is insufficient.",
+                "more questions need to be solved as the current data is insufficient.",
             }
     if ratio < 0.8 and (stats["success_rate"] < 0.8 or stats["questions_success_rate"] < 0.8):
         return {
