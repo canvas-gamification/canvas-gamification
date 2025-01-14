@@ -5,7 +5,13 @@ from rest_framework.permissions import IsAuthenticated
 
 from accounts.models import MyUser
 from api.serializers import UserStatsSerializer
-from api.services.stats import get_category_stats, get_question_stats, get_challenge_stats, get_goal_stats
+from api.services.stats import (
+    get_category_stats,
+    get_question_stats,
+    get_challenge_stats,
+    get_goal_stats,
+    get_token_stats,
+)
 from course.models.models import DIFFICULTY_CHOICES, QuestionCategory
 from course.utils.utils import calculate_average_success
 
@@ -22,6 +28,7 @@ class UserStatsViewSet(viewsets.ReadOnlyModelViewSet):
     def list(self, request, *args, **kwargs):
         return Response(
             {
+                "token_stats": get_token_stats(request.user),
                 "challenge_stats": get_challenge_stats(request.user),
                 "goal_stats": get_goal_stats(request.user),
                 "question_stats": get_question_stats(request.user),

@@ -78,6 +78,11 @@ def get_challenge_stats(user):
     }
 
 
+def get_token_stats(user):
+    course_regs = user.canvascourseregistration_set.filter(status="VERIFIED", registration_type="STUDENT")
+    return {course_reg.course.id: course_reg.total_tokens_received for course_reg in course_regs}
+
+
 def get_goal_stats(user):
     return {
         "goals_completed": 0,
