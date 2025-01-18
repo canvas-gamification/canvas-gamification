@@ -41,15 +41,17 @@ def _get_submission_details(question, submissions):
     details = []
     for s in submissions.all():
         if not s.in_progress:
-            details.append({
-                "name": s.user.nickname,
-                "status": s.status,
-                "grade": s.grade,
-                "answer_files": s.answer_files,
-                "passed_results": s.get_passed_test_results(),
-                "failed_results": s.get_failed_test_results(),
-                "decoded_stderr": s.get_decoded_stderr(),
-            })
+            details.append(
+                {
+                    "name": s.user.nickname,
+                    "status": s.status,
+                    "grade": s.grade,
+                    "answer_files": s.answer_files,
+                    "passed_results": s.get_passed_test_results(),
+                    "failed_results": s.get_failed_test_results(),
+                    "decoded_stderr": s.get_decoded_stderr(),
+                }
+            )
     return details
 
 
