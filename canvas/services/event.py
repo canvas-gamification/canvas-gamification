@@ -34,6 +34,27 @@ def _get_error_messages(submissions):
     return error_messages
 
 
+def _get_submission_details(question, submissions):
+    if not question.event.featured or isinstance(question, MultipleChoiceQuestion):
+        return
+
+    details = []
+    for s in submissions.all():
+        if not s.in_progress:
+            details.append(
+                {
+                    "name": s.user.nickname,
+                    "status": s.status,
+                    "grade": s.grade,
+                    "answer_files": s.answer_files,
+                    "passed_results": s.get_passed_test_results(),
+                    "failed_results": s.get_failed_test_results(),
+                    "decoded_stderr": s.get_decoded_stderr(),
+                }
+            )
+    return details
+
+
 def get_question_stats(question):
     submissions = Submission.objects.filter(uqj__question=question)
 
@@ -65,6 +86,7 @@ def get_question_stats(question):
             "Partially Correct": uqjs.filter(is_partially_solved=True).count(),
             "Incorrect": uqjs.filter(is_solved=False, is_partially_solved=False).count(),
         },
+        "submission_details": _get_submission_details(question, submissions),
         "status_messages": _get_status_messages(submissions),
         "total_submissions": submissions.count(),
         "num_students_attempted": uqjs.count(),
