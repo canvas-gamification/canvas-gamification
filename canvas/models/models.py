@@ -225,7 +225,7 @@ class Event(models.Model):
 
         score = 0
         for question_id in question_ids:
-            score += uqjs.filter(question_id=question_id).aggregate(Max("tokens_received"))["tokens_received__max"]
+            score += uqjs.filter(question_id=question_id).aggregate(Max("tokens_received"))["tokens_received__max"] or 0
 
         return score
 
