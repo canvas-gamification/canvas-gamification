@@ -43,5 +43,6 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
         uid = force_text(urlsafe_base64_decode(validated_data["uid"]))
         user = MyUser.objects.get(pk=uid)
         user.set_password(validated_data["password"])
+        user.is_active = True
         user.save()
         return user
