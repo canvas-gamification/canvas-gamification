@@ -1,5 +1,8 @@
+import csv
+
 from django.db.models import Prefetch, Q
 from django_filters.rest_framework import DjangoFilterBackend
+from django.http import HttpResponse
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -206,7 +209,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         return Response(results)
 
     @action(detail=True, methods=["get"], url_path="grade-book", permission_classes=[GradeBookPermission])
-    def course_grade_book(self, request, pk):
+    def course_grade_book(self, request, pk, response=True):
         course = self.get_object()
         students = course.verified_course_registration.filter(registration_type="STUDENT")
         results = []
@@ -231,5 +234,56 @@ class CourseViewSet(viewsets.ModelViewSet):
                         ],
                     }
                 )
+        if response:
+            return Response(results)
+        return results
 
-        return Response(results)
+    @action(detail=True, methods=["get"], url_path="export-grade-book", permission_classes=[GradeBookPermission])
+    def export_grade_book(self, request, pk):
+        """
+        Optional Parameters:\n
+        ?event_name: string => filters retrieved grades by the event\n
+        ?student_name: string => filters retrieved grades by students whose name is a full or partial match\n
+        ?details: boolean => if true, adds question level breakdown to each overall event grade
+        """
+        event_name = request.GET.get('event_name', '')
+        student_name = request.GET.get('student_name', '')
+        details = request.GET.get('details', 'false')
+
+        response = HttpResponse(
+            content_type="text/csv"
+        )
+
+        response["Content-Disposition"] = f'attachment; filename="{self.get_object().name} ' \
+                                          f'{"" if student_name == "" else student_name + " students "}' \
+                                          f'{"course" if event_name == "" else event_name} ' \
+                                          f'gradebook{" detailed" if details == "true" else ""}.csv"'
+        csv_data = self.course_grade_book("request", "pk", False)
+
+        if event_name != '' and event_name is not None:
+            csv_data = filter(lambda gb: gb["event_name"] == event_name, csv_data)
+
+        if student_name != '' and student_name is not None:
+            csv_data = filter(lambda gb: student_name.lower() in gb["name"].lower(), csv_data)
+
+        writer = csv.writer(response)
+        row = ["Event Name", "Student Name", "Grade", "Total", "Question Title", "Question Grade", "Attempts",
+               "Max Attempts"] if details == "true" else ["Event Name", "Student Name", "Grade", "Total"]
+        writer.writerow(row)
+
+        for student_event_grade in csv_data:
+            if details != "true":
+                writer.writerow([student_event_grade["event_name"], student_event_grade["name"],
+                                 student_event_grade["grade"], student_event_grade["total"]])
+            if details == "true":
+                writer.writerow([student_event_grade["event_name"], student_event_grade["name"],
+                                 student_event_grade["grade"], student_event_grade["total"],
+                                 student_event_grade["question_details"][0]["title"],
+                                 student_event_grade["question_details"][0]["question_grade"],
+                                 student_event_grade["question_details"][0]["attempts"],
+                                 student_event_grade["question_details"][0]["max_attempts"]])
+                for question_detail in student_event_grade["question_details"][1:]:
+                    writer.writerow(["", "", "", "", question_detail["title"], question_detail["question_grade"],
+                                     question_detail["attempts"], question_detail["max_attempts"]])
+
+        return response
