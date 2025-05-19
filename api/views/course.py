@@ -195,7 +195,7 @@ class CourseViewSet(viewsets.ModelViewSet):
                     "question_details": [
                         {
                             "title": uqj.question.title,
-                            "question_grade": uqj.tokens_received,
+                            "question_grade": uqj.formatted_current_tokens_received,
                             "attempts": uqj.submissions.count(),
                             "max_attempts": uqj.question.max_submission_allowed,
                         }
@@ -223,7 +223,7 @@ class CourseViewSet(viewsets.ModelViewSet):
                         "question_details": [
                             {
                                 "title": uqj.question.title,
-                                "question_grade": uqj.tokens_received,
+                                "question_grade": uqj.formatted_current_tokens_received,
                                 "attempts": uqj.submissions.count(),
                                 "max_attempts": uqj.question.max_submission_allowed,
                             }
