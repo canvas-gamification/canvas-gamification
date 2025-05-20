@@ -154,6 +154,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         Given course id, return the leader board for the course.
         """
         course = get_object_or_404(CanvasCourse, id=pk)
+        events = course.events.filter(count_for_tokens=False)
         leader_board = [
             {
                 "name": course_reg.user.get_full_name(),
@@ -165,7 +166,10 @@ class CourseViewSet(viewsets.ModelViewSet):
             ).all()
         ]
 
-        return Response(leader_board)
+        return Response({
+            "board": leader_board,
+            "missing": len(events) != 0
+        })
 
     @action(detail=True, methods=["get"], url_path="course-event-sets")
     def course_event_sets(self, request, pk):
