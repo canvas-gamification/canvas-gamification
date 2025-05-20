@@ -166,10 +166,7 @@ class CourseViewSet(viewsets.ModelViewSet):
             ).all()
         ]
 
-        return Response({
-            "board": leader_board,
-            "missing": len(events) != 0
-        })
+        return Response({"board": leader_board, "missing": len(events) != 0})
 
     @action(detail=True, methods=["get"], url_path="course-event-sets")
     def course_event_sets(self, request, pk):
@@ -250,44 +247,78 @@ class CourseViewSet(viewsets.ModelViewSet):
         ?student_name: string => filters retrieved grades by students whose name is a full or partial match\n
         ?details: boolean => if true, adds question level breakdown to each overall event grade
         """
-        event_name = request.GET.get('event_name', '')
-        student_name = request.GET.get('student_name', '')
-        details = request.GET.get('details', 'false')
+        event_name = request.GET.get("event_name", "")
+        student_name = request.GET.get("student_name", "")
+        details = request.GET.get("details", "false")
 
-        response = HttpResponse(
-            content_type="text/csv"
+        response = HttpResponse(content_type="text/csv")
+
+        response["Content-Disposition"] = (
+            f'attachment; filename="{self.get_object().name} '
+            f'{"" if student_name == "" else student_name + " students "}'
+            f'{"course" if event_name == "" else event_name} '
+            f'gradebook{" detailed" if details == "true" else ""}.csv"'
         )
-
-        response["Content-Disposition"] = f'attachment; filename="{self.get_object().name} ' \
-                                          f'{"" if student_name == "" else student_name + " students "}' \
-                                          f'{"course" if event_name == "" else event_name} ' \
-                                          f'gradebook{" detailed" if details == "true" else ""}.csv"'
         csv_data = self.course_grade_book("request", "pk", False)
 
-        if event_name != '' and event_name is not None:
+        if event_name != "" and event_name is not None:
             csv_data = filter(lambda gb: gb["event_name"] == event_name, csv_data)
 
-        if student_name != '' and student_name is not None:
+        if student_name != "" and student_name is not None:
             csv_data = filter(lambda gb: student_name.lower() in gb["name"].lower(), csv_data)
 
         writer = csv.writer(response)
-        row = ["Event Name", "Student Name", "Grade", "Total", "Question Title", "Question Grade", "Attempts",
-               "Max Attempts"] if details == "true" else ["Event Name", "Student Name", "Grade", "Total"]
+        row = (
+            [
+                "Event Name",
+                "Student Name",
+                "Grade",
+                "Total",
+                "Question Title",
+                "Question Grade",
+                "Attempts",
+                "Max Attempts",
+            ]
+            if details == "true"
+            else ["Event Name", "Student Name", "Grade", "Total"]
+        )
         writer.writerow(row)
 
         for student_event_grade in csv_data:
             if details != "true":
-                writer.writerow([student_event_grade["event_name"], student_event_grade["name"],
-                                 student_event_grade["grade"], student_event_grade["total"]])
+                writer.writerow(
+                    [
+                        student_event_grade["event_name"],
+                        student_event_grade["name"],
+                        student_event_grade["grade"],
+                        student_event_grade["total"],
+                    ]
+                )
             if details == "true":
-                writer.writerow([student_event_grade["event_name"], student_event_grade["name"],
-                                 student_event_grade["grade"], student_event_grade["total"],
-                                 student_event_grade["question_details"][0]["title"],
-                                 student_event_grade["question_details"][0]["question_grade"],
-                                 student_event_grade["question_details"][0]["attempts"],
-                                 student_event_grade["question_details"][0]["max_attempts"]])
+                writer.writerow(
+                    [
+                        student_event_grade["event_name"],
+                        student_event_grade["name"],
+                        student_event_grade["grade"],
+                        student_event_grade["total"],
+                        student_event_grade["question_details"][0]["title"],
+                        student_event_grade["question_details"][0]["question_grade"],
+                        student_event_grade["question_details"][0]["attempts"],
+                        student_event_grade["question_details"][0]["max_attempts"],
+                    ]
+                )
                 for question_detail in student_event_grade["question_details"][1:]:
-                    writer.writerow(["", "", "", "", question_detail["title"], question_detail["question_grade"],
-                                     question_detail["attempts"], question_detail["max_attempts"]])
+                    writer.writerow(
+                        [
+                            "",
+                            "",
+                            "",
+                            "",
+                            question_detail["title"],
+                            question_detail["question_grade"],
+                            question_detail["attempts"],
+                            question_detail["max_attempts"],
+                        ]
+                    )
 
         return response
