@@ -18,6 +18,7 @@ from api.serializers.course import CourseCreateSerializer
 from api.serializers.eventSet import EventSetSerializer
 from canvas.models.models import CanvasCourse, Event
 from canvas.services.course import register_instructor
+from canvas.services.gradebook import get_student_gradebook, get_course_gradebook
 from canvas.utils.utils import get_course_registration
 
 
@@ -166,7 +167,7 @@ class CourseViewSet(viewsets.ModelViewSet):
             ).all()
         ]
 
-        return Response({"board": leader_board, "missing": len(events) != 0})
+        return Response({"board": leader_board, "excluded_values": len(events) != 0})
 
     @action(detail=True, methods=["get"], url_path="course-event-sets")
     def course_event_sets(self, request, pk):
@@ -185,59 +186,11 @@ class CourseViewSet(viewsets.ModelViewSet):
         students = course.verified_course_registration.filter(registration_type="STUDENT", user=request.user)
         if students.count() == 0:
             raise ValueError(ERROR_MESSAGES.TOKEN_USE.NO_STUDENT_GRADES_FOUND)
-        student = students[0]
-        results = []
-
-        for event in course.events.filter(type__in=["ASSIGNMENT", "EXAM"]):
-            uqjs = student.user.question_junctions.filter(question__event_id__in=[event.id])
-            results.append(
-                {
-                    "grade": sum(uqjs.values_list("tokens_received", flat=True)),
-                    "total": event.total_tokens,
-                    "name": student.full_name,
-                    "event_name": event.name,
-                    "question_details": [
-                        {
-                            "title": uqj.question.title,
-                            "question_grade": uqj.formatted_current_tokens_received,
-                            "attempts": uqj.submissions.count(),
-                            "max_attempts": uqj.question.max_submission_allowed,
-                        }
-                        for uqj in uqjs
-                    ],
-                }
-            )
-        return Response(results)
+        return Response(get_student_gradebook(students[0], course))
 
     @action(detail=True, methods=["get"], url_path="grade-book", permission_classes=[GradeBookPermission])
-    def course_grade_book(self, request, pk, response=True):
-        course = self.get_object()
-        students = course.verified_course_registration.filter(registration_type="STUDENT")
-        results = []
-
-        for event in course.events.filter(type__in=["ASSIGNMENT", "EXAM"]):
-            for student in students:
-                uqjs = student.user.question_junctions.filter(question__event_id__in=[event.id])
-                results.append(
-                    {
-                        "grade": sum(uqjs.values_list("tokens_received", flat=True)),
-                        "total": event.total_tokens,
-                        "name": student.full_name,
-                        "event_name": event.name,
-                        "question_details": [
-                            {
-                                "title": uqj.question.title,
-                                "question_grade": uqj.formatted_current_tokens_received,
-                                "attempts": uqj.submissions.count(),
-                                "max_attempts": uqj.question.max_submission_allowed,
-                            }
-                            for uqj in uqjs
-                        ],
-                    }
-                )
-        if response:
-            return Response(results)
-        return results
+    def course_grade_book(self, request, pk):
+        return Response(get_course_gradebook(self.get_object()))
 
     @action(detail=True, methods=["get"], url_path="export-grade-book", permission_classes=[GradeBookPermission])
     def export_grade_book(self, request, pk):
@@ -247,24 +200,24 @@ class CourseViewSet(viewsets.ModelViewSet):
         ?student_name: string => filters retrieved grades by students whose name is a full or partial match\n
         ?details: boolean => if true, adds question level breakdown to each overall event grade
         """
-        event_name = request.GET.get("event_name", "")
-        student_name = request.GET.get("student_name", "")
+        event_name = request.GET.get("event_name", None)
+        student_name = request.GET.get("student_name", None)
         details = request.GET.get("details", "false")
 
         response = HttpResponse(content_type="text/csv")
 
         response["Content-Disposition"] = (
             f'attachment; filename="{self.get_object().name} '
-            f'{"" if student_name == "" else student_name + " students "}'
-            f'{"course" if event_name == "" else event_name} '
+            f'{"" if student_name is None else student_name + " students "}'
+            f'{"course" if event_name is None else event_name} '
             f'gradebook{" detailed" if details == "true" else ""}.csv"'
         )
-        csv_data = self.course_grade_book("request", "pk", False)
+        csv_data = get_course_gradebook(self.get_object())
 
-        if event_name != "" and event_name is not None:
+        if event_name is not None:
             csv_data = filter(lambda gb: gb["event_name"] == event_name, csv_data)
 
-        if student_name != "" and student_name is not None:
+        if student_name is not None:
             csv_data = filter(lambda gb: student_name.lower() in gb["name"].lower(), csv_data)
 
         writer = csv.writer(response)
@@ -276,6 +229,7 @@ class CourseViewSet(viewsets.ModelViewSet):
                 "Total",
                 "Question Title",
                 "Question Grade",
+                "Question Value",
                 "Attempts",
                 "Max Attempts",
             ]
@@ -303,6 +257,7 @@ class CourseViewSet(viewsets.ModelViewSet):
                         student_event_grade["total"],
                         student_event_grade["question_details"][0]["title"],
                         student_event_grade["question_details"][0]["question_grade"],
+                        student_event_grade["question_details"][0]["question_value"],
                         student_event_grade["question_details"][0]["attempts"],
                         student_event_grade["question_details"][0]["max_attempts"],
                     ]
@@ -316,6 +271,7 @@ class CourseViewSet(viewsets.ModelViewSet):
                             "",
                             question_detail["title"],
                             question_detail["question_grade"],
+                            question_detail["question_value"],
                             question_detail["attempts"],
                             question_detail["max_attempts"],
                         ]
