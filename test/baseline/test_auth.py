@@ -91,10 +91,13 @@ class TokenAuthTest(APITestCase):
 
     def test_community_jwt_is_signed_with_the_configured_key(self):
         response = self.login("auth_student", factories.PASSWORD)
+        # verify_sub=False: the app still emits an int "sub" (MyUser.community_jwt is
+        # unchanged); only PyJWT >= 2.10's decoder became strict about "sub" being a string.
         payload = jwt.decode(
             response.data["community_jwt"],
             settings.COMMUNITY_JWT_PRIVATE_KEY,
             algorithms=["HS256"],
+            options={"verify_sub": False},
         )
         self.assertEqual(
             {"sub": self.student.id, "email": self.student.email, "name": "Sam Study"},

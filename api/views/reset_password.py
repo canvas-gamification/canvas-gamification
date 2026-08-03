@@ -1,4 +1,4 @@
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
@@ -20,7 +20,7 @@ class ResetPasswordViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        uid = force_text(urlsafe_base64_decode(serializer.validated_data["uid"]))
+        uid = force_str(urlsafe_base64_decode(serializer.validated_data["uid"]))
         user = MyUser.objects.get(pk=uid)
         serializer.save()
         headers = self.get_success_headers(serializer.data)

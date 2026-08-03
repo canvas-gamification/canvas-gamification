@@ -1,7 +1,7 @@
 import csv
 
 from django.db.models import Prefetch, Q
-from django_filters.rest_framework import DjangoFilterBackend
+from api.filters import DjangoFilterBackend
 from django.http import HttpResponse
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action

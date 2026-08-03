@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import jsonfield.fields
 
 
 class Migration(migrations.Migration):
@@ -21,7 +20,7 @@ class Migration(migrations.Migration):
                 ("time_created", models.DateTimeField(auto_now_add=True)),
                 ("time_modified", models.DateTimeField(auto_now=True)),
                 ("code", models.CharField(max_length=100)),
-                ("response", jsonfield.fields.JSONField(null=True)),
+                ("response", models.JSONField(null=True)),
                 (
                     "user",
                     models.ForeignKey(

@@ -581,7 +581,11 @@ class MyUserModelTest(APITestCase):
     def test_community_jwt_claims(self):
         token = self.user.community_jwt
         # PyJWT 2.x returns a str; PyJWT 1.x returned bytes. Accept whatever decodes.
-        claims = jwt.decode(token, "baseline-jwt-secret", algorithms=["HS256"])
+        # The app still emits an int "sub" (MyUser.community_jwt is unchanged and the
+        # encoder still accepts it); only PyJWT's *decoder* became strict in 2.10, which
+        # rejects a non-string "sub" with InvalidSubjectError. Turn that check off so this
+        # test keeps verifying the real payload.
+        claims = jwt.decode(token, "baseline-jwt-secret", algorithms=["HS256"], options={"verify_sub": False})
 
         self.assertEqual(
             claims,
@@ -597,7 +601,11 @@ class MyUserModelTest(APITestCase):
         user = MyUser(username="fallback-user", email="", first_name="", last_name="", role=STUDENT)
         user.save()
 
-        claims = jwt.decode(user.community_jwt, "baseline-jwt-secret", algorithms=["HS256"])
+        # verify_sub=False: the app still emits an int "sub"; only PyJWT >= 2.10's decoder
+        # became strict about "sub" being a string.
+        claims = jwt.decode(
+            user.community_jwt, "baseline-jwt-secret", algorithms=["HS256"], options={"verify_sub": False}
+        )
         self.assertEqual(claims["email"], "fallback-user")
         self.assertEqual(claims["name"], "")
 
@@ -608,8 +616,15 @@ class MyUserModelTest(APITestCase):
             jwt.decode(token, "not-the-secret", algorithms=["HS256"])
 
     def test_community_jwt_uses_the_configured_settings_key(self):
-        # Round-trip against whatever COMMUNITY_JWT_PRIVATE_KEY is configured (default "").
-        claims = jwt.decode(self.user.community_jwt, django_settings.COMMUNITY_JWT_PRIVATE_KEY, algorithms=["HS256"])
+        # Round-trip against whatever COMMUNITY_JWT_PRIVATE_KEY is configured (defaults to
+        # SECRET_KEY when unset).  verify_sub=False: the app still emits an int "sub"; only
+        # PyJWT >= 2.10's decoder became strict about "sub" being a string.
+        claims = jwt.decode(
+            self.user.community_jwt,
+            django_settings.COMMUNITY_JWT_PRIVATE_KEY,
+            algorithms=["HS256"],
+            options={"verify_sub": False},
+        )
         self.assertEqual(claims["sub"], self.user.id)
 
     def test_user_consent_is_student_property(self):

@@ -1,5 +1,4 @@
 from django.db import models
-import jsonfield
 
 from accounts.models import MyUser
 
@@ -102,7 +101,7 @@ class Action(models.Model):
     verb = models.CharField(max_length=100, choices=ACTION_VERB_CHOICES)
     object_type = models.CharField(max_length=100, choices=OBJECT_TYPE_CHOICES, null=True)
     object_id = models.IntegerField(null=True)
-    data = jsonfield.JSONField(null=True)
+    data = models.JSONField(null=True)
 
     @classmethod
     def create_action(

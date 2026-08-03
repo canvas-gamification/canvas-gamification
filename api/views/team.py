@@ -1,4 +1,4 @@
-from django_filters.rest_framework import DjangoFilterBackend
+from api.filters import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404

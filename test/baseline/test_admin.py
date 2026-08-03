@@ -43,7 +43,10 @@ class AdminRegistrationTests(TestCase):
                 "accounts.userconsent",
                 "analytics.submissionanalytics",
                 "auth.group",
-                "authtoken.token",
+                # DRF 3.14+ registers authtoken.TokenProxy (a proxy of Token) in the admin
+                # instead of authtoken.Token -- same table, same admin functionality, only
+                # the registry label changed.
+                "authtoken.tokenproxy",
                 "canvas.canvascourse",
                 "canvas.canvascourseregistration",
                 "canvas.event",
@@ -77,10 +80,12 @@ class AdminRegistrationTests(TestCase):
     def test_third_party_registrations(self):
         # django.contrib.auth registers Group (but not User, since AUTH_USER_MODEL
         # is accounts.MyUser and accounts/admin.py registers it itself), and DRF's
-        # authtoken app registers Token.  Permission is deliberately not exposed.
+        # authtoken app registers a token model.  Permission is deliberately not exposed.
+        # DRF 3.14+ registers authtoken.TokenProxy (a proxy of Token) rather than
+        # authtoken.Token -- same table and admin behaviour, different registry label.
         labels = [m._meta.label_lower for m in admin.site._registry]
         self.assertIn("auth.group", labels)
-        self.assertIn("authtoken.token", labels)
+        self.assertIn("authtoken.tokenproxy", labels)
         self.assertNotIn("auth.permission", labels)
         self.assertNotIn("auth.user", labels)
 

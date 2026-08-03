@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django_filters import NumberFilter, ChoiceFilter, Filter, BooleanFilter
-from django_filters.rest_framework import DjangoFilterBackend, FilterSet
+from django_filters.rest_framework import FilterSet
+from api.filters import DjangoFilterBackend
 from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
@@ -71,7 +72,7 @@ class UQJViewSet(viewsets.ReadOnlyModelViewSet):
     ordering_fields = [
         "last_viewed",
     ]
-    filter_class = UQJFilterSet
+    filterset_class = UQJFilterSet
 
     def get_queryset(self):
         user = self.request.user
