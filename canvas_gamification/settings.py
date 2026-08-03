@@ -139,7 +139,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "Canada/Pacific"
+# Canonical name for the former "Canada/Pacific" alias -- same zone, same rules.
+# Debian 13 moved the legacy aliases into a separate tzdata-legacy package, and
+# Django validates TIME_ZONE against /usr/share/zoneinfo at startup.
+TIME_ZONE = "America/Vancouver"
 
 USE_I18N = True
 
