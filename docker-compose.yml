@@ -27,7 +27,7 @@ services:
     restart: always
 
   db:
-    image: postgres:9.6
+    image: postgres:17
     env_file: env/db.env
     volumes:
       - ./srv/postgres-data:/var/lib/postgresql/data/
@@ -56,6 +56,8 @@ services:
     restart: always
 
   judge0-db:
+    # judge0 1.9.0 pins its own schema; keep 9.6 (its persisted volume would not
+    # survive a postgres major-version jump).
     image: postgres:9.6
     env_file: env/judge0.env
     volumes:

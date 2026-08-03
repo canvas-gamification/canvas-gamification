@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: ['3.14']
 
     steps:
     - uses: actions/checkout@v2
@@ -16,4 +16,4 @@ jobs:
       with:
         options: "--check"
         src: "."
-        version: "22.10.0"
+        version: "26.5.1"
