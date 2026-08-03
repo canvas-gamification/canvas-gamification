@@ -51,8 +51,11 @@ from utils.recaptcha import validate_recaptcha
 ACTIVATION_LINK_RE = re.compile(r"/accounts/activate/([^/\s]+)/([^/\s]+)/")
 RESET_LINK_RE = re.compile(r"/accounts/reset-password/([^/\s]+)/([^/\s]+)/")
 
-# The from-address used by every outbound e-mail (settings.EMAIL_ACTIVATION in DEBUG).
-EXPECTED_FROM = "test@gamification.com"
+# Every outbound e-mail is sent from settings.EMAIL_ACTIVATION (see
+# accounts/utils/email_functions.py). Read it from settings rather than
+# hard-coding the DEBUG value, so the suite also passes under production-style
+# settings where it comes from the environment -- which is how CI runs.
+EXPECTED_FROM = django_settings.EMAIL_ACTIVATION
 # Hard-coded recipient of the contact-us / question-report / course-create e-mails.
 EXPECTED_STAFF_RECIPIENT = "bowen.hui@ubc.ca"
 
