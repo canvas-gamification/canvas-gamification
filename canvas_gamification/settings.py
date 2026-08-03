@@ -206,6 +206,7 @@ if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
     CORS_ALLOW_HEADERS = list(default_headers) + [
         "sentry-trace",
+        "baggage",
     ]
 
 if DEBUG:
