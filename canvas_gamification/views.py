@@ -17,10 +17,10 @@ def angular(request, path="index.html", document_root=None):
     if not fullpath.exists():
         fullpath = Path(safe_join(document_root, "index.html"))
     statobj = fullpath.stat()
+    # Django 4.1 dropped was_modified_since()'s third "size" argument.
     if not was_modified_since(
         request.META.get("HTTP_IF_MODIFIED_SINCE"),
         statobj.st_mtime,
-        statobj.st_size,
     ):
         return HttpResponseNotModified()
     content_type, encoding = mimetypes.guess_type(str(fullpath))
