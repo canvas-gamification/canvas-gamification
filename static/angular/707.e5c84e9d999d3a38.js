@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkcanvas_gamification_ui=self.webpackChunkcanvas_gamification_ui||[]).push([[707],{3707(_,a,i){i.r(a),i.d(a,{TuiTableCell:()=>s});var l=i(9153);const s=i(2263).TableCell.extend({renderHTML({HTMLAttributes:n}){const t=(0,l.KV)(this.options.HTMLAttributes,n);return t.colwidth&&(t.style=`width: ${t.colwidth}px; ${t.style}`),["td",t,0]}})}}]);

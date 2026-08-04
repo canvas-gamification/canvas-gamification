@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkcanvas_gamification_ui=self.webpackChunkcanvas_gamification_ui||[]).push([[874],{2874(o,e,n){n.r(e),n.d(e,{Document:()=>t,default:()=>u});var t=n(9153).bP.create({name:"doc",topNode:!0,content:"block+",renderMarkdown:(a,r)=>a.content?r.renderChildren(a.content,"\n\n"):""}),u=t}}]);
