@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkcanvas_gamification_ui=self.webpackChunkcanvas_gamification_ui||[]).push([[632],{1632(r,a,t){t.r(a),t.d(a,{Text:()=>n,default:()=>u});var n=t(9153).bP.create({name:"text",group:"inline",parseMarkdown:e=>({type:"text",text:e.text||""}),renderMarkdown:e=>e.text||""}),u=n}}]);
