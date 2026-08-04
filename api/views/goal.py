@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.utils import timezone
-from django_filters.rest_framework import DjangoFilterBackend
+from api.filters import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError

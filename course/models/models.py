@@ -2,9 +2,7 @@ import base64
 import copy
 import json
 import random
-from datetime import datetime
 
-import jsonfield
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
@@ -272,8 +270,8 @@ def validate_variation_type_json(variation_types):
 
 
 class VariableQuestion(Question):
-    variables = jsonfield.JSONField()
-    variation_types = jsonfield.JSONField(blank=True, default=[], validators=[validate_variation_type_json])
+    variables = models.JSONField(default=dict)
+    variation_types = models.JSONField(blank=True, default=list, validators=[validate_variation_type_json])
 
 
 def random_seed():
@@ -310,7 +308,7 @@ class UserQuestionJunction(models.Model):
         unique_together = ("user", "question")
 
     def viewed(self):
-        self.last_viewed = datetime.now()
+        self.last_viewed = timezone.now()
         self.save()
 
     @property
@@ -423,10 +421,16 @@ class UserQuestionJunction(models.Model):
         return str(self.tokens_received) + "/" + str(self.question.token_value)
 
     def save(self, **kwargs):
-        if not self.is_solved and self.submissions.filter(is_correct=True).exists():
+        # An unsaved junction cannot have submissions yet.  Django < 5.0 happily ran these
+        # reverse lookups on a pk-less instance and matched nothing; Django >= 5.0 raises
+        # ValueError instead, so skip them explicitly to keep the previous result.
+        saved = self.pk is not None
+        if not self.is_solved and saved and self.submissions.filter(is_correct=True).exists():
             self.is_solved = True
             self.solved_at = timezone.now()
-        self.is_partially_solved = not self.is_solved and self.submissions.filter(is_partially_correct=True).exists()
+        self.is_partially_solved = (
+            not self.is_solved and saved and self.submissions.filter(is_partially_correct=True).exists()
+        )
         super().save(**kwargs)
 
 
@@ -552,8 +556,8 @@ class Submission(PolymorphicModel):
 
 
 class CodeSubmission(Submission):
-    tokens = jsonfield.JSONField()
-    results = jsonfield.JSONField()
+    tokens = models.JSONField(default=dict)
+    results = models.JSONField(default=dict)
 
     show_answer = False
     show_detail = True

@@ -15,7 +15,7 @@ services:
     command: ["./run_tests.sh"]
 
   db:
-    image: postgres:9.6
+    image: postgres:17
     env_file: env/db.env
     privileged: true
     restart: always
@@ -38,6 +38,7 @@ services:
     restart: always
 
   judge0-db:
+    # judge0 1.9.0 pins its own schema; its database stays on 9.6.
     image: postgres:9.6
     env_file: env/judge0.env
     privileged: true

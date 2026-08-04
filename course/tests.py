@@ -13,13 +13,13 @@ class EnsureUQJTest(BaseTestCase):
         MyUser.objects.create_user("test_user2", "test2@s202.ok.ubc.ca", "aaaaaaaa")
 
     def test_ensure_uqj(self):
-        self.assertEquals(
+        self.assertEqual(
             self.user.question_junctions.count(),
             Question.objects.all().count(),
         )
 
         user = MyUser.objects.get(username="test_user2")
-        self.assertEquals(user.question_junctions.count(), Question.objects.all().count())
+        self.assertEqual(user.question_junctions.count(), Question.objects.all().count())
         self.assertEqual(
             Question.objects.first().user_junctions.count(),
             MyUser.objects.count(),
@@ -30,11 +30,11 @@ class EnsureUQJTest(BaseTestCase):
         for q in Question.objects.all():
             q.save()
 
-        self.assertEquals(
+        self.assertEqual(
             self.user.question_junctions.count(),
             Question.objects.all().count(),
         )
-        self.assertEquals(user.question_junctions.count(), Question.objects.all().count())
+        self.assertEqual(user.question_junctions.count(), Question.objects.all().count())
         self.assertEqual(
             Question.objects.first().user_junctions.count(),
             MyUser.objects.count(),
@@ -100,15 +100,15 @@ class EnsureCorrectMcqGradingOneAnswerTest(McqSubmissionTestCase):
 
     def test_blank_answer(self):
         create_mcq_submission(self.uqj, "")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 0)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 0)
 
     def test_correct_answer(self):
         create_mcq_submission(self.uqj, "a")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 1)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 1)
 
     def test_incorrect_answer(self):
         create_mcq_submission(self.uqj, "b")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 0)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 0)
 
 
 class EnsureCorrectMcqGradingTwoAnswersTest(McqSubmissionTestCase):
@@ -118,27 +118,27 @@ class EnsureCorrectMcqGradingTwoAnswersTest(McqSubmissionTestCase):
 
     def test_duplicated_correct_choice(self):
         create_mcq_submission(self.uqj, "a,a")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 0)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 0)
 
     def test_reversed_correct_choice(self):
         create_mcq_submission(self.uqj, "b,a")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 1)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 1)
 
     def test_incorrect_choices(self):
         create_mcq_submission(self.uqj, "!@#")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 0)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 0)
 
     def test_one_correct_choice(self):
         create_mcq_submission(self.uqj, "b")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 0.5)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 0.5)
 
     def test_one_incorrect_one_correct_choice(self):
         create_mcq_submission(self.uqj, "a,c")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 0)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 0)
 
     def test_empty_string(self):
         create_mcq_submission(self.uqj, "")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 0)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 0)
 
 
 class EnsureCorrectMcqGradingThreeAnswersTest(McqSubmissionTestCase):
@@ -148,24 +148,24 @@ class EnsureCorrectMcqGradingThreeAnswersTest(McqSubmissionTestCase):
 
     def test_one_incorrect_two_correct_choice(self):
         create_mcq_submission(self.uqj, "a,b,d")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 0.33)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 0.33)
 
     def test_one_correct_two_duplicated_correct_choice(self):
         create_mcq_submission(self.uqj, "a,b,a")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 0.33)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 0.33)
 
     def test_empty_string(self):
         create_mcq_submission(self.uqj, "")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 0)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 0)
 
     def test_one_correct_choice(self):
         create_mcq_submission(self.uqj, "a")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 0.33)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 0.33)
 
     def test_two_correct_choice(self):
         create_mcq_submission(self.uqj, "c,a")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 0.67)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 0.67)
 
     def test_two_incorrect_one_correct_choice(self):
         create_mcq_submission(self.uqj, "efa")
-        self.assertEquals(getattr(Submission.objects.first(), "grade"), 0)
+        self.assertEqual(getattr(Submission.objects.first(), "grade"), 0)

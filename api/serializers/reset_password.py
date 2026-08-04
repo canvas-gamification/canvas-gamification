@@ -1,5 +1,5 @@
 from django.contrib.auth.password_validation import validate_password
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 
@@ -40,7 +40,7 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        uid = force_text(urlsafe_base64_decode(validated_data["uid"]))
+        uid = force_str(urlsafe_base64_decode(validated_data["uid"]))
         user = MyUser.objects.get(pk=uid)
         user.set_password(validated_data["password"])
         user.is_active = True

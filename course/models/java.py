@@ -1,12 +1,11 @@
 from django.db import models
 
-import jsonfield
 from course.grader.grader import JunitGrader
 from course.models.models import VariableQuestion, CodeSubmission
 
 
 class JavaQuestion(VariableQuestion):
-    input_files = jsonfield.JSONField()
+    input_files = models.JSONField(default=dict)
     """
         [{
             "name": string
@@ -28,7 +27,7 @@ class JavaQuestion(VariableQuestion):
 
 
 class JavaSubmission(CodeSubmission):
-    answer_files = jsonfield.JSONField()
+    answer_files = models.JSONField(default=dict)
     """
         {
             file_name: string

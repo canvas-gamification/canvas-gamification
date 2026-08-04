@@ -25,6 +25,8 @@ services:
     restart: always
 
   judge0-db:
+    # judge0 1.9.0 pins its own schema; keep 9.6 (its data would not survive a
+    # postgres major-version jump).
     image: postgres:9.6
     env_file: env/judge0.env
     privileged: true

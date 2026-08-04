@@ -1,4 +1,3 @@
-import jsonfield
 from django.db import models
 
 from course.grader.grader import JunitGrader
@@ -6,7 +5,7 @@ from course.models.models import VariableQuestion, CodeSubmission
 
 
 class ParsonsQuestion(VariableQuestion):
-    input_files = jsonfield.JSONField(default=[])
+    input_files = models.JSONField(default=list)
     """
     [{
         "name": string
@@ -23,7 +22,7 @@ class ParsonsQuestion(VariableQuestion):
 
 
 class ParsonsSubmission(CodeSubmission):
-    answer_files = jsonfield.JSONField()
+    answer_files = models.JSONField(default=dict)
     """
     {
         file_name: string
