@@ -18,6 +18,7 @@ from django.contrib.messages import constants as message_constants
 from django.urls import reverse_lazy
 from sentry_sdk.integrations.django import DjangoIntegration
 
+from canvas_gamification.csrf import trusted_origins
 from canvas_gamification.env import read_env
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -42,6 +43,15 @@ elif DEBUG:
     ALLOWED_HOSTS = ["*"]
 else:
     ALLOWED_HOSTS = os.environ["SERVER_NAME"].split()
+
+# The app runs behind a reverse proxy that terminates TLS (see env/nginx.conf),
+# so the request reaching gunicorn is plain HTTP. Trust the forwarded scheme,
+# otherwise request.is_secure() is False for genuinely secure requests.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Django 4.0+ rejects unsafe-method requests whose Origin does not match the
+# expected origin, which breaks admin login behind TLS termination.
+CSRF_TRUSTED_ORIGINS = trusted_origins(ALLOWED_HOSTS)
 
 # Application definition
 
