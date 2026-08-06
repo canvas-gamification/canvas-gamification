@@ -27,15 +27,28 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "=cv^=w$b8iw4q5!ti#j)mxwujw24o)_d*og7($erv@4t5=3z7*"
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "true") == "true"
 HEROKU = False
 
 if DEBUG:
     read_env(os.path.join(BASE_DIR, "env", "gamification.dev.env"))
+
+# SECURITY WARNING: keep the secret key used in production secret!
+# Required from the environment in production: an unset key must stop the
+# process rather than silently fall back to a value committed to this
+# repository, which would be public and therefore no secret at all.
+if DEBUG:
+    SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-key-not-for-production")
+else:
+    SECRET_KEY = os.environ["SECRET_KEY"]
+
+# Whitespace-separated previous keys. Signatures made with them still verify,
+# so rotating SECRET_KEY does not log everyone out or invalidate password-reset
+# links that are already in flight. Drop an old key once it is older than both
+# SESSION_COOKIE_AGE (14 days) and PASSWORD_RESET_TIMEOUT (3 days) -- while it
+# is listed, anything signed with it is still accepted.
+SECRET_KEY_FALLBACKS = os.environ.get("SECRET_KEY_FALLBACKS", "").split()
 
 if HEROKU:
     ALLOWED_HOSTS = ["canvas-gamification.herokuapp.com"]
