@@ -125,6 +125,13 @@ this instance of judge0.
 Run the Website
 +++++++++++++++
 
+``DEBUG`` is off unless you ask for it, so export the development settings
+first (this also switches on the console e-mail backend and the local judge0):
+
+.. code-block:: bash
+
+    set -a; source env/gamification.dev.env; set +a
+
 Apply the migrations
 
 .. code-block:: bash
@@ -168,6 +175,7 @@ Tests
 
 .. code-block:: bash
 
+    set -a; source env/gamification.dev.env; set +a
     python3 manage.py test
 
 Docker

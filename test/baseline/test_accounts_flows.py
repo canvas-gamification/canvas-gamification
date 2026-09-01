@@ -93,6 +93,8 @@ class RecaptchaPassingMixin(object):
         self.addCleanup(patcher.stop)
 
 
+# Links must come from the request host here, whatever the developer's env says.
+@override_settings(FRONTEND_URL="")
 class RegistrationActivationLoginTest(RecaptchaPassingMixin, APITestCase):
     """Registration -> activation e-mail -> activation -> login round trip."""
 
@@ -123,19 +125,17 @@ class RegistrationActivationLoginTest(RecaptchaPassingMixin, APITestCase):
         self.assertEqual(message.subject, "Activate your account.")
         self.assertEqual(message.to, [REGISTRATION_PAYLOAD["email"]])
         self.assertEqual(message.from_email, EXPECTED_FROM)
-        # The HTTP_ORIGIN header is what the activation link is built from.
-        self.assertIn(ORIGIN, message.body)
+        # Security fix: the link host comes from the request host (or FRONTEND_URL),
+        # never from an arbitrary Origin header.
+        self.assertNotIn(ORIGIN, message.body)
+        self.assertIn("http://testserver/accounts/activate/", message.body)
         self.assertIsNotNone(ACTIVATION_LINK_RE.search(message.body))
 
-    def test_registration_requires_http_origin_header(self):
-        # KNOWN-BUG: accounts/utils/email_functions.py:53 reads request.META["HTTP_ORIGIN"]
-        # directly, so a registration POST without an Origin header raises an unhandled
-        # KeyError (HTTP 500) *after* the user row has already been committed.
-        with self.assertRaises(KeyError):
-            self.client.post(_url("api:register-list"), REGISTRATION_PAYLOAD)
-
+    def test_registration_works_without_an_origin_header(self):
+        response = self.client.post(_url("api:register-list"), REGISTRATION_PAYLOAD)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(len(mail.outbox), 1)
         self.assertTrue(MyUser.objects.filter(email=REGISTRATION_PAYLOAD["email"]).exists())
-        self.assertEqual(len(mail.outbox), 0)
 
     def test_duplicate_email_rejected(self):
         self._register()
@@ -312,6 +312,8 @@ class TokenGeneratorTest(APITestCase):
         self.assertIsNone(verify_reset(uid, token))
 
 
+# Links must come from the request host here, whatever the developer's env says.
+@override_settings(FRONTEND_URL="")
 class PasswordResetFlowTest(APITestCase):
     def setUp(self):
         super().setUp()
@@ -341,21 +343,23 @@ class PasswordResetFlowTest(APITestCase):
         self.assertIsNotNone(RESET_LINK_RE.search(message.body))
         self.assertTrue(Action.objects.filter(actor=self.user, verb=ActionVerb.COMPLETED).exists())
 
-    def test_send_email_unknown_email_returns_404(self):
+    def test_send_email_unknown_email_is_indistinguishable_from_known(self):
+        # Security fix: no account enumeration -- 200 either way, no mail for unknowns.
         response = self._send_reset_email(email="nobody@example.com")
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_send_email_missing_email_returns_404(self):
+    def test_send_email_missing_email_is_a_quiet_200(self):
         response = self.client.post(_url("api:reset-password-send-email"), {}, HTTP_ORIGIN=ORIGIN)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 0)
 
-    def test_send_email_requires_http_origin_header(self):
-        # KNOWN-BUG: same unguarded request.META["HTTP_ORIGIN"] read as registration
-        # (accounts/utils/email_functions.py:93).
-        with self.assertRaises(KeyError):
-            self.client.post(_url("api:reset-password-send-email"), {"email": self.user.email})
+    def test_send_email_works_without_an_origin_header(self):
+        response = self.client.post(_url("api:reset-password-send-email"), {"email": self.user.email})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("http://testserver/accounts/reset-password/", mail.outbox[0].body)
 
     def test_reset_round_trip(self):
         self._send_reset_email()

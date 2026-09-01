@@ -223,11 +223,12 @@ class EventStatsEndpointTest(APITestCase):
         self.assertEqual(set(response.data[0].keys()), QUESTION_STATS_KEYS)
         self.assertEqual(response.data[0]["submissions"]["Correct"], 1)
 
-    def test_any_authenticated_user_can_read_event_stats(self):
-        # the EventViewSet permissions only gate writes, so a student sees them too
+    def test_students_cannot_read_event_stats(self):
+        # Security fix: stats expose every student's submissions, so they need
+        # edit permission on the event.
         self.client.force_authenticate(user=self.student)
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 403)
 
     def test_unknown_event_is_404(self):
         self.client.force_authenticate(user=self.teacher)

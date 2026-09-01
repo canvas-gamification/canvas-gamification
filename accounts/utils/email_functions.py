@@ -1,12 +1,16 @@
+from urllib.parse import urlsplit
+
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import EmailMessage
+from django.http.request import validate_host
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
+from django.conf import settings
+
 from accounts.models import MyUser
-from canvas_gamification import settings
 
 
 class TokenGenerator(PasswordResetTokenGenerator):
@@ -16,6 +20,33 @@ class TokenGenerator(PasswordResetTokenGenerator):
 
 account_activation_token_generator = TokenGenerator()
 reset_password_token_generator = TokenGenerator()
+
+
+def link_base_url(request):
+    """
+    The origin that activation / password-reset links point at.
+
+    Never trust the request's ``Origin`` header on its own: anyone can send a
+    reset request for someone else's e-mail with a forged Origin, and the victim
+    would then be mailed a link to the attacker's host carrying a valid token.
+    The order is: explicit ``FRONTEND_URL`` setting; the ``Origin`` header when
+    its host is explicitly listed in ``ALLOWED_HOSTS``; otherwise the (already
+    validated) host that served this request.
+    """
+    frontend_url = getattr(settings, "FRONTEND_URL", "")
+    if frontend_url:
+        return frontend_url.rstrip("/")
+
+    # "*" (the DEBUG default) would make every Origin trusted, which is the very
+    # hole this function closes; only explicitly listed hosts count.
+    allowed_hosts = [host for host in settings.ALLOWED_HOSTS if host != "*"]
+    origin = request.META.get("HTTP_ORIGIN", "")
+    if origin and allowed_hosts:
+        parts = urlsplit(origin)
+        if parts.scheme in ("http", "https") and parts.hostname and validate_host(parts.hostname, allowed_hosts):
+            return origin.rstrip("/")
+
+    return request.build_absolute_uri("/").rstrip("/")
 
 
 def activate_user(uidb64, token):
@@ -43,7 +74,7 @@ def send_activation_email(request, user):
         "accounts/activation_email.html",
         {
             "user": user,
-            "domain": request.META["HTTP_ORIGIN"],
+            "domain": link_base_url(request),
             "uid": urlsafe_base64_encode(force_bytes(user.pk)),
             "token": account_activation_token_generator.make_token(user),
         },
@@ -83,7 +114,7 @@ def send_reset_email(request, user):
         "accounts/password_reset_email.html",
         {
             "user": user,
-            "domain": request.META["HTTP_ORIGIN"],
+            "domain": link_base_url(request),
             "uid": urlsafe_base64_encode(force_bytes(user.pk)),
             "token": reset_password_token_generator.make_token(user),
         },

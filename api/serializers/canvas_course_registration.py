@@ -39,3 +39,14 @@ class CanvasCourseRegistrationSerializer(serializers.ModelSerializer):
             "username",
             "name",
         ]
+
+
+class CourseRosterSerializer(serializers.ModelSerializer):
+    """
+    What one course member may learn about another: enough to pick a team-mate,
+    nothing that identifies the account (no username/e-mail, no token balance).
+    """
+
+    class Meta:
+        model = CanvasCourseRegistration
+        fields = ["id", "name"]

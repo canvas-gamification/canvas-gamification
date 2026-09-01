@@ -550,9 +550,29 @@ class Submission(PolymorphicModel):
         pass
 
     def has_view_permission(self, user):
-        if user.is_teacher or self.user is user:
+        """
+        Teachers, the submitter, course staff (TA / instructor) and, for event
+        questions, the submitter's team-mates may read a submission -- the same
+        audience ``SubmissionViewSet.list`` already serves.
+        """
+        from canvas.models.models import CanvasCourseRegistration, TA, INSTRUCTOR
+
+        if user.is_teacher or self.uqj.user_id == user.id:
             return True
-        return False
+        event = self.uqj.question.event
+        if event is None:
+            return False
+        if event.course.instructor_id == user.id:
+            return True
+        if CanvasCourseRegistration.objects.filter(
+            course=event.course, user=user, registration_type__in=[TA, INSTRUCTOR]
+        ).exists():
+            return True
+        return (
+            event.team_set.filter(course_registrations__user=user)
+            .filter(course_registrations__user_id=self.uqj.user_id)
+            .exists()
+        )
 
 
 class CodeSubmission(Submission):

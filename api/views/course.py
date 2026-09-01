@@ -5,12 +5,13 @@ from api.filters import DjangoFilterBackend
 from django.http import HttpResponse
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from accounts.utils.email_functions import course_create_email
-from api.serializers import CourseSerializer, CourseListSerializer, CanvasCourseRegistrationSerializer
+from api.serializers import CourseSerializer, CourseListSerializer
+from api.serializers.canvas_course_registration import CourseRosterSerializer
 from api.permissions import CoursePermission, GradeBookPermission, StudentsMustBeRegisteredPermission
 import api.error_messages as ERROR_MESSAGES
 from api.serializers.course import CourseCreateSerializer
@@ -138,23 +139,34 @@ class CourseViewSet(viewsets.ModelViewSet):
 
         return Response({"success_rate": success_rate})
 
-    @action(detail=True, methods=["get"], url_path="course-registrations")
+    @action(
+        detail=True,
+        methods=["get"],
+        url_path="course-registrations",
+        permission_classes=[StudentsMustBeRegisteredPermission],
+    )
     def course_registrations(self, request, pk):
         """
-        Given course id, return all students within a class
+        Given course id, return the members of the course (used to pick team-mates).
+        Only members may ask, and the answer carries display names, not accounts.
         """
-        course = get_object_or_404(CanvasCourse, id=pk)
+        course = self.get_object()
 
-        course_regs = CanvasCourseRegistrationSerializer(course.verified_course_registration, many=True)
+        course_regs = CourseRosterSerializer(course.verified_course_registration, many=True)
 
         return Response(course_regs.data)
 
-    @action(detail=True, methods=["get"], url_path="leader-board")
+    @action(
+        detail=True,
+        methods=["get"],
+        url_path="leader-board",
+        permission_classes=[StudentsMustBeRegisteredPermission],
+    )
     def leader_board(self, request, pk):
         """
         Given course id, return the leader board for the course.
         """
-        course = get_object_or_404(CanvasCourse, id=pk)
+        course = self.get_object()
         events = course.events.filter(count_for_tokens=False)
         leader_board = [
             {
@@ -185,7 +197,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         course = self.get_object()
         students = course.verified_course_registration.filter(registration_type="STUDENT", user=request.user)
         if students.count() == 0:
-            raise ValueError(ERROR_MESSAGES.TOKEN_USE.NO_STUDENT_GRADES_FOUND)
+            raise NotFound(ERROR_MESSAGES.TOKEN_USE.NO_STUDENT_GRADES_FOUND)
         return Response(get_student_gradebook(students[0], course))
 
     @action(detail=True, methods=["get"], url_path="grade-book", permission_classes=[GradeBookPermission])

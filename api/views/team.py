@@ -1,4 +1,5 @@
 from api.filters import DjangoFilterBackend
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -19,6 +20,19 @@ class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["event"]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_teacher:
+            return Team.objects.all()
+        # Teams are only visible inside courses the user belongs to.
+        return Team.objects.filter(
+            Q(event__course__instructor=user)
+            | Q(
+                event__course__canvascourseregistration__user=user,
+                event__course__canvascourseregistration__status="VERIFIED",
+            )
+        ).distinct()
 
     @action(detail=False, methods=["post"], url_path="create-and-join")
     def create_and_join(self, request):

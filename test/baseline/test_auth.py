@@ -177,8 +177,8 @@ class CredentialsTest(APITestCase):
     def test_no_credentials_is_401(self):
         response = self.client.get(self.protected_url)
         self.assertEqual(401, response.status_code)
-        # BasicAuthentication is first in the list, so it owns the challenge.
-        self.assertEqual('Basic realm="api"', response["WWW-Authenticate"])
+        # TokenAuthentication is the only authenticator, so it owns the challenge.
+        self.assertEqual("Token", response["WWW-Authenticate"])
 
     def test_the_returned_token_authenticates_a_follow_up_request(self):
         key = self.token_for(self.student)
@@ -201,12 +201,14 @@ class CredentialsTest(APITestCase):
         client.credentials(HTTP_AUTHORIZATION=self.token_for(self.student))
         self.assertEqual(401, client.get(self.protected_url).status_code)
 
-    def test_basic_auth_works(self):
+    def test_basic_auth_is_not_accepted(self):
+        # Security fix: BasicAuthentication was removed so that no API request
+        # can carry a raw password (an unthrottled password oracle).
         raw = "{}:{}".format(self.student.username, factories.PASSWORD)
         encoded = base64.b64encode(raw.encode("utf-8")).decode("ascii")
         client = factories.api_client()
         client.credentials(HTTP_AUTHORIZATION="Basic " + encoded)
-        self.assertEqual(200, client.get(self.protected_url).status_code)
+        self.assertEqual(401, client.get(self.protected_url).status_code)
 
     def test_basic_auth_with_a_wrong_password_is_401(self):
         raw = "{}:{}".format(self.student.username, "wrong")
@@ -222,10 +224,7 @@ class CredentialsTest(APITestCase):
         API calls.
         """
         self.assertEqual(
-            [
-                "rest_framework.authentication.BasicAuthentication",
-                "rest_framework.authentication.TokenAuthentication",
-            ],
+            ["rest_framework.authentication.TokenAuthentication"],
             settings.REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"],
         )
         self.assertNotIn("DEFAULT_PERMISSION_CLASSES", settings.REST_FRAMEWORK)

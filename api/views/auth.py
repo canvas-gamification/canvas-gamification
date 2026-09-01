@@ -2,10 +2,14 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
+from api.throttling import ConfigurableScopedRateThrottle
 from general.services.action import create_login_action
 
 
 class ObtainAuthTokenView(ObtainAuthToken):
+    throttle_classes = [ConfigurableScopedRateThrottle]
+    throttle_scope = "login"
+
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)

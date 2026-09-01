@@ -575,11 +575,12 @@ class ExamAnswerHidingTest(APITestCase):
         payload = self.uqj_payload()
 
         self.assertEqual(payload["formatted_current_tokens_received"], str(self.token_value()))
-        # KNOWN-BUG: the raw `tokens_received` field is still serialized by UQJSerializer
-        # during an open exam, so the grade leaks anyway -- only the *formatted* string
-        # is masked.
-        self.assertAlmostEqual(payload["tokens_received"], 1.0 * self.token_value())
-        self.assertTrue(payload["is_solved"])
+        # Security fix: the raw grade fields are masked while the exam is open,
+        # matching the formatted string.
+        self.assertIsNone(payload["tokens_received"])
+        self.assertIsNone(payload["is_solved"])
+        self.assertIsNone(payload["is_partially_solved"])
+        self.assertEqual(payload["status"], "Submitted")
 
     def test_submission_list_reveals_the_grade_once_the_exam_closes(self):
         close_event(self.exam)
@@ -613,8 +614,8 @@ class ExamAnswerHidingTest(APITestCase):
 
 
 class ActionTokenMintingRegressionTest(APITestCase):
-    """`ActionsViewSet` exposes the whole `Action` model for creation (`exclude = []`),
-    so a client can post an arbitrary `token_change`."""
+    """`ActionsViewSet` exposes the `Action` model for creation, but `token_change`
+    is read-only: a client cannot move tokens through it."""
 
     def setUp(self):
         super().setUp()
@@ -637,13 +638,11 @@ class ActionTokenMintingRegressionTest(APITestCase):
             format="json",
         )
 
-        # KNOWN-BUG: ActionsSerializer has `exclude = []` and only `actor` is read-only,
-        # so `token_change` is client-writable. The created Action is counted by
-        # `MyUser.tokens`, which means any authenticated user can mint unlimited tokens
-        # with a single POST to /api/user-actions/.
+        # Security fix: `token_change` is read-only, so the action is recorded
+        # with no token movement.
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["token_change"], 500)
-        self.assertEqual(self.student.tokens, 500)
+        self.assertEqual(response.data["token_change"], 0)
+        self.assertEqual(self.student.tokens, 0)
         self.assertEqual(Action.objects.get().actor_id, self.student.id)
 
     def test_actor_is_forced_to_the_requesting_user(self):
@@ -663,7 +662,7 @@ class ActionTokenMintingRegressionTest(APITestCase):
         self.assertEqual(Action.objects.get().actor_id, self.student.id)
         self.assertIsNone(self.other.tokens)
 
-    def test_negative_token_change_is_also_accepted(self):
+    def test_negative_token_change_is_ignored_too(self):
         response = self.client.post(
             reverse(USER_ACTIONS_URL),
             {
@@ -676,7 +675,7 @@ class ActionTokenMintingRegressionTest(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(self.student.tokens, -7.5)
+        self.assertEqual(self.student.tokens, 0)
 
     def test_anonymous_cannot_create_actions(self):
         response = api_client().post(

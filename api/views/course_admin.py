@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
@@ -41,6 +42,8 @@ class CourseAdminViewSet(viewsets.GenericViewSet):
         """
         registration_id = request.data.get("id")
         status = request.data.get("status")
+        if status not in ("VERIFIED", "BLOCKED", "PENDING_VERIFICATION", "UNREGISTERED"):
+            raise ValidationError({"status": "Unknown status."})
         # Get the object and update its is_block and is_verified
         course_registration = get_object_or_404(CanvasCourseRegistration, id=registration_id)
         if status == "VERIFIED":

@@ -10,10 +10,13 @@ from accounts.utils.email_functions import (
     activate_user,
 )
 from api.serializers import UserRegistrationSerializer
+from api.throttling import ConfigurableScopedRateThrottle
 
 
 class UserRegistrationViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = UserRegistrationSerializer
+    throttle_classes = [ConfigurableScopedRateThrottle]
+    throttle_scope = "register"
     queryset = MyUser.objects.all()
 
     def create(self, request, *args, **kwargs):

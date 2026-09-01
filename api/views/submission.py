@@ -95,7 +95,8 @@ class SubmissionViewSet(viewsets.GenericViewSet):
         return Response(results)
 
     def retrieve(self, request, pk=None):
-        submission = get_object_or_404(Submission.objects.all(), pk=pk)
+        # get_object() runs HasViewSubmissionPermission; a bare lookup would not.
+        submission = self.get_object()
         return Response(self.get_serialized_data(submission))
 
     @action(detail=False, methods=["post"])

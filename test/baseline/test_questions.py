@@ -1223,14 +1223,12 @@ class QuestionListFilterTests(APITestCase):
         self.assertIsInstance(response.data, list)
         self.assertEqual(len(response.data), 2)
 
-    def test_students_still_see_every_question(self):
-        # KNOWN-BUG: QuestionViewSet.get_queryset (api/views/question.py:64-69) discards
-        # the result of `queryset.filter(author=user)` for non-teachers, so students see
-        # all questions instead of only their own. Pinning the current behaviour.
+    def test_students_only_list_their_own_questions(self):
+        # Security fix: the author filter is applied for non-teachers.
         student = make_student("bl_student")
         self.client.force_authenticate(user=student)
         response = self.client.get(reverse("api:question-list"))
-        self.assertEqual(response.data["count"], 2)
+        self.assertEqual(response.data["count"], 0)
 
 
 class QuestionCategoryHelperTests(TestCase):

@@ -74,18 +74,17 @@ class TeamServiceTests(TestCase):
         self.assertEqual(list(shared.course_registrations.all()), [self.alice_reg])
         self.assertEqual(Team.objects.count(), 2)
 
-    def test_create_and_join_team_does_not_require_a_verified_registration(self):
-        # KNOWN-BUG: unlike join_team, create_and_join_team performs no
-        # registration check at all — an unregistered user can create a team
-        # (and get an UNREGISTERED registration row created as a side effect).
+    def test_create_and_join_team_requires_a_verified_registration(self):
+        # Security fix: same rule as join_team.
+        from rest_framework.exceptions import PermissionDenied
+
         stranger = fx.make_user("stranger", nickname="Stranger")
         self.assertFalse(CanvasCourseRegistration.objects.filter(user=stranger).exists())
 
-        team = create_and_join_team(self.event, stranger, None)
+        with self.assertRaises(PermissionDenied):
+            create_and_join_team(self.event, stranger, None)
 
-        self.assertEqual(team.name, "Stranger's Team")
-        reg = CanvasCourseRegistration.objects.get(user=stranger, course=self.course)
-        self.assertEqual(reg.status, "UNREGISTERED")
+        self.assertFalse(Team.objects.filter(name="Stranger's Team").exists())
 
     def test_teams_are_scoped_to_their_event(self):
         other_event = fx.make_event(self.course, name="other")
@@ -353,24 +352,27 @@ class TeamEndpointTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual([item["name"] for item in response.data], ["Rockets"])
 
-    def test_team_detail_requires_membership(self):
-        # TeamPermission.has_object_permission requires the requesting user to
-        # be a member (has_permission is hardcoded True — see api/permissions.py:365).
+    def test_team_detail_is_visible_to_course_members_only(self):
+        # Security fix: reads are open to members of the team's course (bob is
+        # registered, so he may look at alice's team); anyone else gets a 404
+        # because the queryset never contains the team.
         team = create_and_join_team(self.event, self.alice, "Rockets")
         url = reverse("api:team-detail", kwargs={"pk": team.pk})
 
         self.client.force_authenticate(user=self.bob)
-        self.assertEqual(self.client.get(url).status_code, 403)
+        self.assertEqual(self.client.get(url).status_code, 200)
+
+        stranger = fx.make_user("stranger", nickname="Stranger")
+        self.client.force_authenticate(user=stranger)
+        self.assertEqual(self.client.get(url).status_code, 404)
 
         self.client.force_authenticate(user=self.alice)
         self.assertEqual(self.client.get(url).status_code, 200)
 
-    def test_team_list_is_readable_by_anonymous_users(self):
-        # KNOWN-BUG: TeamPermission.has_permission is hardcoded to True, so the
-        # unauthenticated list endpoint is public.
+    def test_team_list_requires_authentication(self):
+        # Security fix: teams are only visible to course members.
         create_and_join_team(self.event, self.alice, "Rockets")
 
         response = self.client.get(reverse("api:team-list"))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual([item["name"] for item in response.data], ["Rockets"])
+        self.assertEqual(response.status_code, 401)

@@ -2,12 +2,12 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
-from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from accounts.models import MyUser
 from accounts.utils.email_functions import send_reset_email
 from api.serializers import ResetPasswordSerializer
+from api.throttling import ConfigurableScopedRateThrottle
 from general.services.action import (
     reset_password_email_action,
     reset_password_action,
@@ -16,6 +16,8 @@ from general.services.action import (
 
 class ResetPasswordViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = ResetPasswordSerializer
+    throttle_classes = [ConfigurableScopedRateThrottle]
+    throttle_scope = "password-reset"
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -30,7 +32,10 @@ class ResetPasswordViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     @action(detail=False, methods=["post"], url_path="send-email")
     def send_email(self, request):
         email = request.data.get("email", None)
-        user = get_object_or_404(MyUser, email=email)
-        send_reset_email(request, user)
-        reset_password_email_action(user)
+        # Answer identically whether or not the address is known, so the
+        # endpoint cannot be used to enumerate accounts.
+        user = MyUser.objects.filter(email=email).first() if email else None
+        if user is not None:
+            send_reset_email(request, user)
+            reset_password_email_action(user)
         return Response(status=status.HTTP_200_OK)

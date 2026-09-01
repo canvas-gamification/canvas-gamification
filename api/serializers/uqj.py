@@ -14,6 +14,11 @@ class UQJSerializer(serializers.ModelSerializer):
     report = serializers.SerializerMethodField("get_report")
     question = QuestionSerializer(read_only=True)
     question_id = serializers.PrimaryKeyRelatedField(source="question", queryset=Question.objects.all())
+    # Grade-revealing fields are masked while an exam is open (see ``_grades_hidden``).
+    tokens_received = serializers.SerializerMethodField("get_tokens_received")
+    is_solved = serializers.SerializerMethodField("get_is_solved")
+    is_partially_solved = serializers.SerializerMethodField("get_is_partially_solved")
+    status = serializers.SerializerMethodField("get_status")
 
     def get_variables(self, uqj):
         return uqj.get_variables()
@@ -42,6 +47,35 @@ class UQJSerializer(serializers.ModelSerializer):
             return QuestionReportSerializer(queryset[0]).data
         else:
             return {}
+
+    def _grades_hidden(self, uqj):
+        """
+        While an exam is open a student must not learn whether their answers are
+        right. ``formatted_current_tokens_received`` already hides this; the raw
+        fields have to follow the same rule. Staff who can edit the question see
+        everything.
+        """
+        if not uqj.question.is_exam_and_open:
+            return False
+        request = self.context.get("request", None)
+        user = getattr(request, "user", None) if request is not None else None
+        if user is not None and user.is_authenticated and uqj.question.has_edit_permission(user):
+            return False
+        return True
+
+    def get_tokens_received(self, uqj):
+        return None if self._grades_hidden(uqj) else uqj.tokens_received
+
+    def get_is_solved(self, uqj):
+        return None if self._grades_hidden(uqj) else uqj.is_solved
+
+    def get_is_partially_solved(self, uqj):
+        return None if self._grades_hidden(uqj) else uqj.is_partially_solved
+
+    def get_status(self, uqj):
+        if self._grades_hidden(uqj):
+            return "Submitted" if uqj.num_attempts() > 0 else "Not Submitted"
+        return uqj.status
 
     class Meta:
         model = UserQuestionJunction

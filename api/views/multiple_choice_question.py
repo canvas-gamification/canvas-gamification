@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from api.pagination import BasePagination
 from api.permissions import QuestionPermission
 from api.serializers import MultipleChoiceQuestionSerializer
+from api.serializers.multiple_choice_question import SampleMultipleChoiceQuestionSerializer
 from course.models.multiple_choice import MultipleChoiceQuestion
 from general.services.action import (
     create_question_action,
@@ -12,7 +13,7 @@ from general.services.action import (
 
 class SampleMultipleChoiceQuestionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MultipleChoiceQuestion.objects.filter(is_sample=True).all()
-    serializer_class = MultipleChoiceQuestionSerializer
+    serializer_class = SampleMultipleChoiceQuestionSerializer
 
 
 class MultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
