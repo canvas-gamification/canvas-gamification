@@ -182,9 +182,7 @@ class TeacherAccessPermissionTest(PermissionTestCase):
         self.assertEqual(200, response.status_code)
         self.assertEqual("BLOCKED", CanvasCourseRegistration.objects.get(pk=self.world.student_reg.id).status)
 
-    def test_unknown_status_silently_does_nothing(self):
-        # KNOWN-BUG: CourseAdminViewSet.update_status does not validate `status`;
-        # an unrecognised value is a 200 no-op instead of a 400.
+    def test_unknown_status_is_rejected(self):
         from canvas.models.models import CanvasCourseRegistration
 
         response = self.call(
@@ -193,7 +191,7 @@ class TeacherAccessPermissionTest(PermissionTestCase):
             reverse("api:admin-course-update-status"),
             {"id": self.world.student_reg.id, "status": "NONSENSE"},
         )
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(400, response.status_code)
         self.assertEqual("VERIFIED", CanvasCourseRegistration.objects.get(pk=self.world.student_reg.id).status)
 
 
@@ -414,17 +412,14 @@ class GradeBookPermissionTest(PermissionTestCase):
 
 
 class StudentsMustBeRegisteredPermissionTest(PermissionTestCase):
-    def test_my_grades_rejects_unregistered_students_and_explodes_for_staff(self):
-        # KNOWN-BUG: a caller that passes the permission but has no VERIFIED
-        # STUDENT registration (teacher / TA / instructor) hits a bare
-        # ValueError -> 500.
+    def test_my_grades_rejects_unregistered_students_and_is_404_for_staff(self):
         expected = {
             "anonymous": 401,
             "outsider": 403,
             "student": 200,
-            "ta": 500,
-            "instructor": 500,
-            "teacher": 500,
+            "ta": 404,
+            "instructor": 404,
+            "teacher": 404,
         }
         self.assert_matrix(
             "get",
@@ -432,11 +427,10 @@ class StudentsMustBeRegisteredPermissionTest(PermissionTestCase):
             expected,
         )
 
-    def test_token_use_never_checks_the_registration(self):
-        # KNOWN-BUG: StudentsMustBeRegisteredPermission is object-level only and
-        # TokenUseViewSet.use_tokens never calls get_object(), so an unregistered
-        # user reaches update_token_use().
+    def test_token_use_requires_a_verified_registration(self):
+        # Security fix: the object-level permission is invoked explicitly.
         expected = dict(ALL_AUTHENTICATED_ALLOWED)
+        expected["outsider"] = 403
         self.assert_matrix(
             "post",
             reverse("api:token-use-use-tokens", kwargs={"course_pk": self.world.course.id}),
@@ -550,21 +544,23 @@ class EventSetPermissionTest(PermissionTestCase):
             body=lambda role: {"name": "ES " + role, "course": self.world.course.id, "tokens": 1.0, "events": []},
         )
 
-    def test_patching_an_event_set_is_completely_unguarded(self):
-        # KNOWN-BUG: EventCreatePermission only guards POST and EventEditPermission
-        # only guards PUT, so ANY authenticated user can rename any event set --
-        # EventSet.has_edit_permission is never consulted.
+    def test_patching_an_event_set_needs_edit_rights(self):
+        # Security fix: EventSetPermission consults EventSet.has_edit_permission.
+        expected = dict(ALL_AUTHENTICATED_ALLOWED)
+        expected["outsider"] = 403
+        expected["student"] = 403
         self.assert_matrix(
             "patch",
             reverse("api:event-set-view-detail", kwargs={"pk": self.world.event_set.id}),
-            ALL_AUTHENTICATED_ALLOWED,
+            expected,
             body={"name": "Renamed"},
         )
 
-    def test_deleting_an_event_set_is_completely_unguarded(self):
-        # KNOWN-BUG: same hole as above, for DELETE.
+    def test_deleting_an_event_set_needs_edit_rights(self):
         expected = dict((role, 204) for role in ROLES)
         expected["anonymous"] = 401
+        expected["outsider"] = 403
+        expected["student"] = 403
         self.assert_matrix(
             "delete",
             reverse("api:event-set-view-detail", kwargs={"pk": self.world.event_set.id}),
@@ -636,13 +632,22 @@ class UserConsentPermissionTest(PermissionTestCase):
 # HasViewSubmissionPermission
 # --------------------------------------------------------------------------- #
 class SubmissionPermissionTest(PermissionTestCase):
-    def test_any_authenticated_user_can_retrieve_any_submission(self):
-        # KNOWN-BUG: SubmissionViewSet.retrieve() bypasses self.get_object(), so
-        # HasViewSubmissionPermission.has_object_permission never runs.
+    def test_retrieving_a_submission_needs_view_permission(self):
+        # Security fix: retrieve() goes through get_object(). world.submission is
+        # the student's answer to a practice question, so only the student and
+        # teachers may read it (course staff only see event submissions).
+        expected = {
+            "anonymous": 401,
+            "outsider": 403,
+            "student": 200,
+            "ta": 403,
+            "instructor": 403,
+            "teacher": 200,
+        }
         self.assert_matrix(
             "get",
             reverse("api:submission-detail", kwargs={"pk": self.world.submission.id}),
-            ALL_AUTHENTICATED_ALLOWED,
+            expected,
         )
 
     def test_listing_submissions_is_scoped_by_the_queryset_not_the_permission(self):
@@ -664,24 +669,20 @@ class SubmissionPermissionTest(PermissionTestCase):
 # TeamPermission
 # --------------------------------------------------------------------------- #
 class TeamPermissionTest(PermissionTestCase):
-    def test_team_list_is_public(self):
-        # KNOWN-BUG: TeamPermission.has_permission is hardcoded to True.
-        expected = dict(ALL_AUTHENTICATED_ALLOWED)
-        expected["anonymous"] = 200
-        self.assert_matrix("get", reverse("api:team-list"), expected)
+    def test_team_list_needs_authentication(self):
+        self.assert_matrix("get", reverse("api:team-list"), ALL_AUTHENTICATED_ALLOWED)
 
-    def test_team_detail_requires_membership_and_500s_for_anonymous(self):
-        # KNOWN-BUG: the anonymous case reaches the object filter with an
-        # AnonymousUser and raises instead of returning 401.
+    def test_team_detail_is_for_course_members(self):
+        # Security fix: teams are scoped to the courses the caller belongs to;
+        # an outsider cannot even tell the team exists.
         expected = {
-            "anonymous": 500,
-            "outsider": 403,
-            "student": 403,
-            "ta": 403,
-            "instructor": 403,
-            "teacher": 403,
+            "anonymous": 401,
+            "outsider": 404,
+            "student": 200,
+            "ta": 200,
+            "instructor": 200,
+            "teacher": 200,
         }
-        expected["student"] = 200  # the only member of world.team
         self.assert_matrix(
             "get",
             reverse("api:team-detail", kwargs={"pk": self.world.team.id}),
@@ -693,22 +694,24 @@ class TeamPermissionTest(PermissionTestCase):
 # Endpoints with no object-level protection at all
 # --------------------------------------------------------------------------- #
 class UnguardedEndpointTest(PermissionTestCase):
-    def test_any_authenticated_user_can_flip_any_uqj_favourite_flag(self):
-        # KNOWN-BUG: UpdateUQJViewSet.update_is_favorite looks the UQJ up by id
-        # with no ownership check.
+    def test_only_the_owner_can_flip_a_uqj_favourite_flag(self):
+        # Security fix: the UQJ is looked up among the caller's own junctions.
         from course.models.models import UserQuestionJunction
 
         url = reverse("api:uqj-update-update-is-favorite")
         body = {"id": self.world.uqj.id, "status": True}
-        self.assert_matrix("post", url, ALL_AUTHENTICATED_ALLOWED, body=body)
+        expected = dict((role, 404) for role in ROLES)
+        expected["anonymous"] = 401
+        expected["student"] = 200
+        self.assert_matrix("post", url, expected, body=body)
 
+        UserQuestionJunction.objects.filter(pk=self.world.uqj.id).update(is_favorite=False)
         response = self.call("outsider", "post", url, body)
-        self.assertEqual(200, response.status_code)
-        self.assertTrue(UserQuestionJunction.objects.get(pk=self.world.uqj.id).is_favorite)
+        self.assertEqual(404, response.status_code)
+        self.assertFalse(UserQuestionJunction.objects.get(pk=self.world.uqj.id).is_favorite)
 
-    def test_a_client_can_post_an_action_with_an_arbitrary_token_change(self):
-        # KNOWN-BUG: ActionsSerializer excludes nothing, so token_change is
-        # writable and MyUser.tokens (the ledger) can be inflated at will.
+    def test_a_client_supplied_token_change_is_ignored(self):
+        # Security fix: token_change is read-only on ActionsSerializer.
         url = reverse("api:user-actions-list")
         body = {
             "description": "minted",
@@ -721,7 +724,7 @@ class UnguardedEndpointTest(PermissionTestCase):
         response = self.call("outsider", "post", url, body)
         self.assertEqual(201, response.status_code)
         self.assertEqual(self.world.outsider.id, response.data["actor"])
-        self.assertEqual(99, self.world.outsider.tokens)
+        self.assertEqual(0, self.world.outsider.tokens)
 
     def test_actor_is_forced_to_the_requesting_user(self):
         url = reverse("api:user-actions-list")
@@ -791,7 +794,7 @@ class AnonymousAccessTest(PermissionTestCase):
             with self.subTest(permission_class=permission_class):
                 response = self.call("anonymous", method, url)
                 self.assertEqual(401, response.status_code)
-                self.assertEqual('Basic realm="api"', response["WWW-Authenticate"])
+                self.assertEqual("Token", response["WWW-Authenticate"])
 
     def test_the_publicly_readable_endpoints_stay_public(self):
         cases = [
@@ -800,7 +803,6 @@ class AnonymousAccessTest(PermissionTestCase):
             reverse("api:difficulty-list"),
             reverse("api:question-category-list"),
             reverse("api:sample-multiple-choice-question-list"),
-            reverse("api:team-list"),
             reverse("api:openapi-schema"),
             reverse("api:docs"),
         ]

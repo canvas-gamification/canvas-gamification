@@ -343,6 +343,8 @@ class EventSet(models.Model):
     tokens = models.FloatField()
 
     def has_edit_permission(self, user):
+        if user.is_teacher:
+            return True
         course_reg = get_course_registration(user, self.course)
         return course_reg.registration_type == TA or course_reg.registration_type == INSTRUCTOR
 

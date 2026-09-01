@@ -12,6 +12,11 @@ import api.error_messages as ERROR_MESSAGES
 def create_and_join_team(event: Event, user: MyUser, name: Optional[str], is_private=None, who_can_join=None) -> Team:
     course_reg = get_course_registration(user, event.course)
 
+    # Same rule as join_team: only verified course members take part in challenges.
+    # Teachers keep their existing ability to look at a challenge as a team of one.
+    if not course_reg.is_verified and not user.is_teacher:
+        raise PermissionDenied(ERROR_MESSAGES.TEAM.NOT_REGISTERED)
+
     leave_team(event, user)
     team = Team()
     team.event = event

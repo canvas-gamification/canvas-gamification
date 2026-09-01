@@ -25,6 +25,8 @@ class TokenUseViewSet(viewsets.ViewSet):
             raise ValidationError(ERROR_MESSAGES.COURSE.REQUIRED)
 
         course = get_object_or_404(CanvasCourse, pk=course_pk)
+        # StudentsMustBeRegisteredPermission is object-level; it only runs if we ask.
+        self.check_object_permissions(request, course)
         try:
             update_token_use(request.user, course, request.data)
             return Response(status=status.HTTP_200_OK)

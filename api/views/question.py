@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.pagination import BasePagination
-from api.permissions import HasDeletePermission, QuestionPermission
+from api.permissions import HasDeletePermission, QuestionPermission, TeacherAccessPermission
 from api.serializers import (
     QuestionSerializer,
     MultipleChoiceQuestionSerializer,
@@ -64,8 +64,10 @@ class QuestionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         queryset = Question.objects.filter(question_status=Question.CREATED)
-        if not user.is_teacher:
-            queryset.filter(author=user)
+        # Non-teachers only browse their own questions. Detail routes stay
+        # object-permission based (QuestionPermission), as before.
+        if not user.is_teacher and self.action in ("list", "download_questions"):
+            queryset = queryset.filter(author=user)
         return queryset
 
     def get_question_serializer_class(self, question):
@@ -97,7 +99,12 @@ class QuestionViewSet(viewsets.ModelViewSet):
         delete_question_action(self.get_serializer(question).data, request.user)
         return Response(self.get_serializer(question).data, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["get"], url_path="download-questions")
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="download-questions",
+        permission_classes=[TeacherAccessPermission],
+    )
     def download_questions(self, request, *args, **kwargs):
         """
         Action that will display all questions after they have been filtered using the appropriate constructors,

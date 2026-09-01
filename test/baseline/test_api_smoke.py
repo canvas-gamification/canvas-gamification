@@ -41,7 +41,7 @@ GET_SMOKE = [
     ("api-root", {}, 200, 200, 200, 200),
     # -- questions ---------------------------------------------------------
     ("question-list", {}, 401, 200, 200, 200),
-    ("question-download-questions", {}, 401, 200, 200, 200),
+    ("question-download-questions", {}, 401, 403, 200, 403),
     ("question-detail", {"pk": "practice_question"}, 401, 200, 200, 200),
     ("question-get-favorite-count", {"pk": "practice_question"}, 401, 200, 200, 200),
     # no permission_classes -> public
@@ -69,7 +69,7 @@ GET_SMOKE = [
     # KNOWN-BUG: SubmissionViewSet.retrieve uses get_object_or_404 directly instead
     # of self.get_object(), so HasViewSubmissionPermission.has_object_permission is
     # never called -- any authenticated user can read anybody's submission.
-    ("submission-detail", {"pk": "submission"}, 401, 200, 200, 200),
+    ("submission-detail", {"pk": "submission"}, 401, 200, 200, 403),
     # -- courses -----------------------------------------------------------
     ("course-list", {}, 401, 200, 200, 200),
     ("course-detail", {"pk": "course"}, 401, 200, 200, 200),
@@ -82,7 +82,7 @@ GET_SMOKE = [
     ("course-leader-board", {"pk": "course"}, 401, 200, 200, 200),
     # KNOWN-BUG: my_grades raises a bare ValueError (not an APIException) when the
     # caller has no VERIFIED STUDENT registration -> 500 instead of 403/404.
-    ("course-my-grades", {"pk": "course"}, 401, 200, 500, 500),
+    ("course-my-grades", {"pk": "course"}, 401, 200, 404, 404),
     ("course-register", {"pk": "course"}, 401, 405, 405, 405),
     ("course-user-stats", {"pk": "course", "category_pk": "category"}, 401, 200, 200, 200),
     ("course-validate-event", {"pk": "course", "event_pk": "event"}, 401, 200, 200, 200),
@@ -106,19 +106,19 @@ GET_SMOKE = [
     ("event-set-featured", {"pk": "event"}, 401, 405, 405, 405),
     ("event-remove-question", {"pk": "event"}, 401, 405, 405, 405),
     ("event-leader-board", {"pk": "event"}, 401, 200, 200, 200),
-    ("event-stats", {"pk": "event"}, 401, 200, 200, 200),
+    ("event-stats", {"pk": "event"}, 401, 403, 200, 200),
     ("event-set-view-list", {}, 401, 200, 200, 200),
     ("event-set-view-detail", {"pk": "event_set"}, 401, 200, 200, 200),
     # -- teams -------------------------------------------------------------
     # TeamPermission.has_permission is hardcoded True, so the list route is public.
-    ("team-list", {}, 200, 200, 200, 200),
-    ("team-create-and-join", {}, 405, 405, 405, 405),
-    ("team-join", {}, 405, 405, 405, 405),
-    ("team-my-team", {}, 404, 404, 404, 404),
+    ("team-list", {}, 401, 200, 200, 200),
+    ("team-create-and-join", {}, 401, 405, 405, 405),
+    ("team-join", {}, 401, 405, 405, 405),
+    ("team-my-team", {}, 401, 404, 404, 404),
     # KNOWN-BUG: TeamPermission.has_permission returns True even for AnonymousUser,
     # then has_object_permission filters course_registrations by an AnonymousUser
     # -> TypeError -> 500 instead of 401.
-    ("team-detail", {"pk": "team"}, 500, 200, 403, 403),
+    ("team-detail", {"pk": "team"}, 401, 200, 200, 200),
     # -- goals -------------------------------------------------------------
     ("goal-list", {}, 401, 200, 200, 200),
     ("goal-limits", {}, 401, 200, 200, 200),
@@ -182,22 +182,22 @@ POST_SMOKE = [
     ("register-list", {}, "post", 400, 400, 400, 400),
     ("register-activate", {}, "post", 400, 400, 400, 400),
     ("reset-password-list", {}, "post", 400, 400, 400, 400),
-    ("reset-password-send-email", {}, "post", 404, 404, 404, 404),
+    ("reset-password-send-email", {}, "post", 200, 200, 200, 200),
     ("change-password-list", {}, "post", 401, 400, 400, 400),
     ("course-register", {"pk": "course"}, "post", 401, 200, 200, 200),
     ("submission-submit", {}, "post", 401, 400, 400, 400),
     ("event-import-event", {}, "post", 401, 404, 404, 404),
-    ("event-add-question", {"pk": "event"}, "post", 401, 404, 404, 404),
-    ("event-add-question-set", {"pk": "event"}, "post", 401, 200, 200, 200),
-    ("event-remove-question", {"pk": "event"}, "post", 401, 404, 404, 404),
-    ("event-clear-featured", {"pk": "event"}, "post", 401, 200, 200, 200),
-    ("event-set-featured", {"pk": "event"}, "post", 401, 200, 200, 200),
+    ("event-add-question", {"pk": "event"}, "post", 401, 403, 404, 404),
+    ("event-add-question-set", {"pk": "event"}, "post", 401, 403, 200, 200),
+    ("event-remove-question", {"pk": "event"}, "post", 401, 403, 404, 404),
+    ("event-clear-featured", {"pk": "event"}, "post", 401, 403, 200, 200),
+    ("event-set-featured", {"pk": "event"}, "post", 401, 403, 200, 200),
     ("token-use-use-tokens", {"course_pk": "course"}, "post", 401, 400, 400, 400),
     ("token-values-update-bulk", {}, "patch", 401, 403, 200, 403),
-    ("admin-course-update-status", {}, "post", 401, 403, 404, 403),
-    ("uqj-update-update-is-favorite", {}, "post", 401, 404, 404, 404),
-    ("team-create-and-join", {}, "post", 404, 404, 404, 404),
-    ("team-join", {}, "post", 404, 404, 404, 404),
+    ("admin-course-update-status", {}, "post", 401, 403, 400, 403),
+    ("uqj-update-update-is-favorite", {}, "post", 401, 400, 400, 400),
+    ("team-create-and-join", {}, "post", 401, 404, 404, 404),
+    ("team-join", {}, "post", 401, 404, 404, 404),
     ("goal-claim", {"pk": "goal"}, "post", 401, 400, 404, 404),
 ]
 
@@ -410,13 +410,10 @@ class KnownBrokenEndpointTest(SmokeTestCaseBase):
         with self.assertRaises(AttributeError):
             client.get(url)
 
-    def test_my_grades_raises_value_error_without_a_student_registration(self):
-        # KNOWN-BUG: api/views/course.py my_grades() raises a bare ValueError,
-        # which DRF does not translate into a 4xx.
+    def test_my_grades_is_404_without_a_student_registration(self):
         client = factories.api_client(user=self.world.teacher)
         url = reverse("api:course-my-grades", kwargs={"pk": self.world.course.id})
-        with self.assertRaises(ValueError):
-            client.get(url)
+        self.assertEqual(404, client.get(url).status_code)
 
     def test_my_grades_succeeds_for_a_registered_student(self):
         client = factories.api_client(user=self.world.student)
@@ -429,13 +426,10 @@ class KnownBrokenEndpointTest(SmokeTestCaseBase):
             set(response.data[0].keys()),
         )
 
-    def test_team_detail_blows_up_for_anonymous_users(self):
-        # KNOWN-BUG: TeamPermission.has_permission is hardcoded to True, so an
-        # AnonymousUser reaches the object-level filter and explodes.
+    def test_team_detail_is_401_for_anonymous_users(self):
         client = factories.api_client()
         url = reverse("api:team-detail", kwargs={"pk": self.world.team.id})
-        with self.assertRaises(TypeError):
-            client.get(url)
+        self.assertEqual(401, client.get(url).status_code)
 
     def test_registered_users_returns_a_generator_that_the_json_renderer_flattens(self):
         # The generator handed to Response() renders fine as JSON (DRF's

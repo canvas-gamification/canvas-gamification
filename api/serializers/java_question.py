@@ -7,10 +7,11 @@ from api.serializers import (
     EventSerializer,
     QuestionCategorySerializer,
 )
+from api.serializers.utils import HideAnswerMixin
 from course.models.java import JavaQuestion, JavaSubmission
 
 
-class JavaQuestionSerializer(serializers.ModelSerializer):
+class JavaQuestionSerializer(HideAnswerMixin, serializers.ModelSerializer):
     title = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.TITLE.ERROR_MESSAGES)
     text = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.TEXT.ERROR_MESSAGES)
     difficulty = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.DIFFICULTY.ERROR_MESSAGES)

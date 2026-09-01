@@ -38,7 +38,8 @@ class ActionsViewSet(
 
     def perform_create(self, serializer):
         request = serializer.context["request"]
-        serializer.save(actor=request.user)
+        # Client-created actions are activity logging only; they never move tokens.
+        serializer.save(actor=request.user, token_change=0)
 
     def get_queryset(self):
         user = self.request.user

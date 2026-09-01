@@ -7,13 +7,14 @@ from api.serializers import (
     EventSerializer,
     QuestionCategorySerializer,
 )
+from api.serializers.utils import HideAnswerMixin
 from course.models.multiple_choice import (
     MultipleChoiceQuestion,
     MultipleChoiceSubmission,
 )
 
 
-class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
+class MultipleChoiceQuestionSerializer(HideAnswerMixin, serializers.ModelSerializer):
     title = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.TITLE.ERROR_MESSAGES)
     text = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.TEXT.ERROR_MESSAGES)
     difficulty = serializers.CharField(required=True, error_messages=ERROR_MESSAGES.DIFFICULTY.ERROR_MESSAGES)
@@ -63,6 +64,12 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
 
     def get_category_obj(self, question):
         return QuestionCategorySerializer(question.category).data
+
+
+class SampleMultipleChoiceQuestionSerializer(MultipleChoiceQuestionSerializer):
+    """Sample questions are public demo content; the landing page grades them client-side."""
+
+    hide_answer = False
 
 
 class MultipleChoiceSubmissionSerializer(serializers.ModelSerializer):

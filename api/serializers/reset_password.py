@@ -29,14 +29,15 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
         fields = ["uid", "token", "password", "password2"]
 
     def validate(self, attrs):
+        # Check the cheap things first: verify_reset() consumes the token (it
+        # bumps last_login), so it must only run once the rest is acceptable.
+        if attrs["password"] != attrs["password2"]:
+            raise serializers.ValidationError(ERROR_MESSAGES.PASSWORD.MATCH)
         user = verify_reset(attrs["uid"], attrs["token"])
         if not user:
             raise serializers.ValidationError(ERROR_MESSAGES.PASSWORD.INVALID_RESET_LINK)
-        old_password = user.password
-        if old_password == attrs["password"]:
+        if user.check_password(attrs["password"]):
             raise serializers.ValidationError(ERROR_MESSAGES.PASSWORD.DUPLICATED)
-        if attrs["password"] != attrs["password2"]:
-            raise serializers.ValidationError(ERROR_MESSAGES.PASSWORD.MATCH)
         return attrs
 
     def create(self, validated_data):

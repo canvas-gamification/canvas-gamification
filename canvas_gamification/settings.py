@@ -28,7 +28,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "true") == "true"
+# Off unless explicitly requested: a deployment that forgets to set DEBUG must
+# not come up with ALLOWED_HOSTS=["*"], open CORS and a public SECRET_KEY.
+DEBUG = os.environ.get("DEBUG", "false") == "true"
 HEROKU = False
 
 if DEBUG:
@@ -172,11 +174,33 @@ USE_I18N = True
 USE_TZ = True
 
 REST_FRAMEWORK = {
+    # Token only. BasicAuthentication would let every API request carry a raw
+    # password, which turns any endpoint into a password-guessing oracle.
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.TokenAuthentication",
-    ]
+    ],
+    # Scopes are attached per view with api.throttling.ConfigurableScopedRateThrottle.
+    "DEFAULT_THROTTLE_RATES": {
+        "login": os.environ.get("THROTTLE_LOGIN", "20/min"),
+        "password-reset": os.environ.get("THROTTLE_PASSWORD_RESET", "5/min"),
+        "register": os.environ.get("THROTTLE_REGISTER", "10/min"),
+        "contact-us": os.environ.get("THROTTLE_CONTACT_US", "5/min"),
+    },
 }
+
+# Set to "false" to switch the rate limits above off (the test suite does).
+API_THROTTLING_ENABLED = os.environ.get("API_THROTTLING_ENABLED", "true") == "true"
+
+# Origin that activation / password-reset e-mails link to. Optional: when unset,
+# links use the Origin header if its host is in ALLOWED_HOSTS, else the request
+# host. See accounts.utils.email_functions.link_base_url.
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
+
+# Cookies are HTTPS-only outside DEBUG. SECURE_COOKIES=false is the escape hatch
+# for a plain-http staging host.
+if not DEBUG:
+    SESSION_COOKIE_SECURE = os.environ.get("SECURE_COOKIES", "true") == "true"
+    CSRF_COOKIE_SECURE = SESSION_COOKIE_SECURE
 
 
 MESSAGE_TAGS = {message_constants.ERROR: "danger"}
@@ -284,5 +308,5 @@ if DEBUG is False:
         dsn=os.environ["SENTRY_DSN"],
         integrations=[DjangoIntegration()],
         traces_sample_rate=0.1,
-        send_default_pii=True,
+        send_default_pii=False,
     )

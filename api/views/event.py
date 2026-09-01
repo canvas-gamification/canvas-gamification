@@ -1,6 +1,7 @@
 from api.filters import DjangoFilterBackend
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -9,6 +10,7 @@ from api.permissions import (
     IsOwnerOrReadOnly,
     EventCreatePermission,
     EventEditPermission,
+    is_course_member,
 )
 from api.serializers import EventSerializer
 from canvas.models.models import Event, EVENT_TYPE_CHOICES, CanvasCourse, CHALLENGE_TYPE_CHOICES
@@ -55,9 +57,13 @@ class EventViewSet(viewsets.ModelViewSet):
         serializer.save()
         update_event_action(request.user, serializer.data)
 
+    # The detail actions below go through ``self.get_object()`` so that
+    # ``IsOwnerOrReadOnly`` (edit permission on the event) is enforced. A bare
+    # ``get_object_or_404`` would skip every object-level permission.
+
     @action(detail=True, methods=["post"], url_path="add-question-set")
     def add_question_set(self, request, pk=None):
-        event = get_object_or_404(Event, id=pk)
+        event = self.get_object()
         category = request.data.get("category", None)
         difficulty = request.data.get("difficulty", None)
         number_of_questions = request.data.get("number_of_questions", None)
@@ -67,34 +73,43 @@ class EventViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"], url_path="add-question")
     def add_question(self, request, pk=None):
-        event = get_object_or_404(Event, id=pk)
+        event = self.get_object()
         question_id = request.data.get("question_id")
         question = get_object_or_404(Question, id=question_id)
+        # Copying a question also copies its answer, so the source must be one the
+        # caller is allowed to see in full.
+        if not question.is_practice and not question.has_edit_permission(request.user):
+            raise PermissionDenied()
         question.copy_to_event(event)
         return Response("success")
 
     @action(detail=True, methods=["post"], url_path="remove-question")
     def remove_question(self, request, pk=None):
+        event = self.get_object()
         question_id = request.data.get("question_id")
-        question = get_object_or_404(Question, id=question_id, event_id=pk)
+        question = get_object_or_404(Question, id=question_id, event_id=event.id)
         question.soft_delete()
 
         return Response("success")
 
     @action(detail=True, methods=["get"], url_path="stats")
     def stats(self, request, pk=None):
-        event = get_object_or_404(Event, id=pk)
+        event = self.get_object()
+        # Stats expose every student's submissions; GET is "safe" for
+        # IsOwnerOrReadOnly, so the edit check has to be explicit here.
+        if not event.has_edit_permission(request.user):
+            raise PermissionDenied()
         return Response(get_event_stats(event))
 
     @action(detail=True, methods=["post"], url_path="set-featured")
     def set_featured(self, request, pk=None):
-        event = get_object_or_404(Event, id=pk)
+        event = self.get_object()
         set_featured(event)
         return Response("success")
 
     @action(detail=True, methods=["post"], url_path="clear-featured")
     def clear_featured(self, request, pk=None):
-        event = get_object_or_404(Event, id=pk)
+        event = self.get_object()
         clear_featured(event)
         return Response("success")
 
@@ -119,6 +134,9 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         event = get_object_or_404(Event, id=request.data.get("event"))
         course = get_object_or_404(CanvasCourse, id=request.data.get("course"))
+        # Only the target course is checked (EventCreatePermission). The UI's import
+        # dialog deliberately offers events from every course, so the source event
+        # is not restricted here.
         cloned_event = event.copy_to_course(course)
 
         import_event_action(request.user, self.get_serializer(cloned_event).data)
@@ -132,7 +150,9 @@ class EventViewSet(viewsets.ModelViewSet):
         """
         Given event id, return the event leader board.
         """
-        event = get_object_or_404(Event, id=pk)
+        event = self.get_object()
+        if not is_course_member(request.user, event.course):
+            raise PermissionDenied()
         leader_board = [
             {
                 "name": team.name,

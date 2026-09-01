@@ -1,7 +1,31 @@
 from rest_framework import permissions
 from rest_framework.permissions import SAFE_METHODS
 
-from canvas.models.models import Event, CanvasCourse
+from canvas.models.models import Event, CanvasCourse, CanvasCourseRegistration, TA, INSTRUCTOR
+
+
+def is_course_member(user, course):
+    """
+    True for teachers, the course instructor and anyone holding a VERIFIED
+    registration. Unlike ``CanvasCourse.is_registered`` this never creates a
+    registration row as a side effect.
+    """
+    if not user.is_authenticated:
+        return False
+    if user.is_teacher or course.instructor_id == user.id:
+        return True
+    return CanvasCourseRegistration.objects.filter(course=course, user=user, status="VERIFIED").exists()
+
+
+def is_course_staff(user, course):
+    """True for teachers, the course instructor, and TA/INSTRUCTOR registrations."""
+    if not user.is_authenticated:
+        return False
+    if user.is_teacher or course.instructor_id == user.id:
+        return True
+    return CanvasCourseRegistration.objects.filter(
+        course=course, user=user, registration_type__in=[TA, INSTRUCTOR]
+    ).exists()
 
 
 class TeacherAccessPermission(permissions.IsAuthenticated):
@@ -87,17 +111,40 @@ class EventCreatePermission(permissions.IsAuthenticated):
         return True
 
     def has_object_permission(self, request, view, obj):
+        # Reached by the event detail actions (add-question-set, set-featured, ...).
+        # Creation itself is checked in has_permission; acting on an existing
+        # event needs edit rights on it.
         if request.method == "POST":
-            return obj.has_create_event_permission(request.user)
+            return obj.has_edit_permission(request.user)
         return True
 
 
 class EventEditPermission(permissions.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
         user = request.user
-        if request.method == "PUT":
+        if request.method in ["PUT", "PATCH", "DELETE"]:
             return obj.has_edit_permission(user)
         return True
+
+
+class EventSetPermission(permissions.IsAuthenticated):
+    """
+    Creating an event set needs event-creation rights on its course (the same
+    rule as creating an event); changing or deleting one needs edit rights on
+    the event set itself. Reads stay open to any authenticated user.
+    """
+
+    def has_permission(self, request, view):
+        if not super().has_permission(request, view):
+            return False
+        if request.method == "POST":
+            return EventCreatePermission().has_permission(request, view)
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+        return obj.has_edit_permission(request.user)
 
 
 class HasDeletePermission(permissions.IsAuthenticated):
@@ -124,9 +171,8 @@ class HasViewSubmissionPermission(permissions.IsAuthenticated):
 
 
 class TeamPermission(permissions.IsAuthenticated):
-    # TODO: fix permissions for teams
-    def has_permission(self, request, view):
-        return True
-
     def has_object_permission(self, request, view, obj):
-        return obj.course_registrations.filter(user=request.user).exists()
+        user = request.user
+        if request.method in SAFE_METHODS:
+            return is_course_member(user, obj.event.course)
+        return obj.course_registrations.filter(user=user).exists()

@@ -180,10 +180,8 @@ class UserActionsEndpointTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Action.objects.get(description="client supplied").actor_id, self.user.id)
 
-    def test_create_accepts_client_supplied_token_change(self):
-        # KNOWN-BUG: ActionsSerializer has ``exclude = []`` and only ``actor`` is
-        # read-only, so an authenticated client can POST an arbitrary ``token_change``
-        # and mint tokens that show up in MyUser.tokens (api/views/action.py:13-45).
+    def test_create_ignores_client_supplied_token_change(self):
+        # Security fix: ``token_change`` is read-only on ActionsSerializer.
         self.client.force_authenticate(self.user)
 
         response = self.client.post(
@@ -198,7 +196,7 @@ class UserActionsEndpointTest(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(self.user.tokens, 9999.0)
+        self.assertEqual(self.user.tokens, 0)
 
     def test_delete_is_not_routed(self):
         self._action(self.user)
