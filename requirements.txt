@@ -8,7 +8,7 @@ django-polymorphic==4.11.7
 Django==6.0.7
 djangorestframework-csv==3.0.2
 djangorestframework-queryfields==1.1.0
-djangorestframework==3.17.1
+djangorestframework==3.17.2
 gunicorn==26.0.0
 inflection==0.5.1
 ipython==9.16.1
